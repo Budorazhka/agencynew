@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e2c97e;
+  --gold-dark: #a07828;
+  --green-bg: #0d2818;
+  --green-card: #112d1c;
+  --green-card-hover: #163824;
+  --green-border: #1e4a2a;
+  --green-deep: #0a1f12;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  background-color: var(--green-bg);
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.gold-text {
+  color: var(--gold);
+}
+
+.gold-border {
+  border-color: var(--gold);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--green-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gold-dark);
+  border-radius: 2px;
+}
+
+/* Gold glow on cards */
+.card-glow {
+  box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.25), 0 4px 24px rgba(0,0,0,0.4);
+  transition: box-shadow 0.2s, background 0.2s;
+}
+.card-glow:hover {
+  box-shadow: 0 0 0 1.5px rgba(201, 168, 76, 0.55), 0 8px 32px rgba(0,0,0,0.5);
+  background: var(--green-card-hover);
+}
+
+/* Top section big cards */
+.top-card {
+  background: var(--green-card);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-radius: 18px;
+  padding: 20px 24px;
+  cursor: pointer;
+}
+.top-card:hover {
+  border-color: rgba(201, 168, 76, 0.65);
+  background: var(--green-card-hover);
+}
+
+/* Module cards */
+.module-card {
+  background: var(--green-card);
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  border-radius: 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 12px 14px;
+}
+.module-card:hover {
+  border-color: rgba(201, 168, 76, 0.6);
+  background: var(--green-card-hover);
+}
+
+/* Open button */
+.open-btn {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  width: 100%;
+  margin-top: 10px;
+}
+.open-btn:hover {
+  background: var(--gold);
+  color: #0d2818;
+}
+
+/* Sidebar */
+.sidebar {
+  background: var(--green-deep);
+  border-right: 1px solid var(--green-border);
+}
+
+/* Lead badge */
+.badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+.badge-secondary { background: #8b3a3a; color: #ffd0d0; }
+.badge-primary   { background: #1a4f8a; color: #c5deff; }
+.badge-rent      { background: #3a6b3a; color: #c5ffc5; }
+.badge-ads       { background: #7a4a1a; color: #ffe0b0; }
