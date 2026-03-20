@@ -213,8 +213,3 @@ export default function HomePage() {
   )
 }
 
-const sideIconStyle: React.CSSProperties = {
-  width: 36, height: 36,
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  background: 'transparent', border: 'none', borderRadius: 8, cursor: 'pointer',
-}
