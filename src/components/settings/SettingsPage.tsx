@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { User, Building2, Bell, Settings, Users, CreditCard, ShieldCheck } from 'lucide-react'
+import { User, Building2, Bell, Settings, Users, CreditCard, ShieldCheck, Paintbrush } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRolePermissions } from '@/hooks/useRolePermissions'
 import { ProfileTab } from './ProfileTab'
@@ -9,6 +9,8 @@ import { BillingTab } from './BillingTab'
 import { SecurityTab } from './SecurityTab'
 import { LeadSettingsTab } from '@/components/leads/LeadSettingsTab'
 import { LeadManagersTab } from '@/components/leads/LeadManagersTab'
+import AgencyBrandingModal from '@/components/AgencyBrandingModal'
+import { getBranding, type AgencyBranding } from '@/store/agencyStore'
 import '@/components/leads/leads-secret-table.css'
 
 type Section =
@@ -19,6 +21,7 @@ type Section =
   | 'managers'
   | 'billing'
   | 'security'
+  | 'branding'
 
 interface NavItem {
   id: Section
@@ -29,6 +32,8 @@ interface NavItem {
 
 export function SettingsPage() {
   const { isRopOrAbove, isDirectorOrAbove, isOwner } = useRolePermissions()
+  const [branding, setBranding] = useState<AgencyBranding>(() => getBranding())
+  const [showBrandingModal, setShowBrandingModal] = useState(false)
 
   const allItems: (NavItem & { visible: boolean })[] = [
     { id: 'profile',       label: 'Мой профиль',       icon: <User className="size-4" />,        visible: true },
@@ -36,8 +41,9 @@ export function SettingsPage() {
     { id: 'notifications', label: 'Уведомления',        icon: <Bell className="size-4" />,        visible: true },
     { id: 'leads',         label: 'Передача лидов',     icon: <Settings className="size-4" />,    visible: isRopOrAbove, separator: true },
     { id: 'managers',      label: 'Менеджеры',          icon: <Users className="size-4" />,       visible: isRopOrAbove },
-    { id: 'billing',       label: 'Тариф и оплата',     icon: <CreditCard className="size-4" />,  visible: isOwner, separator: true },
-    { id: 'security',      label: 'Безопасность',       icon: <ShieldCheck className="size-4" />, visible: true },
+    { id: 'billing',       label: 'Тариф и оплата',     icon: <CreditCard className="size-4" />,   visible: isOwner, separator: true },
+    { id: 'security',      label: 'Безопасность',       icon: <ShieldCheck className="size-4" />,  visible: true },
+    { id: 'branding',      label: 'Брендинг агентства', icon: <Paintbrush className="size-4" />,   visible: isOwner, separator: true },
   ]
 
   const visibleItems = allItems.filter((i) => i.visible)
@@ -52,7 +58,7 @@ export function SettingsPage() {
     : visibleItems[0]?.id ?? 'profile'
 
   return (
-    <div className="leads-page-root -m-6 min-h-[calc(100vh+3rem)] lg:-m-8 lg:min-h-[calc(100vh+4rem)]">
+    <div className="leads-page-root min-h-screen">
       <div className="leads-page-bg" aria-hidden />
       <div className="leads-page-ornament" aria-hidden />
       <div className="leads-page relative z-10 p-6 lg:p-8">
@@ -111,9 +117,39 @@ export function SettingsPage() {
             {resolvedSection === 'managers'      && <LeadManagersTab />}
             {resolvedSection === 'billing'       && <BillingTab />}
             {resolvedSection === 'security'      && <SecurityTab />}
+            {resolvedSection === 'branding'      && (
+              <div className="rounded-xl border border-[rgba(242,207,141,0.12)] bg-[rgba(0,0,0,0.15)] p-6">
+                <p className="text-xs uppercase tracking-widest text-[rgba(242,207,141,0.45)] mb-1">Оформление</p>
+                <h2 className="text-xl font-bold text-[#fcecc8] mb-4">Брендинг агентства</h2>
+                <p className="text-sm text-[rgba(242,207,141,0.5)] mb-6">
+                  Загрузите логотип и укажите название агентства — они отображаются на главном экране.
+                </p>
+                {branding.logoDataUrl && (
+                  <img src={branding.logoDataUrl} alt="logo" className="h-16 mb-4 object-contain opacity-80" />
+                )}
+                {branding.name && (
+                  <p className="text-[rgba(201,168,76,0.6)] font-bold tracking-widest uppercase text-sm mb-6">{branding.name}</p>
+                )}
+                <button
+                  onClick={() => setShowBrandingModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[rgba(242,207,141,0.25)] text-[rgba(242,207,141,0.7)] text-sm font-semibold hover:bg-[rgba(242,207,141,0.08)] transition-colors"
+                >
+                  <Paintbrush className="size-4" /> Изменить брендинг
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {showBrandingModal && (
+        <AgencyBrandingModal
+          current={branding}
+          onClose={() => setShowBrandingModal(false)}
+          onSave={(b) => { setBranding(b) }}
+        />
+      )}
     </div>
   )
 }
+

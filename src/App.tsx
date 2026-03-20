@@ -9,12 +9,15 @@ export default function App() {
   const isMainDashboard = location.pathname === '/dashboard' || location.pathname === '/dashboard/'
 
   return (
-    <div className={cn('flex min-h-screen', isFeltStyle ? 'app-theme-felt' : 'bg-background text-foreground')}>
+    <div
+      className={cn('flex min-h-screen', isFeltStyle ? 'app-theme-felt' : '')}
+      style={isFeltStyle ? undefined : { background: 'var(--green-bg)' }}
+    >
       <main className={cn(
         'flex-1 overflow-auto',
         isPokerFullscreen ? 'p-0 overflow-hidden' :
         isMainDashboard ? 'p-0 flex flex-col' :
-        'p-6 lg:p-8'
+        'p-0'
       )}>
         <Outlet />
       </main>

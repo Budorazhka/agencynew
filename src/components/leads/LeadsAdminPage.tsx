@@ -47,7 +47,7 @@ function ManagerLeadsView() {
   const firstName = currentUser?.name?.split(' ')[0] ?? 'Менеджер'
 
   return (
-    <div className="leads-page-root -m-6 min-h-[calc(100vh+3rem)] lg:-m-8 lg:min-h-[calc(100vh+4rem)]">
+    <div className="leads-page-root min-h-screen">
       <div className="leads-page-bg" aria-hidden />
       <div className="leads-page-ornament" aria-hidden />
       <div className="leads-page relative z-10 space-y-8 p-6 lg:p-8">
@@ -122,7 +122,7 @@ export function LeadsAdminPage() {
   // Маркетолог видит только аналитику лидов
   if (isMarketer) {
     return (
-      <div className="leads-page-root -m-6 min-h-[calc(100vh+3rem)] lg:-m-8 lg:min-h-[calc(100vh+4rem)]">
+      <div className="leads-page-root min-h-screen">
         <div className="leads-page-bg" aria-hidden />
         <div className="leads-page-ornament" aria-hidden />
         <div className="leads-page relative z-10 space-y-8 p-6 lg:p-8">
@@ -156,7 +156,7 @@ export function LeadsAdminPage() {
   }
 
   return (
-    <div className="leads-page-root -m-6 min-h-[calc(100vh+3rem)] lg:-m-8 lg:min-h-[calc(100vh+4rem)]">
+    <div className="leads-page-root min-h-screen">
       <div className="leads-page-bg" aria-hidden />
       <div className="leads-page-ornament" aria-hidden />
       <div className="leads-page relative z-10 space-y-8 p-6 lg:p-8">

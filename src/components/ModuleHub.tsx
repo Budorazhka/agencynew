@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, ExternalLink } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 
 export interface HubSection {
   icon: React.ReactNode
@@ -28,19 +28,6 @@ export default function ModuleHub({ moduleIcon, moduleName, moduleDescription, s
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--green-bg)', padding: '28px 32px' }}>
-
-      {/* Back */}
-      <button
-        onClick={() => navigate(backRoute)}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          background: 'none', border: 'none', cursor: 'pointer',
-          color: 'rgba(201,168,76,0.6)', fontSize: 13, marginBottom: 24,
-          padding: 0,
-        }}
-      >
-        <ArrowLeft size={15} /> На главную
-      </button>
 
       {/* Module header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 32 }}>

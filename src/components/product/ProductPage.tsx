@@ -13,7 +13,7 @@ export function ProductPage() {
 
   if (section === 'network') {
     return (
-      <div className="leads-page-root -m-6 min-h-[calc(100vh+3rem)] lg:-m-8 lg:min-h-[calc(100vh+4rem)]">
+      <div className="leads-page-root min-h-screen">
         <div className="leads-page-bg" aria-hidden />
         <div className="leads-page-ornament" aria-hidden />
         <div className="leads-page relative z-10 p-6 lg:p-8 space-y-4">
@@ -41,7 +41,7 @@ export function ProductPage() {
   }
 
   return (
-    <div className="leads-page-root -m-6 min-h-[calc(100vh+3rem)] lg:-m-8 lg:min-h-[calc(100vh+4rem)]">
+    <div className="leads-page-root min-h-screen">
       <div className="leads-page-bg" aria-hidden />
       <div className="leads-page-ornament" aria-hidden />
       <div className="leads-page relative z-10 flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center p-6 lg:p-8">
