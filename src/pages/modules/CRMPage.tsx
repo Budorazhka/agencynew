@@ -44,12 +44,6 @@ export default function CRMPage() {
           description: 'Воронки первички и вторички, карточка сделки, финансы, документы.',
           route: '/dashboard/deals',
         },
-        {
-          icon: <BookMarked size={20} color="#c9a84c" />,
-          title: 'Брони / Регистрации',
-          description: 'Бронирование клиентов и квартир, реестр броней, статусы.',
-          route: '/dashboard/bookings',
-        },
       ]}
     />
   )

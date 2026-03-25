@@ -1,5 +1,5 @@
 import ModuleHub from '@/components/ModuleHub'
-import { GitBranch, Users, ShieldCheck, BarChart2, GraduationCap } from 'lucide-react'
+import { GitBranch, Users, ShieldCheck, BarChart2 } from 'lucide-react'
 
 export default function TeamPage() {
   return (
@@ -26,12 +26,6 @@ export default function TeamPage() {
           title: 'Матрица доступов',
           description: 'Матрица ролей и прав, scopes доступа для каждого пользователя.',
           route: '/dashboard/team/access',
-        },
-        {
-          icon: <GraduationCap size={20} color="#c9a84c" />,
-          title: 'Обучение',
-          description: 'Курсы, назначения, тестирование и база знаний команды.',
-          route: '/dashboard/lms',
         },
       ]}
     />

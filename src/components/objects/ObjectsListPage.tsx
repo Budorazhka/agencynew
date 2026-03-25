@@ -4,8 +4,8 @@ import { Search, SlidersHorizontal, Building2, Home, ChevronRight, X } from 'luc
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { mockProperties } from '@/components/management/my-properties/mock-data'
 import type { PropertyCategory, PropertyType, SaleStatus } from '@/components/management/my-properties/types'
+import { FMT_USD } from '@/lib/format-currency'
 
-const FMT_USD = new Intl.NumberFormat('ru', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
 const FMT_M2  = new Intl.NumberFormat('ru', { maximumFractionDigits: 0 })
 
 const STATUS_LABELS: Record<SaleStatus, string> = {

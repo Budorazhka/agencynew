@@ -20,6 +20,7 @@ import {
   ChevronRight,
   FileText,
 } from 'lucide-react'
+import { formatUsdCompact } from '@/lib/format-currency'
 
 const STATUS_FILTERS: { value: SelectionStatus | 'all'; label: string }[] = [
   { value: 'all', label: 'Все' },
@@ -37,9 +38,7 @@ const MARKET_FILTERS: { value: PropertyMarket | 'all'; label: string }[] = [
 ]
 
 function formatPrice(price: number) {
-  if (price >= 1_000_000) return `${(price / 1_000_000).toFixed(1)} млн`
-  if (price >= 1_000) return `${(price / 1_000).toFixed(0)} тыс`
-  return `${price}`
+  return formatUsdCompact(price)
 }
 
 function formatDate(iso: string) {

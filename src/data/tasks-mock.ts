@@ -1,5 +1,8 @@
 import type { Task } from '@/types/tasks'
 
+/** Дата «сегодня» на момент загрузки модуля — для демо задач в реестре «на сегодня» */
+const TODAY_ISO = new Date().toISOString().split('T')[0]
+
 export const TASKS_MOCK: Task[] = [
   {
     id: 'task-1',
@@ -134,5 +137,39 @@ export const TASKS_MOCK: Task[] = [
     entityType: 'none',
     isAutomatic: false,
     createdAt: '2026-03-15',
+  },
+  {
+    id: 'task-today-1',
+    title: 'Согласовать КП с клиентом Петрову И.С.',
+    description: 'Три варианта 2к в Бутово — ответ до обеда',
+    status: 'pending',
+    priority: 'high',
+    assignedToId: 'lm-1',
+    assignedToName: 'Анна Первичкина',
+    createdByName: 'Анна Первичкина',
+    dueDate: TODAY_ISO,
+    dueTime: '12:00',
+    entityType: 'client',
+    entityId: 'cl-3',
+    entityLabel: 'Клиент: Петров И.С.',
+    isAutomatic: false,
+    createdAt: TODAY_ISO,
+  },
+  {
+    id: 'task-today-2',
+    title: 'Осмотр ЖК «Green Valley»',
+    description: 'Сопровождение клиента, сбор обратной связи',
+    status: 'in_progress',
+    priority: 'medium',
+    assignedToId: 'lm-1',
+    assignedToName: 'Анна Первичкина',
+    createdByName: 'Система',
+    dueDate: TODAY_ISO,
+    dueTime: '16:00',
+    entityType: 'lead',
+    entityId: 'ld-105',
+    entityLabel: 'Лид: осмотр первички',
+    isAutomatic: false,
+    createdAt: TODAY_ISO,
   },
 ]

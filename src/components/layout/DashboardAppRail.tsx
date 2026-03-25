@@ -2,9 +2,11 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
   CreditCard,
+  BarChart3,
   Building2,
   BookMarked,
   CalendarDays,
+  CheckSquare,
   Building,
   GraduationCap,
   Settings,
@@ -32,6 +34,14 @@ const RAIL = [
       p.startsWith('/dashboard/bookings'),
   },
   {
+    label: 'Аналитика',
+    to: '/dashboard/dashboards',
+    icon: BarChart3,
+    match: (p: string) =>
+      p.startsWith('/dashboard/dashboards') ||
+      p.startsWith('/dashboard/overview'),
+  },
+  {
     label: 'Брони / Регистрации',
     to: '/dashboard/bookings',
     icon: BookMarked,
@@ -47,10 +57,16 @@ const RAIL = [
       p.startsWith('/dashboard/marketplace'),
   },
   {
-    label: 'Планирование',
+    label: 'Задачи',
     to: '/dashboard/tasks',
+    icon: CheckSquare,
+    match: (p: string) => p.startsWith('/dashboard/tasks'),
+  },
+  {
+    label: 'Планирование',
+    to: '/dashboard/calendar',
     icon: CalendarDays,
-    match: (p: string) => p.startsWith('/dashboard/tasks') || p.startsWith('/dashboard/calendar'),
+    match: (p: string) => p.startsWith('/dashboard/calendar'),
   },
   {
     label: 'Обучение',
@@ -59,7 +75,7 @@ const RAIL = [
     match: (p: string) => p.startsWith('/dashboard/lms') || p.startsWith('/dashboard/learning'),
   },
   {
-    label: 'Компания',
+    label: 'Команда',
     to: '/dashboard/team',
     icon: Building,
     match: (p: string) =>

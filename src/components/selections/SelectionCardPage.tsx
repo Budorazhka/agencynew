@@ -26,11 +26,10 @@ import {
   Wallet,
   MessageSquare,
 } from 'lucide-react'
+import { formatUsdCompact } from '@/lib/format-currency'
 
 function formatPrice(price: number) {
-  if (price >= 1_000_000) return `${(price / 1_000_000).toFixed(1)} млн ₽`
-  if (price >= 1_000) return `${(price / 1_000).toFixed(0)} тыс ₽`
-  return `${price} ₽`
+  return formatUsdCompact(price)
 }
 
 function formatDateTime(iso: string) {

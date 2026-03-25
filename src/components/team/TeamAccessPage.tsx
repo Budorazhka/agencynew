@@ -210,12 +210,7 @@ export function TeamAccessPage() {
   return (
     <DashboardShell>
       <div style={{ padding: '24px 28px 40px' }}>
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 4 }}>Матрица доступов сотрудников</div>
-          <div style={{ fontSize: 12, color: C.whiteLow }}>
-            Формула по ТЗ: действие + сущность. База берётся из роли, индивидуальные правки доступны собственнику.
-          </div>
-        </div>
+        <div style={{ marginBottom: 20, fontSize: 20, fontWeight: 700, color: C.white }}>Матрица доступов сотрудников</div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '320px minmax(0, 1fr)', gap: 14 }}>
           <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, overflow: 'hidden' }}>
@@ -272,15 +267,15 @@ export function TeamAccessPage() {
             <div style={{ padding: '12px 16px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
               <div>
                 <div style={{ fontSize: 13, color: C.white, fontWeight: 700 }}>
-                  {selectedPerson ? `${selectedPerson.name} — персональные доступы` : 'Выберите сотрудника'}
+                  {selectedPerson ? selectedPerson.name : 'Выберите сотрудника'}
                 </div>
                 <div style={{ marginTop: 2, fontSize: 11, color: C.whiteLow }}>
-                  Роль: {selectedRole ? ROLE_LABEL[selectedRole] : '-'} · Индивидуальных правок: {selectedOverridesCount}
+                  {selectedRole ? ROLE_LABEL[selectedRole] : '—'} · правок: {selectedOverridesCount}
                 </div>
               </div>
               {!canEdit && (
                 <div style={{ fontSize: 10, color: C.whiteLow }}>
-                  Только собственник может редактировать
+                  Только просмотр
                 </div>
               )}
             </div>
@@ -288,7 +283,7 @@ export function TeamAccessPage() {
               <thead>
                 <tr style={{ borderBottom: `1px solid ${C.border}` }}>
                   <th style={{ padding: '14px 18px', textAlign: 'left', fontSize: 11, color: C.whiteLow, fontWeight: 600, width: 260 }}>
-                    Сущность
+                    Раздел
                   </th>
                   {ACCESS_COLUMNS.map((col) => (
                     <th
@@ -434,9 +429,6 @@ export function TeamAccessPage() {
               <X size={10} color="rgba(255,255,255,0.18)" />
             </div>
             Нет доступа
-          </div>
-          <div style={{ fontSize: 11, color: C.whiteLow }}>
-            База: права роли, затем персональные правки
           </div>
         </div>
       </div>

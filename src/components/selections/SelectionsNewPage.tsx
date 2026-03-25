@@ -17,13 +17,14 @@ import {
 } from '@/data/selection-catalog-mock'
 import type { Selection, SelectionProperty } from '@/types/selections'
 import { LEAD_STAGE_COLUMN } from '@/data/leads-mock'
+import { FMT_USD } from '@/lib/format-currency'
 
 type BasketPrimary = { kind: 'primary'; key: string; complex: PrimaryComplex; lot: PrimaryLot }
 type BasketSecondary = { kind: 'secondary'; key: string; lot: SecondaryLot }
 type BasketItem = BasketPrimary | BasketSecondary
 
-function formatPriceRub(n: number) {
-  return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(n)
+function formatPriceUsd(n: number) {
+  return FMT_USD.format(n)
 }
 
 function basketToSelectionProperties(items: BasketItem[]): SelectionProperty[] {
@@ -152,7 +153,7 @@ function PrimaryLotPreview({ complex, lot, index }: { complex: PrimaryComplex; l
         <ParamRow label="Комнат" value={String(lot.rooms)} />
         <ParamRow label="Площадь" value={`${lot.area} м²`} />
         <ParamRow label="Этаж" value={lot.floor} />
-        <ParamRow label="Цена" value={formatPriceRub(lot.price)} />
+        <ParamRow label="Цена" value={formatPriceUsd(lot.price)} />
       </div>
     </article>
   )
@@ -178,7 +179,7 @@ function SecondaryLotPreview({ lot, index }: { lot: SecondaryLot; index: number 
         <ParamRow label="Комнат" value={String(lot.rooms)} />
         <ParamRow label="Площадь" value={`${lot.area} м²`} />
         <ParamRow label="Этаж" value={lot.floor} />
-        <ParamRow label="Цена" value={formatPriceRub(lot.price)} />
+        <ParamRow label="Цена" value={formatPriceUsd(lot.price)} />
       </div>
     </article>
   )
@@ -399,7 +400,7 @@ export function SelectionsNewPage() {
                       <div className="p-3">
                         <p className="text-sm font-semibold text-white">{lot.label}</p>
                         <p className="text-xs text-emerald-100/55">
-                          {lot.rooms}к · {lot.area} м² · {formatPriceRub(lot.price)}
+                          {lot.rooms}к · {lot.area} м² · {formatPriceUsd(lot.price)}
                         </p>
                         <button
                           type="button"
@@ -442,7 +443,7 @@ export function SelectionsNewPage() {
                         <p className="text-xs text-emerald-100/55">
                           {lot.rooms}к · {lot.area} м² · {lot.floor}
                         </p>
-                        <p className="text-xs font-medium text-[#e6c364]">{formatPriceRub(lot.price)}</p>
+                        <p className="text-xs font-medium text-[#e6c364]">{formatPriceUsd(lot.price)}</p>
                         <button
                           type="button"
                           disabled={inBasket}

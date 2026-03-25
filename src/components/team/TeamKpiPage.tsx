@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Phone, Mail, TrendingUp, Target, Users, Briefcase } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { MOCK_EMPLOYEES, ROLE_LABELS, type Employee } from '@/data/personnel-mock'
+import { formatUsdMillions } from '@/lib/format-currency'
 
 const C = {
   gold: 'var(--gold)',
@@ -157,7 +158,7 @@ export function TeamKpiPage() {
         {/* Summary strip */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
           {[
-            { label: 'Выручка (менеджеры)', value: `${(totalRevenue / 1_000_000).toFixed(1)}M ₽`, color: '#4ade80' },
+            { label: 'Выручка (менеджеры)', value: formatUsdMillions(totalRevenue, 1), color: '#4ade80' },
             { label: 'Сделок закрыто',      value: totalDeals,                                    color: C.gold   },
             { label: 'Ср. выполнение плана',value: `${avgPlan}%`,                                  color: avgPlan >= 80 ? '#4ade80' : '#fb923c' },
             { label: 'Перевыполнили план',  value: `${overplan} из ${managers.length}`,            color: '#a78bfa' },

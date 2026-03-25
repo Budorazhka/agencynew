@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Plus, Briefcase, AlertTriangle, ChevronRight, ArrowLeft } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { DEALS_MOCK } from '@/data/deals-mock'
+import { formatUsdMillions } from '@/lib/format-currency'
 import { STAGE_LABELS, STAGE_ORDER, type Deal, type DealStage } from '@/types/deals'
 import { useLeads } from '@/context/LeadsContext'
 import { LEAD_STAGE_COLUMN, LEAD_STAGES } from '@/data/leads-mock'
@@ -434,7 +435,7 @@ function DealCard({
       {/* Price */}
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
         <span style={{ fontSize: 12, fontWeight: 700, color: C_local.white }}>
-          {(deal.price / 1000000).toFixed(1)}M ₽
+          {formatUsdMillions(deal.price, 1)}
         </span>
         <span style={{ fontSize: 11, color: C_local.gold }}>
           +{(deal.commission / 1000).toFixed(0)}K комисс.

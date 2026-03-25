@@ -70,7 +70,7 @@ export const SELECTIONS_MOCK: Selection[] = [
   },
   {
     id: 'sel-002',
-    title: 'Михайлова — студия/1к, бюджет 5.5 млн',
+    title: 'Михайлова — студия/1к, бюджет $5.5M',
     clientId: 'client-002',
     clientName: 'Михайлова Елена Дмитриевна',
     clientPhone: '+7 (903) 567-89-01',
@@ -78,7 +78,7 @@ export const SELECTIONS_MOCK: Selection[] = [
     agentName: 'Игорь Петров',
     status: 'sent',
     budget: 5500000,
-    notes: 'Первая покупка, ипотека одобрена на 5.2 млн. Интересует только первичка с отделкой.',
+    notes: 'Первая покупка, ипотека одобрена на $5.2M. Интересует только первичка с отделкой.',
     createdAt: '2026-03-20T09:00:00Z',
     sentAt: '2026-03-20T16:00:00Z',
     viewCount: 0,

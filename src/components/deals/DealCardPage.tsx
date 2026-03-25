@@ -22,6 +22,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useLeads } from '@/context/LeadsContext'
 import { useRolePermissions } from '@/hooks/useRolePermissions'
 import { DEALS_MOCK } from '@/data/deals-mock'
+import { FMT_USD, formatUsdMillions, formatUsdThousands } from '@/lib/format-currency'
 import { CLIENTS_MOCK } from '@/data/clients-mock'
 import { STAGE_LABELS, STAGE_ORDER, type Deal } from '@/types/deals'
 
@@ -210,8 +211,8 @@ export function DealCardPage() {
               </div>
             </div>
             <div style={{ textAlign: 'right' as const }}>
-              <div style={{ fontSize: 24, fontWeight: 700, color: C.white }}>{(deal.price / 1000000).toFixed(1)}M ₽</div>
-              <div style={{ fontSize: 12, color: C.gold }}>Комиссия: {(deal.commission / 1000).toFixed(0)}K ₽</div>
+              <div style={{ fontSize: 24, fontWeight: 700, color: C.white }}>{formatUsdMillions(deal.price, 1)}</div>
+              <div style={{ fontSize: 12, color: C.gold }}>Комиссия: {formatUsdThousands(deal.commission)}</div>
               <div style={{ fontSize: 11, color: C.whiteLow, marginTop: 4 }}>Агент: {deal.agentName}</div>
             </div>
           </div>
@@ -367,8 +368,8 @@ export function DealCardPage() {
         {tab === 'finances' && (
           <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: '20px 24px' }}>
             {[
-              { label: 'Стоимость объекта', value: `${(deal.price / 1000000).toFixed(2)}M ₽`, color: C.white },
-              { label: 'Комиссия агентства', value: `${(deal.commission / 1000).toFixed(0)} 000 ₽`, color: C.gold },
+              { label: 'Стоимость объекта', value: formatUsdMillions(deal.price, 2), color: C.white },
+              { label: 'Комиссия агентства', value: FMT_USD.format(deal.commission), color: C.gold },
               { label: 'Ставка комиссии', value: `${((deal.commission / deal.price) * 100).toFixed(1)}%`, color: C.gold },
             ].map((row, i) => (
               <div key={i} style={{

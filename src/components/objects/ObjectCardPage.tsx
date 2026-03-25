@@ -4,8 +4,8 @@ import { Building2, MapPin, Calendar, TrendingUp, FileText, Bookmark } from 'luc
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { mockProperties } from '@/components/management/my-properties/mock-data'
 import type { SaleStatus } from '@/components/management/my-properties/types'
+import { FMT_USD } from '@/lib/format-currency'
 
-const FMT_USD = new Intl.NumberFormat('ru', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
 const FMT_M2  = new Intl.NumberFormat('ru', { maximumFractionDigits: 0 })
 
 const STATUS_LABELS: Record<SaleStatus, string> = {

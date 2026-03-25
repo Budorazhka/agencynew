@@ -14,7 +14,7 @@ export function OwnerDashboard() {
       <div style={S.grid4}>
         <KpiCard
           label="EBITDA (мес.)"
-          value="4.2M ₽"
+          value="$4.2M"
           delta="+12.4% vs прошлый мес."
           deltaPositive
         />
@@ -28,7 +28,7 @@ export function OwnerDashboard() {
         />
         <KpiCard
           label="Стоимость базы"
-          value="218M ₽"
+          value="$218M"
           sub="Оценка активов в базе"
         />
         <KpiCard
@@ -43,7 +43,7 @@ export function OwnerDashboard() {
 
       <div style={S.grid2}>
         {/* P&L динамика */}
-        <Section title="P&L — прибыль по месяцам (млн ₽)">
+        <Section title="P&L — прибыль по месяцам (млн $)">
           <div style={{ ...S.card }}>
             <div style={S.cardTitle}>P&L Динамика</div>
             <MiniBarChart values={PL_DATA} color={C.gold} />
@@ -54,11 +54,11 @@ export function OwnerDashboard() {
             <div style={{ marginTop: 12, display: 'flex', gap: 24 }}>
               <div>
                 <div style={{ fontSize: 10, color: C.whiteLow, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Факт YTD</div>
-                <div style={{ fontSize: 20, fontWeight: 700, color: C.white }}>38M ₽</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: C.white }}>$38M</div>
               </div>
               <div>
                 <div style={{ fontSize: 10, color: C.whiteLow, letterSpacing: '0.1em', textTransform: 'uppercase' }}>План YTD</div>
-                <div style={{ fontSize: 20, fontWeight: 700, color: C.gold }}>42M ₽</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: C.gold }}>$42M</div>
               </div>
               <div>
                 <div style={{ fontSize: 10, color: C.whiteLow, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Исполнение</div>

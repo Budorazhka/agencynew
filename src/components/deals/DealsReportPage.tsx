@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { DEALS_MOCK } from '@/data/deals-mock'
+import { formatUsdMillions, formatUsdThousands } from '@/lib/format-currency'
 import { STAGE_LABELS, type Deal } from '@/types/deals'
 
 const backToCrmBtn: CSSProperties = {
@@ -81,7 +82,7 @@ export function DealsReportPage() {
             { label: 'Всего сделок', value: deals.length.toString() },
             { label: 'Активных', value: activeDeals.length.toString(), color: '#60a5fa' },
             { label: 'Успешных', value: successDeals.length.toString(), color: C.green },
-            { label: 'Общая комиссия', value: `${(totalCommission / 1000000).toFixed(2)}M ₽`, color: C.gold },
+            { label: 'Общая комиссия', value: formatUsdMillions(totalCommission, 2), color: C.gold },
           ].map(kpi => (
             <div key={kpi.label} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: '18px 20px' }}>
               <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: C.whiteLow, marginBottom: 6 }}>{kpi.label}</div>
@@ -118,8 +119,8 @@ export function DealsReportPage() {
                 <div style={{ fontSize: 11, color: C.whiteLow }}>{deal.propertyAddress}</div>
               </div>
               <div style={{ fontSize: 12, color: C.whiteMid }}>{STAGE_LABELS[deal.stage]}</div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: C.white }}>{(deal.price / 1000000).toFixed(1)}M ₽</div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: C.gold }}>{(deal.commission / 1000).toFixed(0)}K ₽</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: C.white }}>{formatUsdMillions(deal.price, 1)}</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: C.gold }}>{formatUsdThousands(deal.commission)}</div>
             </div>
           ))}
         </div>

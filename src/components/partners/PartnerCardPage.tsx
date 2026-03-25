@@ -5,7 +5,7 @@ import { DashboardShell } from '@/components/layout/DashboardShell'
 import { PARTNERS_MOCK } from '@/data/partners-mock'
 import { PARTNER_TYPE_LABELS, PARTNER_STATUS_LABELS } from '@/types/partners'
 
-const FMT = new Intl.NumberFormat('ru', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 })
+import { FMT_USD as FMT } from '@/lib/format-currency'
 
 const LEAD_STATUS_LABELS: Record<string, string> = {
   new:         'Новый',

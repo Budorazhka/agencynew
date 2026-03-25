@@ -6,6 +6,7 @@ import { useLeads } from '@/context/LeadsContext'
 import { useTheme } from '@/hooks/useTheme'
 import { StatCard } from '@/components/ui/StatCard'
 import { cn } from '@/lib/utils'
+import { FMT_USD } from '@/lib/format-currency'
 
 // Стадии которые считаются "в работе" — всё кроме отказа и успешно закрытых
 const ACTIVE_STAGES = ['new', 'contacted', 'qualified', 'proposal']
@@ -73,8 +74,8 @@ export function MainScreenOptimized() {
       icon: DollarSign,
       title: 'Комиссии',
       rows: [
-        { value: `${stats.totalCommission.toLocaleString()} ₽`, label: 'Всего' },
-        { value: `${stats.avgCommission.toLocaleString()} ₽`, label: 'Средний' },
+        { value: FMT_USD.format(stats.totalCommission), label: 'Всего' },
+        { value: FMT_USD.format(stats.avgCommission), label: 'Средний' },
       ],
       accentClass: isFeltStyle ? 'border-[var(--felt-accent-gold)]' : 'border-orange-500',
     },

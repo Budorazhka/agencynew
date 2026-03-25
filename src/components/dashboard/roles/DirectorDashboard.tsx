@@ -13,7 +13,7 @@ export function DirectorDashboard() {
       <div style={S.grid4}>
         <KpiCard
           label="Выручка факт"
-          value="48M ₽"
+          value="$48M"
           sub="Текущий месяц"
           delta="+14% vs план"
           deltaPositive
@@ -46,15 +46,15 @@ export function DirectorDashboard() {
 
       <div style={S.grid2}>
         {/* Выручка план-факт */}
-        <Section title="Выручка план-факт (млн ₽)">
+        <Section title="Выручка план-факт (млн $)">
           <div style={S.card}>
             <div style={S.cardTitle}>Динамика выручки</div>
             <MiniBarChart values={REVENUE_DATA} color={C.gold} />
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginTop: 16 }}>
               {[
-                { l: 'Центр. офис', v: '21.4M', c: C.green },
-                { l: 'Бутово', v: '14.2M', c: C.gold },
-                { l: 'Подмосковье', v: '12.4M', c: C.whiteMid },
+                { l: 'Центр. офис', v: '$21.4M', c: C.green },
+                { l: 'Бутово', v: '$14.2M', c: C.gold },
+                { l: 'Подмосковье', v: '$12.4M', c: C.whiteMid },
               ].map((d, i) => (
                 <div key={i}>
                   <div style={{ fontSize: 10, color: C.whiteLow, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 2 }}>{d.l}</div>

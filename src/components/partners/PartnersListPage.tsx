@@ -7,6 +7,7 @@ import {
   PARTNER_TYPE_LABELS, PARTNER_STATUS_LABELS,
   type PartnerType, type PartnerStatus,
 } from '@/types/partners'
+import { FMT_USD as FMT } from '@/lib/format-currency'
 
 const STATUS_COLORS: Record<PartnerStatus, string> = {
   active:  '#4ade80',
@@ -19,8 +20,6 @@ const TYPE_COLORS: Record<PartnerType, string> = {
   intermediary: '#a78bfa',
   owner:        '#f2cf8d',
 }
-
-const FMT = new Intl.NumberFormat('ru', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 })
 
 type FilterType = PartnerType | 'all'
 

@@ -20,9 +20,9 @@ export function MarketerDashboard() {
         />
         <KpiCard
           label="CPL средний"
-          value="1 050 ₽"
+          value="$1,050"
           sub="Стоимость лида"
-          delta="-80 ₽"
+          delta="-$80"
           deltaPositive
           color={C.green}
         />
@@ -36,7 +36,7 @@ export function MarketerDashboard() {
         />
         <KpiCard
           label="CAC"
-          value="14 200 ₽"
+          value="$14,200"
           sub="Стоимость клиента"
           color={C.gold}
         />
@@ -64,10 +64,10 @@ export function MarketerDashboard() {
             <MiniBarChart values={CPL_DATA} color={C.blue} />
             <SimpleList
               rows={[
-                { left: 'Яндекс.Директ', middle: '320 лидов · 256 000 ₽', right: '800 ₽', rightColor: C.green },
-                { left: 'Авито', middle: '62 лида · 74 400 ₽', right: '1 200 ₽', rightColor: C.gold },
-                { left: 'ВКонтакте', middle: '38 лидов · 76 000 ₽', right: '2 000 ₽', rightColor: C.orange },
-                { left: 'ЦИАН', middle: '140 лидов · 98 000 ₽', right: '700 ₽', rightColor: C.green },
+                { left: 'Яндекс.Директ', middle: '320 лидов · $256,000', right: '$800', rightColor: C.green },
+                { left: 'Авито', middle: '62 лида · $74,400', right: '$1,200', rightColor: C.gold },
+                { left: 'ВКонтакте', middle: '38 лидов · $76,000', right: '$2,000', rightColor: C.orange },
+                { left: 'ЦИАН', middle: '140 лидов · $98,000', right: '$700', rightColor: C.green },
               ]}
             />
           </div>
@@ -115,7 +115,7 @@ export function MarketerDashboard() {
                   }} />
                 </div>
                 <div style={{ fontSize: 11, color: C.whiteLow, marginTop: 2 }}>
-                  {(b.spent / 1000).toFixed(0)}K / {(b.budget / 1000).toFixed(0)}K ₽
+                  ${(b.spent / 1000).toFixed(0)}K / ${(b.budget / 1000).toFixed(0)}K
                 </div>
               </div>
             ))}

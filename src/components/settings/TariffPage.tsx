@@ -25,8 +25,8 @@ const PLANS: Plan[] = [
   {
     key: 'starter',
     name: 'Старт',
-    price: '2 900',
-    period: '₽/мес',
+    price: '$2,900',
+    period: '$/мес',
     icon: <Zap size={20} />,
     color: '#60a5fa',
     current: false,
@@ -46,8 +46,8 @@ const PLANS: Plan[] = [
   {
     key: 'pro',
     name: 'Профи',
-    price: '7 900',
-    period: '₽/мес',
+    price: '$7,900',
+    period: '$/мес',
     icon: <Crown size={20} />,
     color: '#c9a84c',
     current: true,
@@ -67,8 +67,8 @@ const PLANS: Plan[] = [
   {
     key: 'enterprise',
     name: 'Корпоратив',
-    price: 'от 24 900',
-    period: '₽/мес',
+    price: 'от $24,900',
+    period: '$/мес',
     icon: <Building2 size={20} />,
     color: '#a78bfa',
     current: false,
@@ -194,7 +194,7 @@ export function TariffPage() {
           </div>
           {[
             { label: 'Способ оплаты', value: '**** **** **** 4242' },
-            { label: 'Следующее списание', value: '22 апреля 2026 · 7 900 ₽' },
+            { label: 'Следующее списание', value: '22 апреля 2026 · $7,900' },
             { label: 'Договор', value: '№ AG-2024-0087' },
           ].map((row, i) => (
             <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: i < 2 ? `1px solid rgba(255,255,255,0.05)` : 'none' }}>
