@@ -16,9 +16,9 @@ export function PropertyCard({ property, readOnly, onEdit, onDelete }: PropertyC
   const pricePerM2Label = property.details?.priceOnRequest ? 'Прайс скрыт' : `$${formatPrice(property.pricePerM2)} за м²`
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl border border-[rgba(242,207,141,0.15)] bg-[rgba(0,0,0,0.25)] transition-all hover:border-[rgba(242,207,141,0.28)] hover:bg-[rgba(0,0,0,0.32)]">
+    <div className="flex flex-col overflow-hidden rounded-xl border border-[#e6c364]/20 bg-[#0a1f1a] shadow-[inset_0_0_0_1px_rgba(201,168,76,0.1)] transition-all hover:border-[#e6c364]/35 hover:bg-[#0f231e]">
       {/* Photo */}
-      <div className="relative aspect-video bg-gradient-to-br from-[rgba(242,207,141,0.08)] to-[rgba(0,0,0,0.25)]">
+      <div className="relative aspect-video bg-gradient-to-br from-[rgba(230,195,100,0.08)] to-[rgba(0,0,0,0.25)]">
         {property.photo && (
           <img src={property.photo} alt={property.title} className="size-full object-cover" />
         )}
@@ -31,22 +31,22 @@ export function PropertyCard({ property, readOnly, onEdit, onDelete }: PropertyC
       {/* Content */}
       <div className="flex flex-1 flex-col gap-2 p-3">
         <div>
-          <p className="line-clamp-2 text-sm font-semibold leading-snug text-[#fcecc8]">{property.title}</p>
-          <span className="mt-0.5 text-xs font-medium text-emerald-400">{property.type}</span>
+          <p className="line-clamp-2 text-sm font-semibold leading-snug text-[#d0e8df]">{property.title}</p>
+          <span className="mt-0.5 text-xs font-medium text-[#e6c364]/90">{property.type}</span>
         </div>
 
-        <p className="text-xs text-[rgba(242,207,141,0.58)] line-clamp-1">{property.city}, {property.street}</p>
+        <p className="text-xs text-[rgba(230,195,100,0.58)] line-clamp-1">{property.city}, {property.street}</p>
 
         <div className="mt-auto">
-          <p className="text-base font-bold text-[#fcecc8]">{priceLabel}</p>
-          <p className="text-xs text-[rgba(242,207,141,0.55)]">{pricePerM2Label}</p>
+          <p className="text-base font-bold text-[#d0e8df]">{priceLabel}</p>
+          <p className="text-xs text-[rgba(230,195,100,0.55)]">{pricePerM2Label}</p>
         </div>
 
         {!readOnly && (
-          <div className="flex items-center gap-1 border-t border-[rgba(242,207,141,0.1)] pt-2">
+          <div className="flex items-center gap-1 border-t border-emerald-900/30 pt-2">
             <button
               onClick={onEdit}
-              className="flex items-center gap-1 rounded px-2 py-1 text-xs font-semibold text-emerald-400 hover:bg-[rgba(242,207,141,0.07)] transition-colors"
+              className="flex items-center gap-1 rounded px-2 py-1 text-xs font-semibold text-[#e6c364] transition-colors hover:bg-[#e6c364]/10"
             >
               <Pencil className="size-3" />
               Изменить

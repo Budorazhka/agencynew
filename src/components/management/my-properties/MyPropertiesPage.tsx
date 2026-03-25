@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowLeft, Plus } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useRolePermissions } from '@/hooks/useRolePermissions'
 import { useAuth } from '@/context/AuthContext'
 import { mockProperties } from './mock-data'
@@ -17,17 +17,23 @@ import {
 } from '@/components/ui/select'
 import type { FiltersState, PropertyCategory, PropertyWizardValues, SaleStatus } from './types'
 import { EMPTY_FILTERS } from './types'
-import '@/components/leads/leads-secret-table.css'
+import './my-properties.css'
 
 const PROPERTIES_STORAGE_KEY = 'agency.product.properties'
 
+/** Переход с каталога объектов: открыть нужную вкладку сегмента */
+type MyPropertiesLocationState = { defaultTab?: TabValue }
+
+const VALID_ENTRY_TABS: TabValue[] = ['primary', 'secondary', 'rent', 'commercial', 'other']
+
 export function MyPropertiesPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { isManager, isMarketer } = useRolePermissions()
   const { currentUser } = useAuth()
 
   // ── UI state ───────────────────────────────────────────────────────────────
-  const [activeTab, setActiveTab]   = useState<TabValue>('secondary')
+  const [activeTab, setActiveTab]   = useState<TabValue>('primary')
   const [search, setSearch]         = useState('')
   const [viewMode, setViewMode]     = useState<ViewMode>('table')
   const [sortDesc, setSortDesc]     = useState(true)
@@ -71,6 +77,14 @@ export function MyPropertiesPage() {
       // Ignore storage errors and keep working with in-memory state.
     }
   }, [properties])
+
+  useEffect(() => {
+    const s = location.state as MyPropertiesLocationState | null
+    const t = s?.defaultTab
+    if (!t || !VALID_ENTRY_TABS.includes(t)) return
+    setActiveTab(t)
+    navigate(location.pathname, { replace: true, state: null })
+  }, [location.state, location.pathname, navigate])
 
   /** Базовый список по scope (до tab/search/filters) */
   const scopedProperties = useMemo(() => {
@@ -118,7 +132,12 @@ export function MyPropertiesPage() {
       list = list.filter((p) => p.status === 'archive')
     } else {
       const catMap: Record<TabValue, string> = {
-        secondary: 'secondary', rent: 'rent', commercial: 'commercial', other: 'other', archive: '',
+        primary: 'primary',
+        secondary: 'secondary',
+        rent: 'rent',
+        commercial: 'commercial',
+        other: 'other',
+        archive: '',
       }
       list = list.filter((p) => p.category === catMap[activeTab] && p.status !== 'archive')
     }
@@ -215,7 +234,7 @@ export function MyPropertiesPage() {
   function handleScopeChange(s: Scope) {
     setScope(s)
     setSelectedIds(new Set())
-    setActiveTab('secondary')
+    setActiveTab('primary')
     setSearch('')
     setFilters(EMPTY_FILTERS)
     setAlertFilter(null)
@@ -224,8 +243,8 @@ export function MyPropertiesPage() {
 
   function handleAlertFilter(f: AlertFilter) {
     setAlertFilter(f)
-    // При выборе фильтра из блока управления — сбрасываем таб на 'secondary'
-    if (f && f !== 'archive') setActiveTab('secondary')
+    // При выборе фильтра из блока управления — сбрасываем таб на «Первичка»
+    if (f && f !== 'archive') setActiveTab('primary')
     if (f === 'archive') setActiveTab('archive')
     setSelectedIds(new Set())
   }
@@ -235,6 +254,7 @@ export function MyPropertiesPage() {
   }
 
   function openCreateWizard() {
+    /** При создании «Первичка» недоступна — подставляем вторичку (или другой сегмент с вкладки). */
     const categoryFromTab: PropertyCategory =
       activeTab === 'secondary' || activeTab === 'rent' || activeTab === 'commercial' || activeTab === 'other'
         ? activeTab
@@ -285,32 +305,33 @@ export function MyPropertiesPage() {
   const pageTitle = scope === 'my' ? 'МОИ ОБЪЕКТЫ' : 'ВСЕ ОБЪЕКТЫ'
 
   return (
-    <div className="leads-page-root min-h-screen">
-      <div className="leads-page-bg" aria-hidden />
-      <div className="leads-page-ornament" aria-hidden />
-      <div className="leads-page relative z-10 space-y-4 p-6 lg:p-8">
+    <div className="mp-page-root min-h-full">
+      <div className="mp-page-bg" aria-hidden />
+      <div className="mp-page-inner space-y-4 p-6 lg:p-8">
 
         {/* ── Header ── */}
-        <div className="flex items-center gap-4 pb-4 border-b border-[rgba(242,207,141,0.15)]">
+        <div className="flex items-center gap-4 border-b border-emerald-900/30 pb-4">
           <button
+            type="button"
             onClick={() => navigate(-1)}
-            className="flex items-center gap-1.5 text-sm font-medium text-[rgba(242,207,141,0.5)] hover:text-[#fcecc8] transition-colors"
+            className="flex items-center gap-1.5 text-sm font-medium text-emerald-100/50 transition-colors hover:text-[#e6c364]"
           >
             <ArrowLeft className="size-4" />
             Вернуться
           </button>
 
-          <div className="flex-1 flex items-center gap-2.5">
-            <h1 className="text-lg font-bold tracking-tight text-[#fcecc8]">{pageTitle}</h1>
-            <span className="rounded-full border border-[rgba(242,207,141,0.2)] bg-[rgba(242,207,141,0.07)] px-2.5 py-0.5 text-xs font-semibold text-[rgba(242,207,141,0.6)]">
+          <div className="flex flex-1 items-center gap-2.5">
+            <h1 className="text-lg font-bold tracking-tight text-white">{pageTitle}</h1>
+            <span className="rounded-full border border-[#e6c364]/25 bg-[#e6c364]/10 px-2.5 py-0.5 text-xs font-semibold text-[#e6c364]/90">
               {totalCount} объектов
             </span>
           </div>
 
           {!readOnly && (
             <button
+              type="button"
               onClick={openCreateWizard}
-              className="flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-600 active:scale-95 transition-all shadow-sm"
+              className="flex items-center gap-2 rounded-sm bg-[#e6c364] px-5 py-2 text-sm font-semibold text-[#3d2e00] shadow-[0_1px_0_rgba(255,255,255,0.12)_inset] transition-all hover:brightness-110 active:scale-[0.98]"
             >
               <Plus className="size-4" />
               Добавить объект
@@ -326,15 +347,15 @@ export function MyPropertiesPage() {
         {/* ── Фильтр по менеджерам (РОП+ в scope=all) ── */}
         {scope === 'all' && !isManager && agentStats.length > 0 && (
           <Select value={agentFilter ?? 'all'} onValueChange={(v) => setAgentFilter(v === 'all' ? null : v)}>
-            <SelectTrigger className="h-9 w-64 rounded-xl border border-[rgba(242,207,141,0.2)] bg-[rgba(0,0,0,0.35)] text-sm text-[#fcecc8] shadow-none focus:ring-1 focus:ring-[rgba(242,207,141,0.2)] focus:border-[rgba(242,207,141,0.5)] [&>span]:text-[#fcecc8]">
+            <SelectTrigger className="h-9 w-64 rounded-xl border border-emerald-800/50 bg-[#0a1f1a] text-sm text-[#d0e8df] shadow-none focus:border-[#e6c364]/40 focus:ring-1 focus:ring-[#e6c364]/20 [&>span]:text-[#d0e8df]">
               <SelectValue placeholder="Все менеджеры" />
             </SelectTrigger>
-            <SelectContent className="border-[rgba(242,207,141,0.2)] bg-[rgba(9,36,28,0.98)] text-[#fcecc8] backdrop-blur-sm">
-              <SelectItem value="all" className="text-[#fcecc8] focus:bg-[rgba(242,207,141,0.1)] focus:text-[#fcecc8]">
+            <SelectContent className="border-emerald-900/40 bg-[#0a1f1a] text-[#d0e8df] backdrop-blur-sm">
+              <SelectItem value="all" className="focus:bg-[#e6c364]/10 focus:text-[#d0e8df]">
                 Все менеджеры
               </SelectItem>
               {agentStats.map((a) => (
-                <SelectItem key={a.agentId} value={a.agentId} className="text-[#fcecc8] focus:bg-[rgba(242,207,141,0.1)] focus:text-[#fcecc8]">
+                <SelectItem key={a.agentId} value={a.agentId} className="focus:bg-[#e6c364]/10 focus:text-[#d0e8df]">
                   <span className="flex items-center gap-2">
                     {a.agentName}
                     {a.overdue > 0 && (
@@ -408,6 +429,11 @@ export function MyPropertiesPage() {
 
         {!readOnly && (
           <PropertyWizardDialog
+            key={
+              wizardState.open
+                ? `${wizardState.mode}-${wizardState.propertyId ?? `new-${wizardState.defaults?.category ?? 'x'}`}`
+                : 'wizard-closed'
+            }
             open={wizardState.open}
             mode={wizardState.mode}
             actor={wizardActor}

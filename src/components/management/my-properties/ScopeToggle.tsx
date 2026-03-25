@@ -9,14 +9,14 @@ interface ScopeToggleProps {
 
 export function ScopeToggle({ scope, onChange }: ScopeToggleProps) {
   return (
-    <div className="inline-flex items-center gap-0.5 rounded-xl border border-[rgba(242,207,141,0.2)] bg-[rgba(0,0,0,0.2)] p-1 shadow-sm">
+    <div className="inline-flex items-center gap-0.5 rounded-xl border border-emerald-900/40 bg-[#0a1f1a] p-1 shadow-sm">
       <button
         onClick={() => onChange('my')}
         className={cn(
           'rounded-lg px-4 py-1.5 text-sm font-medium transition-all',
           scope === 'my'
-            ? 'bg-[rgba(242,207,141,0.15)] text-[#fcecc8] shadow-sm border border-[rgba(242,207,141,0.3)]'
-            : 'text-[rgba(242,207,141,0.5)] hover:text-[rgba(242,207,141,0.8)]',
+            ? 'border border-[#e6c364]/35 bg-[#e6c364]/12 text-[#d0e8df] shadow-sm'
+            : 'text-emerald-100/50 hover:text-emerald-100/85',
         )}
       >
         Мои объекты
@@ -26,8 +26,8 @@ export function ScopeToggle({ scope, onChange }: ScopeToggleProps) {
         className={cn(
           'rounded-lg px-4 py-1.5 text-sm font-medium transition-all',
           scope === 'all'
-            ? 'bg-[rgba(242,207,141,0.15)] text-[#fcecc8] shadow-sm border border-[rgba(242,207,141,0.3)]'
-            : 'text-[rgba(242,207,141,0.5)] hover:text-[rgba(242,207,141,0.8)]',
+            ? 'border border-[#e6c364]/35 bg-[#e6c364]/12 text-[#d0e8df] shadow-sm'
+            : 'text-emerald-100/50 hover:text-emerald-100/85',
         )}
       >
         Все объекты агентства

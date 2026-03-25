@@ -7,6 +7,7 @@ export default function MarketplacePage() {
       moduleIcon={<Globe size={32} color="#c9a84c" />}
       moduleName="Маркетплейс"
       moduleDescription="Публичный портал недвижимости — поиск объектов, размещение и витрина для клиентов."
+      backRoute="/dashboard"
       sections={[
         {
           icon: <Globe size={20} color="#c9a84c" />,

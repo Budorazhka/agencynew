@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { UserPlus, Phone, Mail, Calendar, X, Pencil, Trash2, Users, ShieldOff, ShieldCheck } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { UserPlus, Phone, Mail, Calendar, X, Pencil, Trash2, Users, ShieldOff, ShieldCheck, ArrowLeft } from 'lucide-react'
 import { useAuth, MOCK_USERS } from '@/context/AuthContext'
 import {
   MOCK_EMPLOYEES,
@@ -10,16 +11,19 @@ import {
 import { ROLE_LABEL } from '@/lib/permissions'
 import type { UserRole } from '@/types/auth'
 
-// ─── Цвета ролей ──────────────────────────────────────────────────────────────
+// ─── Цвета ролей (в тон дашборду: #031712, золото, изумруд) ───────────────────
 
 const ROLE_FELT: Record<EmployeeRole, { suit: string; accent: string; badge: string; text: string; glow: string }> = {
-  owner:    { suit: '♛', accent: '#f2cf8d', badge: 'rgba(242,207,141,0.15)', text: '#f2cf8d', glow: 'rgba(242,207,141,0.3)' },
-  director: { suit: '◆', accent: '#7ec8e3', badge: 'rgba(126,200,227,0.15)', text: '#7ec8e3', glow: 'rgba(126,200,227,0.25)' },
-  rop:      { suit: '♠', accent: '#f4b96a', badge: 'rgba(244,185,106,0.15)', text: '#f4b96a', glow: 'rgba(244,185,106,0.25)' },
-  manager:  { suit: '♣', accent: '#6fcf97', badge: 'rgba(111,207,151,0.15)', text: '#6fcf97', glow: 'rgba(111,207,151,0.2)'  },
+  owner:    { suit: '♛', accent: '#e6c364', badge: 'rgba(201,168,76,0.12)', text: '#e6c364', glow: 'rgba(201,168,76,0.22)' },
+  director: { suit: '◆', accent: '#7dd3fc', badge: 'rgba(125,211,252,0.1)', text: '#bae6fd', glow: 'rgba(125,211,252,0.18)' },
+  rop:      { suit: '♠', accent: '#fbbf24', badge: 'rgba(251,191,36,0.1)', text: '#fcd34d', glow: 'rgba(251,191,36,0.18)' },
+  manager:  { suit: '♣', accent: '#6ee7b7', badge: 'rgba(110,231,183,0.1)', text: '#a7f3d0', glow: 'rgba(52,211,153,0.15)' },
 }
 
-const LINE = 'rgba(242,207,141,0.22)'
+const LINE = 'rgba(201,168,76,0.2)'
+const CARD_BORDER = 'rgba(201,168,76,0.28)'
+const TEXT_MAIN = '#d0e8df'
+const TEXT_MUTED = 'rgba(208,232,223,0.62)'
 
 // ─── Утилиты ──────────────────────────────────────────────────────────────────
 
@@ -54,13 +58,11 @@ function EmployeeCard({
         width: 148,
         height: 196,
         borderRadius: 14,
-        border: `1px solid ${isSelected ? f.accent : 'rgba(229,196,136,0.25)'}`,
-        background: isSelected
-          ? `linear-gradient(160deg, rgba(9,59,48,0.98) 0%, rgba(6,35,28,0.98) 100%)`
-          : `linear-gradient(160deg, rgba(9,47,38,0.92) 0%, rgba(6,28,22,0.92) 100%)`,
+        border: `1px solid ${isSelected ? f.accent : CARD_BORDER}`,
+        background: isSelected ? 'var(--green-card-hover)' : 'var(--green-card)',
         boxShadow: isSelected
-          ? `0 0 0 2px ${f.glow}, 0 10px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06)`
-          : `0 6px 22px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)`,
+          ? `0 0 0 1px ${f.glow}, 0 8px 28px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)`
+          : '0 4px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.03)',
         cursor: 'pointer',
         display: 'flex',
         flexDirection: 'column',
@@ -69,7 +71,6 @@ function EmployeeCard({
         padding: '10px 8px',
         position: 'relative',
         transition: 'all 0.15s',
-        backdropFilter: 'blur(8px)',
       }}
     >
       {/* Углы карты */}
@@ -87,11 +88,11 @@ function EmployeeCard({
         {/* Круг с инициалами */}
         <div style={{
           width: 60, height: 60, borderRadius: '50%',
-          background: `radial-gradient(circle at 35% 35%, ${f.badge}, rgba(0,0,0,0.35))`,
-          border: `1.5px solid ${f.accent}45`,
+          background: `radial-gradient(circle at 35% 35%, ${f.badge}, rgba(3,23,18,0.5))`,
+          border: `1.5px solid ${f.accent}55`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 19, fontWeight: 800, color: f.accent, letterSpacing: '-0.02em',
-          boxShadow: `0 0 18px ${f.glow}`,
+          boxShadow: `0 0 12px ${f.glow}`,
           position: 'relative', zIndex: 1,
         }}>
           {initials}
@@ -100,7 +101,7 @@ function EmployeeCard({
         {/* Имя */}
         <div style={{ textAlign: 'center', lineHeight: 1.3, position: 'relative', zIndex: 1 }}>
           {employee.name.split(' ').map((part, i) => (
-            <div key={i} style={{ fontSize: i === 0 ? 11.5 : 10.5, fontWeight: i === 0 ? 700 : 500, color: i === 0 ? '#f7ecd4' : 'rgba(247,236,212,0.6)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 116 }}>
+            <div key={i} style={{ fontSize: i === 0 ? 11.5 : 10.5, fontWeight: i === 0 ? 700 : 500, color: i === 0 ? TEXT_MAIN : TEXT_MUTED, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 116 }}>
               {part}
             </div>
           ))}
@@ -200,10 +201,10 @@ function EmployeeDrawer({
   const f = ROLE_FELT[employee.role]
   const initials = getInitials(employee.name)
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'rgba(5,28,22,0.97)', borderLeft: '1px solid rgba(229,196,136,0.18)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: '1px solid rgba(229,196,136,0.1)' }}>
-        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(243,225,188,0.55)', margin: 0 }}>Сотрудник</p>
-        <button onClick={onClose} style={{ padding: 6, borderRadius: 8, color: 'rgba(247,236,212,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#0a1f1a', borderLeft: '1px solid var(--green-border)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: '1px solid rgba(16,74,42,0.5)' }}>
+        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(208,232,223,0.55)', margin: 0 }}>Сотрудник</p>
+        <button onClick={onClose} style={{ padding: 6, borderRadius: 8, color: 'rgba(208,232,223,0.45)', background: 'none', border: 'none', cursor: 'pointer' }}>
           <X size={16} />
         </button>
       </div>
@@ -223,8 +224,8 @@ function EmployeeDrawer({
             {initials}
           </div>
           <div>
-            <p style={{ fontWeight: 700, color: '#f7ecd4', fontSize: 15, lineHeight: 1.3, margin: 0 }}>{employee.name}</p>
-            <p style={{ fontSize: 12, color: 'rgba(247,236,212,0.5)', marginTop: 3 }}>{employee.position}</p>
+            <p style={{ fontWeight: 700, color: TEXT_MAIN, fontSize: 15, lineHeight: 1.3, margin: 0 }}>{employee.name}</p>
+            <p style={{ fontSize: 12, color: TEXT_MUTED, marginTop: 3 }}>{employee.position}</p>
             <span style={{
               display: 'inline-block', marginTop: 5, fontSize: 9.5, fontWeight: 700,
               letterSpacing: '0.1em', textTransform: 'uppercase',
@@ -237,30 +238,30 @@ function EmployeeDrawer({
           </div>
         </div>
 
-        <div style={{ borderRadius: 10, border: '1px solid rgba(229,196,136,0.13)', background: 'rgba(255,255,255,0.03)', padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ borderRadius: 10, border: '1px solid rgba(201,168,76,0.2)', background: 'rgba(3,23,18,0.5)', padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
           {employee.phone && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <Phone size={13} style={{ color: f.accent, opacity: 0.6, flexShrink: 0 }} />
-              <a href={`tel:${employee.phone}`} style={{ fontSize: 13, color: '#f7ecd4', textDecoration: 'none' }}>{employee.phone}</a>
+              <a href={`tel:${employee.phone}`} style={{ fontSize: 13, color: TEXT_MAIN, textDecoration: 'none' }}>{employee.phone}</a>
             </div>
           )}
           {employee.email && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <Mail size={13} style={{ color: f.accent, opacity: 0.6, flexShrink: 0 }} />
-              <a href={`mailto:${employee.email}`} style={{ fontSize: 12, color: '#f7ecd4', textDecoration: 'none', wordBreak: 'break-all' }}>{employee.email}</a>
+              <a href={`mailto:${employee.email}`} style={{ fontSize: 12, color: TEXT_MAIN, textDecoration: 'none', wordBreak: 'break-all' }}>{employee.email}</a>
             </div>
           )}
           {employee.hireDate && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <Calendar size={13} style={{ color: f.accent, opacity: 0.6, flexShrink: 0 }} />
-              <span style={{ fontSize: 12, color: 'rgba(247,236,212,0.65)' }}>В команде с {formatDate(employee.hireDate)}</span>
+              <span style={{ fontSize: 12, color: TEXT_MUTED }}>В команде с {formatDate(employee.hireDate)}</span>
             </div>
           )}
         </div>
       </div>
 
       {canEdit && (
-        <div style={{ borderTop: '1px solid rgba(229,196,136,0.1)', padding: '12px 16px', display: 'flex', gap: 8 }}>
+        <div style={{ borderTop: '1px solid rgba(16,74,42,0.5)', padding: '12px 16px', display: 'flex', gap: 8 }}>
           <button onClick={() => onEdit(employee)} style={{ flex: 1, height: 32, borderRadius: 8, border: `1px solid ${ROLE_FELT[employee.role].accent}40`, background: ROLE_FELT[employee.role].badge, color: ROLE_FELT[employee.role].text, fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
             <Pencil size={12} /> Редактировать
           </button>
@@ -277,8 +278,8 @@ function EmployeeDrawer({
 
 const EMPTY_FORM = { name: '', role: 'manager' as EmployeeRole, position: '', managerId: '', phone: '', email: '', hireDate: '' }
 
-const iStyle: React.CSSProperties = { height: 34, width: '100%', borderRadius: 8, border: '1px solid rgba(229,196,136,0.22)', background: 'rgba(255,255,255,0.05)', color: '#f7ecd4', fontSize: 12, padding: '0 10px', outline: 'none' }
-const lStyle: React.CSSProperties = { display: 'block', fontSize: 10, fontWeight: 600, color: 'rgba(243,225,188,0.65)', marginBottom: 4 }
+const iStyle: React.CSSProperties = { height: 34, width: '100%', borderRadius: 8, border: '1px solid rgba(30,74,42,0.85)', background: '#0a1f1a', color: '#d0e8df', fontSize: 12, padding: '0 10px', outline: 'none' }
+const lStyle: React.CSSProperties = { display: 'block', fontSize: 10, fontWeight: 600, color: 'rgba(208,232,223,0.55)', marginBottom: 4 }
 const sStyle: React.CSSProperties = { ...iStyle, appearance: 'none', WebkitAppearance: 'none', cursor: 'pointer' }
 
 function EmployeeForm({ initial, employees, onSave, onCancel }: {
@@ -302,15 +303,15 @@ function EmployeeForm({ initial, employees, onSave, onCancel }: {
           <label style={lStyle}>Роль</label>
           <select style={sStyle} value={form.role} onChange={(e) => set('role', e.target.value)}>
             {(Object.entries(ROLE_LABELS) as [EmployeeRole, string][]).map(([k, v]) => (
-              <option key={k} value={k} style={{ background: '#093b30' }}>{v}</option>
+              <option key={k} value={k} style={{ background: '#0a1f1a' }}>{v}</option>
             ))}
           </select>
         </div>
         <div>
           <label style={lStyle}>Руководитель</label>
           <select style={sStyle} value={form.managerId} onChange={(e) => set('managerId', e.target.value)}>
-            <option value="" style={{ background: '#093b30' }}>— нет —</option>
-            {employees.map((e) => <option key={e.id} value={e.id} style={{ background: '#093b30' }}>{e.name}</option>)}
+            <option value="" style={{ background: '#0a1f1a' }}>— нет —</option>
+            {employees.map((e) => <option key={e.id} value={e.id} style={{ background: '#0a1f1a' }}>{e.name}</option>)}
           </select>
         </div>
       </div>
@@ -320,10 +321,10 @@ function EmployeeForm({ initial, employees, onSave, onCancel }: {
         <div><label style={lStyle}>Дата начала</label><input type="date" style={{ ...iStyle, colorScheme: 'dark' }} value={form.hireDate} onChange={(e) => set('hireDate', e.target.value)} /></div>
       </div>
       <div style={{ display: 'flex', gap: 8, paddingTop: 4 }}>
-        <button onClick={() => valid && onSave(form)} disabled={!valid} style={{ flex: 1, height: 32, borderRadius: 8, border: '1px solid rgba(242,207,141,0.4)', background: valid ? 'rgba(242,207,141,0.12)' : 'rgba(255,255,255,0.03)', color: valid ? '#f2cf8d' : 'rgba(247,236,212,0.25)', fontSize: 12, fontWeight: 700, cursor: valid ? 'pointer' : 'not-allowed' }}>
+        <button onClick={() => valid && onSave(form)} disabled={!valid} style={{ flex: 1, height: 32, borderRadius: 8, border: '1px solid rgba(201,168,76,0.45)', background: valid ? 'rgba(201,168,76,0.12)' : 'rgba(255,255,255,0.03)', color: valid ? '#e6c364' : 'rgba(208,232,223,0.25)', fontSize: 12, fontWeight: 700, cursor: valid ? 'pointer' : 'not-allowed' }}>
           Сохранить
         </button>
-        <button onClick={onCancel} style={{ height: 32, paddingInline: 16, borderRadius: 8, border: '1px solid rgba(229,196,136,0.2)', background: 'transparent', color: 'rgba(247,236,212,0.5)', fontSize: 12, cursor: 'pointer' }}>
+        <button onClick={onCancel} style={{ height: 32, paddingInline: 16, borderRadius: 8, border: '1px solid rgba(30,74,42,0.8)', background: 'transparent', color: 'rgba(208,232,223,0.5)', fontSize: 12, cursor: 'pointer' }}>
           Отмена
         </button>
       </div>
@@ -334,11 +335,14 @@ function EmployeeForm({ initial, employees, onSave, onCancel }: {
 // ─── Цвета ролей для управления командой ──────────────────────────────────────
 
 const MGMT_ROLE_STYLE: Record<UserRole, { accent: string; badge: string; text: string }> = {
-  owner:    { accent: '#f2cf8d', badge: 'rgba(242,207,141,0.15)', text: '#f2cf8d' },
-  director: { accent: '#7ec8e3', badge: 'rgba(126,200,227,0.15)', text: '#7ec8e3' },
-  rop:      { accent: '#f4b96a', badge: 'rgba(244,185,106,0.15)', text: '#f4b96a' },
-  marketer: { accent: '#c084fc', badge: 'rgba(192,132,252,0.15)', text: '#c084fc' },
-  manager:  { accent: '#6fcf97', badge: 'rgba(111,207,151,0.15)', text: '#6fcf97' },
+  owner:            { accent: '#f2cf8d', badge: 'rgba(242,207,141,0.15)', text: '#f2cf8d' },
+  director:         { accent: '#7ec8e3', badge: 'rgba(126,200,227,0.15)', text: '#7ec8e3' },
+  rop:              { accent: '#f4b96a', badge: 'rgba(244,185,106,0.15)', text: '#f4b96a' },
+  marketer:         { accent: '#c084fc', badge: 'rgba(192,132,252,0.15)', text: '#c084fc' },
+  manager:          { accent: '#6fcf97', badge: 'rgba(111,207,151,0.15)', text: '#6fcf97' },
+  lawyer:           { accent: '#22d3ee', badge: 'rgba(34,211,238,0.15)', text: '#22d3ee' },
+  procurement_head: { accent: '#fb923c', badge: 'rgba(251,146,60,0.15)', text: '#fb923c' },
+  partner:          { accent: '#f472b6', badge: 'rgba(244,114,182,0.15)', text: '#f472b6' },
 }
 
 // ─── Вкладка управления аккаунтами ────────────────────────────────────────────
@@ -352,10 +356,10 @@ function AccountManagementTab({ currentUserId }: { currentUserId: string }) {
       <div style={{
         padding: '12px 16px',
         borderRadius: 10,
-        border: '1px solid rgba(244,185,106,0.3)',
-        background: 'rgba(244,185,106,0.07)',
+        border: '1px solid rgba(201,168,76,0.28)',
+        background: 'rgba(201,168,76,0.06)',
         fontSize: 12,
-        color: 'rgba(244,185,106,0.9)',
+        color: 'rgba(208,232,223,0.85)',
         marginBottom: 4,
       }}>
         Заблокированный сотрудник не сможет войти в систему. Все его данные сохраняются.
@@ -376,8 +380,8 @@ function AccountManagementTab({ currentUserId }: { currentUserId: string }) {
               gap: 14,
               padding: '12px 16px',
               borderRadius: 12,
-              border: `1px solid ${blocked ? 'rgba(252,129,129,0.25)' : 'rgba(229,196,136,0.15)'}`,
-              background: blocked ? 'rgba(252,129,129,0.05)' : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${blocked ? 'rgba(252,129,129,0.25)' : 'rgba(201,168,76,0.2)'}`,
+              background: blocked ? 'rgba(252,129,129,0.05)' : 'var(--green-card)',
               opacity: blocked ? 0.75 : 1,
               transition: 'all 0.15s',
             }}
@@ -396,7 +400,7 @@ function AccountManagementTab({ currentUserId }: { currentUserId: string }) {
             {/* Инфо */}
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#f7ecd4' }}>{user.name}</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: TEXT_MAIN }}>{user.name}</span>
                 <span style={{
                   fontSize: 9, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase',
                   color: style.text, background: style.badge,
@@ -457,6 +461,9 @@ function AccountManagementTab({ currentUserId }: { currentUserId: string }) {
 // ─── Главная страница ──────────────────────────────────────────────────────────
 
 export function PersonnelPage() {
+  const navigate = useNavigate()
+  const backRoute = '/dashboard/team'
+
   const { currentUser } = useAuth()
   const userRole = currentUser?.role ?? 'manager'
   const canEdit = userRole === 'owner' || userRole === 'director'
@@ -484,23 +491,55 @@ export function PersonnelPage() {
   const startEdit = (emp: Employee) => { setEditTarget(emp); setSelected(null); setShowForm(false) }
 
   return (
-    <div className="-m-6 lg:-m-8" style={{ display: 'flex', minHeight: 'calc(100vh - 0px)', position: 'relative', isolation: 'isolate', overflow: 'hidden' }}>
-      {/* Фон сукно */}
-      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, background: 'radial-gradient(130% 90% at 50% 46%, #1f765e 0%, #115745 45%, #093b30 100%)' }} />
-      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1, backgroundImage: 'radial-gradient(rgba(255,255,255,0.055) 0.55px, transparent 0.55px), radial-gradient(rgba(0,0,0,0.08) 0.7px, transparent 0.7px)', backgroundSize: '3px 3px, 5px 5px', backgroundPosition: '0 0, 1px 1px', mixBlendMode: 'soft-light', opacity: 0.5 }} />
-      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2, boxShadow: 'inset 0 0 0 2px rgba(236,194,112,0.18), inset 0 0 80px rgba(0,0,0,0.5)' }} />
-
-      {/* Content */}
-      <div style={{ position: 'relative', zIndex: 10, flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 24px', borderBottom: '1px solid rgba(229,196,136,0.13)', background: 'rgba(5,28,22,0.65)', backdropFilter: 'blur(8px)', flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 34, height: 34, borderRadius: '50%', border: '1px solid rgba(244,205,133,0.45)', background: 'radial-gradient(circle at 30% 30%, rgba(255,233,176,0.34), rgba(111,68,23,0.26))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f7dc9d' }}>
+    <div className="flex w-full min-w-0 flex-row items-stretch bg-[#031712] text-[#d0e8df]">
+      {/* Один фон в потоке: не наслаиваем absolute-слои на .app-theme-felt (иначе «два экрана») */}
+      <div className="relative flex min-h-full min-w-0 flex-1 flex-col">
+        {/* Header — sticky: при прокрутке страницы шапка остаётся; прокрутка на <main> в App */}
+        <div
+          className="border-b border-emerald-900/25 shadow-[0_1px_0_rgba(201,168,76,0.1)]"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '14px 24px',
+            background: 'rgba(3,23,18,0.88)',
+            backdropFilter: 'blur(12px)',
+            flexShrink: 0,
+            position: 'sticky',
+            top: 0,
+            zIndex: 20,
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+            <button
+              type="button"
+              onClick={() => navigate(backRoute)}
+              className="shrink-0 rounded-[10px] border border-[#e6c364]/35 bg-[#e6c364]/10 text-[#e6c364] hover:bg-[#e6c364]/18"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                height: 34,
+                padding: '0 12px',
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: '0.06em',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              <ArrowLeft size={16} strokeWidth={2} />
+              Назад
+            </button>
+            <div
+              className="flex items-center justify-center rounded-full border border-[#e6c364]/35 bg-[#0a1f1a] text-[#e6c364]"
+              style={{ width: 34, height: 34 }}
+            >
               <Users size={16} />
             </div>
             <div>
-              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(243,225,188,0.65)', margin: 0 }}>КОМАНДА</p>
-              <p style={{ fontSize: 17, fontWeight: 700, color: '#fff4d7', margin: '2px 0 0', letterSpacing: '0.02em' }}>
+              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(208,232,223,0.5)', margin: 0 }}>КОМАНДА</p>
+              <p style={{ fontSize: 17, fontWeight: 700, color: '#d0e8df', margin: '2px 0 0', letterSpacing: '0.02em' }}>
                 {activeTab === 'org' ? 'Оргструктура' : 'Управление командой'}
               </p>
             </div>
@@ -508,15 +547,15 @@ export function PersonnelPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {/* Табы — только для owner */}
             {isOwner && (
-              <div style={{ display: 'flex', borderRadius: 8, border: '1px solid rgba(229,196,136,0.2)', overflow: 'hidden' }}>
+              <div className="flex overflow-hidden rounded-lg border border-emerald-900/30">
                 {(['org', 'management'] as const).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
                     style={{
                       height: 30, paddingInline: 14, fontSize: 11, fontWeight: 700, cursor: 'pointer', border: 'none',
-                      background: activeTab === tab ? 'rgba(242,207,141,0.15)' : 'transparent',
-                      color: activeTab === tab ? '#f2cf8d' : 'rgba(247,236,212,0.4)',
+                      background: activeTab === tab ? 'rgba(201,168,76,0.14)' : 'transparent',
+                      color: activeTab === tab ? '#e6c364' : 'rgba(208,232,223,0.45)',
                       transition: 'all 0.15s',
                     }}
                   >
@@ -527,9 +566,14 @@ export function PersonnelPage() {
             )}
             {activeTab === 'org' && (
               <>
-                <span style={{ fontSize: 12, color: 'rgba(247,236,212,0.45)' }}>{employees.length} сотрудников</span>
+                <span style={{ fontSize: 12, color: 'rgba(208,232,223,0.45)' }}>{employees.length} сотрудников</span>
                 {canEdit && !showForm && !editTarget && (
-                  <button onClick={() => setShowForm(true)} style={{ height: 34, paddingInline: 14, borderRadius: 8, display: 'flex', alignItems: 'center', gap: 6, border: '1px solid rgba(242,207,141,0.38)', background: 'rgba(242,207,141,0.1)', color: '#f2cf8d', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowForm(true)}
+                    className="rounded-lg border border-[#e6c364]/45 bg-[#e6c364]/10 text-[#e6c364] hover:bg-[#e6c364]/18"
+                    style={{ height: 34, paddingInline: 14, display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
+                  >
                     <UserPlus size={14} /> Добавить
                   </button>
                 )}
@@ -540,15 +584,15 @@ export function PersonnelPage() {
 
         {activeTab === 'management' && isOwner
           ? (
-            <div style={{ flex: 1, overflow: 'auto' }}>
+            <div style={{ paddingBottom: 32 }}>
               <AccountManagementTab currentUserId={currentUser?.id ?? ''} />
             </div>
           ) : (
             <>
               {/* Form */}
               {(showForm || editTarget) && (
-                <div style={{ padding: '16px 24px', borderBottom: '1px solid rgba(229,196,136,0.13)', background: 'rgba(5,28,22,0.7)', backdropFilter: 'blur(8px)', flexShrink: 0 }}>
-                  <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(243,225,188,0.55)', marginBottom: 12 }}>
+                <div className="border-b border-emerald-900/25" style={{ padding: '16px 24px', background: 'rgba(10,31,26,0.92)', backdropFilter: 'blur(8px)', flexShrink: 0 }}>
+                  <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(208,232,223,0.5)', marginBottom: 12 }}>
                     {editTarget ? 'Редактировать сотрудника' : 'Новый сотрудник'}
                   </p>
                   <EmployeeForm
@@ -560,8 +604,16 @@ export function PersonnelPage() {
                 </div>
               )}
 
-              {/* Tree */}
-              <div style={{ flex: 1, overflow: 'auto', padding: '40px 40px 60px', display: 'flex', justifyContent: 'center' }}>
+              {/* Tree — высота по контенту; горизонтальный скролл при узком окне */}
+              <div
+                style={{
+                  overflowX: 'auto',
+                  WebkitOverflowScrolling: 'touch',
+                  padding: '40px 24px 80px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 'max-content', gap: 0 }}>
                   {roots.map((root) => (
                     <OrgNode key={root.id} employee={root} allEmployees={employees} onSelect={setSelected} selectedId={selected?.id ?? null} />
@@ -575,7 +627,7 @@ export function PersonnelPage() {
 
       {/* Drawer */}
       {selected && (
-        <div style={{ position: 'relative', zIndex: 10, width: 272, flexShrink: 0 }}>
+        <div style={{ position: 'relative', zIndex: 10, width: 272, flexShrink: 0, alignSelf: 'stretch' }}>
           <EmployeeDrawer employee={selected} canEdit={canEdit} onClose={() => setSelected(null)} onDelete={handleDelete} onEdit={startEdit} />
         </div>
       )}

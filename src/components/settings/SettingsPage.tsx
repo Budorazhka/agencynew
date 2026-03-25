@@ -11,7 +11,6 @@ import { LeadSettingsTab } from '@/components/leads/LeadSettingsTab'
 import { LeadManagersTab } from '@/components/leads/LeadManagersTab'
 import AgencyBrandingModal from '@/components/AgencyBrandingModal'
 import { getBranding, type AgencyBranding } from '@/store/agencyStore'
-import '@/components/leads/leads-secret-table.css'
 
 type Section =
   | 'profile'
@@ -58,10 +57,8 @@ export function SettingsPage() {
     : visibleItems[0]?.id ?? 'profile'
 
   return (
-    <div className="leads-page-root min-h-screen">
-      <div className="leads-page-bg" aria-hidden />
-      <div className="leads-page-ornament" aria-hidden />
-      <div className="leads-page relative z-10 p-6 lg:p-8">
+    <div className="min-h-screen bg-[#031712] text-[#d0e8df]">
+      <div className="relative z-10 p-6 lg:p-8">
 
         {/* Header */}
         <div className="mb-8">
@@ -73,7 +70,7 @@ export function SettingsPage() {
         <div className="flex gap-8 items-start">
 
           {/* Sidebar — в том же стиле, что и блоки контента */}
-          <nav className="w-52 shrink-0 rounded-xl border border-[rgba(242,207,141,0.12)] bg-[rgba(0,0,0,0.15)] p-2">
+          <nav className="w-52 shrink-0 rounded-xl border border-[rgba(242,207,141,0.14)] bg-[#0a1f1a] p-2">
             {visibleItems.map((item, idx) => {
               const showSep = item.separator && idx > 0
               return (
@@ -118,7 +115,7 @@ export function SettingsPage() {
             {resolvedSection === 'billing'       && <BillingTab />}
             {resolvedSection === 'security'      && <SecurityTab />}
             {resolvedSection === 'branding'      && (
-              <div className="rounded-xl border border-[rgba(242,207,141,0.12)] bg-[rgba(0,0,0,0.15)] p-6">
+              <div className="rounded-xl border border-[rgba(242,207,141,0.14)] bg-[#0a1f1a] p-6">
                 <p className="text-xs uppercase tracking-widest text-[rgba(242,207,141,0.45)] mb-1">Оформление</p>
                 <h2 className="text-xl font-bold text-[#fcecc8] mb-4">Брендинг агентства</h2>
                 <p className="text-sm text-[rgba(242,207,141,0.5)] mb-6">

@@ -1,10 +1,30 @@
 /**
  * Типы авторизации и ролевой модели платформы.
  * Иерархия: Собственник → Директор → РОП → Менеджер
+ * Расширено по ТЗ: +lawyer, +procurement_head, +partner
  */
 
 /** Роль пользователя в системе */
-export type UserRole = 'owner' | 'director' | 'rop' | 'marketer' | 'manager'
+export type UserRole =
+  | 'owner'
+  | 'director'
+  | 'rop'
+  | 'marketer'
+  | 'manager'
+  | 'lawyer'
+  | 'procurement_head'
+  | 'partner'
+
+/**
+ * Уровень доступа к данным (Data Scope по ТЗ RBAC+ABAC).
+ * own — только свои записи
+ * team — своя команда/отдел
+ * branch — филиал
+ * project — конкретный ЖК/проект
+ * assigned — только если явно назначен
+ * all — все данные
+ */
+export type DataScope = 'own' | 'team' | 'branch' | 'project' | 'assigned' | 'all'
 
 /** Тип бизнес-аккаунта: четыре версии продукта — один вход, разные кабинеты */
 export type AccountType = 'agency' | 'developer' | 'realtor' | 'internal'
@@ -37,6 +57,15 @@ export type PermissionAction =
   | 'view_lead_analytics'   // Аналитика лидов и рекламных кампаний
   | 'block_account'         // Блокировка аккаунтов сотрудников (только собственник)
   | 'manage_properties'     // Добавление, редактирование и удаление объектов недвижимости
+  // Новые действия по ТЗ
+  | 'see_finance'           // Просмотр комиссий, бюджетов, рентабельности
+  | 'see_analytics'         // Просмотр агрегированных BI-дашбордов
+  | 'approve_deal'          // Согласование критических переходов в сделке
+  | 'legal_approve'         // Юридический апрув сделки
+  | 'manage_bookings'       // Управление бронями
+  | 'create_deal'           // Создание сделки
+  | 'assign_lead'           // Назначение ответственного по лиду
+  | 'view_commissions'      // Просмотр комиссионных начислений
 
 /** Матрица прав: роль → список разрешённых действий */
 export const ROLE_PERMISSIONS: Record<UserRole, PermissionAction[]> = {
@@ -55,6 +84,13 @@ export const ROLE_PERMISSIONS: Record<UserRole, PermissionAction[]> = {
     'view_lead_analytics',
     'manage_properties',
     'block_account',
+    'see_finance',
+    'see_analytics',
+    'approve_deal',
+    'manage_bookings',
+    'create_deal',
+    'assign_lead',
+    'view_commissions',
   ],
   director: [
     'manage_team',
@@ -69,6 +105,13 @@ export const ROLE_PERMISSIONS: Record<UserRole, PermissionAction[]> = {
     'set_substitute',
     'view_lead_analytics',
     'manage_properties',
+    'see_finance',
+    'see_analytics',
+    'approve_deal',
+    'manage_bookings',
+    'create_deal',
+    'assign_lead',
+    'view_commissions',
   ],
   rop: [
     'change_distribution',
@@ -77,15 +120,44 @@ export const ROLE_PERMISSIONS: Record<UserRole, PermissionAction[]> = {
     'set_substitute',
     'view_lead_analytics',
     'manage_properties',
+    'see_analytics',
+    'approve_deal',
+    'manage_bookings',
+    'create_deal',
+    'assign_lead',
+    'see_finance',
+    'view_commissions',
   ],
   marketer: [
     'view_lead_analytics',
     'view_all_stages',
     'add_lead_source',
+    'see_analytics',
   ],
   manager: [
     'view_all_stages',
     'manage_properties',
+    'create_deal',
+    'manage_bookings',
+  ],
+  lawyer: [
+    'view_all_stages',
+    'legal_approve',
+    'see_finance',
+    'export_data',
+  ],
+  procurement_head: [
+    'manage_properties',
+    'view_all_stages',
+    'approve_deal',
+    'see_finance',
+    'see_analytics',
+    'export_data',
+    'view_commissions',
+  ],
+  partner: [
+    'view_all_stages',
+    'view_commissions',
   ],
 }
 
@@ -105,4 +177,12 @@ export const PERMISSION_DENIED_REASON: Record<PermissionAction, string> = {
   view_lead_analytics: 'Доступно с уровня РОПа и для Маркетолога',
   block_account: 'Только для Собственника',
   manage_properties: 'Доступно с уровня Менеджера',
+  see_finance: 'Недостаточно прав для просмотра финансовых данных',
+  see_analytics: 'Недостаточно прав для просмотра аналитики',
+  approve_deal: 'Доступно с уровня РОПа',
+  legal_approve: 'Только для Юриста',
+  manage_bookings: 'Доступно с уровня Менеджера',
+  create_deal: 'Доступно с уровня Менеджера',
+  assign_lead: 'Доступно с уровня РОПа',
+  view_commissions: 'Недостаточно прав для просмотра комиссий',
 }

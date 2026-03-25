@@ -1,4 +1,4 @@
-export type PropertyCategory = 'secondary' | 'rent' | 'commercial' | 'other'
+export type PropertyCategory = 'primary' | 'secondary' | 'rent' | 'commercial' | 'other'
 export type PropertyType = 'Квартира' | 'Дом' | 'Коммерция' | 'Участок' | 'Апартаменты' | 'Проект'
 export type SaleStatus = 'for_sale' | 'booked' | 'sold' | 'moderation' | 'draft' | 'archive'
 

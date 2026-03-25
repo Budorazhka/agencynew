@@ -38,7 +38,7 @@ function CheckboxGroup<T extends string>({
 }) {
   return (
     <div className="space-y-2">
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-emerald-100/50">{label}</p>
       <div className="flex flex-wrap gap-2">
         {items.map((item) => {
           const active = selected.includes(item.value)
@@ -50,8 +50,8 @@ function CheckboxGroup<T extends string>({
               className={cn(
                 'rounded-full border px-3 py-1 text-xs font-medium transition-colors',
                 active
-                  ? 'border-emerald-500 bg-emerald-500 text-white'
-                  : 'border-border bg-background text-foreground hover:border-emerald-300',
+                  ? 'border-[#e6c364]/60 bg-[#e6c364]/15 text-[#e6c364]'
+                  : 'border-emerald-800/50 bg-[#00110d] text-[#d0e8df] hover:border-[#e6c364]/35',
               )}
             >
               {item.label}
@@ -80,7 +80,7 @@ function RangeInputs({
 }) {
   return (
     <div className="space-y-2">
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <p className="text-xs font-semibold uppercase tracking-wide text-emerald-100/50">
         {label}, {unit}
       </p>
       <div className="flex items-center gap-2">
@@ -89,15 +89,15 @@ function RangeInputs({
           placeholder="От"
           value={minValue}
           onChange={(e) => onMinChange(e.target.value)}
-          className="w-full rounded-lg border border-border bg-background px-3 py-1.5 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all placeholder:text-muted-foreground"
+          className="w-full rounded-lg border border-emerald-800/50 bg-[#00110d] px-3 py-1.5 text-sm text-[#d0e8df] outline-none transition-all placeholder:text-emerald-100/35 focus:border-[#e6c364]/50 focus:ring-1 focus:ring-[#e6c364]/20"
         />
-        <span className="shrink-0 text-muted-foreground">—</span>
+        <span className="shrink-0 text-emerald-100/45">—</span>
         <input
           type="number"
           placeholder="До"
           value={maxValue}
           onChange={(e) => onMaxChange(e.target.value)}
-          className="w-full rounded-lg border border-border bg-background px-3 py-1.5 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all placeholder:text-muted-foreground"
+          className="w-full rounded-lg border border-emerald-800/50 bg-[#00110d] px-3 py-1.5 text-sm text-[#d0e8df] outline-none transition-all placeholder:text-emerald-100/35 focus:border-[#e6c364]/50 focus:ring-1 focus:ring-[#e6c364]/20"
         />
       </div>
     </div>
@@ -129,11 +129,11 @@ export function FilterPanel({ open, onClose, filters, onApply }: FilterPanelProp
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="max-w-lg"
+        className="max-w-lg border-emerald-900/40 bg-[#0a1f1a] text-[#d0e8df] shadow-xl"
         onOpenAutoFocus={handleOpenAutoFocus}
       >
         <DialogHeader>
-          <DialogTitle>Фильтры</DialogTitle>
+          <DialogTitle className="text-white">Фильтры</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-5 py-1">
@@ -177,18 +177,18 @@ export function FilterPanel({ open, onClose, filters, onApply }: FilterPanelProp
           />
         </div>
 
-        <div className="flex items-center justify-between gap-3 border-t border-border pt-4">
+        <div className="flex items-center justify-between gap-3 border-t border-emerald-900/40 pt-4">
           <button
             type="button"
             onClick={handleReset}
-            className="rounded-full border border-border px-5 py-2 text-sm font-medium text-muted-foreground hover:border-foreground hover:text-foreground transition-colors"
+            className="rounded-full border border-emerald-800/50 px-5 py-2 text-sm font-medium text-emerald-100/60 transition-colors hover:border-[#e6c364]/40 hover:text-[#d0e8df]"
           >
             Сбросить
           </button>
           <button
             type="button"
             onClick={handleApply}
-            className="rounded-full bg-emerald-500 px-6 py-2 text-sm font-semibold text-white hover:bg-emerald-600 transition-colors"
+            className="rounded-sm bg-[#e6c364] px-6 py-2 text-sm font-semibold text-[#3d2e00] transition-all hover:brightness-110"
           >
             Применить
           </button>

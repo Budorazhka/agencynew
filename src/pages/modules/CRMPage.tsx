@@ -7,12 +7,23 @@ export default function CRMPage() {
       moduleIcon={<LayoutGrid size={32} color="#c9a84c" />}
       moduleName="CRM"
       moduleDescription="Контейнерный раздел — единая точка входа во все операционные сущности системы."
+      backRoute="/dashboard"
+      actionButton={{
+        label: 'Перейти в обычную версию CRM',
+        externalUrl: 'https://crm.baza.sale/',
+      }}
+      stats={[
+        { label: 'Активные лиды',    value: '1 284',  sub: '+12% за месяц' },
+        { label: 'Объектов в базе',  value: '14 902', sub: 'Обновлено 2 мин. назад' },
+        { label: 'Сделок в работе',  value: '₽4.2B',  sub: 'Elite Pipeline' },
+        { label: 'Конверсия',        value: '24.8%',  progress: 24.8 },
+      ]}
       sections={[
         {
           icon: <Users size={20} color="#c9a84c" />,
           title: 'Лиды',
           description: 'Канбан входящих обращений, очередь, квалификация и перевод в сделку.',
-          route: '/dashboard/leads',
+          route: '/dashboard/leads/poker',
         },
         {
           icon: <UserCog size={20} color="#c9a84c" />,

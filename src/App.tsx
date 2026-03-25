@@ -1,26 +1,40 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import { useTheme } from '@/hooks/useTheme'
 import { cn } from '@/lib/utils'
+import { SidebarRailProvider } from '@/context/SidebarRailContext'
+import { DashboardAppRail } from '@/components/layout/DashboardAppRail'
 
 export default function App() {
   const { isFeltStyle } = useTheme()
   const location = useLocation()
   const isPokerFullscreen = location.pathname === '/dashboard/leads/poker'
-  const isMainDashboard = location.pathname === '/dashboard' || location.pathname === '/dashboard/'
+
+  if (isPokerFullscreen) {
+    return (
+      <div
+        className={cn('flex min-h-screen', isFeltStyle ? 'app-theme-felt' : '')}
+        style={isFeltStyle ? undefined : { background: '#031712' }}
+      >
+        <main className="flex-1 overflow-hidden p-0">
+          <Outlet />
+        </main>
+      </div>
+    )
+  }
 
   return (
-    <div
-      className={cn('flex min-h-screen', isFeltStyle ? 'app-theme-felt' : '')}
-      style={isFeltStyle ? undefined : { background: 'var(--green-bg)' }}
-    >
-      <main className={cn(
-        'flex-1 overflow-auto',
-        isPokerFullscreen ? 'p-0 overflow-hidden' :
-        isMainDashboard ? 'p-0 flex flex-col' :
-        'p-0'
-      )}>
-        <Outlet />
-      </main>
-    </div>
+    <SidebarRailProvider>
+      <div
+        className={cn('flex h-screen min-h-0 overflow-hidden', isFeltStyle ? 'app-theme-felt' : '')}
+        style={isFeltStyle ? undefined : { background: '#031712' }}
+      >
+        <DashboardAppRail />
+        <main
+          className="relative min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden flex flex-col bg-[#031712] p-0"
+        >
+          <Outlet />
+        </main>
+      </div>
+    </SidebarRailProvider>
   )
 }

@@ -7,6 +7,7 @@ export default function LeadsHubPage() {
       moduleIcon={<Users size={32} color="#c9a84c" />}
       moduleName="Лиды"
       moduleDescription="Управление входящими обращениями: канбан, квалификация, дубли, перевод в сделку."
+      backRoute="/dashboard"
       sections={[
         {
           icon: <Trello size={20} color="#c9a84c" />,

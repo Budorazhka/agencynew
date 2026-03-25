@@ -41,7 +41,7 @@ export function LeadsPokerPage() {
         variant="page"
         selectedManagerId={selectedManagerId}
         onSelectedManagerIdChange={setSelectedManagerId}
-        onBack={() => navigate('/dashboard/leads')}
+        onBack={() => navigate('/dashboard/crm')}
       />
     </div>
   )

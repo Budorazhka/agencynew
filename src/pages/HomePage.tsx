@@ -1,452 +1,300 @@
-import { useState, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
-import {
-  Settings,
-  Users, Handshake, Building2, BookMarked,
-  Briefcase, CheckSquare, CalendarDays, GraduationCap,
-  Bell, UserCog, LayoutDashboard, Store,
-  ChevronRight,
-} from 'lucide-react'
-import { getBranding, type AgencyBranding } from '../store/agencyStore'
+import { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Settings, Search, Plus, Check, Clock, MoreVertical, ChevronDown } from 'lucide-react'
+import { getBranding } from '../store/agencyStore'
+import { useAuth } from '@/context/AuthContext'
+import { cn } from '@/lib/utils'
+import { NotificationCenter } from '@/components/layout/NotificationCenter'
 
-const USER_NAME = 'Александр'
+const ADD_ACTIONS = [
+  { label: 'Новый лид', route: '/dashboard/leads/poker' },
+  { label: 'Новый клиент', route: '/dashboard/clients/list' },
+  { label: 'Новая сделка', route: '/dashboard/deals' },
+  { label: 'Новая задача', route: '/dashboard/tasks' },
+  { label: 'Новая подборка', route: '/dashboard/selections/new' },
+  { label: 'Новая бронь', route: '/dashboard/bookings' },
+  { label: 'Событие в календаре', route: '/dashboard/calendar' },
+  { label: 'Новый объект', route: '/dashboard/objects/list' },
+] as const
 
-// ─── Sidebar nav items ─────────────────────────────────────────────────────────
-const NAV_ITEMS = [
-  { label: 'Маркетплейс', icon: Store,         route: 'https://baza.sale',           external: true },
-  { label: 'CRM',          icon: Users,          route: '/dashboard/crm' },
-  { label: 'Дашборды',    icon: LayoutDashboard, route: '/dashboard/dashboards' },
-  { label: 'Объекты',     icon: Building2,       route: '/dashboard/objects' },
-  { label: 'Брони',       icon: BookMarked,      route: '/dashboard/bookings' },
-  { label: 'Лиды',        icon: UserCog,         route: '/dashboard/leads-hub' },
-  { label: 'Клиенты',     icon: Users,           route: '/dashboard/clients' },
-  { label: 'Команда',     icon: Users,           route: '/dashboard/team' },
-  { label: 'Обучение',    icon: GraduationCap,   route: '/dashboard/learning' },
-  { label: 'Сделки',      icon: Briefcase,       route: '/dashboard/deals' },
-  { label: 'Календарь',   icon: CalendarDays,    route: '/dashboard/calendar' },
-  { label: 'Партнёры',    icon: Handshake,       route: '/dashboard/partners' },
-  { label: 'Задачи',      icon: CheckSquare,     route: '/dashboard/tasks' },
-  { label: 'Инфо',        icon: Bell,            route: '/dashboard/info' },
-  { label: 'Настройки',   icon: Settings,        route: '/dashboard/settings-hub' },
-]
-
-// ─── Module cards ──────────────────────────────────────────────────────────────
-const MODULE_CARDS = [
-  { label: 'Объекты',   icon: Building2,   route: '/dashboard/objects' },
-  { label: 'Брони',     icon: BookMarked,  route: '/dashboard/bookings' },
-  { label: 'Лиды',      icon: UserCog,     route: '/dashboard/leads-hub' },
-  { label: 'Клиенты',   icon: Users,       route: '/dashboard/clients' },
-  { label: 'Команда',   icon: Users,       route: '/dashboard/team' },
-  { label: 'Обучение',  icon: GraduationCap, route: '/dashboard/learning' },
-  { label: 'Сделки',    icon: Briefcase,   route: '/dashboard/deals' },
-  { label: 'Календарь', icon: CalendarDays, route: '/dashboard/calendar' },
-  { label: 'Партнёры',  icon: Handshake,   route: '/dashboard/partners' },
-  { label: 'Задачи',    icon: CheckSquare, route: '/dashboard/tasks' },
-  { label: 'Информация',icon: Bell,        route: '/dashboard/info' },
-  { label: 'Настройки', icon: Settings,    route: '/dashboard/settings-hub' },
-]
-
-// ─── Styles ────────────────────────────────────────────────────────────────────
-const S = {
-  root: {
-    display: 'flex',
-    height: '100vh',
-    background: 'var(--green-bg)',
-    overflow: 'hidden',
-    fontFamily: 'Inter, sans-serif',
-  } as React.CSSProperties,
-
-  // Sidebar
-  sidebar: {
-    width: 220,
-    flexShrink: 0,
-    background: 'var(--green-deep)',
-    borderRight: '1px solid var(--green-border)',
-    display: 'flex',
-    flexDirection: 'column' as const,
-    overflow: 'hidden',
-  },
-  sidebarLogo: {
-    padding: '20px 20px 16px',
-    borderBottom: '1px solid var(--green-border)',
-  },
-  sidebarLogoTitle: {
-    fontSize: 16,
-    fontWeight: 700,
-    color: 'var(--gold)',
-    letterSpacing: '0.04em',
-    marginBottom: 2,
-  },
-  sidebarLogoSub: {
-    fontSize: 9,
-    fontWeight: 600,
-    color: 'rgba(201,168,76,0.4)',
-    letterSpacing: '0.14em',
-    textTransform: 'uppercase' as const,
-  },
-  navScroll: {
-    flex: 1,
-    overflowY: 'auto' as const,
-    padding: '8px 0',
-  },
-  navItem: (active: boolean): React.CSSProperties => ({
-    display: 'flex',
-    alignItems: 'center',
-    gap: 10,
-    padding: '9px 20px',
-    cursor: 'pointer',
-    fontSize: 11,
-    fontWeight: active ? 700 : 500,
-    letterSpacing: '0.08em',
-    color: active ? 'var(--gold)' : 'rgba(255,255,255,0.55)',
-    background: active ? 'rgba(201,168,76,0.1)' : 'transparent',
-    borderLeft: active ? '3px solid var(--gold)' : '3px solid transparent',
-    transition: 'all 0.15s',
-    textTransform: 'uppercase' as const,
-  }),
-
-  // Right side
-  right: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column' as const,
-    overflow: 'hidden',
-  },
-
-  // Main content
-  content: {
-    flex: 1,
-    overflowY: 'auto' as const,
-    padding: '28px 28px 40px',
-  },
-
-  // Greeting
-  greeting: {
-    marginBottom: 24,
-  },
-  greetingTitle: {
-    fontSize: 36,
-    fontWeight: 700,
-    color: '#ffffff',
-    letterSpacing: '-0.01em',
-    marginBottom: 6,
-  },
-  greetingRow: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  greetingSub: {
-    fontSize: 13,
-    color: 'rgba(255,255,255,0.55)',
-    fontStyle: 'italic' as const,
-  },
-  greetingTime: {
-    fontSize: 10,
-    fontWeight: 600,
-    letterSpacing: '0.12em',
-    color: 'rgba(201,168,76,0.55)',
-    textTransform: 'uppercase' as const,
-  },
-
-  // Feature cards row
-  featureRow: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: 14,
-    marginBottom: 28,
-  },
-
-  // Card base
-  card: (variant: 'light' | 'dark' | 'mid'): React.CSSProperties => ({
-    borderRadius: 12,
-    padding: '22px 24px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 10,
-    cursor: 'pointer',
-    border: '1px solid',
-    background:
-      variant === 'light' ? 'rgba(255,255,255,0.06)' :
-      variant === 'dark'  ? '#0a1f12' :
-      'var(--green-card)',
-    borderColor:
-      variant === 'light' ? 'rgba(255,255,255,0.1)' :
-      variant === 'dark'  ? 'var(--green-border)' :
-      'var(--green-border)',
-    transition: 'all 0.2s',
-    minHeight: 200,
-  }),
-  cardLabel: (gold: boolean): React.CSSProperties => ({
-    fontSize: 9,
-    fontWeight: 700,
-    letterSpacing: '0.2em',
-    textTransform: 'uppercase' as const,
-    color: gold ? 'var(--gold)' : 'rgba(255,255,255,0.4)',
-    marginBottom: 2,
-  }),
-  cardTitle: (light: boolean): React.CSSProperties => ({
-    fontSize: 24,
-    fontWeight: 700,
-    color: light ? '#ffffff' : '#ffffff',
-    letterSpacing: '-0.01em',
-    lineHeight: 1.2,
-  }),
-  cardDesc: {
-    fontSize: 13,
-    color: 'rgba(255,255,255,0.55)',
-    lineHeight: 1.5,
-    flex: 1,
-  },
-  cardStat: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    fontSize: 12,
-    color: 'rgba(255,255,255,0.7)',
-    padding: '6px 0',
-    borderBottom: '1px solid rgba(255,255,255,0.07)',
-  },
-  cardLink: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 4,
-    fontSize: 11,
-    fontWeight: 700,
-    letterSpacing: '0.1em',
-    textTransform: 'uppercase' as const,
-    color: 'var(--gold)',
-    marginTop: 4,
-  },
-  actionBtn: {
-    background: 'var(--gold-dark)',
-    color: '#fff',
-    border: 'none',
-    borderRadius: 8,
-    padding: '10px 16px',
-    fontSize: 11,
-    fontWeight: 700,
-    letterSpacing: '0.08em',
-    textTransform: 'uppercase' as const,
-    cursor: 'pointer',
-    width: '100%',
-    marginTop: 8,
-  },
-
-  // Chart placeholder
-  chartBars: {
-    display: 'flex',
-    alignItems: 'flex-end',
-    gap: 4,
-    height: 50,
-    padding: '4px 0',
-  },
-
-  // Section label
-  sectionLabel: {
-    fontSize: 10,
-    fontWeight: 700,
-    letterSpacing: '0.18em',
-    textTransform: 'uppercase' as const,
-    color: 'rgba(201,168,76,0.5)',
-    marginBottom: 12,
-  },
-
-  // Module grid
-  moduleGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(6, 1fr)',
-    gap: 10,
-  },
-  moduleTile: {
-    background: 'var(--green-card)',
-    border: '1px solid var(--green-border)',
-    borderRadius: 10,
-    padding: '16px 12px 12px',
-    display: 'flex',
-    flexDirection: 'column' as const,
-    alignItems: 'center',
-    gap: 8,
-    cursor: 'pointer',
-    transition: 'all 0.18s',
-    minHeight: 90,
-    justifyContent: 'center',
-  },
-  moduleTileLabel: {
-    fontSize: 10,
-    fontWeight: 600,
-    color: 'rgba(255,255,255,0.7)',
-    letterSpacing: '0.05em',
-    textAlign: 'center' as const,
-  },
-}
-
-// ─── Mini bar chart ────────────────────────────────────────────────────────────
-const BARS = [55, 70, 45, 80, 65, 90, 75]
-
-function MiniChart() {
-  return (
-    <div style={S.chartBars}>
-      {BARS.map((h, i) => (
-        <div key={i} style={{
-          flex: 1,
-          height: `${h}%`,
-          borderRadius: 3,
-          background: i === BARS.length - 1
-            ? 'var(--gold)'
-            : 'rgba(201,168,76,0.3)',
-        }} />
-      ))}
-    </div>
-  )
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
 export default function HomePage() {
   const navigate = useNavigate()
-  const location = useLocation()
-  const [branding, setBranding] = useState<AgencyBranding>(() => getBranding())
+  const { currentUser } = useAuth()
+  const branding = getBranding()
+  const [searchQuery, setSearchQuery] = useState('')
+  const [addOpen, setAddOpen] = useState(false)
+  const addRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => { setBranding(getBranding()) }, [])
+  useEffect(() => {
+    function onDoc(e: MouseEvent) {
+      if (addRef.current && !addRef.current.contains(e.target as Node)) setAddOpen(false)
+    }
+    document.addEventListener('mousedown', onDoc)
+    return () => document.removeEventListener('mousedown', onDoc)
+  }, [])
 
-  const now = new Date()
-  const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
-
-  function go(route: string, external = false) {
-    if (external) { window.open(route, '_blank'); return }
-    navigate(route)
-  }
+  const userName = currentUser?.name ?? 'Пользователь'
+  const firstName = userName.trim().split(/\s+/)[0] || userName
+  const shortName = userName.split(' ').slice(0, 2).map(p => p[0]).join('').slice(0, 2).toUpperCase() || 'П'
+  const productTitle = branding.name || 'Sovereign Analyst'
 
   return (
-    <div style={S.root}>
-
-      {/* ── Sidebar ─────────────────────────────────────────────────────── */}
-      <aside style={S.sidebar}>
-        <div style={S.sidebarLogo}>
-          {branding.logoDataUrl && (
-            <img src={branding.logoDataUrl} alt="logo" style={{ height: 28, marginBottom: 6, objectFit: 'contain' }} />
+    <div className="flex h-screen min-h-0 flex-1 flex-col overflow-hidden bg-[#031712] font-[Inter,sans-serif] text-[#d0e8df] antialiased">
+        <header
+          className={cn(
+            'sticky top-0 z-40 flex h-16 w-full shrink-0 items-center justify-between border-b border-emerald-900/20',
+            'bg-[#031712]/80 px-8 shadow-[0_1px_0_rgba(201,168,76,0.12)] backdrop-blur-md',
           )}
-          <div style={S.sidebarLogoTitle}>
-            {branding.name || 'Estate Portal'}
+        >
+          <div className="flex w-full max-w-[400px] items-center rounded-lg border border-[#424846]/15 bg-[#0a1f1a] px-4 py-2">
+            <Search className="mr-3 size-[18px] shrink-0 text-[#d0e8df]/35" />
+            <input
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Поиск по клиентам, объектам..."
+              className="w-full border-0 bg-transparent text-sm text-[#d0e8df] placeholder:text-[#d0e8df]/50 focus:outline-none focus:ring-0"
+            />
           </div>
-        </div>
-
-        <nav style={S.navScroll}>
-          {NAV_ITEMS.map(item => {
-            const Icon = item.icon
-            const active = item.route === '/dashboard/dashboards'
-              ? location.pathname === '/dashboard' || location.pathname === '/dashboard/'
-              : location.pathname.startsWith(item.route)
-            return (
-              <div
-                key={item.label}
-                style={S.navItem(active)}
-                onClick={() => go(item.route, item.external)}
+          <div className="flex items-center gap-6">
+            <div className="relative" ref={addRef}>
+              <button
+                type="button"
+                onClick={() => setAddOpen(o => !o)}
+                className="flex items-center gap-2 rounded-sm bg-[#e6c364] px-4 py-1.5 text-sm font-medium text-[#3d2e00] transition-all hover:brightness-110 active:scale-95"
               >
-                <Icon size={14} />
-                {item.label}
-              </div>
-            )
-          })}
-        </nav>
-
-      </aside>
-
-      {/* ── Right area ──────────────────────────────────────────────────── */}
-      <div style={S.right}>
-
-        {/* Main content */}
-        <main style={S.content}>
-
-          {/* Greeting */}
-          <div style={S.greeting}>
-            <div style={S.greetingTitle}>Добро пожаловать, {USER_NAME}</div>
-            <div style={S.greetingRow}>
-              <div style={S.greetingSub}>
-                На рынке сегодня 14 новых запросов и 3 премиальных объекта на выброс
-              </div>
-              <div style={S.greetingTime}>Обновлено: сегодня, {timeStr}</div>
+                <Plus className="size-[18px]" />
+                Добавить
+                <ChevronDown className={cn('size-4 transition-transform', addOpen && 'rotate-180')} />
+              </button>
+              {addOpen && (
+                <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[220px] overflow-hidden rounded-lg border border-[#424846]/30 bg-[#0a1f1a] py-1 shadow-xl">
+                  {ADD_ACTIONS.map(a => (
+                    <button
+                      key={a.label}
+                      type="button"
+                      className="block w-full px-4 py-2.5 text-left text-xs font-medium text-[#d0e8df] hover:bg-emerald-900/30"
+                      onClick={() => {
+                        navigate(a.route)
+                        setAddOpen(false)
+                      }}
+                    >
+                      {a.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-
-          {/* 3 Feature cards */}
-          <div style={S.featureRow}>
-
-            {/* Маркетплейс */}
-            <div style={S.card('light')} onClick={() => window.open('https://baza.sale', '_blank')}>
-              <div style={S.cardLabel(false)}>Глобальная сеть</div>
-              <div style={S.cardTitle(true)}>Маркетплейс</div>
-              <div style={S.cardDesc}>
-                Доступ к эксклюзивным объектам по всему миру и внешним листингам.
-              </div>
-              <div style={{ flex: 1 }} />
-              <div style={S.cardLink}>
-                Перейти <ChevronRight size={13} />
-              </div>
-            </div>
-
-            {/* CRM */}
-            <div style={S.card('dark')} onClick={() => navigate('/dashboard/crm')}>
-              <div style={S.cardLabel(true)}>Взаимоотношения</div>
-              <div style={S.cardTitle(true)}>CRM Система</div>
-              <div style={{ flex: 1 }} />
-              <div style={S.cardStat}>
-                <Users size={14} color="var(--gold)" />
-                42 активных клиента в воронке
-              </div>
-              <div style={{ ...S.cardStat, borderBottom: 'none' }}>
-                <CalendarDays size={14} color="var(--gold)" />
-                3 запланированных показа сегодня
-              </div>
-              <button style={S.actionBtn} onClick={e => { e.stopPropagation(); navigate('/dashboard/crm') }}>
-                Управление клиентами
+            <div className="flex items-center gap-4 text-emerald-100/70">
+              <NotificationCenter />
+              <button
+                type="button"
+                onClick={() => navigate('/dashboard/settings-hub')}
+                className="transition-colors hover:text-[#e6c364]"
+                aria-label="Настройки"
+              >
+                <Settings className="size-[22px]" strokeWidth={1.5} />
               </button>
             </div>
-
-            {/* Статистика */}
-            <div style={S.card('mid')} onClick={() => navigate('/dashboard/dashboards')}>
-              <div style={S.cardLabel(false)}>Аналитика</div>
-              <div style={S.cardTitle(true)}>Статистика</div>
-              <MiniChart />
-              <div style={{ flex: 1 }} />
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.4 }}>
-                Эффективность отдела выросла на{' '}
-                <span style={{ color: 'var(--gold)', fontWeight: 700 }}>12.4%</span>{' '}
-                за последний месяц
-              </div>
+            <div className="h-8 w-px bg-emerald-900/20" />
+            <div className="flex size-8 items-center justify-center rounded-full border border-[#e6c364]/30 bg-[#0a1f1a] text-[10px] font-bold text-[#e6c364]">
+              {shortName}
             </div>
-
           </div>
+        </header>
 
-          {/* Module tiles */}
-          <div style={S.sectionLabel}>Вспомогательные инструменты</div>
-          <div style={S.moduleGrid}>
-            {MODULE_CARDS.map(card => {
-              const Icon = card.icon
-              return (
-                <div
-                  key={card.label}
-                  style={S.moduleTile}
-                  onClick={() => navigate(card.route)}
-                  onMouseEnter={e => {
-                    ;(e.currentTarget as HTMLDivElement).style.background = 'var(--green-card-hover)'
-                    ;(e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(201,168,76,0.3)'
-                  }}
-                  onMouseLeave={e => {
-                    ;(e.currentTarget as HTMLDivElement).style.background = 'var(--green-card)'
-                    ;(e.currentTarget as HTMLDivElement).style.borderColor = 'var(--green-border)'
-                  }}
-                >
-                  <Icon size={24} color="var(--gold)" />
-                  <div style={S.moduleTileLabel}>{card.label}</div>
+        <main className="min-h-0 flex-1 overflow-y-auto p-8">
+          <div className="mx-auto max-w-7xl">
+            <header className="mb-10">
+              <h2 className="mb-1 text-3xl font-extrabold tracking-tight text-white">
+                Добро пожаловать, {firstName}
+              </h2>
+              <p className="text-sm opacity-70">
+                {productTitle} — ваша сводка на сегодня.
+              </p>
+            </header>
+
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              {/* План на сегодня */}
+              <section
+                className={cn(
+                  'flex flex-col rounded-xl bg-[#0a1f1a] p-6 transition-colors duration-300',
+                  'shadow-[inset_0_0_0_1px_rgba(201,168,76,0.18)] hover:bg-[#0f231e]',
+                )}
+              >
+                <div className="mb-6 flex items-center justify-between">
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#e6c364]">
+                    План на сегодня
+                  </h3>
+                  <MoreVertical className="size-4 text-[#e6c364]/40" />
                 </div>
-              )
-            })}
+                <div className="flex flex-1 flex-col space-y-4">
+                  <label className="group/item flex cursor-pointer items-center">
+                    <div className="mr-4 flex size-5 items-center justify-center rounded-sm border border-[#e6c364] transition-colors group-hover/item:bg-[#e6c364]/10">
+                      <Check className="size-3.5 text-[#e6c364]" strokeWidth={3} />
+                    </div>
+                    <span className="text-sm font-medium">Звонок по объекту «Emerald Tower»</span>
+                  </label>
+                  <label className="group/item flex cursor-pointer items-center">
+                    <div className="mr-4 flex size-5 items-center justify-center rounded-sm border border-[#e6c364]/30 transition-colors group-hover/item:border-[#e6c364]" />
+                    <span className="text-sm font-medium opacity-70">Подготовка отчета для инвесторов</span>
+                  </label>
+                  <label className="group/item flex cursor-pointer items-center">
+                    <div className="mr-4 flex size-5 items-center justify-center rounded-sm border border-[#e6c364]/30 transition-colors group-hover/item:border-[#e6c364]" />
+                    <span className="text-sm font-medium opacity-70">Осмотр ЖК «Green Valley»</span>
+                  </label>
+                </div>
+              </section>
+
+              {/* Входящие лиды */}
+              <section
+                className={cn(
+                  'flex flex-col rounded-xl bg-[#0a1f1a] p-6 transition-colors duration-300',
+                  'shadow-[inset_0_0_0_1px_rgba(201,168,76,0.18)] hover:bg-[#0f231e]',
+                )}
+              >
+                <div className="mb-6 flex items-center justify-between">
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#e6c364]">
+                    Входящие лиды
+                  </h3>
+                  <span className="rounded-full bg-[#e6c364]/10 px-2 py-0.5 text-[10px] font-bold text-[#e6c364]">
+                    2 новых
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/dashboard/leads/poker')}
+                    className="flex w-full items-center justify-between rounded-lg border border-[#424846]/10 bg-[#00110d]/50 p-3 text-left transition-colors hover:border-[#e6c364]/20"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex size-8 items-center justify-center rounded-full bg-emerald-800/40 text-xs font-bold text-emerald-200">
+                        МК
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold">Михаил Котов</p>
+                        <p className="text-[10px] uppercase tracking-tighter opacity-50">Покупка, Коммерция</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="flex items-center justify-end gap-1 text-[10px] font-bold text-red-400">
+                        <Clock className="size-3" />
+                        14м SLA
+                      </p>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/dashboard/leads/poker')}
+                    className="flex w-full items-center justify-between rounded-lg border border-[#424846]/10 bg-[#00110d]/50 p-3 text-left transition-colors hover:border-[#e6c364]/20"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex size-8 items-center justify-center rounded-full bg-emerald-800/40 text-xs font-bold text-emerald-200">
+                        АБ
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold">Анна Белова</p>
+                        <p className="text-[10px] uppercase tracking-tighter opacity-50">Аренда, Пентхаус</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="flex items-center justify-end gap-1 text-[10px] font-bold text-[#e6c364]">
+                        <Clock className="size-3" />
+                        45м SLA
+                      </p>
+                    </div>
+                  </button>
+                </div>
+              </section>
+
+              {/* Мой прогресс */}
+              <section
+                className={cn(
+                  'flex flex-col rounded-xl bg-[#0a1f1a] p-6 transition-colors duration-300',
+                  'shadow-[inset_0_0_0_1px_rgba(201,168,76,0.18)] hover:bg-[#0f231e]',
+                )}
+              >
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#e6c364]">
+                    Мой прогресс
+                  </h3>
+                  <span className="text-[10px] uppercase tracking-widest opacity-50">KPI квартал</span>
+                </div>
+                <div className="mb-6 flex items-end gap-4">
+                  <span className="text-6xl font-extrabold leading-none tracking-tighter text-white">75%</span>
+                  <div className="mb-2">
+                    <p className="text-xs font-medium text-emerald-300/90">+12% с пр. недели</p>
+                  </div>
+                </div>
+                <div className="h-3 w-full overflow-hidden rounded-full border border-[#424846]/10 bg-[#00110d]">
+                  <div
+                    className="relative h-full w-[75%] rounded-full bg-gradient-to-r from-[#e6c364] to-[#9e8028]"
+                    style={{ boxShadow: 'inset 0 0 8px rgba(255,255,255,0.15)' }}
+                  />
+                </div>
+                <div className="mt-6 grid grid-cols-2 gap-4">
+                  <div className="border-l border-[#e6c364]/20 p-3">
+                    <p className="mb-1 text-[10px] uppercase opacity-50">Сделки</p>
+                    <p className="text-lg font-bold">12 / 15</p>
+                  </div>
+                  <div className="border-l border-[#e6c364]/20 p-3">
+                    <p className="mb-1 text-[10px] uppercase opacity-50">Выручка</p>
+                    <p className="text-lg font-bold">4.2M ₽</p>
+                  </div>
+                </div>
+              </section>
+
+              {/* Уведомления */}
+              <section
+                className={cn(
+                  'flex flex-col rounded-xl bg-[#0a1f1a] p-6 transition-colors duration-300',
+                  'shadow-[inset_0_0_0_1px_rgba(201,168,76,0.18)] hover:bg-[#0f231e]',
+                )}
+              >
+                <div className="mb-6 flex items-center justify-between">
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#e6c364]">
+                    Уведомления
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/dashboard/info')}
+                    className="text-[10px] font-bold uppercase tracking-wider text-[#e6c364]/60 transition-colors hover:text-[#e6c364]"
+                  >
+                    Все
+                  </button>
+                </div>
+                <div className="max-h-[180px] space-y-4 overflow-y-auto pr-2">
+                  <div className="flex items-start gap-4">
+                    <div className="mt-1 size-2 shrink-0 rounded-full bg-[#e6c364]" />
+                    <div>
+                      <p className="mb-1 text-sm leading-tight">
+                        Объект <span className="text-[#e6c364]">«Park Plaza»</span> переведен в статус активных.
+                      </p>
+                      <p className="text-[10px] opacity-40">10 минут назад</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="mt-1 size-2 shrink-0 rounded-full bg-emerald-700" />
+                    <div>
+                      <p className="mb-1 text-sm leading-tight">
+                        Система: Ежедневный бэкап базы данных завершен успешно.
+                      </p>
+                      <p className="text-[10px] opacity-40">1 час назад</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="mt-1 size-2 shrink-0 rounded-full bg-[#e6c364]" />
+                    <div>
+                      <p className="mb-1 text-sm leading-tight">
+                        Новый комментарий от <span className="text-[#e6c364]">Ильи С.</span> по объекту River Side.
+                      </p>
+                      <p className="text-[10px] opacity-40">3 часа назад</p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
           </div>
-
         </main>
-      </div>
-
     </div>
   )
 }

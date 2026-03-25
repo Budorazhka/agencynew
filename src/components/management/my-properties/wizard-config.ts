@@ -59,6 +59,7 @@ export interface PropertyWizardActor {
 }
 
 export const PROPERTY_CATEGORY_OPTIONS: WizardOption<PropertyCategory>[] = [
+  { value: 'primary', label: 'Первичка', description: 'Новостройки и лоты от застройщика.' },
   { value: 'secondary', label: 'Вторичка', description: 'Готовые квартиры, дома и апартаменты.' },
   { value: 'rent', label: 'Аренда', description: 'Краткосрочная и долгосрочная аренда.' },
   { value: 'commercial', label: 'Коммерция', description: 'Офисы, ритейл, свободные площади.' },
@@ -66,12 +67,12 @@ export const PROPERTY_CATEGORY_OPTIONS: WizardOption<PropertyCategory>[] = [
 ]
 
 export const PROPERTY_TYPE_OPTIONS: PropertyTypeOption[] = [
-  { value: 'Квартира', label: 'Квартира', kind: 'apartment', categories: ['secondary', 'rent'] },
-  { value: 'Апартаменты', label: 'Апартаменты', kind: 'apartment', categories: ['secondary', 'rent'] },
-  { value: 'Дом', label: 'Дом', kind: 'house', categories: ['secondary', 'other'] },
+  { value: 'Квартира', label: 'Квартира', kind: 'apartment', categories: ['primary', 'secondary', 'rent'] },
+  { value: 'Апартаменты', label: 'Апартаменты', kind: 'apartment', categories: ['primary', 'secondary', 'rent'] },
+  { value: 'Дом', label: 'Дом', kind: 'house', categories: ['primary', 'secondary', 'other'] },
   { value: 'Участок', label: 'Участок', kind: 'land', categories: ['other'] },
-  { value: 'Коммерция', label: 'Коммерция', kind: 'commercial', categories: ['commercial', 'other'] },
-  { value: 'Проект', label: 'Проект', kind: 'project', categories: ['commercial', 'other'] },
+  { value: 'Коммерция', label: 'Коммерция', kind: 'commercial', categories: ['primary', 'commercial', 'other'] },
+  { value: 'Проект', label: 'Проект', kind: 'project', categories: ['primary', 'commercial', 'other'] },
 ]
 
 export const SALE_STATUS_OPTIONS: WizardOption<SaleStatus>[] = [
@@ -394,6 +395,7 @@ export function getAllowedTypesForCategory(category: PropertyCategory): Property
 }
 
 export function getDefaultTypeForCategory(category: PropertyCategory): PropertyType {
+  if (category === 'primary') return 'Проект'
   return getAllowedTypesForCategory(category)[0]?.value ?? 'Квартира'
 }
 
@@ -424,6 +426,7 @@ export function createPropertyWizardValues(
   defaults: Partial<PropertyWizardValues> = {},
 ): PropertyWizardValues {
   const details = { ...EMPTY_DETAILS, ...property?.details }
+  /** Новые карточки по умолчанию не с первички (первичка добавляется иначе / из другого потока). */
   const category = defaults.category ?? property?.category ?? 'secondary'
   const rawType = defaults.type ?? property?.type ?? getDefaultTypeForCategory(category)
   const type = ensureTypeForCategory(rawType, category)

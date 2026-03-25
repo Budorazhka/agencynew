@@ -18,7 +18,7 @@
 body {
   margin: 0;
   font-family: 'Montserrat', sans-serif;
-  background-color: var(--green-bg);
+  background-color: #031712;
   color: #ffffff;
   overflow: hidden;
 }
@@ -41,6 +41,11 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--gold-dark);
   border-radius: 2px;
+}
+
+/* Inset gold rim (Stitch / подборки hub) */
+.gold-inner-glow {
+  box-shadow: inset 0 0 0 1px rgba(230, 195, 100, 0.12);
 }
 
 /* Gold glow on cards */
@@ -121,3 +126,13 @@ body {
 .badge-primary   { background: #1a4f8a; color: #c5deff; }
 .badge-rent      { background: #3a6b3a; color: #c5ffc5; }
 .badge-ads       { background: #7a4a1a; color: #ffe0b0; }
+
+/* Числовое поле бюджета без стрелок (форма нового клиента) */
+.create-client-budget-input::-webkit-outer-spin-button,
+.create-client-budget-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.create-client-budget-input {
+  -moz-appearance: textfield;
+}

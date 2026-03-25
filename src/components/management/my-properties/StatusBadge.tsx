@@ -9,7 +9,7 @@ const saleStatusMap: Record<SaleStatus, { label: string; className: string }> = 
   booked:     { label: 'Забронировано', className: 'text-amber-400  bg-amber-500/12  border-amber-500/30' },
   sold:       { label: 'Продано',       className: 'text-orange-400 bg-orange-500/12 border-orange-500/30' },
   moderation: { label: 'На модерации',  className: 'text-sky-300 bg-sky-500/12 border-sky-500/30' },
-  draft:      { label: 'Черновик',      className: 'text-[rgba(242,207,141,0.5)] bg-[rgba(242,207,141,0.07)] border-[rgba(242,207,141,0.2)]' },
+  draft:      { label: 'Черновик',      className: 'text-[rgba(230,195,100,0.5)] bg-[rgba(230,195,100,0.07)] border-[rgba(230,195,100,0.2)]' },
   archive:    { label: 'Архив',         className: 'text-blue-400   bg-transparent border-0' },
 }
 

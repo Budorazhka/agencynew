@@ -1,44 +1,38 @@
-import ModuleHub from '@/components/ModuleHub'
-import { BarChart2, TrendingUp, ZoomIn, Map, LayoutDashboard } from 'lucide-react'
+import { useAuth } from '@/context/AuthContext'
+import { DashboardShell } from '@/components/layout/DashboardShell'
+import {
+  OwnerDashboard,
+  DirectorDashboard,
+  RopDashboard,
+  ManagerDashboard,
+  ProcurementDashboard,
+  LawyerDashboard,
+  MarketerDashboard,
+  PartnerDashboard,
+} from '@/components/dashboard/roles'
 
+/** Роутит на нужный ролевой дашборд */
 export default function DashboardsPage() {
+  const { currentUser } = useAuth()
+
+  function renderDashboard() {
+    if (!currentUser) return null
+    switch (currentUser.role) {
+      case 'owner':           return <OwnerDashboard />
+      case 'director':        return <DirectorDashboard />
+      case 'rop':             return <RopDashboard />
+      case 'manager':         return <ManagerDashboard />
+      case 'procurement_head':return <ProcurementDashboard />
+      case 'lawyer':          return <LawyerDashboard />
+      case 'marketer':        return <MarketerDashboard />
+      case 'partner':         return <PartnerDashboard />
+      default:                return <ManagerDashboard />
+    }
+  }
+
   return (
-    <ModuleHub
-      moduleIcon={<LayoutDashboard size={32} color="#c9a84c" />}
-      moduleName="Дашборды"
-      moduleDescription="Ролевая аналитика, KPI-виджеты, drill-down и сводные графики."
-      sections={[
-        {
-          icon: <LayoutDashboard size={20} color="#c9a84c" />,
-          title: 'Ролевой главный экран',
-          description: 'Состав виджетов автоматически подстраивается под роль пользователя.',
-          route: '/dashboard/overview',
-        },
-        {
-          icon: <BarChart2 size={20} color="#c9a84c" />,
-          title: 'KPI-виджеты',
-          description: 'Продажи, маркетинг, финансы, SLA и активность команды.',
-          route: '/dashboard/overview',
-        },
-        {
-          icon: <ZoomIn size={20} color="#c9a84c" />,
-          title: 'Drill-down аналитика',
-          description: 'Переход из карточки показателя в детализацию по отделу, агенту или источнику.',
-          route: '/dashboard/overview',
-        },
-        {
-          icon: <Map size={20} color="#c9a84c" />,
-          title: 'Сводные графики и тепловые карты',
-          description: 'Динамика, рентабельность и загрузка команды в наглядном виде.',
-          route: '/dashboard/overview',
-        },
-        {
-          icon: <TrendingUp size={20} color="#c9a84c" />,
-          title: 'Мои KPI',
-          description: 'Личные показатели: выполнение плана, активность, конверсия.',
-          route: '/dashboard/overview',
-        },
-      ]}
-    />
+    <DashboardShell>
+      {renderDashboard()}
+    </DashboardShell>
   )
 }

@@ -99,7 +99,7 @@ export function MainScreenOptimized() {
     {
       title: 'Персонал',
       description: 'Сотрудники и роли',
-      href: '/dashboard/personnel',
+      href: '/dashboard/team/org',
       icon: Users,
       variant: isFeltStyle ? ('felt' as const) : ('default' as const),
     },

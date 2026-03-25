@@ -22,14 +22,39 @@ import {
   LeadsErrorBoundary,
   DashboardErrorBoundary,
   ProductErrorBoundary,
-  PersonnelErrorBoundary,
   SettingsErrorBoundary,
 } from '@/components/common/ModuleErrorBoundary'
 import { AgencyOnboarding } from '@/components/onboarding/AgencyOnboarding'
 import { LoginPage } from '@/components/auth/LoginPage'
 import { LMSPage } from '@/components/lms/LMSPage'
-import { PersonnelPage } from '@/components/personnel/PersonnelPage'
 import { MyPropertiesPage } from '@/components/management/my-properties/MyPropertiesPage'
+import { ClientsListPage } from '@/components/clients/ClientsListPage'
+import { ClientCardPage } from '@/components/clients/ClientCardPage'
+import { DealsKanbanPage } from '@/components/deals/DealsKanbanPage'
+import { DealCardPage } from '@/components/deals/DealCardPage'
+import { DealsReportPage } from '@/components/deals/DealsReportPage'
+import { TasksPage as TasksPageFull } from '@/components/tasks/TasksPage'
+import { BookingsPage as BookingsPageFull } from '@/components/bookings/BookingsPage'
+import { CalendarPage as CalendarPageFull } from '@/components/calendar/CalendarPage'
+import { PartnersListPage } from '@/components/partners/PartnersListPage'
+import { PartnerCardPage } from '@/components/partners/PartnerCardPage'
+import { TeamOrgPage } from '@/components/team/TeamOrgPage'
+import { TeamKpiPage } from '@/components/team/TeamKpiPage'
+import { TeamAccessPage } from '@/components/team/TeamAccessPage'
+import { NotificationsSettingsPage } from '@/components/settings/NotificationsSettingsPage'
+import { ThemeSettingsPage } from '@/components/settings/ThemeSettingsPage'
+import { TariffPage } from '@/components/settings/TariffPage'
+import { NewsPage } from '@/components/info/NewsPage'
+import { RemindersPage } from '@/components/info/RemindersPage'
+import { ObjectsListPage } from '@/components/objects/ObjectsListPage'
+import { ObjectCardPage } from '@/components/objects/ObjectCardPage'
+import { CoursePage } from '@/components/lms/CoursePage'
+import { LessonPage } from '@/components/lms/LessonPage'
+import { TestPage } from '@/components/lms/TestPage'
+import { SelectionsListPage } from '@/components/selections/SelectionsListPage'
+import { SelectionCardPage } from '@/components/selections/SelectionCardPage'
+import { SelectionsNewPage } from '@/components/selections/SelectionsNewPage'
+import SelectionsPage from '@/pages/modules/SelectionsPage'
 import MarketplacePage from '@/pages/modules/MarketplacePage'
 import CRMPage from '@/pages/modules/CRMPage'
 import DashboardsPage from '@/pages/modules/DashboardsPage'
@@ -124,16 +149,49 @@ createRoot(document.getElementById('root')!).render(
                           <Route path="dashboards" element={<DashboardsPage />} />
                           <Route path="leads-hub" element={<LeadsHubPage />} />
                           <Route path="clients" element={<ClientsPage />} />
+                          <Route path="clients/list" element={<ClientsListPage />} />
+                          <Route path="clients/:clientId" element={<ClientCardPage />} />
+                          <Route path="deals/kanban" element={<DealsKanbanPage />} />
+                          <Route path="deals/report" element={<DealsReportPage />} />
+                          <Route path="deals/:dealId" element={<DealCardPage />} />
+                          <Route path="tasks/my" element={<TasksPageFull />} />
+                          <Route path="tasks/team" element={<TasksPageFull />} />
+                          <Route path="tasks/auto" element={<TasksPageFull />} />
+                          <Route path="bookings/client" element={<BookingsPageFull />} />
+                          <Route path="bookings/apartment" element={<BookingsPageFull />} />
+                          <Route path="bookings/history" element={<BookingsPageFull />} />
+                          <Route path="calendar/personal" element={<CalendarPageFull />} />
+                          <Route path="calendar/team" element={<CalendarPageFull />} />
                           <Route path="partners" element={<PartnersPage />} />
+                          <Route path="partners/list" element={<PartnersListPage />} />
+                          <Route path="partners/:partnerId" element={<PartnerCardPage />} />
+                          <Route path="selections" element={<SelectionsPage />} />
+                          <Route path="selections/list" element={<SelectionsListPage />} />
+                          <Route path="selections/new" element={<SelectionsNewPage />} />
+                          <Route path="selections/:selectionId" element={<SelectionCardPage />} />
                           <Route path="objects" element={<ObjectsPage />} />
+                          <Route path="objects/list" element={<ObjectsListPage />} />
+                          <Route path="objects/:propertyId" element={<ObjectCardPage />} />
                           <Route path="bookings" element={<BookingsPage />} />
                           <Route path="deals" element={<DealsPage />} />
                           <Route path="tasks" element={<TasksPage />} />
                           <Route path="calendar" element={<CalendarPage />} />
                           <Route path="team" element={<TeamPage />} />
+                          <Route path="team/org" element={<TeamOrgPage />} />
+                          <Route path="team/kpi" element={<TeamKpiPage />} />
+                          <Route path="team/access" element={<TeamAccessPage />} />
                           <Route path="learning" element={<LearningPage />} />
+                          <Route path="lms/course/:courseId" element={<CoursePage />} />
+                          <Route path="lms/lesson/:lessonId" element={<LessonPage />} />
+                          <Route path="lms/test/:lessonId" element={<TestPage />} />
                           <Route path="info" element={<InfoPage />} />
+                          <Route path="info/news" element={<NewsPage />} />
+                          <Route path="info/reminders" element={<RemindersPage />} />
                           <Route path="settings-hub" element={<SettingsHubPage />} />
+                          <Route path="settings/pipeline" element={<Navigate to="/dashboard/settings-hub" replace />} />
+                          <Route path="settings/notifications" element={<NotificationsSettingsPage />} />
+                          <Route path="settings/theme" element={<ThemeSettingsPage />} />
+                          <Route path="settings/tariff" element={<TariffPage />} />
 
                           {/* Рабочие страницы из agency */}
                           <Route path="overview" element={<DashboardErrorBoundary><OverviewGuard /></DashboardErrorBoundary>} />
@@ -141,7 +199,7 @@ createRoot(document.getElementById('root')!).render(
                           <Route path="leads/poker" element={<LeadsErrorBoundary><RuntimeErrorBoundary><LeadsPokerPage /></RuntimeErrorBoundary></LeadsErrorBoundary>} />
                           <Route path="leads/analytics" element={<Navigate to="/dashboard/leads" replace />} />
                           <Route path="my-properties" element={<MyPropertiesPage />} />
-                          <Route path="personnel" element={<PersonnelErrorBoundary><PersonnelPage /></PersonnelErrorBoundary>} />
+                          <Route path="personnel" element={<Navigate to="/dashboard/team/org" replace />} />
                           <Route path="lms" element={<LMSPage />} />
                           <Route path="settings" element={<SettingsErrorBoundary><SettingsPage /></SettingsErrorBoundary>} />
                           <Route path="product" element={<ProductErrorBoundary><RuntimeErrorBoundary><ProductPage /></RuntimeErrorBoundary></ProductErrorBoundary>} />

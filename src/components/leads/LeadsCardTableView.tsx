@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import { useSearchParams } from "react-router-dom"
 import {
   DndContext,
   DragOverlay,
@@ -171,6 +172,7 @@ export function LeadsCardTableView({
 }) {
   const { state, dispatch } = useLeads()
   const { currentUser } = useAuth()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { isRopOrAbove } = useRolePermissions()
   const isManager = currentUser?.role === "manager"
   const [distributionOpen, setDistributionOpen] = useState(false)
@@ -208,6 +210,40 @@ export function LeadsCardTableView({
       setDealSession((s) => s + 1)
     }
   }, [variant])
+
+  const focusLeadIdFromUrl = searchParams.get("lead")
+
+  /** Переход из карточки сделки: полная карточка лида (?lead=…) */
+  useEffect(() => {
+    if (variant !== "page" || !focusLeadIdFromUrl) return
+    const lead = leadPool.find((l) => l.id === focusLeadIdFromUrl)
+    if (!lead) {
+      setSearchParams(
+        (prev) => {
+          const p = new URLSearchParams(prev)
+          p.delete("lead")
+          return p
+        },
+        { replace: true },
+      )
+      return
+    }
+    onSelectedManagerIdChange("_all")
+    setSelectedLeadId(focusLeadIdFromUrl)
+    const peers = leadPool.filter((l) => l.stageId === lead.stageId)
+    const idx = peers.findIndex((l) => l.id === focusLeadIdFromUrl)
+    if (idx >= 0) {
+      setCursorByStageId((prev) => ({ ...prev, [lead.stageId]: idx }))
+    }
+    setSearchParams(
+      (prev) => {
+        const p = new URLSearchParams(prev)
+        p.delete("lead")
+        return p
+      },
+      { replace: true },
+    )
+  }, [variant, focusLeadIdFromUrl, leadPool, setSearchParams, onSelectedManagerIdChange])
 
   const managerNameById = useMemo(() => {
     const map: Record<string, string> = {}

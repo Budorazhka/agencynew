@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   BookOpen,
   MessageSquare,
@@ -10,7 +11,6 @@ import {
   XCircle,
   Presentation,
   GraduationCap,
-  Lock,
   FileText,
   Pencil,
   Trash2,
@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useRolePermissions } from '@/hooks/useRolePermissions'
-import { LMS_ITEMS } from '@/data/lms-mock'
+import { LMS_ITEMS, LMS_COURSES } from '@/data/lms-mock'
 import type { LMSItem, TargetRole } from '@/data/lms-mock'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -374,57 +374,37 @@ function ItemDetail({ item, onBack }: { item: LMSItem; onBack: () => void }) {
 
 // ─── Вкладка «Курсы» ──────────────────────────────────────────────────────────
 
-const COURSE_TRACKS = [
-  {
-    title: 'Базовый курс менеджера',
-    description: 'Скрипты, воронка, CRM — полный онбординг для новичка.',
-    role: 'Менеджер',
-    modules: 6,
-  },
-  {
-    title: 'Управление командой продаж',
-    description: 'KPI, планёрки, разбор звонков и работа с воронкой.',
-    role: 'РОП',
-    modules: 5,
-  },
-  {
-    title: 'Стратегия и финансы',
-    description: 'P&L, масштабирование, партнёрская модель.',
-    role: 'Директор',
-    modules: 4,
-  },
-]
 
 function CoursesTab() {
+  const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const userRole = (currentUser?.role ?? 'manager') as TargetRole
+
+  const visibleCourses = LMS_COURSES.filter(c =>
+    c.targetRoles.includes('all') || c.targetRoles.includes(userRole)
+  )
+
   return (
-    <div className="space-y-5">
-      <div className="flex items-center gap-3 rounded-xl border border-[rgba(242,207,141,0.2)] bg-[rgba(242,207,141,0.06)] px-4 py-3">
-        <Lock className="size-4 text-[rgba(242,207,141,0.6)] shrink-0" />
-        <p className="text-sm text-[rgba(242,207,141,0.8)] font-medium">
-          Раздел курсов в разработке. Скоро здесь появятся полноценные треки обучения.
-        </p>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {COURSE_TRACKS.map((course) => (
-          <div key={course.title} className="rounded-2xl border border-dashed border-[rgba(242,207,141,0.15)] bg-[rgba(10,30,22,0.5)] p-5 relative">
-            <div className="absolute top-3 right-3">
-              <span className="inline-flex items-center gap-1 rounded-full border border-[rgba(242,207,141,0.15)] bg-[rgba(242,207,141,0.07)] px-2 py-0.5 text-[10px] font-semibold text-[rgba(242,207,141,0.4)]">
-                <Lock className="size-2.5" /> Скоро
-              </span>
-            </div>
-            <div className="space-y-3 pr-14">
-              <span className="inline-block rounded-full border border-[rgba(242,207,141,0.2)] bg-[rgba(242,207,141,0.08)] px-2.5 py-0.5 text-xs font-semibold text-[rgba(242,207,141,0.65)]">
-                {course.role}
-              </span>
-              <div>
-                <p className="font-semibold text-[rgba(242,207,141,0.85)] leading-snug">{course.title}</p>
-                <p className="mt-1 text-sm text-[rgba(242,207,141,0.4)]">{course.description}</p>
-              </div>
-              <p className="text-xs text-[rgba(242,207,141,0.3)]">{course.modules} модулей</p>
-            </div>
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {visibleCourses.map((course) => (
+        <div
+          key={course.id}
+          onClick={() => navigate(`/dashboard/lms/course/${course.id}`)}
+          className="rounded-2xl border border-[rgba(242,207,141,0.15)] bg-[rgba(10,30,22,0.5)] p-5 cursor-pointer hover:border-[rgba(242,207,141,0.35)] hover:bg-[rgba(242,207,141,0.04)] transition-all"
+        >
+          <div className="text-3xl mb-3">{course.emoji}</div>
+          <div className="space-y-2">
+            <p className="font-semibold text-[rgba(242,207,141,0.9)] leading-snug">{course.title}</p>
+            <p className="text-sm text-[rgba(242,207,141,0.4)]">{course.description}</p>
           </div>
-        ))}
-      </div>
+          <div className="mt-4 flex items-center justify-between">
+            <span className="text-xs text-[rgba(242,207,141,0.35)]">{course.lessons.length} уроков</span>
+            <span className="text-xs font-semibold text-[rgba(242,207,141,0.6)] flex items-center gap-1">
+              Начать <ChevronRight className="size-3" />
+            </span>
+          </div>
+        </div>
+      ))}
     </div>
   )
 }

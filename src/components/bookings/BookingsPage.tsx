@@ -1,0 +1,937 @@
+import { useState, useEffect, useMemo, type CSSProperties } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { Clock, AlertTriangle, CheckCircle, XCircle, ArrowLeft, Building2, Layers, Minus, Plus } from 'lucide-react'
+import { DashboardShell } from '@/components/layout/DashboardShell'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { useAuth } from '@/context/AuthContext'
+import { useLeads } from '@/context/LeadsContext'
+import {
+  AGENCY_SECONDARY_LOTS_MOCK,
+  NEW_BUILD_APARTMENTS_MOCK,
+  NEW_BUILD_COMPLEXES_MOCK,
+} from '@/data/bookings-catalog-mock'
+import { BOOKINGS_MOCK } from '@/data/bookings-mock'
+import {
+  BOOKING_STATUS_LABELS, BOOKING_STATUS_COLORS,
+  type Booking, type BookingPropertyMarket, type BookingStatus,
+} from '@/types/bookings'
+import type { Lead, LeadSource } from '@/types/leads'
+import { LEAD_STAGES } from '@/data/leads-mock'
+
+const LEAD_SOURCE_LABELS: Record<LeadSource, string> = {
+  primary: 'Первичка',
+  secondary: 'Вторичка',
+  rent: 'Аренда',
+  ad_campaigns: 'Реклама',
+}
+
+const NO_LEAD_VALUE = '__no_lead__'
+
+function stageName(stageId: string): string {
+  return LEAD_STAGES.find(s => s.id === stageId)?.name ?? stageId
+}
+
+function LeadBookingSelect({
+  value,
+  onChange,
+  leads,
+}: {
+  value: string
+  onChange: (id: string) => void
+  leads: Lead[]
+}) {
+  return (
+    <Select
+      value={value ? value : NO_LEAD_VALUE}
+      onValueChange={v => onChange(v === NO_LEAD_VALUE ? '' : v)}
+    >
+      <SelectTrigger className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]">
+        <SelectValue placeholder="Выберите лида" />
+      </SelectTrigger>
+      <SelectContent className="max-h-[min(320px,50vh)] border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df]">
+        <SelectItem value={NO_LEAD_VALUE} className="focus:bg-white/10">
+          Без лида
+        </SelectItem>
+        {leads.map(lead => (
+          <SelectItem key={lead.id} value={lead.id} className="focus:bg-white/10">
+            <span className="font-mono text-[11px] text-[#d0e8df]/55">{lead.id}</span>
+            {' · '}
+            {lead.name ?? 'Без имени'}
+            {' · '}
+            {LEAD_SOURCE_LABELS[lead.source]}
+            {' · '}
+            {stageName(lead.stageId)}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  )
+}
+
+function BookingHoursField({
+  value,
+  onChange,
+  id,
+}: {
+  value: string
+  onChange: (v: string) => void
+  id: string
+}) {
+  const parsed = parseInt(value, 10)
+  const safe = Number.isFinite(parsed) && parsed >= 1 ? Math.min(720, parsed) : 72
+  const bump = (delta: number) => onChange(String(Math.max(1, Math.min(720, safe + delta))))
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className="h-10 w-10 shrink-0 border-[var(--green-border)] bg-[#031712] text-[#d0e8df] hover:bg-white/10"
+          onClick={() => bump(-24)}
+          aria-label="Уменьшить срок на 24 часа"
+        >
+          <Minus className="h-4 w-4" />
+        </Button>
+        <Input
+          id={id}
+          type="text"
+          inputMode="numeric"
+          autoComplete="off"
+          value={value}
+          onChange={e => {
+            const d = e.target.value.replace(/\D/g, '').slice(0, 3)
+            onChange(d)
+          }}
+          onBlur={() => {
+            const x = parseInt(value, 10)
+            if (!Number.isFinite(x) || x < 1) onChange('72')
+            else onChange(String(Math.min(720, x)))
+          }}
+          className="border-[var(--green-border)] bg-[#031712] text-center text-[#d0e8df] tabular-nums max-w-[5rem]"
+        />
+        <span className="text-sm text-[#d0e8df]/60 shrink-0">ч</span>
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className="h-10 w-10 shrink-0 border-[var(--green-border)] bg-[#031712] text-[#d0e8df] hover:bg-white/10"
+          onClick={() => bump(24)}
+          aria-label="Увеличить срок на 24 часа"
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {[24, 48, 72, 120, 168].map(h => (
+          <button
+            key={h}
+            type="button"
+            onClick={() => onChange(String(h))}
+            className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
+              safe === h
+                ? 'border-[#e6c364] bg-[#e6c364]/15 text-[#e6c364]'
+                : 'border-white/10 bg-transparent text-[#d0e8df]/70 hover:bg-white/5'
+            }`}
+          >
+            {h} ч
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const C = {
+  gold: 'var(--gold)',
+  white: '#ffffff',
+  whiteMid: 'rgba(255,255,255,0.7)',
+  whiteLow: 'rgba(255,255,255,0.4)',
+  border: 'var(--green-border)',
+  card: 'var(--green-card)',
+  green: '#4ade80',
+  red: '#f87171',
+  orange: '#fb923c',
+  blue: '#60a5fa',
+}
+
+const backToCrmBtn: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 6,
+  height: 36,
+  padding: '0 14px',
+  background: 'rgba(201,168,76,0.1)',
+  border: '1px solid rgba(201,168,76,0.35)',
+  borderRadius: 10,
+  color: '#e6c364',
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: '0.06em',
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+}
+
+function useCountdown(expiresAt: string) {
+  const [remaining, setRemaining] = useState(0)
+
+  useEffect(() => {
+    function calc() {
+      const diff = new Date(expiresAt).getTime() - Date.now()
+      setRemaining(Math.max(0, diff))
+    }
+    calc()
+    const t = setInterval(calc, 60000)
+    return () => clearInterval(t)
+  }, [expiresAt])
+
+  const totalHours = Math.floor(remaining / 3600000)
+  const minutes = Math.floor((remaining % 3600000) / 60000)
+  return { totalHours, minutes, isExpired: remaining === 0 }
+}
+
+function CountdownTimer({ expiresAt, status }: { expiresAt: string; status: BookingStatus }) {
+  const { totalHours, minutes, isExpired } = useCountdown(expiresAt)
+
+  if (status !== 'active') return null
+
+  const color = totalHours < 12 ? C.red : totalHours < 24 ? C.orange : C.green
+  const isUrgent = totalHours < 12
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+      {isUrgent && <AlertTriangle size={12} color={C.red} />}
+      <Clock size={12} color={color} />
+      <span style={{ fontSize: 11, fontWeight: 700, color }}>
+        {isExpired ? 'Истекла' : `${totalHours}ч ${minutes}мин`}
+      </span>
+    </div>
+  )
+}
+
+type FilterTab = 'all' | 'client' | 'apartment' | 'active' | 'expired'
+
+function apartmentMarket(b: Booking): BookingPropertyMarket {
+  if (b.type !== 'apartment') return 'primary'
+  return b.propertyMarket ?? 'primary'
+}
+
+export function BookingsPage() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { currentUser } = useAuth()
+  const { state: leadsState } = useLeads()
+  const [bookings, setBookings] = useState<Booking[]>(() => [...BOOKINGS_MOCK])
+  const [tab, setTab] = useState<FilterTab>('all')
+  const [apartmentSubTab, setApartmentSubTab] = useState<BookingPropertyMarket>('primary')
+
+  const [primaryOpen, setPrimaryOpen] = useState(false)
+  const [primKind, setPrimKind] = useState<'client' | 'apartment'>('client')
+  const [primRcId, setPrimRcId] = useState('')
+  const [primAptId, setPrimAptId] = useState('')
+  const [primClient, setPrimClient] = useState('')
+  const [primHours, setPrimHours] = useState('72')
+  const [primNotes, setPrimNotes] = useState('')
+  const [primLeadId, setPrimLeadId] = useState('')
+
+  const [secondaryOpen, setSecondaryOpen] = useState(false)
+  const [secLotId, setSecLotId] = useState('')
+  const [secClient, setSecClient] = useState('')
+  const [secHours, setSecHours] = useState('72')
+  const [secNotes, setSecNotes] = useState('')
+  const [secLeadId, setSecLeadId] = useState('')
+
+  const leadsSorted = useMemo(() => {
+    return [...leadsState.leadPool].sort((a, b) => {
+      const an = (a.name ?? a.id).toLocaleLowerCase()
+      const bn = (b.name ?? b.id).toLocaleLowerCase()
+      return an.localeCompare(bn, 'ru')
+    })
+  }, [leadsState.leadPool])
+
+  const apartmentsForRc = useMemo(
+    () => NEW_BUILD_APARTMENTS_MOCK.filter(a => a.rcId === primRcId),
+    [primRcId],
+  )
+
+  function openPrimaryModal() {
+    if (tab === 'client') setPrimKind('client')
+    else if (tab === 'apartment' && apartmentSubTab === 'primary') setPrimKind('apartment')
+    else setPrimKind('client')
+    setPrimRcId('')
+    setPrimAptId('')
+    setPrimClient('')
+    setPrimHours('72')
+    setPrimNotes('')
+    setPrimLeadId('')
+    setPrimaryOpen(true)
+  }
+
+  function openSecondaryModal() {
+    setSecLotId('')
+    setSecClient('')
+    setSecHours('72')
+    setSecNotes('')
+    setSecLeadId('')
+    setSecondaryOpen(true)
+  }
+
+  function submitPrimaryBooking() {
+    const rc = NEW_BUILD_COMPLEXES_MOCK.find(r => r.id === primRcId)
+    const name = primClient.trim()
+    if (!rc || !name) return
+    if (primKind === 'apartment') {
+      const apt = NEW_BUILD_APARTMENTS_MOCK.find(a => a.id === primAptId && a.rcId === primRcId)
+      if (!apt) return
+    }
+
+    const hours = Math.max(1, Number.parseInt(primHours, 10) || 72)
+    const now = new Date()
+    const expiresAt = new Date(now.getTime() + hours * 60 * 60 * 1000).toISOString()
+
+    let propertyAddress = rc.name
+    let propertyType = primKind === 'client' ? 'Фиксация в ЖК' : '—'
+    let newBuildApartmentId: string | undefined
+
+    if (primKind === 'apartment') {
+      const apt = NEW_BUILD_APARTMENTS_MOCK.find(a => a.id === primAptId && a.rcId === primRcId)!
+      propertyAddress = `${rc.name}, ${apt.label}`
+      propertyType = apt.typology
+      newBuildApartmentId = apt.id
+    }
+
+    const row: Booking = {
+      id: `book-${Date.now()}`,
+      type: primKind,
+      status: 'active',
+      clientId: `tmp-${Date.now()}`,
+      clientName: name,
+      propertyAddress,
+      propertyType,
+      bookedAt: now.toISOString(),
+      durationHours: hours,
+      expiresAt,
+      agentId: currentUser?.id ?? 'lm-1',
+      agentName: currentUser?.name ?? 'Агент',
+      developerName: rc.developerName,
+      newBuildComplexId: rc.id,
+      newBuildApartmentId,
+      notes: primNotes.trim() || undefined,
+      sourceLeadId: primLeadId.trim() || undefined,
+    }
+    if (primKind === 'apartment') row.propertyMarket = 'primary'
+
+    setBookings(prev => [row, ...prev])
+    setPrimaryOpen(false)
+  }
+
+  function submitSecondaryBooking() {
+    const lot = AGENCY_SECONDARY_LOTS_MOCK.find(l => l.id === secLotId)
+    const name = secClient.trim()
+    if (!lot || !name) return
+
+    const hours = Math.max(1, Number.parseInt(secHours, 10) || 72)
+    const now = new Date()
+    const expiresAt = new Date(now.getTime() + hours * 60 * 60 * 1000).toISOString()
+
+    const row: Booking = {
+      id: `book-${Date.now()}`,
+      type: 'apartment',
+      status: 'active',
+      propertyMarket: 'secondary',
+      clientId: `tmp-${Date.now()}`,
+      clientName: name,
+      propertyAddress: lot.address,
+      propertyType: lot.propertyType,
+      bookedAt: now.toISOString(),
+      durationHours: hours,
+      expiresAt,
+      agentId: currentUser?.id ?? 'lm-1',
+      agentName: currentUser?.name ?? 'Агент',
+      agencyLotId: lot.id,
+      sourceLeadId: secLeadId.trim() || undefined,
+      notes: secNotes.trim() || undefined,
+    }
+
+    setBookings(prev => [row, ...prev])
+    setSecondaryOpen(false)
+  }
+
+  useEffect(() => {
+    const p = location.pathname
+    if (p.includes('/bookings/client')) setTab('client')
+    else if (p.includes('/bookings/apartment')) {
+      setTab('apartment')
+      setApartmentSubTab('primary')
+    } else if (p.includes('/bookings/history')) setTab('expired')
+    else if (/\/dashboard\/bookings\/?$/.test(p)) setTab('all')
+  }, [location.pathname])
+
+  const isHistoryRoute = location.pathname.includes('/bookings/history')
+
+  const filtered = useMemo(() => {
+    return bookings.filter(b => {
+      if (tab === 'active') {
+        if (b.status !== 'active') return false
+      } else if (tab === 'expired') {
+        if (isHistoryRoute) {
+          if (!['expired', 'rejected', 'completed'].includes(b.status)) return false
+        } else if (b.status !== 'expired' && b.status !== 'rejected') {
+          return false
+        }
+      } else if (tab === 'client') {
+        if (b.type !== 'client') return false
+      } else if (tab === 'apartment') {
+        if (b.type !== 'apartment') return false
+        if (apartmentMarket(b) !== apartmentSubTab) return false
+      }
+      return true
+    })
+  }, [bookings, tab, apartmentSubTab, isHistoryRoute])
+
+  const TABS: { key: FilterTab; label: string }[] = [
+    { key: 'all', label: 'Все' },
+    { key: 'active', label: 'Активные' },
+    { key: 'client', label: 'Брони клиента' },
+    { key: 'apartment', label: 'Брони квартиры' },
+    { key: 'expired', label: 'Истекшие' },
+  ]
+
+  const activeCount = bookings.filter(b => b.status === 'active').length
+
+  return (
+    <DashboardShell>
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          padding: '28px 24px 48px',
+          boxSizing: 'border-box',
+          width: '100%',
+          minHeight: 0,
+        }}
+      >
+        <div
+          style={{
+            width: '100%',
+            maxWidth: 920,
+            margin: '0 auto',
+            boxSizing: 'border-box',
+          }}
+        >
+          <div style={{ marginBottom: 20 }}>
+            <button type="button" onClick={() => navigate('/dashboard/crm')} style={backToCrmBtn}>
+              <ArrowLeft size={18} strokeWidth={2} />
+              Назад
+            </button>
+          </div>
+
+          {/* Header */}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              gap: 16,
+              marginBottom: 8,
+            }}
+          >
+            <div style={{ textAlign: 'left' as const, flex: '1 1 240px' }}>
+              <div style={{ fontSize: 26, fontWeight: 700, color: C.white, letterSpacing: '-0.01em' }}>
+                Брони / Регистрации
+              </div>
+              <div style={{ fontSize: 13, color: C.whiteLow, marginTop: 4, maxWidth: 560, lineHeight: 1.45 }}>
+                Бронь клиента — только новостройки (фиксация в ЖК). Бронь квартиры — первичка (шахматка) или вторичка (лот из своей базы и лид). ·{' '}
+                <span style={{ color: C.gold, fontWeight: 600 }}>{activeCount}</span> активных
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
+              <button
+                type="button"
+                onClick={openPrimaryModal}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '9px 16px',
+                  background: 'var(--gold-dark)',
+                  border: 'none',
+                  borderRadius: 7,
+                  color: '#fff',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase' as const,
+                  cursor: 'pointer',
+                }}
+              >
+                <Building2 size={16} strokeWidth={2} />
+                Новостройка
+              </button>
+              <button
+                type="button"
+                onClick={openSecondaryModal}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '9px 16px',
+                  background: 'transparent',
+                  border: '1px solid rgba(201,168,76,0.45)',
+                  borderRadius: 7,
+                  color: '#e6c364',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase' as const,
+                  cursor: 'pointer',
+                }}
+              >
+                <Layers size={16} strokeWidth={2} />
+                Вторичка
+              </button>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'flex-start',
+              gap: 8,
+              marginBottom: 24,
+              padding: '4px 0',
+            }}
+          >
+            {TABS.map(t => (
+              <button
+                key={t.key}
+                type="button"
+                onClick={() => {
+                  setTab(t.key)
+                  if (t.key === 'apartment') setApartmentSubTab('primary')
+                }}
+                style={{
+                  padding: '8px 14px',
+                  borderRadius: 8,
+                  border: `1px solid ${tab === t.key ? 'rgba(201,168,76,0.45)' : 'rgba(255,255,255,0.1)'}`,
+                  background: tab === t.key ? 'rgba(201,168,76,0.12)' : 'rgba(255,255,255,0.03)',
+                  color: tab === t.key ? C.gold : C.whiteLow,
+                  fontSize: 12,
+                  fontWeight: tab === t.key ? 700 : 500,
+                  cursor: 'pointer',
+                  transition: 'border-color 0.15s, background 0.15s',
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          {tab === 'client' && (
+            <p style={{ fontSize: 12, color: C.whiteLow, marginTop: -12, marginBottom: 20, lineHeight: 1.5 }}>
+              Раздел только для <strong style={{ color: C.gold }}>новостроек</strong>: закрепление приведённого клиента за конкретным ЖК / застройщиком (несколько таких броней на клиента допустимы).
+            </p>
+          )}
+
+          {isHistoryRoute && tab === 'expired' && (
+            <p style={{ fontSize: 12, color: C.whiteLow, marginTop: -12, marginBottom: 16 }}>
+              История: завершённые, просроченные и отклонённые брони.
+            </p>
+          )}
+
+          {tab === 'apartment' && (
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 10,
+                marginTop: -8,
+                marginBottom: 22,
+                padding: '12px 14px',
+                borderRadius: 10,
+                border: `1px solid ${C.border}`,
+                background: 'rgba(255,255,255,0.03)',
+              }}
+            >
+              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', color: C.whiteLow, alignSelf: 'center', textTransform: 'uppercase' as const }}>
+                Брони квартиры
+              </span>
+              {(['primary', 'secondary'] as const).map(m => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => setApartmentSubTab(m)}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: 8,
+                    border: `1px solid ${apartmentSubTab === m ? 'rgba(201,168,76,0.5)' : 'rgba(255,255,255,0.12)'}`,
+                    background: apartmentSubTab === m ? 'rgba(201,168,76,0.15)' : 'transparent',
+                    color: apartmentSubTab === m ? C.gold : C.whiteMid,
+                    fontSize: 12,
+                    fontWeight: apartmentSubTab === m ? 700 : 500,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {m === 'primary' ? 'Первичка' : 'Вторичка'}
+                </button>
+              ))}
+              <span style={{ fontSize: 11, color: C.whiteLow, flex: '1 1 200px', lineHeight: 1.4 }}>
+                {apartmentSubTab === 'primary'
+                  ? 'Шахматка ЖК, конкретный лот в новостройке.'
+                  : 'Объект из внутреннего списка агентства, связь с лидом.'}
+              </span>
+            </div>
+          )}
+
+          {/* Bookings cards */}
+          <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 14 }}>
+            {filtered.map(booking => (
+              <BookingCard key={booking.id} booking={booking} />
+            ))}
+            {filtered.length === 0 && (
+              <div
+                style={{
+                  padding: '48px 24px',
+                  textAlign: 'center' as const,
+                  color: C.whiteLow,
+                  border: `1px dashed ${C.border}`,
+                  borderRadius: 12,
+                  background: 'rgba(255,255,255,0.02)',
+                }}
+              >
+                Бронирований не найдено
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <Dialog open={primaryOpen} onOpenChange={setPrimaryOpen}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df] sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-[#f5f5f5]">Бронь · новостройка</DialogTitle>
+            <DialogDescription className="text-[#d0e8df]/70">
+              Два шага: сначала ЖК, затем при брони квартиры — лот (шахматка / каталог). Список позже подгрузится с сервера.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-1">
+            <div className="flex flex-wrap gap-2">
+              <span className="w-full text-[10px] font-bold uppercase tracking-wider text-[#d0e8df]/50">Что бронируем</span>
+              {(['client', 'apartment'] as const).map(k => (
+                <button
+                  key={k}
+                  type="button"
+                  onClick={() => {
+                    setPrimKind(k)
+                    setPrimAptId('')
+                  }}
+                  className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                    primKind === k
+                      ? 'border-[#e6c364] bg-[#e6c364]/15 text-[#e6c364]'
+                      : 'border-white/10 bg-transparent text-[#d0e8df]/70 hover:bg-white/5'
+                  }`}
+                >
+                  {k === 'client' ? 'Клиента в ЖК' : 'Квартиру'}
+                </button>
+              ))}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-[#d0e8df]/80">1. Жилой комплекс</Label>
+              <Select
+                value={primRcId || undefined}
+                onValueChange={v => {
+                  setPrimRcId(v)
+                  setPrimAptId('')
+                }}
+              >
+                <SelectTrigger className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]">
+                  <SelectValue placeholder="Выберите ЖК" />
+                </SelectTrigger>
+                <SelectContent className="border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df]">
+                  {NEW_BUILD_COMPLEXES_MOCK.map(rc => (
+                    <SelectItem key={rc.id} value={rc.id} className="focus:bg-white/10">
+                      {rc.name} · {rc.developerName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {primKind === 'apartment' && (
+              <div className="space-y-1.5">
+                <Label className="text-[#d0e8df]/80">2. Квартира (лот)</Label>
+                <Select
+                  value={primAptId || undefined}
+                  onValueChange={setPrimAptId}
+                  disabled={!primRcId || apartmentsForRc.length === 0}
+                >
+                  <SelectTrigger className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df] disabled:opacity-50">
+                    <SelectValue placeholder={primRcId ? 'Выберите квартиру' : 'Сначала выберите ЖК'} />
+                  </SelectTrigger>
+                  <SelectContent className="border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df]">
+                    {apartmentsForRc.map(apt => (
+                      <SelectItem key={apt.id} value={apt.id} className="focus:bg-white/10">
+                        {apt.label} · {apt.typology}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="space-y-1.5">
+              <Label htmlFor="prim-client" className="text-[#d0e8df]/80">Клиент (ФИО)</Label>
+              <Input
+                id="prim-client"
+                value={primClient}
+                onChange={e => setPrimClient(e.target.value)}
+                placeholder="Иванов И.И."
+                className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-[#d0e8df]/80">Лид (из вашей базы, необязательно)</Label>
+              <LeadBookingSelect value={primLeadId} onChange={setPrimLeadId} leads={leadsSorted} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="prim-hours" className="text-[#d0e8df]/80">Срок брони</Label>
+              <BookingHoursField id="prim-hours" value={primHours} onChange={setPrimHours} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="prim-notes" className="text-[#d0e8df]/80">Комментарий</Label>
+              <Input
+                id="prim-notes"
+                value={primNotes}
+                onChange={e => setPrimNotes(e.target.value)}
+                className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button type="button" variant="outline" onClick={() => setPrimaryOpen(false)} className="border-[var(--green-border)] bg-transparent text-[#d0e8df]">
+              Отмена
+            </Button>
+            <Button type="button" onClick={submitPrimaryBooking} className="bg-[var(--gold-dark)] text-[#3d2e00] hover:brightness-110">
+              Создать
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={secondaryOpen} onOpenChange={setSecondaryOpen}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df] sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-[#f5f5f5]">Бронь · вторичка</DialogTitle>
+            <DialogDescription className="text-[#d0e8df]/70">
+              Выбор объекта из внутренней базы агентства (позже — ваша CRM / каталог). Отдельный процесс от новостроек.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-1">
+            <div className="space-y-1.5">
+              <Label className="text-[#d0e8df]/80">Объект из своей базы</Label>
+              <Select value={secLotId || undefined} onValueChange={setSecLotId}>
+                <SelectTrigger className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]">
+                  <SelectValue placeholder="Выберите лот" />
+                </SelectTrigger>
+                <SelectContent className="border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df]">
+                  {AGENCY_SECONDARY_LOTS_MOCK.map(lot => (
+                    <SelectItem key={lot.id} value={lot.id} className="focus:bg-white/10">
+                      {lot.address} · {lot.propertyType}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="sec-client" className="text-[#d0e8df]/80">Клиент (ФИО)</Label>
+              <Input
+                id="sec-client"
+                value={secClient}
+                onChange={e => setSecClient(e.target.value)}
+                className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-[#d0e8df]/80">Лид (из вашей базы, необязательно)</Label>
+              <LeadBookingSelect value={secLeadId} onChange={setSecLeadId} leads={leadsSorted} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="sec-hours" className="text-[#d0e8df]/80">Срок брони</Label>
+              <BookingHoursField id="sec-hours" value={secHours} onChange={setSecHours} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="sec-notes" className="text-[#d0e8df]/80">Комментарий</Label>
+              <Input
+                id="sec-notes"
+                value={secNotes}
+                onChange={e => setSecNotes(e.target.value)}
+                className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button type="button" variant="outline" onClick={() => setSecondaryOpen(false)} className="border-[var(--green-border)] bg-transparent text-[#d0e8df]">
+              Отмена
+            </Button>
+            <Button type="button" onClick={submitSecondaryBooking} className="bg-[var(--gold-dark)] text-[#3d2e00] hover:brightness-110">
+              Создать
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </DashboardShell>
+  )
+}
+
+function BookingCard({ booking }: { booking: Booking }) {
+  const statusColor = BOOKING_STATUS_COLORS[booking.status]
+  const isActive = booking.status === 'active'
+  const market = apartmentMarket(booking)
+
+  return (
+    <div style={{
+      background: 'var(--green-card)',
+      border: `1px solid ${isActive ? 'rgba(74,222,128,0.2)' : 'var(--green-border)'}`,
+      borderRadius: 10,
+      padding: '18px 20px',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+        <div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: booking.type === 'client' ? C.blue : C.gold }}>
+              {booking.type === 'client' ? 'Бронь клиента · новостройки' : 'Бронь квартиры'}
+            </span>
+            {booking.type === 'apartment' && (
+              <span style={{
+                fontSize: 10,
+                fontWeight: 700,
+                padding: '2px 8px',
+                borderRadius: 20,
+                background: market === 'primary' ? 'rgba(96,165,250,0.12)' : 'rgba(201,168,76,0.12)',
+                border: `1px solid ${market === 'primary' ? 'rgba(96,165,250,0.35)' : 'rgba(201,168,76,0.35)'}`,
+                color: market === 'primary' ? C.blue : C.gold,
+              }}>
+                {market === 'primary' ? 'Первичка' : 'Вторичка'}
+              </span>
+            )}
+            <span style={{
+              fontSize: 10,
+              fontWeight: 700,
+              padding: '2px 8px',
+              borderRadius: 20,
+              background: `${statusColor}18`,
+              border: `1px solid ${statusColor}44`,
+              color: statusColor,
+            }}>
+              {BOOKING_STATUS_LABELS[booking.status]}
+            </span>
+          </div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: '#ffffff' }}>{booking.clientName}</div>
+          <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>
+            {booking.propertyAddress} · {booking.propertyType}
+          </div>
+          {booking.developerName && (
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
+              Застройщик: {booking.developerName}
+            </div>
+          )}
+          {booking.type === 'apartment' && (
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.38)', marginTop: 4 }}>
+              {market === 'primary'
+                ? 'Сценарий: шахматка ЖК, конкретный лот.'
+                : 'Сценарий: объект из списка агентства, связь с лидом.'}
+            </div>
+          )}
+          {booking.sourceLeadId && (
+            <div style={{ fontSize: 11, color: 'rgba(230,195,100,0.55)', marginTop: 4 }}>
+              Лид: {booking.sourceLeadId}
+            </div>
+          )}
+        </div>
+
+        {/* Timer */}
+        <div style={{ textAlign: 'right' as const }}>
+          <CountdownTimer expiresAt={booking.expiresAt} status={booking.status} />
+          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', marginTop: 4 }}>
+            Истекает: {new Date(booking.expiresAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
+          Агент: {booking.agentName} · Создана: {new Date(booking.bookedAt).toLocaleDateString('ru-RU')}
+        </div>
+        {isActive && (
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button style={{
+              padding: '5px 12px',
+              background: 'rgba(74,222,128,0.1)',
+              border: '1px solid rgba(74,222,128,0.3)',
+              borderRadius: 6,
+              color: '#4ade80',
+              fontSize: 11,
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+            }}>
+              <CheckCircle size={11} /> Подтвердить
+            </button>
+            <button style={{
+              padding: '5px 12px',
+              background: 'rgba(248,113,113,0.1)',
+              border: '1px solid rgba(248,113,113,0.3)',
+              borderRadius: 6,
+              color: '#f87171',
+              fontSize: 11,
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+            }}>
+              <XCircle size={11} /> Отменить
+            </button>
+          </div>
+        )}
+      </div>
+
+      {booking.notes && (
+        <div style={{ marginTop: 10, fontSize: 12, color: 'rgba(255,255,255,0.4)', fontStyle: 'italic' as const }}>
+          {booking.notes}
+        </div>
+      )}
+    </div>
+  )
+}

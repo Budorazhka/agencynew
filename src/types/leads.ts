@@ -3,6 +3,27 @@
  * портальный пользователь (Директор/РОП), лид, облако, правило раздачи, менеджеры и пользователи с доступом к разделу (по email ЛК).
  */
 
+/** Формальный статус лида по ТЗ */
+export type LeadStatus = 'new' | 'in_progress' | 'qualified' | 'no_answer' | 'lost' | 'postponed'
+
+export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
+  new:        'Новый',
+  in_progress:'В работе',
+  qualified:  'Квалифицирован',
+  no_answer:  'Недозвон',
+  lost:       'Потерян',
+  postponed:  'Отложен',
+}
+
+export const LEAD_STATUS_COLORS: Record<LeadStatus, string> = {
+  new:        '#22d3ee',
+  in_progress:'#60a5fa',
+  qualified:  '#4ade80',
+  no_answer:  '#fb923c',
+  lost:       '#ef4444',
+  postponed:  '#a78bfa',
+}
+
 /** Роль доступа к админке лидов */
 export type LeadAdminRole = 'director' | 'rop'
 
@@ -54,6 +75,8 @@ export interface Lead {
   commissionUsd?: number
   /** ID рекламной кампании (только для source === 'ad_campaigns') */
   campaignId?: string
+  /** Формальный статус лида (новый, в работе, квалифицирован, etc.) */
+  status?: LeadStatus
 }
 
 /** Единое облако лидов — пул по всем типам */

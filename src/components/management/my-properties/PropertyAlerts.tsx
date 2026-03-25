@@ -65,9 +65,9 @@ export function PropertyAlerts({
       key: 'draft',
       label: 'Черновики',
       count: drafts,
-      colorClass: 'border-[rgba(242,207,141,0.2)] bg-[rgba(242,207,141,0.05)] text-[rgba(242,207,141,0.5)] hover:bg-[rgba(242,207,141,0.1)]',
-      activeClass: 'ring-2 ring-[rgba(242,207,141,0.4)] ring-offset-1',
-      dotClass: 'bg-[rgba(242,207,141,0.5)]',
+      colorClass: 'border-[rgba(230,195,100,0.2)] bg-[rgba(230,195,100,0.05)] text-[rgba(230,195,100,0.5)] hover:bg-[rgba(230,195,100,0.1)]',
+      activeClass: 'ring-2 ring-[rgba(230,195,100,0.4)] ring-offset-1',
+      dotClass: 'bg-[rgba(230,195,100,0.5)]',
     },
     {
       key: 'archive',
@@ -80,9 +80,9 @@ export function PropertyAlerts({
   ]
 
   return (
-    <div className="rounded-xl border border-[rgba(242,207,141,0.15)] bg-[rgba(0,0,0,0.2)] px-4 py-3">
+    <div className="rounded-xl border border-[#e6c364]/15 bg-[#0a1f1a] px-4 py-3 shadow-[inset_0_0_0_1px_rgba(201,168,76,0.06)]">
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-xs font-semibold uppercase tracking-wide text-[rgba(242,207,141,0.65)] shrink-0 mr-1">
+        <span className="mr-1 shrink-0 text-xs font-semibold uppercase tracking-wide text-[#e6c364]/80">
           Обзор:
         </span>
         {chips.map((chip) => {
@@ -106,7 +106,7 @@ export function PropertyAlerts({
         {activeFilter && (
           <button
             onClick={() => onFilterChange(null)}
-            className="text-xs text-[rgba(242,207,141,0.58)] underline underline-offset-2 hover:text-[rgba(242,207,141,0.8)] transition-colors"
+            className="text-xs text-[rgba(230,195,100,0.58)] underline underline-offset-2 hover:text-[rgba(230,195,100,0.8)] transition-colors"
           >
             сбросить
           </button>
