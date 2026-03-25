@@ -32,53 +32,111 @@ const ROLE_ACCENT: Record<UserRole, string> = {
   partner:          '#94a3b8',
 }
 
-const ACTION_GROUPS: { group: string; actions: { key: PermissionAction; label: string }[] }[] = [
+type AccessColumn = {
+  key:
+    | 'view'
+    | 'create'
+    | 'edit'
+    | 'delete'
+    | 'assign'
+    | 'export'
+    | 'approve'
+    | 'finance'
+    | 'analytics'
+    | 'manage'
+  label: string
+  width?: number
+}
+
+const ACCESS_COLUMNS: AccessColumn[] = [
+  { key: 'view',      label: 'Просмотр', width: 110 },
+  { key: 'create',    label: 'Создать', width: 110 },
+  { key: 'edit',      label: 'Редакт.', width: 110 },
+  { key: 'delete',    label: 'Удалить', width: 110 },
+  { key: 'assign',    label: 'Назнач.', width: 110 },
+  { key: 'export',    label: 'Экспорт', width: 110 },
+  { key: 'approve',   label: 'Апрув', width: 110 },
+  { key: 'finance',   label: 'Финансы', width: 110 },
+  { key: 'analytics', label: 'Аналит.', width: 110 },
+  { key: 'manage',    label: 'Доступы', width: 120 },
+]
+
+type AccessRow = {
+  group: string
+  resource: string
+  description?: string
+  map: Partial<Record<AccessColumn['key'], PermissionAction | PermissionAction[]>>
+}
+
+const ACCESS_ROWS: AccessRow[] = [
   {
-    group: 'Команда и лиды',
-    actions: [
-      { key: 'manage_team',         label: 'Управление командой' },
-      { key: 'view_all_leads',      label: 'Видеть все лиды' },
-      { key: 'transfer_leads',      label: 'Передача лидов' },
-      { key: 'assign_lead',         label: 'Назначение лида' },
-      { key: 'change_distribution', label: 'Правила распределения' },
-      { key: 'add_lead_source',     label: 'Добавить источник' },
-    ],
+    group: 'CRM',
+    resource: 'Лиды',
+    description: 'Очередь, распределение, контроль',
+    map: {
+      view: ['view_all_leads', 'view_all_stages'],
+      assign: ['assign_lead', 'transfer_leads', 'change_distribution'],
+      analytics: 'view_lead_analytics',
+      manage: 'manage_team',
+    },
   },
   {
-    group: 'Сделки и брони',
-    actions: [
-      { key: 'create_deal',         label: 'Создать сделку' },
-      { key: 'approve_deal',        label: 'Согласовать сделку' },
-      { key: 'legal_approve',       label: 'Юр. апрув сделки' },
-      { key: 'manage_bookings',     label: 'Управление бронями' },
-    ],
+    group: 'CRM',
+    resource: 'Сделки',
+    description: 'Создание и согласование этапов',
+    map: {
+      create: 'create_deal',
+      approve: ['approve_deal', 'legal_approve'],
+      finance: ['see_finance', 'view_commissions'],
+      export: 'export_data',
+    },
   },
   {
-    group: 'Объекты',
-    actions: [
-      { key: 'manage_properties',   label: 'Управление объектами' },
-    ],
+    group: 'CRM',
+    resource: 'Брони / Регистрации',
+    description: 'Бронирования клиента и квартиры',
+    map: {
+      edit: 'manage_bookings',
+      finance: ['see_finance', 'view_commissions'],
+    },
   },
   {
-    group: 'Аналитика и финансы',
-    actions: [
-      { key: 'see_analytics',       label: 'BI-дашборды' },
-      { key: 'view_network_analytics', label: 'Аналитика сети' },
-      { key: 'view_lead_analytics', label: 'Аналитика лидов' },
-      { key: 'see_finance',         label: 'Финансы' },
-      { key: 'view_commissions',    label: 'Комиссии' },
-      { key: 'export_data',         label: 'Экспорт данных' },
-    ],
+    group: 'Каталог',
+    resource: 'Объекты',
+    description: 'Каталог и карточки объектов',
+    map: {
+      edit: 'manage_properties',
+    },
   },
   {
-    group: 'Администрирование',
-    actions: [
-      { key: 'manage_partners',     label: 'Управление партнёрами' },
-      { key: 'manage_mailings',     label: 'Рассылки' },
-      { key: 'block_account',       label: 'Блокировка аккаунтов' },
-      { key: 'set_substitute',      label: 'Подменный дежурный' },
-      { key: 'view_all_stages',     label: 'Все стадии воронки' },
-    ],
+    group: 'Партнёры',
+    resource: 'Партнёры',
+    description: 'Рефералы, посредники, собственники',
+    map: {
+      edit: 'manage_partners',
+      export: 'export_data',
+      analytics: 'view_network_analytics',
+    },
+  },
+  {
+    group: 'Аналитика',
+    resource: 'BI / Дашборды',
+    description: 'Агрегированные показатели',
+    map: {
+      view: 'see_analytics',
+      finance: 'see_finance',
+      analytics: ['see_analytics', 'view_network_analytics', 'view_lead_analytics'],
+    },
+  },
+  {
+    group: 'Админ',
+    resource: 'Система',
+    description: 'Рассылки, блокировки, подмены',
+    map: {
+      edit: ['manage_mailings', 'block_account', 'set_substitute', 'add_lead_source'],
+      export: 'export_data',
+      manage: 'manage_team',
+    },
   },
 ]
 
@@ -124,13 +182,38 @@ export function TeamAccessPage() {
 
   const selectedOverridesCount = selectedPerson ? Object.keys(overrides[selectedPerson.id] ?? {}).length : 0
 
+  const columnKeys = ACCESS_COLUMNS.map((c) => c.key)
+
+  const getAllowed = (personId: string, role: UserRole, actionOrActions: PermissionAction | PermissionAction[] | undefined) => {
+    if (!actionOrActions) return false
+    const actions = Array.isArray(actionOrActions) ? actionOrActions : [actionOrActions]
+    return actions.some((a) => hasPermission(personId, role, a))
+  }
+
+  const toggleCell = (personId: string, role: UserRole, actionOrActions: PermissionAction | PermissionAction[] | undefined) => {
+    if (!actionOrActions) return
+    const actions = Array.isArray(actionOrActions) ? actionOrActions : [actionOrActions]
+    if (actions.length === 0) return
+
+    // Если в ячейке несколько разрешений — переключаем "все" в одно состояние:
+    // если хоть одно выключено → включаем все, иначе выключаем все.
+    const anyOff = actions.some((a) => !hasPermission(personId, role, a))
+    const desired = anyOff
+
+    actions.forEach((a) => {
+      const current = hasPermission(personId, role, a)
+      if (current === desired) return
+      togglePermission(personId, role, a)
+    })
+  }
+
   return (
     <DashboardShell>
       <div style={{ padding: '24px 28px 40px' }}>
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 4 }}>Матрица доступов сотрудников</div>
           <div style={{ fontSize: 12, color: C.whiteLow }}>
-            Права назначаются конкретным людям. База берётся из роли, индивидуальные правки доступны собственнику.
+            Формула по ТЗ: действие + сущность. База берётся из роли, индивидуальные правки доступны собственнику.
           </div>
         </div>
 
@@ -201,68 +284,137 @@ export function TeamAccessPage() {
                 </div>
               )}
             </div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 620 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 980 }}>
               <thead>
                 <tr style={{ borderBottom: `1px solid ${C.border}` }}>
                   <th style={{ padding: '14px 18px', textAlign: 'left', fontSize: 11, color: C.whiteLow, fontWeight: 600, width: 260 }}>
-                    Действие
+                    Сущность
                   </th>
-                  <th style={{ padding: '14px 10px', textAlign: 'center', minWidth: 120, fontSize: 11, color: C.whiteLow, fontWeight: 600 }}>
-                    Доступ
-                  </th>
+                  {ACCESS_COLUMNS.map((col) => (
+                    <th
+                      key={col.key}
+                      style={{
+                        padding: '14px 10px',
+                        textAlign: 'center',
+                        fontSize: 11,
+                        color: C.whiteLow,
+                        fontWeight: 600,
+                        width: col.width,
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {col.label}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {ACTION_GROUPS.flatMap(({ group, actions }) => {
-                  const rows: ReactNode[] = [
+                {Array.from(new Set(ACCESS_ROWS.map((r) => r.group))).flatMap((group) => {
+                  const rowsInGroup = ACCESS_ROWS.filter((r) => r.group === group)
+                  const groupRows: ReactNode[] = [
                     (
                       <tr key={`group-${group}`}>
-                        <td colSpan={2} style={{
-                          padding: '10px 18px 6px',
-                          fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
-                          color: C.gold, background: 'rgba(201,168,76,0.04)',
-                          borderTop: `1px solid ${C.border}`,
-                        }}>
+                        <td
+                          colSpan={1 + columnKeys.length}
+                          style={{
+                            padding: '10px 18px 6px',
+                            fontSize: 10,
+                            fontWeight: 700,
+                            letterSpacing: '0.12em',
+                            textTransform: 'uppercase',
+                            color: C.gold,
+                            background: 'rgba(201,168,76,0.04)',
+                            borderTop: `1px solid ${C.border}`,
+                          }}
+                        >
                           {group}
                         </td>
                       </tr>
                     ),
                   ]
 
-                  actions.forEach((action, i) => {
-                    const allowed = selectedPerson && selectedRole
-                      ? hasPermission(selectedPerson.id, selectedRole, action.key)
-                      : false
-                    rows.push(
-                      <tr key={action.key} style={{ borderBottom: i < actions.length - 1 ? `1px solid rgba(255,255,255,0.04)` : 'none' }}>
-                        <td style={{ padding: '10px 18px', fontSize: 12, color: C.whiteMid }}>{action.label}</td>
-                        <td style={{ padding: '10px', textAlign: 'center' }}>
-                          <button
-                            type="button"
-                            disabled={!canEdit || !selectedPerson || !selectedRole}
-                            onClick={() => selectedPerson && selectedRole && togglePermission(selectedPerson.id, selectedRole, action.key)}
-                            style={{
-                              border: 'none',
-                              background: 'transparent',
-                              cursor: canEdit ? 'pointer' : 'default',
-                              padding: 0,
-                            }}
-                          >
-                            {allowed
-                              ? <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 24, height: 24, borderRadius: '50%', background: 'rgba(74,222,128,0.12)' }}>
-                                  <Check size={13} color="#4ade80" />
-                                </div>
-                              : <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 24, height: 24, borderRadius: '50%', background: 'rgba(255,255,255,0.04)' }}>
-                                  <X size={13} color="rgba(255,255,255,0.18)" />
-                                </div>
-                            }
-                          </button>
+                  rowsInGroup.forEach((row, idx) => {
+                    groupRows.push(
+                      <tr
+                        key={`${group}-${row.resource}`}
+                        style={{
+                          borderBottom:
+                            idx < rowsInGroup.length - 1 ? `1px solid rgba(255,255,255,0.04)` : 'none',
+                        }}
+                      >
+                        <td style={{ padding: '12px 18px' }}>
+                          <div style={{ fontSize: 12, color: C.whiteMid, fontWeight: 700 }}>{row.resource}</div>
+                          {row.description && (
+                            <div style={{ marginTop: 3, fontSize: 10, color: C.whiteLow }}>
+                              {row.description}
+                            </div>
+                          )}
                         </td>
+                        {ACCESS_COLUMNS.map((col) => {
+                          const actionOrActions = row.map[col.key]
+                          const allowed =
+                            selectedPerson && selectedRole
+                              ? getAllowed(selectedPerson.id, selectedRole, actionOrActions)
+                              : false
+
+                          const clickable = Boolean(actionOrActions) && canEdit && selectedPerson && selectedRole
+
+                          return (
+                            <td key={`${row.resource}-${col.key}`} style={{ padding: '10px', textAlign: 'center' }}>
+                              <button
+                                type="button"
+                                disabled={!clickable}
+                                onClick={() =>
+                                  selectedPerson && selectedRole &&
+                                  toggleCell(selectedPerson.id, selectedRole, actionOrActions)
+                                }
+                                style={{
+                                  border: 'none',
+                                  background: 'transparent',
+                                  cursor: clickable ? 'pointer' : 'default',
+                                  padding: 0,
+                                  opacity: actionOrActions ? 1 : 0.35,
+                                }}
+                                title={!actionOrActions ? 'Не применяется' : undefined}
+                              >
+                                {allowed ? (
+                                  <div
+                                    style={{
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      width: 24,
+                                      height: 24,
+                                      borderRadius: '50%',
+                                      background: 'rgba(74,222,128,0.12)',
+                                    }}
+                                  >
+                                    <Check size={13} color="#4ade80" />
+                                  </div>
+                                ) : (
+                                  <div
+                                    style={{
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      width: 24,
+                                      height: 24,
+                                      borderRadius: '50%',
+                                      background: 'rgba(255,255,255,0.04)',
+                                    }}
+                                  >
+                                    <X size={13} color="rgba(255,255,255,0.18)" />
+                                  </div>
+                                )}
+                              </button>
+                            </td>
+                          )
+                        })}
                       </tr>,
                     )
                   })
 
-                  return rows
+                  return groupRows
                 })}
               </tbody>
             </table>

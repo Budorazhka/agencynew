@@ -3,8 +3,10 @@ import {
   LayoutDashboard,
   CreditCard,
   Building2,
+  BookMarked,
   CalendarDays,
   Building,
+  GraduationCap,
   Settings,
   LogOut,
   PanelLeftClose,
@@ -30,6 +32,12 @@ const RAIL = [
       p.startsWith('/dashboard/bookings'),
   },
   {
+    label: 'Брони / Регистрации',
+    to: '/dashboard/bookings',
+    icon: BookMarked,
+    match: (p: string) => p.startsWith('/dashboard/bookings'),
+  },
+  {
     label: 'База объектов',
     to: '/dashboard/objects',
     icon: Building2,
@@ -45,14 +53,19 @@ const RAIL = [
     match: (p: string) => p.startsWith('/dashboard/tasks') || p.startsWith('/dashboard/calendar'),
   },
   {
+    label: 'Обучение',
+    to: '/dashboard/lms',
+    icon: GraduationCap,
+    match: (p: string) => p.startsWith('/dashboard/lms') || p.startsWith('/dashboard/learning'),
+  },
+  {
     label: 'Компания',
     to: '/dashboard/team',
     icon: Building,
     match: (p: string) =>
       p.startsWith('/dashboard/team') ||
       p.startsWith('/dashboard/partners') ||
-      p.startsWith('/dashboard/learning') ||
-      p.startsWith('/dashboard/lms'),
+      p.startsWith('/dashboard/partners'),
   },
 ] as const
 
@@ -96,7 +109,7 @@ export function DashboardAppRail() {
   return (
     <aside
       className={cn(
-        'z-50 flex h-screen shrink-0 flex-col border-r border-emerald-900/20 bg-[#00110d]',
+        'z-50 flex h-screen shrink-0 flex-col border-r border-emerald-900/20 bg-[var(--rail-bg)]',
         'py-4 shadow-[inset_-1px_0_0_rgba(201,168,76,0.1),30px_0_30px_rgba(0,17,13,0.4)]',
         'transition-[width] duration-200 ease-out',
         railCollapsed ? RAIL_COLLAPSED_W : RAIL_EXPANDED_W,
@@ -111,7 +124,7 @@ export function DashboardAppRail() {
             title={railCollapsed ? 'Развернуть меню' : 'Свернуть до иконок'}
             aria-expanded={!railCollapsed}
             className={cn(
-              'flex items-center rounded-md border border-emerald-900/30 bg-[#0a1f1a]/80 p-2 text-emerald-100/70 transition-colors hover:border-[#e6c364]/30 hover:text-[#e6c364]',
+              'flex items-center rounded-md border border-emerald-900/30 bg-[var(--rail-surface)] p-2 text-emerald-100/70 transition-colors hover:border-[#e6c364]/30 hover:text-[#e6c364]',
               railCollapsed ? 'justify-center' : 'gap-3',
             )}
           >
@@ -195,7 +208,7 @@ export function DashboardAppRail() {
 
         {!railCollapsed ? (
           <div className="mt-4 flex items-center gap-3 border-t border-emerald-900/20 pt-4">
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-[#e6c364]/20 bg-[#0a1f1a] text-[10px] font-bold text-[#e6c364]">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-[#e6c364]/20 bg-[var(--rail-surface)] text-[10px] font-bold text-[#e6c364]">
               {shortName}
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
@@ -217,7 +230,7 @@ export function DashboardAppRail() {
         ) : (
           <div className="mt-2 flex flex-col items-center gap-2 border-t border-emerald-900/20 pt-3">
             <div
-              className="flex size-8 items-center justify-center rounded-full border border-[#e6c364]/20 bg-[#0a1f1a] text-[10px] font-bold text-[#e6c364]"
+              className="flex size-8 items-center justify-center rounded-full border border-[#e6c364]/20 bg-[var(--rail-surface)] text-[10px] font-bold text-[#e6c364]"
               title={`${displayLast} · ${roleLabel}`}
             >
               {shortName}

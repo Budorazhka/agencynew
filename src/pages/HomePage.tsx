@@ -105,12 +105,29 @@ export default function HomePage() {
         <main className="min-h-0 flex-1 overflow-y-auto p-8">
           <div className="mx-auto max-w-7xl">
             <header className="mb-10">
-              <h2 className="mb-1 text-3xl font-extrabold tracking-tight text-white">
-                Добро пожаловать, {firstName}
-              </h2>
-              <p className="text-sm opacity-70">
-                {productTitle} — ваша сводка на сегодня.
-              </p>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div className="min-w-0">
+                  <h2 className="mb-1 text-3xl font-extrabold tracking-tight text-white">
+                    Добро пожаловать, {firstName}
+                  </h2>
+                  <p className="text-sm opacity-70">
+                    {productTitle} — ваша сводка на сегодня.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/dashboard/bookings')}
+                    className={cn(
+                      'inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold transition-colors',
+                      'border border-[#e6c364]/35 bg-[#0a1f1a] text-[#e6c364] hover:bg-[#0f231e] hover:border-[#e6c364]/55'
+                    )}
+                  >
+                    Брони / Регистрации
+                  </button>
+                </div>
+              </div>
             </header>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

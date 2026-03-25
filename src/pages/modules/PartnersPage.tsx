@@ -1,5 +1,5 @@
 import ModuleHub from '@/components/ModuleHub'
-import { List, Handshake, Share2, Home, Receipt } from 'lucide-react'
+import { List, Handshake, Share2, Home, Receipt, Network } from 'lucide-react'
 
 export default function PartnersPage() {
   return (
@@ -38,6 +38,12 @@ export default function PartnersPage() {
           title: 'Комиссии и акты',
           description: 'Расчёт вознаграждений и документы по выплатам.',
           route: '/dashboard/partners/list',
+        },
+        {
+          icon: <Network size={20} color="#c9a84c" />,
+          title: 'МЛМ аналитика',
+          description: 'Отчёты по структуре, линиям и активности сети.',
+          route: '/dashboard/partners/mlm',
         },
       ]}
     />

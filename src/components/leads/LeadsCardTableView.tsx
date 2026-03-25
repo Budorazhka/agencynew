@@ -212,6 +212,7 @@ export function LeadsCardTableView({
   }, [variant])
 
   const focusLeadIdFromUrl = searchParams.get("lead")
+  const openDistributionFromUrl = searchParams.get("distribution")
 
   /** Переход из карточки сделки: полная карточка лида (?lead=…) */
   useEffect(() => {
@@ -244,6 +245,25 @@ export function LeadsCardTableView({
       { replace: true },
     )
   }, [variant, focusLeadIdFromUrl, leadPool, setSearchParams, onSelectedManagerIdChange])
+
+  /** Глубокая ссылка: открыть «Распределение» сразу при входе (?distribution=1) */
+  useEffect(() => {
+    if (variant !== "page") return
+    if (openDistributionFromUrl !== "1") return
+
+    // чтобы не "зацикливать" параметр, убираем его сразу
+    setSearchParams(
+      (prev) => {
+        const p = new URLSearchParams(prev)
+        p.delete("distribution")
+        return p
+      },
+      { replace: true },
+    )
+
+    if (!canOpenDistribution) return
+    setDistributionOpen(true)
+  }, [variant, openDistributionFromUrl, canOpenDistribution, setSearchParams])
 
   const managerNameById = useMemo(() => {
     const map: Record<string, string> = {}

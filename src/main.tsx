@@ -61,6 +61,7 @@ import DashboardsPage from '@/pages/modules/DashboardsPage'
 import LeadsHubPage from '@/pages/modules/LeadsHubPage'
 import ClientsPage from '@/pages/modules/ClientsPage'
 import PartnersPage from '@/pages/modules/PartnersPage'
+import PartnersMlmAnalyticsPage from '@/pages/modules/PartnersMlmAnalyticsPage'
 import ObjectsPage from '@/pages/modules/ObjectsPage'
 import BookingsPage from '@/pages/modules/BookingsPage'
 import DealsPage from '@/pages/modules/DealsPage'
@@ -163,6 +164,7 @@ createRoot(document.getElementById('root')!).render(
                           <Route path="calendar/personal" element={<CalendarPageFull />} />
                           <Route path="calendar/team" element={<CalendarPageFull />} />
                           <Route path="partners" element={<PartnersPage />} />
+                          <Route path="partners/mlm" element={<PartnersMlmAnalyticsPage />} />
                           <Route path="partners/list" element={<PartnersListPage />} />
                           <Route path="partners/:partnerId" element={<PartnerCardPage />} />
                           <Route path="selections" element={<SelectionsPage />} />

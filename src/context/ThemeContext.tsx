@@ -1,15 +1,38 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 
-export type ThemeType = 'felt' | 'standard'
+export type ThemeType = 'felt' | 'standard' | 'light'
+export type ThemePreference = 'auto' | 'standard' | 'light'
 
 interface ThemeContextValue {
   theme: ThemeType
   isFeltStyle: boolean
+  preference: ThemePreference
+  setPreference: (pref: ThemePreference) => void
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null)
+
+const THEME_PREFERENCE_STORAGE_KEY = 'maindash.themePreference'
+
+function readPreferenceFromStorage(): ThemePreference {
+  try {
+    const raw = localStorage.getItem(THEME_PREFERENCE_STORAGE_KEY)
+    if (raw === 'auto' || raw === 'standard' || raw === 'light') return raw
+  } catch {
+    // ignore
+  }
+  return 'auto'
+}
+
+function writePreferenceToStorage(pref: ThemePreference) {
+  try {
+    localStorage.setItem(THEME_PREFERENCE_STORAGE_KEY, pref)
+  } catch {
+    // ignore
+  }
+}
 
 // Маршруты аналитики сети партнёров содержат '/partner' в пути
 function isAnalyticsNetworkRoute(pathname: string): boolean {
@@ -39,12 +62,34 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const location = useLocation()
   const auth = useAuth()
   const currentUser = auth?.currentUser || null
+  const [preference, setPreferenceState] = useState<ThemePreference>(() => readPreferenceFromStorage())
 
-  const themeValue = useMemo(() => {
-    const isFeltStyle = shouldUseFeltTheme(location.pathname, currentUser?.accountType)
-    const theme: ThemeType = isFeltStyle ? 'felt' : 'standard'
-    return { theme, isFeltStyle }
-  }, [location.pathname, currentUser?.accountType])
+  const setPreference = (pref: ThemePreference) => {
+    setPreferenceState(pref)
+    writePreferenceToStorage(pref)
+  }
+
+  const themeValue = useMemo<ThemeContextValue>(() => {
+    let theme: ThemeType
+
+    if (preference === 'light') {
+      theme = 'light'
+    } else if (preference === 'standard') {
+      theme = 'standard'
+    } else {
+      const isFeltStyle = shouldUseFeltTheme(location.pathname, currentUser?.accountType)
+      theme = isFeltStyle ? 'felt' : 'standard'
+    }
+
+    const isFeltStyle = theme === 'felt'
+    return { theme, isFeltStyle, preference, setPreference }
+  }, [location.pathname, currentUser?.accountType, preference])
+
+  useEffect(() => {
+    // Глобально выставляем тему на <html>, чтобы CSS-переменные работали везде (включая body).
+    const root = document.documentElement
+    root.dataset.theme = themeValue.theme
+  }, [themeValue.theme])
 
   return (
     <ThemeContext.Provider value={themeValue}>

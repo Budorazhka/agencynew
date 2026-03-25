@@ -57,7 +57,7 @@ export function SettingsPage() {
     : visibleItems[0]?.id ?? 'profile'
 
   return (
-    <div className="min-h-screen bg-[#031712] text-[#d0e8df]">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)]">
       <div className="relative z-10 p-6 lg:p-8">
 
         {/* Header */}
@@ -70,7 +70,7 @@ export function SettingsPage() {
         <div className="flex gap-8 items-start">
 
           {/* Sidebar — в том же стиле, что и блоки контента */}
-          <nav className="w-52 shrink-0 rounded-xl border border-[rgba(242,207,141,0.14)] bg-[#0a1f1a] p-2">
+          <nav className="w-52 shrink-0 rounded-xl border border-[rgba(242,207,141,0.14)] bg-[var(--green-card)] p-2">
             {visibleItems.map((item, idx) => {
               const showSep = item.separator && idx > 0
               return (
@@ -115,7 +115,7 @@ export function SettingsPage() {
             {resolvedSection === 'billing'       && <BillingTab />}
             {resolvedSection === 'security'      && <SecurityTab />}
             {resolvedSection === 'branding'      && (
-              <div className="rounded-xl border border-[rgba(242,207,141,0.14)] bg-[#0a1f1a] p-6">
+              <div className="rounded-xl border border-[rgba(242,207,141,0.14)] bg-[var(--green-card)] p-6">
                 <p className="text-xs uppercase tracking-widest text-[rgba(242,207,141,0.45)] mb-1">Оформление</p>
                 <h2 className="text-xl font-bold text-[#fcecc8] mb-4">Брендинг агентства</h2>
                 <p className="text-sm text-[rgba(242,207,141,0.5)] mb-6">

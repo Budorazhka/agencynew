@@ -1,5 +1,5 @@
 import ModuleHub from '@/components/ModuleHub'
-import { CreditCard, Palette, Bell, SlidersHorizontal, Settings } from 'lucide-react'
+import { CreditCard, Palette, Bell, SlidersHorizontal, Settings, Paintbrush } from 'lucide-react'
 
 export default function SettingsHubPage() {
   return (
@@ -17,9 +17,15 @@ export default function SettingsHubPage() {
         },
         {
           icon: <Palette size={20} color="#c9a84c" />,
-          title: 'White-label и тема',
-          description: 'Название компании, акцентный цвет, шрифт, логотип.',
+          title: 'Внешний вид',
+          description: 'Тема интерфейса (светлая/тёмная) и оформление.',
           route: '/dashboard/settings/theme',
+        },
+        {
+          icon: <Paintbrush size={20} color="#c9a84c" />,
+          title: 'Брендинг агентства',
+          description: 'Название и логотип агентства.',
+          route: '/dashboard/settings',
         },
         {
           icon: <CreditCard size={20} color="#c9a84c" />,

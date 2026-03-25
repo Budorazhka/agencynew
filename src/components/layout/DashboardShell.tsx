@@ -49,7 +49,7 @@ const S = {
   root: {
     display: 'flex',
     height: '100vh',
-    background: '#031712',
+    background: 'var(--app-bg)',
     overflow: 'hidden',
     fontFamily: 'Inter, sans-serif',
   } as React.CSSProperties,
@@ -162,7 +162,7 @@ const S = {
     display: 'flex',
     flexDirection: 'column' as const,
     overflow: 'hidden',
-    background: '#031712',
+    background: 'var(--app-bg)',
   },
 
   topbar: {
@@ -223,7 +223,7 @@ const S = {
     minHeight: 0,
     overflowY: 'auto' as const,
     overflowX: 'hidden' as const,
-    background: '#031712',
+    background: 'var(--app-bg)',
     display: 'flex',
     flexDirection: 'column' as const,
   },
@@ -234,7 +234,7 @@ const S = {
     left: 0,
     right: 0,
     marginTop: 4,
-    background: '#1a2520',
+    background: 'var(--green-card)',
     border: '1px solid rgba(255,255,255,0.12)',
     borderRadius: 10,
     boxShadow: '0 8px 32px rgba(0,0,0,0.5)',

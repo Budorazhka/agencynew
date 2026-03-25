@@ -60,7 +60,7 @@ export default function ModuleHub({
       inset: 0,
       display: 'flex',
       flexDirection: 'column',
-      background: '#031712',
+      background: 'var(--app-bg)',
       padding: '32px 40px',
       fontFamily: 'Inter, sans-serif',
       overflowY: 'auto',

@@ -479,10 +479,8 @@ export function LMSPage() {
 
   return (
     <>
-      <div className="leads-page-root min-h-screen">
-        <div className="leads-page-bg" aria-hidden />
-        <div className="leads-page-ornament" aria-hidden />
-        <div className="leads-page relative z-10 space-y-8 p-6 lg:p-8">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)]">
+        <div className="space-y-8 p-6 lg:p-8">
 
           {/* Header */}
           <div>
