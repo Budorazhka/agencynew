@@ -13,6 +13,7 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeft,
+  Store,
 } from 'lucide-react'
 import { useAgencyBranding } from '@/hooks/useAgencyBranding'
 import { useAuth } from '@/context/AuthContext'
@@ -23,6 +24,12 @@ import { useTheme } from '@/hooks/useTheme'
 
 const RAIL = [
   { label: 'Рабочий стол', to: '/dashboard', icon: LayoutDashboard, end: true },
+  {
+    label: 'Маркетплейс',
+    to: '/dashboard/marketplace',
+    icon: Store,
+    match: (p: string) => p.startsWith('/dashboard/marketplace'),
+  },
   {
     label: 'CRM (Продажи)',
     to: '/dashboard/crm',
@@ -52,9 +59,7 @@ const RAIL = [
     to: '/dashboard/objects',
     icon: Building2,
     match: (p: string) =>
-      p.startsWith('/dashboard/objects') ||
-      p.startsWith('/dashboard/selections') ||
-      p.startsWith('/dashboard/marketplace'),
+      p.startsWith('/dashboard/objects') || p.startsWith('/dashboard/selections'),
   },
   {
     label: 'Задачи',
@@ -70,7 +75,7 @@ const RAIL = [
   },
   {
     label: 'Обучение',
-    to: '/dashboard/lms',
+    to: '/dashboard/learning',
     icon: GraduationCap,
     match: (p: string) => p.startsWith('/dashboard/lms') || p.startsWith('/dashboard/learning'),
   },
@@ -97,6 +102,8 @@ function isRailItemActive(pathname: string, item: (typeof RAIL)[number]): boolea
 
 const RAIL_EXPANDED_W = 'w-64' // 256px
 const RAIL_COLLAPSED_W = 'w-[72px]' // 60–80px по ТЗ
+/** Как иконки плиток в ModuleHub (lucide size 20) */
+const RAIL_ICON = 'size-5 shrink-0' // 20px
 
 export function DashboardAppRail() {
   const navigate = useNavigate()
@@ -146,15 +153,15 @@ export function DashboardAppRail() {
               'flex items-center rounded-md border p-2 transition-colors',
               isLight
                 ? 'border-slate-200 bg-slate-100 text-slate-600 hover:border-[var(--gold)]/50 hover:text-slate-900'
-                : 'border-emerald-900/30 bg-[var(--rail-surface)] text-emerald-100/70 hover:border-[#e6c364]/30 hover:text-[#e6c364]',
+                : 'border-emerald-900/30 bg-[var(--rail-surface)] text-emerald-100/70 hover:border-[color:var(--rail-active-border)] hover:text-[color:var(--rail-active-fg)]',
               railCollapsed ? 'justify-center' : 'gap-3',
             )}
           >
             {railCollapsed ? (
-              <PanelLeft className="size-[18px] shrink-0" strokeWidth={2} />
+              <PanelLeft className={RAIL_ICON} strokeWidth={2} />
             ) : (
               <>
-                <PanelLeftClose className="size-[18px] shrink-0" strokeWidth={2} />
+                <PanelLeftClose className={RAIL_ICON} strokeWidth={2} />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Свернуть</span>
               </>
             )}
@@ -168,7 +175,7 @@ export function DashboardAppRail() {
                 </span>
               </div>
               <div className="min-w-0">
-                <h1 className="truncate text-lg font-bold tracking-tight text-[#e6c364]">{productTitle}</h1>
+                <h1 className="truncate text-lg font-bold tracking-tight text-[color:var(--rail-product-title)]">{productTitle}</h1>
                 <p className="font-[Inter] text-[10px] uppercase tracking-widest text-[color:var(--app-text-muted)]">
                   {productSub}
                 </p>
@@ -203,7 +210,7 @@ export function DashboardAppRail() {
                 railCollapsed ? 'justify-center px-0 py-3' : 'px-6 py-3',
                 active
                   ? cn(
-                      'translate-x-0 border-l-2 border-[#e6c364] text-[#e6c364] sm:translate-x-1',
+                      'translate-x-0 border-l-2 border-[color:var(--rail-active-border)] text-[color:var(--rail-active-fg)] sm:translate-x-1',
                       isLight ? 'bg-[var(--nav-item-bg-active)]' : 'bg-emerald-900/30',
                     )
                   : cn(
@@ -215,7 +222,7 @@ export function DashboardAppRail() {
               )}
             >
               <Icon
-                className={cn('size-[18px] shrink-0', !railCollapsed && 'mr-4')}
+                className={cn(RAIL_ICON, !railCollapsed && 'mr-4')}
                 strokeWidth={active ? 2.25 : 1.75}
               />
               {!railCollapsed && <span className="truncate">{item.label}</span>}
@@ -237,7 +244,7 @@ export function DashboardAppRail() {
             railCollapsed ? 'justify-center' : '',
           )}
         >
-          <Settings className={cn('size-[18px] shrink-0', !railCollapsed && 'mr-4')} strokeWidth={1.75} />
+          <Settings className={cn(RAIL_ICON, !railCollapsed && 'mr-4')} strokeWidth={1.75} />
           {!railCollapsed && 'Настройки'}
         </button>
 
@@ -248,7 +255,7 @@ export function DashboardAppRail() {
               isLight ? 'border-[var(--green-border)]' : 'border-emerald-900/20',
             )}
           >
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-[#e6c364]/20 bg-[var(--rail-surface)] text-[10px] font-bold text-[#e6c364]">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-[color:var(--rail-footer-avatar-border)] bg-[var(--rail-surface)] text-[10px] font-bold text-[color:var(--rail-footer-avatar-text)]">
               {shortName}
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
@@ -263,11 +270,11 @@ export function DashboardAppRail() {
                 navigate('/')
               }}
               className={cn(
-                'shrink-0 hover:text-[#e6c364]',
+                'shrink-0 hover:text-[color:var(--theme-accent-link)]',
                 isLight ? 'text-slate-400' : 'text-emerald-100/40',
               )}
             >
-              <LogOut className="size-4" />
+              <LogOut className={RAIL_ICON} />
             </button>
           </div>
         ) : (
@@ -278,7 +285,7 @@ export function DashboardAppRail() {
             )}
           >
             <div
-              className="flex size-8 items-center justify-center rounded-full border border-[#e6c364]/20 bg-[var(--rail-surface)] text-[10px] font-bold text-[#e6c364]"
+              className="flex size-8 items-center justify-center rounded-full border border-[color:var(--rail-footer-avatar-border)] bg-[var(--rail-surface)] text-[10px] font-bold text-[color:var(--rail-footer-avatar-text)]"
               title={`${displayLast} · ${roleLabel}`}
             >
               {shortName}
@@ -290,9 +297,9 @@ export function DashboardAppRail() {
                 logout()
                 navigate('/')
               }}
-              className={cn('hover:text-[#e6c364]', isLight ? 'text-slate-400' : 'text-emerald-100/40')}
+              className={cn('hover:text-[color:var(--theme-accent-link)]', isLight ? 'text-slate-400' : 'text-emerald-100/40')}
             >
-              <LogOut className="size-4" />
+              <LogOut className={RAIL_ICON} />
             </button>
           </div>
         )}

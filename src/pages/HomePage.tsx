@@ -11,7 +11,7 @@ const ADD_ACTIONS = [
   { label: 'Новый лид', route: '/dashboard/leads/poker' },
   { label: 'Новый клиент', route: '/dashboard/clients/list' },
   { label: 'Новая сделка', route: '/dashboard/deals' },
-  { label: 'Новая задача', route: '/dashboard/tasks' },
+  { label: 'Новая задача', route: '/dashboard/tasks/new' },
   { label: 'Новая подборка', route: '/dashboard/selections/new' },
   { label: 'Новая бронь', route: '/dashboard/bookings' },
   { label: 'Событие в календаре', route: '/dashboard/calendar' },
@@ -48,7 +48,7 @@ export default function HomePage() {
           )}
         >
           <div className="flex w-full max-w-[400px] items-center rounded-lg border border-[var(--shell-search-border)] bg-[var(--shell-elevated-bg)] px-4 py-2">
-            <Search className="mr-3 size-[18px] shrink-0 text-[color:var(--workspace-text-dim)]" />
+            <Search className="mr-3 size-5 shrink-0 text-[color:var(--workspace-text-dim)]" />
             <input
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
@@ -63,7 +63,7 @@ export default function HomePage() {
                 onClick={() => setAddOpen(o => !o)}
                 className="flex items-center gap-2 rounded-sm bg-[#e6c364] px-4 py-1.5 text-sm font-medium text-[#3d2e00] transition-all hover:brightness-110 active:scale-95"
               >
-                <Plus className="size-[18px]" />
+                <Plus className="size-5" />
                 Добавить
                 <ChevronDown className={cn('size-4 transition-transform', addOpen && 'rotate-180')} />
               </button>
@@ -90,14 +90,14 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => navigate('/dashboard/settings-hub')}
-                className="transition-colors hover:text-[var(--gold)]"
+                className="transition-colors hover:text-[color:var(--theme-accent-link)]"
                 aria-label="Настройки"
               >
-                <Settings className="size-[22px]" strokeWidth={1.5} />
+                <Settings className="size-5" strokeWidth={1.75} />
               </button>
             </div>
             <div className="h-8 w-px bg-[var(--divider-subtle)]" />
-            <div className="flex size-8 items-center justify-center rounded-full border border-[var(--header-avatar-border)] bg-[var(--header-avatar-bg)] text-[10px] font-bold text-[var(--gold)]">
+            <div className="flex size-8 items-center justify-center rounded-full border border-[var(--header-avatar-border)] bg-[var(--header-avatar-bg)] text-[10px] font-bold text-[color:var(--home-header-avatar-text)]">
               {shortName}
             </div>
           </div>

@@ -136,7 +136,7 @@ export function NotificationCenter() {
           transition: 'all 0.15s',
         }}
       >
-        <Bell size={15} />
+        <Bell size={20} strokeWidth={1.75} />
         {unread > 0 && (
           <div style={{
             position: 'absolute' as const,

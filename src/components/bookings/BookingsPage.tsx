@@ -229,6 +229,15 @@ function CountdownTimer({ expiresAt, status }: { expiresAt: string; status: Book
 
 type FilterTab = 'all' | 'client' | 'apartment' | 'active' | 'expired'
 
+/** client — только фиксация клиента в ЖК; buyer — бронь квартиры (первичка/вторичка); all — полный список (история). */
+type BookingsFlowVariant = 'client' | 'buyer' | 'all'
+
+function bookingsVariantFromPath(pathname: string): BookingsFlowVariant {
+  if (pathname.includes('/bookings/history')) return 'all'
+  if (pathname.includes('/register-buyer') || pathname.includes('/bookings/apartment')) return 'buyer'
+  return 'client'
+}
+
 function apartmentMarket(b: Booking): BookingPropertyMarket {
   if (b.type !== 'apartment') return 'primary'
   return b.propertyMarket ?? 'primary'
@@ -237,6 +246,7 @@ function apartmentMarket(b: Booking): BookingPropertyMarket {
 export function BookingsPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  const variant = bookingsVariantFromPath(location.pathname)
   const { currentUser } = useAuth()
   const { state: leadsState } = useLeads()
   const [bookings, setBookings] = useState<Booking[]>(() => [...BOOKINGS_MOCK])
@@ -273,9 +283,13 @@ export function BookingsPage() {
   )
 
   function openPrimaryModal() {
-    if (tab === 'client') setPrimKind('client')
-    else if (tab === 'apartment' && apartmentSubTab === 'primary') setPrimKind('apartment')
-    else setPrimKind('client')
+    if (variant === 'buyer') setPrimKind('apartment')
+    else if (variant === 'client') setPrimKind('client')
+    else {
+      if (tab === 'client') setPrimKind('client')
+      else if (tab === 'apartment' && apartmentSubTab === 'primary') setPrimKind('apartment')
+      else setPrimKind('client')
+    }
     setPrimRcId('')
     setPrimAptId('')
     setPrimClient('')
@@ -377,18 +391,31 @@ export function BookingsPage() {
 
   useEffect(() => {
     const p = location.pathname
-    if (p.includes('/bookings/client')) setTab('client')
+    if (p.includes('/bookings/history')) setTab('expired')
     else if (p.includes('/bookings/apartment')) {
       setTab('apartment')
       setApartmentSubTab('primary')
-    } else if (p.includes('/bookings/history')) setTab('expired')
-    else if (/\/dashboard\/bookings\/?$/.test(p)) setTab('all')
+    } else if (p.includes('/bookings/client')) setTab('client')
+    else if (p.includes('/register-buyer') || p.includes('/register-client')) setTab('all')
   }, [location.pathname])
+
+  useEffect(() => {
+    if (variant === 'buyer') setPrimKind('apartment')
+    if (variant === 'client') setPrimKind('client')
+  }, [variant])
+
+  useEffect(() => {
+    if (variant === 'buyer' && tab === 'client') setTab('all')
+    if (variant === 'client' && tab === 'apartment') setTab('all')
+  }, [variant, tab])
 
   const isHistoryRoute = location.pathname.includes('/bookings/history')
 
   const filtered = useMemo(() => {
     return bookings.filter(b => {
+      if (variant === 'client' && b.type !== 'client') return false
+      if (variant === 'buyer' && b.type !== 'apartment') return false
+
       if (tab === 'active') {
         if (b.status !== 'active') return false
       } else if (tab === 'expired') {
@@ -405,17 +432,42 @@ export function BookingsPage() {
       }
       return true
     })
-  }, [bookings, tab, apartmentSubTab, isHistoryRoute])
+  }, [bookings, tab, apartmentSubTab, isHistoryRoute, variant])
 
-  const TABS: { key: FilterTab; label: string }[] = [
-    { key: 'all', label: 'Все' },
-    { key: 'active', label: 'Активные' },
-    { key: 'client', label: 'Брони клиента' },
-    { key: 'apartment', label: 'Брони квартиры' },
-    { key: 'expired', label: 'Истекшие' },
-  ]
+  const TABS: { key: FilterTab; label: string }[] = useMemo(() => {
+    if (variant === 'client') {
+      return [
+        { key: 'all' as const, label: 'Все' },
+        { key: 'active' as const, label: 'Активные' },
+        { key: 'client' as const, label: 'Брони клиента' },
+        { key: 'expired' as const, label: 'Истекшие' },
+      ]
+    }
+    if (variant === 'buyer') {
+      return [
+        { key: 'all' as const, label: 'Все' },
+        { key: 'active' as const, label: 'Активные' },
+        { key: 'apartment' as const, label: 'Брони квартиры' },
+        { key: 'expired' as const, label: 'Истекшие' },
+      ]
+    }
+    return [
+      { key: 'all' as const, label: 'Все' },
+      { key: 'active' as const, label: 'Активные' },
+      { key: 'client' as const, label: 'Брони клиента' },
+      { key: 'apartment' as const, label: 'Брони квартиры' },
+      { key: 'expired' as const, label: 'Истекшие' },
+    ]
+  }, [variant])
 
-  const activeCount = bookings.filter(b => b.status === 'active').length
+  const activeCount = useMemo(() => {
+    return bookings.filter(b => {
+      if (b.status !== 'active') return false
+      if (variant === 'client' && b.type !== 'client') return false
+      if (variant === 'buyer' && b.type !== 'apartment') return false
+      return true
+    }).length
+  }, [bookings, variant])
 
   return (
     <DashboardShell>
@@ -440,8 +492,8 @@ export function BookingsPage() {
           }}
         >
           <div style={{ marginBottom: 20 }}>
-            <button type="button" onClick={() => navigate('/dashboard/crm')} style={backToCrmBtn}>
-              <ArrowLeft size={18} strokeWidth={2} />
+            <button type="button" onClick={() => navigate('/dashboard/bookings')} style={backToCrmBtn}>
+              <ArrowLeft size={20} strokeWidth={2} />
               Назад
             </button>
           </div>
@@ -459,10 +511,28 @@ export function BookingsPage() {
           >
             <div style={{ textAlign: 'left' as const, flex: '1 1 240px' }}>
               <div style={{ fontSize: 26, fontWeight: 700, color: C.white, letterSpacing: '-0.01em' }}>
-                Брони / Регистрации
+                {variant === 'client'
+                  ? 'Регистрация клиента'
+                  : variant === 'buyer'
+                    ? 'Регистрация покупателя'
+                    : 'Брони / Регистрации'}
               </div>
               <div style={{ fontSize: 13, color: C.whiteLow, marginTop: 4, maxWidth: 560, lineHeight: 1.45 }}>
-                Бронь клиента — только новостройки (фиксация в ЖК). Бронь квартиры — первичка (шахматка) или вторичка (лот из своей базы и лид). ·{' '}
+                {variant === 'client' && (
+                  <>
+                    Фиксация приведённого клиента за жилым комплексом в новостройке (несколько таких регистраций на одного клиента допустимы). ·{' '}
+                  </>
+                )}
+                {variant === 'buyer' && (
+                  <>
+                    Бронь квартиры: новостройка (лот в ЖК) или вторичка из базы агентства. ·{' '}
+                  </>
+                )}
+                {variant === 'all' && (
+                  <>
+                    Бронь клиента — только новостройки (фиксация в ЖК). Бронь квартиры — первичка (шахматка) или вторичка (лот из своей базы и лид). ·{' '}
+                  </>
+                )}
                 <span style={{ color: C.gold, fontWeight: 600 }}>{activeCount}</span> активных
               </div>
             </div>
@@ -486,31 +556,33 @@ export function BookingsPage() {
                   cursor: 'pointer',
                 }}
               >
-                <Building2 size={16} strokeWidth={2} />
+                <Building2 size={20} strokeWidth={2} />
                 Новостройка
               </button>
-              <button
-                type="button"
-                onClick={openSecondaryModal}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  padding: '9px 16px',
-                  background: 'transparent',
-                  border: '1px solid rgba(201,168,76,0.45)',
-                  borderRadius: 7,
-                  color: '#e6c364',
-                  fontSize: 12,
-                  fontWeight: 700,
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase' as const,
-                  cursor: 'pointer',
-                }}
-              >
-                <Layers size={16} strokeWidth={2} />
-                Вторичка
-              </button>
+              {(variant === 'buyer' || variant === 'all') && (
+                <button
+                  type="button"
+                  onClick={openSecondaryModal}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '9px 16px',
+                    background: 'transparent',
+                    border: '1px solid rgba(201,168,76,0.45)',
+                    borderRadius: 7,
+                    color: '#e6c364',
+                    fontSize: 12,
+                    fontWeight: 700,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase' as const,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Layers size={20} strokeWidth={2} />
+                  Вторичка
+                </button>
+              )}
             </div>
           </div>
 
@@ -632,33 +704,45 @@ export function BookingsPage() {
       <Dialog open={primaryOpen} onOpenChange={setPrimaryOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)] sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#f5f5f5]">Бронь · новостройка</DialogTitle>
+            <DialogTitle className="text-[#f5f5f5]">
+              {variant === 'client'
+                ? 'Регистрация клиента в ЖК'
+                : variant === 'buyer'
+                  ? 'Бронь квартиры · новостройка'
+                  : 'Бронь · новостройка'}
+            </DialogTitle>
             <DialogDescription className="text-[color:var(--app-text-muted)]">
-              Два шага: сначала ЖК, затем при брони квартиры — лот (шахматка / каталог). Список позже подгрузится с сервера.
+              {variant === 'client' && 'Выберите жилой комплекс и укажите клиента. Список ЖК позже подгрузится с сервера.'}
+              {variant === 'buyer' &&
+                'Сначала ЖК, затем лот (шахматка / каталог). Список позже подгрузится с сервера.'}
+              {variant === 'all' &&
+                'Два шага: сначала ЖК, затем при брони квартиры — лот (шахматка / каталог). Список позже подгрузится с сервера.'}
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-1">
-            <div className="flex flex-wrap gap-2">
-              <span className="w-full text-[10px] font-bold uppercase tracking-wider text-[color:var(--app-text-subtle)]">Что бронируем</span>
-              {(['client', 'apartment'] as const).map(k => (
-                <button
-                  key={k}
-                  type="button"
-                  onClick={() => {
-                    setPrimKind(k)
-                    setPrimAptId('')
-                  }}
-                  className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                    primKind === k
-                      ? 'border-[#e6c364] bg-[#e6c364]/15 text-[#e6c364]'
-                      : 'border-[var(--green-border)] bg-transparent text-[color:var(--app-text-muted)] hover:bg-[var(--dropdown-hover)]'
-                  }`}
-                >
-                  {k === 'client' ? 'Клиента в ЖК' : 'Квартиру'}
-                </button>
-              ))}
-            </div>
+            {variant === 'all' && (
+              <div className="flex flex-wrap gap-2">
+                <span className="w-full text-[10px] font-bold uppercase tracking-wider text-[color:var(--app-text-subtle)]">Что бронируем</span>
+                {(['client', 'apartment'] as const).map(k => (
+                  <button
+                    key={k}
+                    type="button"
+                    onClick={() => {
+                      setPrimKind(k)
+                      setPrimAptId('')
+                    }}
+                    className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                      primKind === k
+                        ? 'border-[#e6c364] bg-[#e6c364]/15 text-[#e6c364]'
+                        : 'border-[var(--green-border)] bg-transparent text-[color:var(--app-text-muted)] hover:bg-[var(--dropdown-hover)]'
+                    }`}
+                  >
+                    {k === 'client' ? 'Клиента в ЖК' : 'Квартиру'}
+                  </button>
+                ))}
+              </div>
+            )}
 
             <div className="space-y-1.5">
               <Label className="text-[color:var(--app-text)]">1. Жилой комплекс</Label>
@@ -682,7 +766,7 @@ export function BookingsPage() {
               </Select>
             </div>
 
-            {primKind === 'apartment' && (
+            {(variant === 'buyer' || primKind === 'apartment') && (
               <div className="space-y-1.5">
                 <Label className="text-[color:var(--app-text)]">2. Квартира (лот)</Label>
                 <Select

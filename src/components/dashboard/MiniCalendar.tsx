@@ -16,7 +16,7 @@ function getFirstDayOfWeek(year: number, month: number) {
 
 const EVENT_DOT: Record<string, string> = {
   showing: 'bg-blue-400',
-  meeting: 'bg-[#e6c364]',
+  meeting: 'bg-[color:var(--workspace-cal-meeting-dot)]',
   call: 'bg-violet-400',
   signing: 'bg-emerald-400',
 }
@@ -62,13 +62,13 @@ export function MiniCalendar() {
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="min-w-0 text-sm font-bold tracking-tight text-[color:var(--workspace-text)]">
-          {MONTH_NAMES[month]} <span className="text-[#e6c364]">{year}</span>
+          {MONTH_NAMES[month]} <span className="text-[color:var(--workspace-cal-accent)]">{year}</span>
         </div>
         <div className="flex shrink-0 items-center gap-1">
           <button
             type="button"
             onClick={prevMonth}
-            className="rounded-md border border-[color:var(--hub-card-border)] bg-[var(--workspace-cal-nav-bg)] p-1.5 text-[color:var(--workspace-text-muted)] transition-colors hover:border-[#e6c364]/40 hover:text-[#e6c364]"
+            className="rounded-md border border-[color:var(--hub-card-border)] bg-[var(--workspace-cal-nav-bg)] p-1.5 text-[color:var(--workspace-text-muted)] transition-colors hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--theme-accent-link)]"
             aria-label="Предыдущий месяц"
           >
             <ChevronLeft className="size-4" />
@@ -76,14 +76,14 @@ export function MiniCalendar() {
           <button
             type="button"
             onClick={goThisMonth}
-            className="rounded-md border border-[rgba(230,195,100,0.35)] bg-[rgba(230,195,100,0.08)] px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[#e6c364]"
+            className="rounded-md border border-[color:var(--workspace-cal-chip-border)] bg-[var(--workspace-cal-chip-bg)] px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[color:var(--workspace-cal-chip-text)]"
           >
             Сегодня
           </button>
           <button
             type="button"
             onClick={nextMonth}
-            className="rounded-md border border-[color:var(--hub-card-border)] bg-[var(--workspace-cal-nav-bg)] p-1.5 text-[color:var(--workspace-text-muted)] transition-colors hover:border-[#e6c364]/40 hover:text-[#e6c364]"
+            className="rounded-md border border-[color:var(--hub-card-border)] bg-[var(--workspace-cal-nav-bg)] p-1.5 text-[color:var(--workspace-text-muted)] transition-colors hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--theme-accent-link)]"
             aria-label="Следующий месяц"
           >
             <ChevronRight className="size-4" />
@@ -123,7 +123,7 @@ export function MiniCalendar() {
               <span
                 className={cn(
                   'mb-0.5 flex size-6 items-center justify-center rounded-full text-[11px] font-medium',
-                  isToday ? 'bg-[#e6c364] font-bold text-[#241a00]' : 'text-[color:var(--workspace-text)] opacity-85',
+                  isToday ? 'bg-[color:var(--workspace-cal-today-bg)] font-bold text-[color:var(--workspace-cal-today-fg)]' : 'text-[color:var(--workspace-text)] opacity-85',
                 )}
               >
                 {parseInt(d, 10)}
@@ -139,7 +139,7 @@ export function MiniCalendar() {
       </div>
 
       <div className="mt-3 min-h-[72px] flex-shrink-0 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] p-2">
-        <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-[#e6c364]/80">
+        <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)]">
           {new Date(selectedDate + 'T12:00:00').toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'long' })}
         </div>
         {selectedEvents.length === 0 ? (
@@ -148,7 +148,7 @@ export function MiniCalendar() {
           <ul className="max-h-[56px] space-y-1 overflow-y-auto pr-1">
             {selectedEvents.map(ev => (
               <li key={ev.id} className="truncate text-[11px] leading-tight text-[color:var(--workspace-text-muted)]">
-                <span className="text-[#e6c364]/90">{ev.time}</span> · {ev.title}
+                <span className="text-[color:var(--theme-accent-link)]">{ev.time}</span> · {ev.title}
               </li>
             ))}
           </ul>
@@ -158,7 +158,7 @@ export function MiniCalendar() {
       <div className="mt-2 text-right">
         <Link
           to="/dashboard/calendar"
-          className="text-[10px] font-semibold uppercase tracking-wider text-[#e6c364]/70 underline-offset-2 hover:text-[#e6c364] hover:underline"
+          className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] underline-offset-2 hover:text-[color:var(--theme-accent-link)] hover:underline"
         >
           Полный календарь
         </Link>

@@ -61,13 +61,13 @@ function WidgetTitle({
     <div className={cn('flex items-center', compact ? 'mb-0 gap-2' : 'mb-4 gap-3')}>
       <div
         className={cn(
-          'flex shrink-0 items-center justify-center rounded-[10px] border border-[rgba(230,195,100,0.2)] bg-[rgba(230,195,100,0.1)] text-[#e6c364]',
+          'flex shrink-0 items-center justify-center rounded-[10px] border border-[color:var(--workspace-widget-icon-border)] bg-[var(--workspace-widget-icon-bg)] text-[color:var(--workspace-widget-icon-fg)]',
           compact ? 'size-8' : 'size-10',
         )}
       >
         {icon}
       </div>
-      <h3 className={cn('font-bold uppercase tracking-[0.12em] text-[#e6c364]', compact ? 'text-[10px]' : 'text-[11px]')}>
+      <h3 className={cn('font-bold uppercase tracking-[0.12em] text-[color:var(--workspace-widget-title)]', compact ? 'text-[10px]' : 'text-[11px]')}>
         {children}
       </h3>
     </div>
@@ -125,7 +125,7 @@ export function DashboardWorkspace() {
           <WidgetTitle icon={<ListTodo className="size-5" strokeWidth={2} />}>План на сегодня</WidgetTitle>
           <Link
             to="/dashboard/tasks"
-            className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-[#e6c364]/70 hover:text-[#e6c364]"
+            className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
           >
             Все задачи
           </Link>
@@ -155,7 +155,7 @@ export function DashboardWorkspace() {
                   {t.status === 'in_progress' ? (
                     <Clock className="size-3 text-[#60a5fa]" />
                   ) : (
-                    <Check className="size-3 text-[#e6c364]/40" strokeWidth={2.5} />
+                    <Check className="size-3 text-[color:var(--theme-accent-icon-dim)]" strokeWidth={2.5} />
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
@@ -188,7 +188,7 @@ export function DashboardWorkspace() {
             </WidgetTitle>
             <Link
               to="/dashboard/info"
-              className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-[#e6c364]/70 hover:text-[#e6c364]"
+              className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
             >
               Все
             </Link>
@@ -214,7 +214,7 @@ export function DashboardWorkspace() {
             </WidgetTitle>
             <Link
               to="/dashboard/info/reminders"
-              className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-[#e6c364]/70 hover:text-[#e6c364]"
+              className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
             >
               Все
             </Link>
@@ -228,7 +228,7 @@ export function DashboardWorkspace() {
                 <div className="mt-0.5 flex size-3.5 shrink-0 items-center justify-center rounded border border-[rgba(230,195,100,0.25)]" />
                 <div className="min-w-0">
                   <p className="text-[11px] font-medium leading-snug text-[color:var(--workspace-text)]">{r.title}</p>
-                  <p className="mt-0.5 flex items-center gap-1 text-[9px] text-[#e6c364]/70">
+                  <p className="mt-0.5 flex items-center gap-1 text-[9px] text-[color:var(--theme-accent-link-dim)]">
                     <Clock className="size-2.5" />
                     {formatReminderDue(r.dueAt)}
                   </p>
@@ -245,7 +245,7 @@ export function DashboardWorkspace() {
             </WidgetTitle>
             <Link
               to="/dashboard/info/news"
-              className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-[#e6c364]/70 hover:text-[#e6c364]"
+              className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
             >
               Все
             </Link>

@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect, useMemo } from 'react'
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import {
   BookOpen,
   MessageSquare,
@@ -29,6 +29,13 @@ import '@/components/leads/leads-secret-table.css'
 // ─── Типы вкладок ─────────────────────────────────────────────────────────────
 
 type Tab = 'articles' | 'scripts' | 'presentations' | 'pdfs' | 'courses'
+
+const VALID_TABS: readonly Tab[] = ['articles', 'scripts', 'presentations', 'pdfs', 'courses']
+
+function parseLmsTab(params: URLSearchParams): Tab {
+  const t = params.get('tab')
+  return (VALID_TABS as readonly string[]).includes(t ?? '') ? (t as Tab) : 'scripts'
+}
 
 const TABS: Array<{ id: Tab; label: string; icon: React.ReactNode }> = [
   { id: 'articles', label: 'Статьи', icon: <BookOpen className="size-3.5" /> },
@@ -412,19 +419,40 @@ function CoursesTab() {
 // ─── Главная страница ─────────────────────────────────────────────────────────
 
 export function LMSPage() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTab = useMemo(() => parseLmsTab(searchParams), [searchParams])
   const { currentUser } = useAuth()
   const { isDirectorOrAbove } = useRolePermissions()
   const userRole = currentUser?.role ?? 'manager'
   const canAdmin = isDirectorOrAbove
 
   const [items, setItems] = useState<LMSItem[]>(LMS_ITEMS)
-  const [activeTab, setActiveTab] = useState<Tab>('articles')
   const [search, setSearch] = useState('')
   const [openItem, setOpenItem] = useState<LMSItem | null>(null)
 
   // Admin dialog state
   const [adminOpen, setAdminOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<LMSItem | null>(null)
+
+  useEffect(() => {
+    if (!location.pathname.includes('/lms/add')) return
+    if (!canAdmin) {
+      navigate('/dashboard/lms/browse', { replace: true })
+      return
+    }
+    setEditingItem(null)
+    setAdminOpen(true)
+  }, [location.pathname, canAdmin, navigate])
+
+  const handleAdminClose = () => {
+    setAdminOpen(false)
+    setEditingItem(null)
+    if (location.pathname.includes('/lms/add')) {
+      navigate('/dashboard/learning')
+    }
+  }
 
   const handleOpenCreate = () => {
     setEditingItem(null)
@@ -481,6 +509,20 @@ export function LMSPage() {
     <>
       <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)]">
         <div className="space-y-8 p-6 lg:p-8">
+          {(location.pathname.includes('/lms/browse') || location.pathname.includes('/lms/add')) && (
+            <div className="-mb-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/dashboard/learning')}
+                className="h-9 gap-2 px-3 text-[rgba(242,207,141,0.8)] hover:bg-[rgba(242,207,141,0.08)] hover:text-[#fcecc8]"
+              >
+                <ArrowLeft className="size-5 shrink-0" strokeWidth={2} />
+                Назад
+              </Button>
+            </div>
+          )}
 
           {/* Header */}
           <div>
@@ -496,7 +538,15 @@ export function LMSPage() {
                 {TABS.map((tab) => (
                   <button
                     key={tab.id}
-                    onClick={() => { setActiveTab(tab.id); setSearch('') }}
+                    type="button"
+                    onClick={() => {
+                      setSearch('')
+                      if (tab.id === 'scripts') {
+                        setSearchParams({}, { replace: true })
+                      } else {
+                        setSearchParams({ tab: tab.id }, { replace: true })
+                      }
+                    }}
                     className={cn(
                       'leads-tabs-trigger flex items-center gap-1.5 rounded-full border-0 px-4 py-2 text-sm font-medium shadow-none transition-colors',
                       activeTab === tab.id && 'leads-tabs-trigger--active'
@@ -574,7 +624,7 @@ export function LMSPage() {
         open={adminOpen}
         mode={editingItem ? 'edit' : 'create'}
         item={editingItem}
-        onClose={() => { setAdminOpen(false); setEditingItem(null) }}
+        onClose={handleAdminClose}
         onSave={handleSaveItem}
       />
     </>

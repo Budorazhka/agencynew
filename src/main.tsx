@@ -64,9 +64,9 @@ import ClientsPage from '@/pages/modules/ClientsPage'
 import PartnersPage from '@/pages/modules/PartnersPage'
 import PartnersMlmAnalyticsPage from '@/pages/modules/PartnersMlmAnalyticsPage'
 import ObjectsPage from '@/pages/modules/ObjectsPage'
-import BookingsPage from '@/pages/modules/BookingsPage'
+import BookingsHubPage from '@/pages/modules/BookingsHubPage'
 import DealsPage from '@/pages/modules/DealsPage'
-import TasksPage from '@/pages/modules/TasksPage'
+import TasksHubPage from '@/pages/modules/TasksHubPage'
 import CalendarPage from '@/pages/modules/CalendarPage'
 import TeamPage from '@/pages/modules/TeamPage'
 import LearningPage from '@/pages/modules/LearningPage'
@@ -159,9 +159,12 @@ createRoot(document.getElementById('root')!).render(
                           <Route path="deals/kanban" element={<DealsKanbanPage />} />
                           <Route path="deals/report" element={<DealsReportPage />} />
                           <Route path="deals/:dealId" element={<DealCardPage />} />
+                          <Route path="tasks/new" element={<TasksPageFull />} />
                           <Route path="tasks/my" element={<TasksPageFull />} />
                           <Route path="tasks/team" element={<TasksPageFull />} />
                           <Route path="tasks/auto" element={<TasksPageFull />} />
+                          <Route path="bookings/register-client" element={<BookingsPageFull />} />
+                          <Route path="bookings/register-buyer" element={<BookingsPageFull />} />
                           <Route path="bookings/client" element={<BookingsPageFull />} />
                           <Route path="bookings/apartment" element={<BookingsPageFull />} />
                           <Route path="bookings/history" element={<BookingsPageFull />} />
@@ -178,15 +181,17 @@ createRoot(document.getElementById('root')!).render(
                           <Route path="objects" element={<ObjectsPage />} />
                           <Route path="objects/list" element={<ObjectsListPage />} />
                           <Route path="objects/:propertyId" element={<ObjectCardPage />} />
-                          <Route path="bookings" element={<BookingsPage />} />
+                          <Route path="bookings" element={<BookingsHubPage />} />
                           <Route path="deals" element={<DealsPage />} />
-                          <Route path="tasks" element={<TasksPage />} />
+                          <Route path="tasks" element={<TasksHubPage />} />
                           <Route path="calendar" element={<CalendarPage />} />
                           <Route path="team" element={<TeamPage />} />
                           <Route path="team/org" element={<TeamOrgPage />} />
                           <Route path="team/kpi" element={<TeamKpiPage />} />
                           <Route path="team/access" element={<TeamAccessPage />} />
                           <Route path="learning" element={<LearningPage />} />
+                          <Route path="lms/browse" element={<LMSPage />} />
+                          <Route path="lms/add" element={<LMSPage />} />
                           <Route path="lms/course/:courseId" element={<CoursePage />} />
                           <Route path="lms/lesson/:lessonId" element={<LessonPage />} />
                           <Route path="lms/test/:lessonId" element={<TestPage />} />
@@ -209,7 +214,7 @@ createRoot(document.getElementById('root')!).render(
                           <Route path="leads/analytics" element={<Navigate to="/dashboard/leads" replace />} />
                           <Route path="my-properties" element={<MyPropertiesPage />} />
                           <Route path="personnel" element={<Navigate to="/dashboard/team/org" replace />} />
-                          <Route path="lms" element={<LMSPage />} />
+                          <Route path="lms" element={<Navigate to="/dashboard/learning" replace />} />
                           <Route
                             path="settings/branding"
                             element={(

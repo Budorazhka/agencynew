@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react'
-import { Plus, Zap, Clock, AlertTriangle, CheckCircle, Circle, MapPin, ListChecks, Paperclip } from 'lucide-react'
+import { useState, useMemo, useEffect, useRef, type CSSProperties } from 'react'
+import { Plus, Zap, Clock, AlertTriangle, CheckCircle, Circle, MapPin, ListChecks, Paperclip, ArrowLeft } from 'lucide-react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { CreateTaskModal } from '@/components/tasks/CreateTaskModal'
 import { useAuth } from '@/context/AuthContext'
@@ -21,6 +22,23 @@ const C = {
   orange: '#fb923c',
 }
 
+const backToTasksHubBtn: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 6,
+  height: 36,
+  padding: '0 14px',
+  background: 'rgba(201,168,76,0.1)',
+  border: '1px solid rgba(201,168,76,0.35)',
+  borderRadius: 10,
+  color: '#e6c364',
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: '0.06em',
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+}
+
 type Filter = 'my' | 'today' | 'overdue' | 'team' | 'auto' | 'all'
 
 const STATUS_ICON: Record<TaskStatus, React.ReactNode> = {
@@ -31,12 +49,23 @@ const STATUS_ICON: Record<TaskStatus, React.ReactNode> = {
 }
 
 export function TasksPage() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const createSuccessRef = useRef(false)
   const { currentUser } = useAuth()
   const [filter, setFilter] = useState<Filter>('my')
   const [tasks, setTasks] = useState(TASKS_MOCK)
   const [createOpen, setCreateOpen] = useState(false)
 
   const today = new Date().toISOString().split('T')[0]
+
+  useEffect(() => {
+    const p = location.pathname
+    if (p.includes('/tasks/new')) setCreateOpen(true)
+    if (p.includes('/tasks/my')) setFilter('my')
+    else if (p.includes('/tasks/team')) setFilter('team')
+    else if (p.includes('/tasks/auto')) setFilter('auto')
+  }, [location.pathname])
 
   const filtered = useMemo(() => {
     switch (filter) {
@@ -74,6 +103,12 @@ export function TasksPage() {
   return (
     <DashboardShell>
       <div style={{ padding: '28px 28px 40px', maxWidth: 1000 }}>
+        <div style={{ marginBottom: 20 }}>
+          <button type="button" onClick={() => navigate('/dashboard/tasks')} style={backToTasksHubBtn}>
+            <ArrowLeft size={20} strokeWidth={2} />
+            Назад
+          </button>
+        </div>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
           <div>
@@ -97,7 +132,7 @@ export function TasksPage() {
               cursor: 'pointer',
             }}
           >
-            <Plus size={13} /> Новая задача
+            <Plus size={20} strokeWidth={2} /> Новая задача
           </button>
         </div>
 
@@ -158,8 +193,23 @@ export function TasksPage() {
 
       <CreateTaskModal
         open={createOpen}
-        onOpenChange={setCreateOpen}
-        onCreate={task => setTasks(prev => [task, ...prev])}
+        onOpenChange={open => {
+          setCreateOpen(open)
+          if (!open) {
+            if (createSuccessRef.current) {
+              createSuccessRef.current = false
+              return
+            }
+            if (location.pathname.includes('/tasks/new')) {
+              navigate('/dashboard/tasks')
+            }
+          }
+        }}
+        onCreate={task => {
+          createSuccessRef.current = true
+          setTasks(prev => [task, ...prev])
+          navigate('/dashboard/tasks/my', { replace: true })
+        }}
       />
     </DashboardShell>
   )

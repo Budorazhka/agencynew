@@ -192,7 +192,7 @@ export function DealsKanbanPage() {
       >
         <div style={{ marginBottom: 20 }}>
           <button type="button" onClick={() => navigate('/dashboard/crm')} style={backToCrmBtn}>
-            <ArrowLeft size={18} strokeWidth={2} />
+            <ArrowLeft size={20} strokeWidth={2} />
             Назад
           </button>
         </div>

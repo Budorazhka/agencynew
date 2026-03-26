@@ -53,7 +53,7 @@ export function CoursePage() {
     <div style={S.root}>
       {/* Back */}
       <button
-        onClick={() => navigate('/dashboard/lms')}
+        onClick={() => navigate('/dashboard/lms/browse?tab=courses')}
         style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: S.dim, fontSize: 12, marginBottom: 24 }}
       >
         <ArrowLeft size={14} />

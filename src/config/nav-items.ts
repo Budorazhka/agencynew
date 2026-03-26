@@ -121,8 +121,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     label: 'Обучение',
     icon: GraduationCap,
-    /** Основной экран LMS (курсы, назначения); хаб `/dashboard/learning` остаётся для обзора разделов */
-    route: '/dashboard/lms',
+    route: '/dashboard/learning',
   },
   {
     label: 'Инфо',

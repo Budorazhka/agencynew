@@ -52,7 +52,12 @@ export default function ModuleHub({
     if (s.route) navigate(s.route)
   }
 
-  const rows = Math.ceil(sections.length / 3)
+  /** Как в CRM: при двух строках сетки высота одной ячейки ~половина области. При 1–3 плитках одна строка тянула бы плитку на весь экран — добавляем вторую пустую строку 1fr. */
+  const computedRows =
+    sections.length === 0 ? 0 : Math.ceil(sections.length / 3)
+  const minRowsToMatchCrmCellHeight =
+    sections.length > 0 && sections.length < 4 ? 2 : 0
+  const rows = Math.max(computedRows, minRowsToMatchCrmCellHeight)
 
   return (
     <div style={{
@@ -80,7 +85,7 @@ export default function ModuleHub({
               background: 'rgba(201,168,76,0.1)',
               border: '1px solid rgba(201,168,76,0.35)',
               borderRadius: 10,
-              color: '#e6c364',
+              color: 'var(--theme-accent-heading)',
               fontSize: 11,
               fontWeight: 700,
               letterSpacing: '0.06em',
@@ -88,7 +93,7 @@ export default function ModuleHub({
               fontFamily: 'inherit',
             }}
           >
-            <ArrowLeft size={18} strokeWidth={2} />
+            <ArrowLeft size={20} strokeWidth={2} />
             {backLabel}
           </button>
         </div>
@@ -108,7 +113,7 @@ export default function ModuleHub({
             {moduleIcon}
           </div>
           <div>
-            <h1 style={{ margin: 0, fontSize: 30, fontWeight: 900, color: '#e6c364', letterSpacing: '0.04em', textTransform: 'uppercase', lineHeight: 1.1 }}>
+            <h1 style={{ margin: 0, fontSize: 30, fontWeight: 900, color: 'var(--theme-accent-heading)', letterSpacing: '0.04em', textTransform: 'uppercase', lineHeight: 1.1 }}>
               {moduleName}
             </h1>
             <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--hub-desc)', maxWidth: 540, lineHeight: 1.5 }}>
@@ -134,7 +139,7 @@ export default function ModuleHub({
               background: 'transparent',
               border: '1px solid rgba(230,195,100,0.4)',
               borderRadius: 6,
-              color: '#e6c364',
+              color: 'var(--theme-accent-heading)',
               fontSize: 12, fontWeight: 600,
               letterSpacing: '0.06em',
               cursor: 'pointer',
@@ -144,7 +149,7 @@ export default function ModuleHub({
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
           >
             {actionButton.label}
-            <ArrowUpRight size={14} />
+            <ArrowUpRight size={20} strokeWidth={2} />
           </button>
         )}
       </div>
@@ -195,8 +200,9 @@ export default function ModuleHub({
             >
               {/* Arrow top-right */}
               <ArrowUpRight
-                size={15}
-                color="#e6c364"
+                size={20}
+                strokeWidth={2}
+                color="var(--theme-accent-heading)"
                 style={{ position: 'absolute', top: 16, right: 16, opacity: hovered ? 1 : 0, transition: 'opacity 0.2s' }}
               />
 
@@ -205,7 +211,7 @@ export default function ModuleHub({
                 <span style={{
                   position: 'absolute', top: 14, right: 14,
                   fontSize: 8, fontWeight: 700, padding: '3px 8px', borderRadius: 3,
-                  background: 'rgba(230,195,100,0.15)', color: 'rgba(230,195,100,0.6)',
+                  background: 'rgba(230,195,100,0.15)', color: 'var(--hub-badge-soon-fg)',
                   letterSpacing: '0.1em', textTransform: 'uppercase',
                 }}>СКОРО</span>
               )}
@@ -213,15 +219,18 @@ export default function ModuleHub({
               {/* Icon */}
               <div style={{
                 width: 56, height: 56,
-                background: hovered ? '#e6c364' : 'rgba(230,195,100,0.1)',
-                border: '1px solid rgba(230,195,100,0.2)',
+                background: hovered ? 'var(--hub-tile-icon-hover-bg)' : 'var(--hub-tile-icon-bg)',
+                border: '1px solid var(--hub-tile-icon-border)',
                 borderRadius: 10,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'background 0.2s',
                 marginBottom: 20,
                 flexShrink: 0,
               }}>
-                <span style={{ color: hovered ? '#241a00' : '#e6c364', display: 'flex', transition: 'color 0.2s' }}>
+                <span
+                  className="hub-section-icon-slot"
+                  style={{ color: hovered ? 'var(--hub-tile-icon-hover-fg)' : 'var(--hub-tile-icon-fg)', display: 'flex', transition: 'color 0.2s' }}
+                >
                   {s.icon}
                 </span>
               </div>
@@ -230,7 +239,7 @@ export default function ModuleHub({
               <h3 style={{
                 margin: '0 0 10px',
                 fontSize: 15, fontWeight: 700,
-                color: '#e6c364',
+                color: 'var(--theme-accent-heading)',
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
               }}>
@@ -272,7 +281,7 @@ export default function ModuleHub({
               )}
               {stat.progress !== undefined && (
                 <div style={{ marginTop: 8, height: 3, background: 'var(--hub-progress-track)', borderRadius: 2, overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${stat.progress}%`, background: '#e6c364', borderRadius: 2 }} />
+                  <div style={{ height: '100%', width: `${stat.progress}%`, background: 'var(--hub-progress-fill)', borderRadius: 2 }} />
                 </div>
               )}
             </div>

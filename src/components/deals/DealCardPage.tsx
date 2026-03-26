@@ -122,7 +122,7 @@ export function DealCardPage() {
       <DashboardShell>
         <div style={{ padding: 40, color: C.whiteLow }}>
           <button type="button" onClick={() => navigate('/dashboard/crm')} style={{ ...S.backToCrm, marginBottom: 16 }}>
-            <ArrowLeft size={18} strokeWidth={2} />
+            <ArrowLeft size={20} strokeWidth={2} />
             Назад
           </button>
           <div>Сделка не найдена.</div>
@@ -168,7 +168,7 @@ export function DealCardPage() {
         {/* Назад — в хаб CRM (как на экране CRM) */}
         <div style={{ marginBottom: 20 }}>
           <button type="button" onClick={() => navigate('/dashboard/crm')} style={S.backToCrm}>
-            <ArrowLeft size={18} strokeWidth={2} />
+            <ArrowLeft size={20} strokeWidth={2} />
             Назад
           </button>
         </div>

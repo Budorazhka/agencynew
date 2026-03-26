@@ -61,7 +61,7 @@ export function DealsReportPage() {
       <div style={{ padding: '24px 28px 40px', maxWidth: 900 }}>
         <div style={{ marginBottom: 20, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 }}>
           <button type="button" onClick={() => navigate('/dashboard/crm')} style={backToCrmBtn}>
-            <ArrowLeft size={18} strokeWidth={2} />
+            <ArrowLeft size={20} strokeWidth={2} />
             Назад
           </button>
           <button
