@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { User, Building2, Bell, Settings, Users, CreditCard, ShieldCheck, Paintbrush } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRolePermissions } from '@/hooks/useRolePermissions'
@@ -9,8 +9,7 @@ import { BillingTab } from './BillingTab'
 import { SecurityTab } from './SecurityTab'
 import { LeadSettingsTab } from '@/components/leads/LeadSettingsTab'
 import { LeadManagersTab } from '@/components/leads/LeadManagersTab'
-import AgencyBrandingModal from '@/components/AgencyBrandingModal'
-import { getBranding, type AgencyBranding } from '@/store/agencyStore'
+import { BrandingTab } from './BrandingTab'
 
 type Section =
   | 'profile'
@@ -29,10 +28,13 @@ interface NavItem {
   separator?: boolean
 }
 
-export function SettingsPage() {
+export type SettingsPageProps = {
+  /** Открыть указанную секцию при загрузке (например с маршрута /settings/branding). */
+  initialSection?: Section
+}
+
+export function SettingsPage({ initialSection }: SettingsPageProps) {
   const { isRopOrAbove, isDirectorOrAbove, isOwner } = useRolePermissions()
-  const [branding, setBranding] = useState<AgencyBranding>(() => getBranding())
-  const [showBrandingModal, setShowBrandingModal] = useState(false)
 
   const allItems: (NavItem & { visible: boolean })[] = [
     { id: 'profile',       label: 'Мой профиль',       icon: <User className="size-4" />,        visible: true },
@@ -48,8 +50,16 @@ export function SettingsPage() {
   const visibleItems = allItems.filter((i) => i.visible)
 
   const [activeSection, setActiveSection] = useState<Section>(
-    visibleItems[0]?.id ?? 'profile'
+    visibleItems[0]?.id ?? 'profile',
   )
+
+  const visibleIdsKey = visibleItems.map((i) => i.id).join('|')
+
+  useLayoutEffect(() => {
+    if (initialSection && visibleItems.some((i) => i.id === initialSection)) {
+      setActiveSection(initialSection)
+    }
+  }, [initialSection, visibleIdsKey])
 
   // Ensure activeSection is always valid
   const resolvedSection = visibleItems.find((i) => i.id === activeSection)
@@ -116,36 +126,13 @@ export function SettingsPage() {
             {resolvedSection === 'security'      && <SecurityTab />}
             {resolvedSection === 'branding'      && (
               <div className="rounded-xl border border-[rgba(242,207,141,0.14)] bg-[var(--green-card)] p-6">
-                <p className="text-xs uppercase tracking-widest text-[rgba(242,207,141,0.45)] mb-1">Оформление</p>
-                <h2 className="text-xl font-bold text-[#fcecc8] mb-4">Брендинг агентства</h2>
-                <p className="text-sm text-[rgba(242,207,141,0.5)] mb-6">
-                  Загрузите логотип и укажите название агентства — они отображаются на главном экране.
-                </p>
-                {branding.logoDataUrl && (
-                  <img src={branding.logoDataUrl} alt="logo" className="h-16 mb-4 object-contain opacity-80" />
-                )}
-                {branding.name && (
-                  <p className="text-[rgba(201,168,76,0.6)] font-bold tracking-widest uppercase text-sm mb-6">{branding.name}</p>
-                )}
-                <button
-                  onClick={() => setShowBrandingModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[rgba(242,207,141,0.25)] text-[rgba(242,207,141,0.7)] text-sm font-semibold hover:bg-[rgba(242,207,141,0.08)] transition-colors"
-                >
-                  <Paintbrush className="size-4" /> Изменить брендинг
-                </button>
+                <BrandingTab />
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {showBrandingModal && (
-        <AgencyBrandingModal
-          current={branding}
-          onClose={() => setShowBrandingModal(false)}
-          onSave={(b) => { setBranding(b) }}
-        />
-      )}
     </div>
   )
 }

@@ -33,13 +33,18 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
   }
 
   return (
-    <div className={cn('rounded-md border border-input bg-transparent', className)}>
-      <div className="flex flex-wrap gap-1 border-b border-input p-1">
+    <div
+      className={cn(
+        'rounded-md border border-[var(--green-border)] bg-[var(--green-deep)]',
+        className,
+      )}
+    >
+      <div className="flex flex-wrap gap-1 border-b border-[var(--green-border)] p-1">
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          className="h-8 w-8 p-0"
+          className="h-8 w-8 p-0 text-[color:var(--app-text-muted)] hover:bg-[var(--dropdown-hover)] hover:text-[color:var(--app-text)]"
           onClick={() => execCommand('bold')}
           title="Жирный"
         >
@@ -49,7 +54,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
           type="button"
           variant="ghost"
           size="sm"
-          className="h-8 w-8 p-0"
+          className="h-8 w-8 p-0 text-[color:var(--app-text-muted)] hover:bg-[var(--dropdown-hover)] hover:text-[color:var(--app-text)]"
           onClick={() => execCommand('italic')}
           title="Курсив"
         >
@@ -59,7 +64,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
           type="button"
           variant="ghost"
           size="sm"
-          className="h-8 w-8 p-0"
+          className="h-8 w-8 p-0 text-[color:var(--app-text-muted)] hover:bg-[var(--dropdown-hover)] hover:text-[color:var(--app-text)]"
           onClick={() => execCommand('insertUnorderedList')}
           title="Маркированный список"
         >
@@ -69,7 +74,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
           type="button"
           variant="ghost"
           size="sm"
-          className="h-8 w-8 p-0"
+          className="h-8 w-8 p-0 text-[color:var(--app-text-muted)] hover:bg-[var(--dropdown-hover)] hover:text-[color:var(--app-text)]"
           onClick={() => execCommand('insertOrderedList')}
           title="Нумерованный список"
         >
@@ -79,7 +84,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
       <div
         ref={ref}
         contentEditable
-        className="min-h-[120px] px-3 py-2 text-base outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground"
+        className="min-h-[120px] px-3 py-2 text-base text-[color:var(--app-text)] outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-[color:var(--app-text-subtle)]"
         data-placeholder={placeholder ?? 'Введите текст...'}
         onInput={handleInput}
         suppressContentEditableWarning

@@ -30,21 +30,23 @@ export function MailingPreview({
     <div
       className={cn(
         'rounded-xl border p-5',
-        isCrm ? 'border-slate-200 bg-slate-50/50' : 'border-primary/20 bg-primary/5',
+        isCrm
+          ? 'border-[var(--green-border)] bg-[var(--green-deep)]'
+          : 'border-[rgba(201,168,76,0.35)] bg-[color-mix(in_srgb,var(--green-deep)_92%,var(--gold)_8%)]',
         className
       )}
     >
       <div className="space-y-4">
-        <h3 className="text-readable-lg font-semibold text-high-contrast">
+        <h3 className="text-lg font-semibold text-[color:var(--app-text)]">
           {title || 'Без названия'}
         </h3>
         <div
-          className="text-readable-base text-muted-high-contrast prose prose-p:my-2 prose-ul:my-2 prose-li:my-0.5 max-w-none"
+          className="max-w-none text-base leading-relaxed text-[color:var(--app-text-muted)] [&_a]:text-[#e6c364] [&_li]:my-0.5 [&_p]:my-2 [&_ul]:my-2"
           dangerouslySetInnerHTML={{ __html: body || '<p>Нет текста</p>' }}
         />
         {filteredLinks.length > 0 && (
           <div className="space-y-2">
-            <p className="text-readable-sm font-medium text-high-contrast">Ссылки:</p>
+            <p className="text-sm font-medium text-[color:var(--app-text)]">Ссылки:</p>
             <ul className="space-y-1.5">
               {filteredLinks.map((link, i) => (
                 <li key={i}>
@@ -52,7 +54,7 @@ export function MailingPreview({
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-readable-base text-primary underline hover:no-underline"
+                    className="text-base text-[#e6c364] underline hover:no-underline"
                   >
                     {link.label?.trim() || link.url}
                   </a>
@@ -66,18 +68,18 @@ export function MailingPreview({
             <img
               src={imageUrl}
               alt=""
-              className="max-h-48 rounded-md border border-input object-contain"
+              className="max-h-48 rounded-md border border-[var(--green-border)] object-contain"
             />
           </div>
         )}
         {fileUrl && fileName && (
-          <div className="flex items-center gap-2 rounded-md border border-input bg-muted/30 px-3 py-2">
-            <span className="text-readable-sm font-medium text-high-contrast">{fileName}</span>
+          <div className="flex items-center gap-2 rounded-md border border-[var(--green-border)] bg-[var(--green-card)] px-3 py-2">
+            <span className="text-sm font-medium text-[color:var(--app-text)]">{fileName}</span>
             <a
               href={fileUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-readable-sm text-primary underline"
+              className="text-sm text-[#e6c364] underline"
             >
               Скачать
             </a>

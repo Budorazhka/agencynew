@@ -20,6 +20,12 @@ import { FileUpload, type FileUploadValue } from './FileUpload'
 import type { City, Country, Partner } from '@/types/dashboard'
 import type { Mailing, MailingLink } from '@/types/mailings'
 
+const CARD_SURFACE =
+  'border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)] shadow-none'
+const FIELD =
+  'border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)] placeholder:text-[color:var(--app-text-subtle)]'
+const LABEL = 'text-base text-[color:var(--app-text-muted)]'
+
 interface MailingsEditorProps {
   city: City
   country?: Country
@@ -127,16 +133,16 @@ export function MailingsEditor({
 
   return (
     <>
-    <Card>
+    <Card className={CARD_SURFACE}>
       <CardHeader className="space-y-1.5 pb-4">
-        <CardTitle className="text-xl">Редактор рассылок</CardTitle>
-        <CardDescription className="text-base">
+        <CardTitle className="text-xl text-[color:var(--app-text)]">Редактор рассылок</CardTitle>
+        <CardDescription className="text-base text-[color:var(--app-text-muted)]">
           Новости, оповещения и маркетинговые рассылки — в CRM и в личный кабинет
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="mailing-title" className="text-base">
+          <Label htmlFor="mailing-title" className={LABEL}>
             Название оповещения
           </Label>
           <Input
@@ -144,12 +150,12 @@ export function MailingsEditor({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Введите название"
-            className="text-base"
+            className={`text-base ${FIELD}`}
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-base">Текст оповещения</Label>
+          <Label className={LABEL}>Текст оповещения</Label>
           <RichTextEditor
             value={body}
             onChange={setBody}
@@ -159,12 +165,12 @@ export function MailingsEditor({
 
         <LinkListEditor links={links} onChange={setLinks} />
 
-        <Separator />
+        <Separator className="bg-[var(--green-border)]" />
 
         <ImageUpload value={imageUrl} onChange={setImageUrl} />
         <FileUpload value={fileValue} onChange={setFileValue} />
 
-        <Separator />
+        <Separator className="bg-[var(--green-border)]" />
 
         <AudienceSelector
           city={city}
@@ -175,10 +181,10 @@ export function MailingsEditor({
           onChange={setAudienceState}
         />
 
-        <Separator />
+        <Separator className="bg-[var(--green-border)]" />
 
         <div className="space-y-3">
-          <Label className="text-base">Когда отправить</Label>
+          <Label className={LABEL}>Когда отправить</Label>
           <div className="flex flex-col gap-2">
             <label className="flex cursor-pointer items-center gap-2">
               <input
@@ -188,7 +194,7 @@ export function MailingsEditor({
                 onChange={() => setSendNow(true)}
                 className="size-4"
               />
-              <span className="text-base">Отправить сейчас</span>
+              <span className="text-base text-[color:var(--app-text)]">Отправить сейчас</span>
             </label>
             <label className="flex cursor-pointer items-center gap-2">
               <input
@@ -198,7 +204,7 @@ export function MailingsEditor({
                 onChange={() => setSendNow(false)}
                 className="size-4"
               />
-              <span className="text-base">Запланировать</span>
+              <span className="text-base text-[color:var(--app-text)]">Запланировать</span>
             </label>
             {!sendNow && (
               <div className="ml-6">
@@ -206,7 +212,7 @@ export function MailingsEditor({
                   type="datetime-local"
                   value={scheduledAt}
                   onChange={(e) => setScheduledAt(e.target.value)}
-                  className="max-w-xs text-base"
+                  className={`max-w-xs text-base ${FIELD}`}
                 />
               </div>
             )}
@@ -214,13 +220,19 @@ export function MailingsEditor({
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Button type="button" variant="outline" onClick={() => setPreviewOpen(true)}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setPreviewOpen(true)}
+            className="border-[var(--green-border)] bg-transparent text-[color:var(--app-text)] hover:bg-[var(--dropdown-hover)]"
+          >
             Предпросмотр
           </Button>
           <Button
             type="button"
             onClick={handleSubmitClick}
             disabled={audienceState.channels.length === 0 || (!sendNow && !scheduledAt.trim())}
+            className="bg-[var(--gold)] text-[#0d2818] hover:bg-[var(--gold-light)] disabled:opacity-40"
           >
             {sendNow ? 'Отправить' : 'Запланировать'}
           </Button>
@@ -229,13 +241,15 @@ export function MailingsEditor({
     </Card>
 
     <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+      <DialogContent
+        className={`max-h-[90vh] max-w-2xl overflow-y-auto border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)]`}
+      >
         <DialogHeader>
-          <DialogTitle>Предпросмотр рассылки</DialogTitle>
+          <DialogTitle className="text-[color:var(--app-text)]">Предпросмотр рассылки</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 pt-2">
           <div>
-            <p className="mb-2 text-sm font-medium text-muted-foreground">Как в CRM</p>
+            <p className="mb-2 text-sm font-medium text-[color:var(--app-text-muted)]">Как в CRM</p>
             <MailingPreview
               title={title}
               body={body || ''}
@@ -247,7 +261,7 @@ export function MailingsEditor({
             />
           </div>
           <div>
-            <p className="mb-2 text-sm font-medium text-muted-foreground">Как в личном кабинете</p>
+            <p className="mb-2 text-sm font-medium text-[color:var(--app-text-muted)]">Как в личном кабинете</p>
             <MailingPreview
               title={title}
               body={body || ''}
@@ -271,10 +285,12 @@ export function MailingsEditor({
     />
 
     {mailings.length > 0 && (
-      <Card className="mt-8">
+      <Card className={`mt-8 ${CARD_SURFACE}`}>
         <CardHeader className="space-y-1.5 pb-4">
-          <CardTitle className="text-xl">История рассылок</CardTitle>
-          <CardDescription className="text-base">Отправленные и запланированные рассылки</CardDescription>
+          <CardTitle className="text-xl text-[color:var(--app-text)]">История рассылок</CardTitle>
+          <CardDescription className="text-base text-[color:var(--app-text-muted)]">
+            Отправленные и запланированные рассылки
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -283,11 +299,11 @@ export function MailingsEditor({
               return (
                 <div
                   key={m.id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 p-4"
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[var(--green-border)] bg-[var(--green-deep)] p-4"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium text-foreground">{m.title}</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="font-medium text-[color:var(--app-text)]">{m.title}</p>
+                    <p className="text-sm text-[color:var(--app-text-muted)]">
                       {formatDate(m.createdAt)}
                       {' · '}
                       {scopeLabel(m)}
@@ -295,7 +311,7 @@ export function MailingsEditor({
                       {m.channels.map((ch) => (ch === 'crm' ? 'CRM' : 'ЛК')).join(', ')}
                     </p>
                     {isScheduled && m.scheduledAt && (
-                      <p className="mt-1 text-sm text-amber-700">
+                      <p className="mt-1 text-sm text-[#e6c364]">
                         Запланировано на {formatDate(m.scheduledAt)}
                       </p>
                     )}
@@ -306,6 +322,7 @@ export function MailingsEditor({
                       variant="outline"
                       size="sm"
                       onClick={() => onCancelScheduled(m.id)}
+                      className="border-[var(--green-border)] bg-transparent text-[color:var(--app-text)] hover:bg-[var(--dropdown-hover)]"
                     >
                       Отменить
                     </Button>

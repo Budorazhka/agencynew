@@ -125,7 +125,7 @@ export function AudienceSelector({
   return (
     <div className={cn('space-y-4', className)}>
       <div className="space-y-2">
-        <Label className="text-base">Кому</Label>
+        <Label className="text-base text-[color:var(--app-text-muted)]">Кому</Label>
         <div className="flex flex-col gap-2">
           <label className="flex cursor-pointer items-center gap-2">
             <input
@@ -135,10 +135,10 @@ export function AudienceSelector({
               onChange={() => setAudience('all_partners')}
               className="size-4"
             />
-            <span className="text-base">Всем партнёрам</span>
+            <span className="text-base text-[color:var(--app-text)]">Всем партнёрам</span>
           </label>
           {value.audience === 'all_partners' && (
-            <div className="ml-6 flex flex-col gap-1.5 border-l-2 border-slate-200 pl-4">
+            <div className="ml-6 flex flex-col gap-1.5 border-l-2 border-[var(--green-border)] pl-4">
               <label className="flex cursor-pointer items-center gap-2">
                 <input
                   type="radio"
@@ -147,7 +147,7 @@ export function AudienceSelector({
                   onChange={() => setScope('city')}
                   className="size-4"
                 />
-                <span className="text-sm">По городу ({city.name})</span>
+                <span className="text-sm text-[color:var(--app-text)]">По городу ({city.name})</span>
               </label>
               <label className="flex cursor-pointer items-center gap-2">
                 <input
@@ -157,7 +157,7 @@ export function AudienceSelector({
                   onChange={() => setScope('country')}
                   className="size-4"
                 />
-                <span className="text-sm">По стране{country ? ` (${country.name})` : ''}</span>
+                <span className="text-sm text-[color:var(--app-text)]">По стране{country ? ` (${country.name})` : ''}</span>
               </label>
               <label className="flex cursor-pointer items-center gap-2">
                 <input
@@ -167,7 +167,7 @@ export function AudienceSelector({
                   onChange={() => setScope('world')}
                   className="size-4"
                 />
-                <span className="text-sm">По всем партнёрам в мире</span>
+                <span className="text-sm text-[color:var(--app-text)]">По всем партнёрам в мире</span>
               </label>
             </div>
           )}
@@ -179,7 +179,7 @@ export function AudienceSelector({
               onChange={() => setAudience('all_network')}
               className="size-4"
             />
-            <span className="text-base">Всем участникам сети</span>
+            <span className="text-base text-[color:var(--app-text)]">Всем участникам сети</span>
           </label>
           <label className="flex cursor-pointer items-center gap-2">
             <input
@@ -189,38 +189,38 @@ export function AudienceSelector({
               onChange={() => setAudience('selected')}
               className="size-4"
             />
-            <span className="text-base">Выбрать</span>
+            <span className="text-base text-[color:var(--app-text)]">Выбрать</span>
           </label>
           {value.audience === 'selected' && (
-            <div className="ml-6 space-y-2 rounded-md border border-input p-3">
+            <div className="ml-6 space-y-2 rounded-md border border-[var(--green-border)] bg-[var(--green-deep)] p-3">
               <Input
                 placeholder="Поиск по имени или email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="text-base"
+                className="text-base border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)] placeholder:text-[color:var(--app-text-subtle)]"
               />
               <div className="flex items-center justify-between gap-2">
                 <button
                   type="button"
                   onClick={selectAllFiltered}
-                  className="text-sm text-primary hover:underline"
+                  className="text-sm text-[#e6c364] hover:underline"
                 >
                   Выбрать всех в списке
                 </button>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-[color:var(--app-text-muted)]">
                   Выбрано: {value.selectedPartnerIds.length}
                 </span>
               </div>
-              <div className="max-h-48 space-y-1 overflow-y-auto rounded border border-slate-100 bg-slate-50/50 p-2">
+              <div className="max-h-48 space-y-1 overflow-y-auto rounded border border-[var(--green-border)] bg-[color-mix(in_srgb,var(--green-deep)_85%,transparent)] p-2">
                 {filteredPartners.length === 0 ? (
-                  <p className="py-2 text-center text-sm text-muted-foreground">
+                  <p className="py-2 text-center text-sm text-[color:var(--app-text-muted)]">
                     Нет участников или ничего не найдено
                   </p>
                 ) : (
                   filteredPartners.map((partner) => (
                     <label
                       key={partner.id}
-                      className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 hover:bg-slate-100"
+                      className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 hover:bg-[var(--dropdown-hover)]"
                     >
                       <input
                         type="checkbox"
@@ -228,8 +228,8 @@ export function AudienceSelector({
                         onChange={() => togglePartner(partner.id)}
                         className="size-4 rounded border-input"
                       />
-                      <span className="truncate text-sm">{partner.name}</span>
-                      <span className="truncate text-xs text-muted-foreground">{partner.login}</span>
+                      <span className="truncate text-sm text-[color:var(--app-text)]">{partner.name}</span>
+                      <span className="truncate text-xs text-[color:var(--app-text-muted)]">{partner.login}</span>
                     </label>
                   ))
                 )}
@@ -240,7 +240,7 @@ export function AudienceSelector({
       </div>
 
       <div className="space-y-2">
-        <Label className="text-base">Куда доставить</Label>
+        <Label className="text-base text-[color:var(--app-text-muted)]">Куда доставить</Label>
         <div className="flex flex-wrap gap-4">
           <label className="flex cursor-pointer items-center gap-2">
             <input
@@ -249,7 +249,7 @@ export function AudienceSelector({
               onChange={() => toggleChannel('crm')}
               className="size-4 rounded border-input"
             />
-            <span className="text-base">В CRM</span>
+            <span className="text-base text-[color:var(--app-text)]">В CRM</span>
           </label>
           <label className="flex cursor-pointer items-center gap-2">
             <input
@@ -258,12 +258,12 @@ export function AudienceSelector({
               onChange={() => toggleChannel('cabinet')}
               className="size-4 rounded border-input"
             />
-            <span className="text-base">В личный кабинет</span>
+            <span className="text-base text-[color:var(--app-text)]">В личный кабинет</span>
           </label>
         </div>
       </div>
 
-      <p className="text-base font-medium text-muted-foreground">
+      <p className="text-base font-medium text-[color:var(--app-text-muted)]">
         Будет отправлено: {count} получателям
       </p>
     </div>

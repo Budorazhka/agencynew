@@ -1,7 +1,7 @@
 import { type ReactNode, useState, useRef, useMemo, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
-import { getBranding } from '@/store/agencyStore'
+import { useAgencyBranding } from '@/hooks/useAgencyBranding'
 import { getNavItemsForRole } from '@/config/nav-items'
 import { LogOut, User, Search, Users, Briefcase, CheckSquare, ArrowLeft } from 'lucide-react'
 import { ROLE_LABEL } from '@/lib/permissions'
@@ -98,8 +98,8 @@ const S = {
     fontSize: 11,
     fontWeight: active ? 700 : 500,
     letterSpacing: '0.08em',
-    color: active ? 'var(--gold)' : 'rgba(255,255,255,0.55)',
-    background: active ? 'rgba(201,168,76,0.1)' : 'transparent',
+    color: active ? 'var(--gold)' : 'var(--nav-item-text)',
+    background: active ? 'var(--nav-item-bg-active)' : 'transparent',
     borderLeft: active ? '3px solid var(--gold)' : '3px solid transparent',
     transition: 'all 0.15s',
     textTransform: 'uppercase' as const,
@@ -124,7 +124,7 @@ const S = {
   userName: {
     fontSize: 11,
     fontWeight: 600,
-    color: 'rgba(255,255,255,0.8)',
+    color: 'var(--sidebar-user-name)',
     flex: 1,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -148,7 +148,7 @@ const S = {
     fontSize: 10,
     fontWeight: 600,
     letterSpacing: '0.08em',
-    color: 'rgba(255,255,255,0.35)',
+    color: 'var(--logout-muted)',
     textTransform: 'uppercase' as const,
     transition: 'color 0.15s',
     border: 'none',
@@ -181,8 +181,8 @@ const S = {
     display: 'flex',
     alignItems: 'center',
     gap: 8,
-    background: 'rgba(255,255,255,0.05)',
-    border: '1px solid rgba(255,255,255,0.08)',
+    background: 'var(--shell-search-bg)',
+    border: '1px solid var(--shell-search-border)',
     borderRadius: 8,
     padding: '0 12px',
     height: 32,
@@ -195,7 +195,7 @@ const S = {
     border: 'none',
     outline: 'none',
     fontSize: 12,
-    color: 'rgba(255,255,255,0.7)',
+    color: 'var(--shell-search-fg)',
     fontFamily: 'inherit',
   },
 
@@ -234,10 +234,10 @@ const S = {
     left: 0,
     right: 0,
     marginTop: 4,
-    background: 'var(--green-card)',
-    border: '1px solid rgba(255,255,255,0.12)',
+    background: 'var(--dropdown-bg)',
+    border: '1px solid var(--dropdown-border)',
     borderRadius: 10,
-    boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+    boxShadow: 'var(--dropdown-shadow)',
     zIndex: 999,
     overflow: 'hidden',
     maxHeight: 360,
@@ -256,7 +256,7 @@ const S = {
   searchEmpty: {
     padding: '14px 16px',
     fontSize: 12,
-    color: 'rgba(255,255,255,0.35)',
+    color: 'var(--dropdown-text-muted)',
     textAlign: 'center' as const,
   },
 }
@@ -278,7 +278,7 @@ export function DashboardShell({ children, hideSidebar = true, topBack }: Dashbo
   const navigate = useNavigate()
   const location = useLocation()
   const { currentUser, logout } = useAuth()
-  const branding = getBranding()
+  const branding = useAgencyBranding()
   const [searchQuery, setSearchQuery] = useState('')
   const [searchFocused, setSearchFocused] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
@@ -374,7 +374,7 @@ export function DashboardShell({ children, hideSidebar = true, topBack }: Dashbo
         <div style={S.sidebarFooter}>
           {currentUser && (
             <div style={S.userRow}>
-              <User size={14} color="rgba(255,255,255,0.4)" />
+              <User size={14} color="var(--sidebar-icon-muted)" />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={S.userName}>{currentUser.name}</div>
                 <div style={S.userRole}>{ROLE_LABEL[currentUser.role]}</div>
@@ -384,8 +384,8 @@ export function DashboardShell({ children, hideSidebar = true, topBack }: Dashbo
           <button
             style={S.logoutBtn}
             onClick={() => { logout(); navigate('/') }}
-            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.7)')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.35)')}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--app-text-muted)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--logout-muted)')}
           >
             <LogOut size={12} />
             Выйти
@@ -439,8 +439,8 @@ export function DashboardShell({ children, hideSidebar = true, topBack }: Dashbo
                   display: 'flex',
                   alignItems: 'center',
                   gap: 8,
-                  background: 'rgba(10, 31, 26, 0.95)',
-                  border: '1px solid rgba(255,255,255,0.06)',
+                  background: 'var(--shell-elevated-bg)',
+                  border: '1px solid var(--shell-elevated-border)',
                   borderRadius: 12,
                   padding: '0 14px 0 44px',
                   height: 36,
@@ -449,7 +449,7 @@ export function DashboardShell({ children, hideSidebar = true, topBack }: Dashbo
               >
                 <Search
                   size={20}
-                  color="rgba(194, 200, 196, 0.55)"
+                  color="var(--shell-search-ph)"
                   style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)' }}
                 />
                 <input
@@ -474,15 +474,15 @@ export function DashboardShell({ children, hideSidebar = true, topBack }: Dashbo
                           key={item.id + item.category}
                           style={S.searchResultItem}
                           onMouseDown={() => { navigate(item.route); setSearchQuery(''); setSearchFocused(false) }}
-                          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+                          onMouseEnter={e => (e.currentTarget.style.background = 'var(--dropdown-hover)')}
                           onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                         >
                           <div style={{ width: 28, height: 28, borderRadius: 6, background: `${color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                             <Icon size={13} color={color} />
                           </div>
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 12, fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</div>
-                            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.sub}</div>
+                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--dropdown-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</div>
+                            <div style={{ fontSize: 10, color: 'var(--dropdown-text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.sub}</div>
                           </div>
                           <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color, flexShrink: 0 }}>{CATEGORY_LABEL[item.category]}</span>
                         </div>
@@ -496,10 +496,10 @@ export function DashboardShell({ children, hideSidebar = true, topBack }: Dashbo
               <NotificationCenter />
               {currentUser && (
                 <>
-                  <div style={{ width: 1, height: 24, background: 'rgba(66, 72, 70, 0.35)' }} />
+                  <div style={{ width: 1, height: 24, background: 'var(--divider-subtle)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#d0e8df', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--header-user-text)', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {shortDisplayName(currentUser.name)}
                       </div>
                       <div style={{ fontSize: 9, fontWeight: 700, color: '#e6c364', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
@@ -511,8 +511,8 @@ export function DashboardShell({ children, hideSidebar = true, topBack }: Dashbo
                         width: 32,
                         height: 32,
                         borderRadius: '50%',
-                        background: '#243933',
-                        border: '1px solid rgba(230, 195, 100, 0.25)',
+                        background: 'var(--header-avatar-bg)',
+                        border: '1px solid var(--header-avatar-border)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -536,11 +536,11 @@ export function DashboardShell({ children, hideSidebar = true, topBack }: Dashbo
                         border: 'none',
                         background: 'transparent',
                         cursor: 'pointer',
-                        color: 'rgba(194, 200, 196, 0.65)',
+                        color: 'var(--app-text-muted)',
                       }}
                       onClick={() => { logout(); navigate('/') }}
-                      onMouseEnter={e => { e.currentTarget.style.color = '#ffb4ab' }}
-                      onMouseLeave={e => { e.currentTarget.style.color = 'rgba(194, 200, 196, 0.65)' }}
+                      onMouseEnter={e => { e.currentTarget.style.color = '#b91c1c' }}
+                      onMouseLeave={e => { e.currentTarget.style.color = 'var(--app-text-muted)' }}
                     >
                       <LogOut size={20} />
                     </button>
@@ -568,7 +568,7 @@ export function DashboardShell({ children, hideSidebar = true, topBack }: Dashbo
                 position: 'relative',
               }}
             >
-              <Search size={13} color="rgba(255,255,255,0.35)" />
+              <Search size={13} color="var(--shell-search-ph)" />
               <input
                 style={S.searchInput}
                 placeholder="Поиск по клиентам, сделкам, задачам..."
@@ -588,15 +588,15 @@ export function DashboardShell({ children, hideSidebar = true, topBack }: Dashbo
                         key={item.id + item.category}
                         style={S.searchResultItem}
                         onMouseDown={() => { navigate(item.route); setSearchQuery(''); setSearchFocused(false) }}
-                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--dropdown-hover)')}
                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                       >
                         <div style={{ width: 28, height: 28, borderRadius: 6, background: `${color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                           <Icon size={13} color={color} />
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: 12, fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</div>
-                          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.sub}</div>
+                          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--dropdown-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</div>
+                          <div style={{ fontSize: 10, color: 'var(--dropdown-text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.sub}</div>
                         </div>
                         <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color, flexShrink: 0 }}>{CATEGORY_LABEL[item.category]}</span>
                       </div>

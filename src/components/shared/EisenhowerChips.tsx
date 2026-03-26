@@ -63,13 +63,13 @@ export function EisenhowerChips({
     variant === 'dark'
       ? {
           urgentActive: 'bg-rose-500/15 text-rose-300 border-rose-500/35',
-          urgentInactive: 'bg-white/5 text-[#d0e8df]/55 border-white/12',
+          urgentInactive: 'bg-[var(--dropdown-hover)] text-[color:var(--app-text-muted)] border-[var(--green-border)]',
           importantActive: 'bg-amber-500/12 text-[#e6c364] border-amber-500/35',
-          importantInactive: 'bg-white/5 text-[#d0e8df]/55 border-white/12',
-          group: 'border-white/15 bg-[#031712]',
-          borderInner: 'border-white/12',
-          neutral: 'bg-white/5 text-[#d0e8df]/75',
-          faded: 'bg-transparent text-[#d0e8df]/45',
+          importantInactive: 'bg-[var(--dropdown-hover)] text-[color:var(--app-text-muted)] border-[var(--green-border)]',
+          group: 'border-[var(--green-border)] bg-[var(--green-deep)]',
+          borderInner: 'border-[var(--green-border)]',
+          neutral: 'bg-[var(--dropdown-hover)] text-[color:var(--app-text)]',
+          faded: 'bg-transparent text-[color:var(--app-text-subtle)]',
         }
       : {
           urgentActive: 'bg-rose-50 text-[#ff3b30] border-rose-200',

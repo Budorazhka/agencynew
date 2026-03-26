@@ -61,14 +61,14 @@ export function MiniCalendar() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="mb-3 flex items-center justify-between gap-2">
-        <div className="min-w-0 text-sm font-bold tracking-tight text-[#d0e8df]">
+        <div className="min-w-0 text-sm font-bold tracking-tight text-[color:var(--workspace-text)]">
           {MONTH_NAMES[month]} <span className="text-[#e6c364]">{year}</span>
         </div>
         <div className="flex shrink-0 items-center gap-1">
           <button
             type="button"
             onClick={prevMonth}
-            className="rounded-md border border-[rgba(230,195,100,0.2)] bg-[rgba(15,35,30,0.6)] p-1.5 text-[#d0e8df]/70 transition-colors hover:border-[#e6c364]/40 hover:text-[#e6c364]"
+            className="rounded-md border border-[color:var(--hub-card-border)] bg-[var(--workspace-cal-nav-bg)] p-1.5 text-[color:var(--workspace-text-muted)] transition-colors hover:border-[#e6c364]/40 hover:text-[#e6c364]"
             aria-label="Предыдущий месяц"
           >
             <ChevronLeft className="size-4" />
@@ -83,7 +83,7 @@ export function MiniCalendar() {
           <button
             type="button"
             onClick={nextMonth}
-            className="rounded-md border border-[rgba(230,195,100,0.2)] bg-[rgba(15,35,30,0.6)] p-1.5 text-[#d0e8df]/70 transition-colors hover:border-[#e6c364]/40 hover:text-[#e6c364]"
+            className="rounded-md border border-[color:var(--hub-card-border)] bg-[var(--workspace-cal-nav-bg)] p-1.5 text-[color:var(--workspace-text-muted)] transition-colors hover:border-[#e6c364]/40 hover:text-[#e6c364]"
             aria-label="Следующий месяц"
           >
             <ChevronRight className="size-4" />
@@ -91,9 +91,9 @@ export function MiniCalendar() {
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-0.5 border-b border-[rgba(230,195,100,0.08)] pb-1">
+      <div className="grid grid-cols-7 gap-0.5 border-b border-[color:var(--workspace-cal-day-row-border)] pb-1">
         {DAY_NAMES.map(d => (
-          <div key={d} className="text-center text-[9px] font-semibold uppercase tracking-wider text-[#d0e8df]/35">
+          <div key={d} className="text-center text-[9px] font-semibold uppercase tracking-wider text-[color:var(--workspace-text-dim)]">
             {d}
           </div>
         ))}
@@ -116,21 +116,21 @@ export function MiniCalendar() {
                 isSelected
                   ? 'border-[rgba(230,195,100,0.45)] bg-[rgba(230,195,100,0.1)]'
                   : isToday
-                    ? 'border-[rgba(230,195,100,0.25)] bg-[rgba(255,255,255,0.03)]'
-                    : 'border-transparent hover:bg-[rgba(255,255,255,0.03)]',
+                    ? 'border-[rgba(230,195,100,0.25)] bg-[var(--workspace-cal-cell-fill)]'
+                    : 'border-transparent hover:bg-[var(--workspace-cal-cell-fill)]',
               )}
             >
               <span
                 className={cn(
                   'mb-0.5 flex size-6 items-center justify-center rounded-full text-[11px] font-medium',
-                  isToday ? 'bg-[#e6c364] font-bold text-[#241a00]' : 'text-[#d0e8df]/85',
+                  isToday ? 'bg-[#e6c364] font-bold text-[#241a00]' : 'text-[color:var(--workspace-text)] opacity-85',
                 )}
               >
                 {parseInt(d, 10)}
               </span>
               <div className="flex flex-wrap gap-px">
                 {dayEvents.slice(0, 4).map(ev => (
-                  <span key={ev.id} className={cn('size-1.5 rounded-full', EVENT_DOT[ev.type] ?? 'bg-white/30')} title={`${ev.time} ${ev.title}`} />
+                  <span key={ev.id} className={cn('size-1.5 rounded-full', EVENT_DOT[ev.type] ?? 'bg-[var(--workspace-cal-dot-fallback)]')} title={`${ev.time} ${ev.title}`} />
                 ))}
               </div>
             </button>
@@ -138,16 +138,16 @@ export function MiniCalendar() {
         })}
       </div>
 
-      <div className="mt-3 min-h-[72px] flex-shrink-0 rounded-md border border-[rgba(230,195,100,0.12)] bg-[rgba(0,17,13,0.35)] p-2">
+      <div className="mt-3 min-h-[72px] flex-shrink-0 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] p-2">
         <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-[#e6c364]/80">
           {new Date(selectedDate + 'T12:00:00').toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'long' })}
         </div>
         {selectedEvents.length === 0 ? (
-          <p className="text-[11px] text-[#d0e8df]/40">Нет событий</p>
+          <p className="text-[11px] text-[color:var(--workspace-text-dim)]">Нет событий</p>
         ) : (
           <ul className="max-h-[56px] space-y-1 overflow-y-auto pr-1">
             {selectedEvents.map(ev => (
-              <li key={ev.id} className="truncate text-[11px] leading-tight text-[#d0e8df]/80">
+              <li key={ev.id} className="truncate text-[11px] leading-tight text-[color:var(--workspace-text-muted)]">
                 <span className="text-[#e6c364]/90">{ev.time}</span> · {ev.title}
               </li>
             ))}

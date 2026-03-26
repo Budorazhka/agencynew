@@ -16,4 +16,5 @@ export function getBranding(): AgencyBranding {
 
 export function saveBranding(data: AgencyBranding): void {
   localStorage.setItem(KEY, JSON.stringify(data))
+  window.dispatchEvent(new Event('agency-branding-updated'))
 }

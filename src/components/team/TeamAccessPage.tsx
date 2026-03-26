@@ -61,6 +61,19 @@ const ACCESS_COLUMNS: AccessColumn[] = [
   { key: 'manage',    label: 'Доступы', width: 120 },
 ]
 
+const ACCESS_COLUMN_HINTS: Record<AccessColumn['key'], string> = {
+  view: 'Право видеть список и карточки в этом разделе.',
+  create: 'Право создавать новые карточки и записи в разделе.',
+  edit: 'Право изменять существующие карточки и данные.',
+  delete: 'Право удалять карточки и записи.',
+  assign: 'Право назначать ответственных и перераспределять задачи/лиды.',
+  export: 'Право выгружать данные (файлы, отчеты, таблицы).',
+  approve: 'Право согласовывать и подтверждать действия или этапы.',
+  finance: 'Право видеть финансовые показатели, комиссии и суммы.',
+  analytics: 'Право видеть аналитические отчеты и метрики.',
+  manage: 'Право управлять доступами и настройками прав других пользователей.',
+}
+
 type AccessRow = {
   group: string
   resource: string
@@ -288,6 +301,7 @@ export function TeamAccessPage() {
                   {ACCESS_COLUMNS.map((col) => (
                     <th
                       key={col.key}
+                      title={ACCESS_COLUMN_HINTS[col.key]}
                       style={{
                         padding: '14px 10px',
                         textAlign: 'center',
@@ -370,7 +384,7 @@ export function TeamAccessPage() {
                                   padding: 0,
                                   opacity: actionOrActions ? 1 : 0.35,
                                 }}
-                                title={!actionOrActions ? 'Не применяется' : undefined}
+                                title={!actionOrActions ? 'Не применяется' : ACCESS_COLUMN_HINTS[col.key]}
                               >
                                 {allowed ? (
                                   <div

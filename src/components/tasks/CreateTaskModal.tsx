@@ -241,20 +241,20 @@ export function CreateTaskModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92vh] overflow-y-auto border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df] sm:max-w-lg">
+      <DialogContent className="max-h-[92vh] overflow-y-auto border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)] sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-[#f5f5f5]">
             <ListTodo className="h-5 w-5 text-[#e6c364]" />
             Новая задача
           </DialogTitle>
-          <DialogDescription className="text-[#d0e8df]/70">
+          <DialogDescription className="text-[color:var(--app-text-muted)]">
             Заполните поля и сохраните — задача появится в списке (данные пока только в сессии браузера).
           </DialogDescription>
         </DialogHeader>
 
         <form id={formId} onSubmit={handleSubmit} className="grid gap-4 py-1">
           <div className="space-y-1.5">
-            <Label htmlFor="task-title" className="text-[#d0e8df]/80">
+            <Label htmlFor="task-title" className="text-[color:var(--app-text)]">
               Заголовок <span className="text-rose-400">*</span>
             </Label>
             <Input
@@ -262,16 +262,16 @@ export function CreateTaskModal({
               value={title}
               onChange={e => setTitle(e.target.value.slice(0, TITLE_MAX))}
               placeholder="Заголовок"
-              className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]"
+              className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]"
               maxLength={TITLE_MAX}
             />
-            <div className="text-right text-[10px] text-[#d0e8df]/45">
+            <div className="text-right text-[10px] text-[color:var(--app-text-subtle)]">
               {title.length}/{TITLE_MAX}
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-[#d0e8df]/80">Поиск лида</Label>
+            <Label className="text-[color:var(--app-text)]">Поиск лида</Label>
             <Input
               value={leadQuery}
               onChange={e => {
@@ -279,17 +279,17 @@ export function CreateTaskModal({
                 setSelectedLeadId(null)
               }}
               placeholder="Поиск лида по имени или номеру"
-              className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]"
+              className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]"
               disabled={!!selectedLead}
             />
             {selectedLead && (
-              <div className="flex flex-wrap items-center gap-2 rounded-lg border border-white/10 bg-[#031712] px-2 py-1.5 text-xs">
+              <div className="flex flex-wrap items-center gap-2 rounded-lg border border-white/10 bg-[var(--green-deep)] px-2 py-1.5 text-xs">
                 <span className="text-[#e6c364]">
                   {selectedLead.name ?? 'Без имени'} · {selectedLead.id}
                 </span>
                 <button
                   type="button"
-                  className="ml-auto text-[#d0e8df]/55 underline hover:text-[#d0e8df]"
+                  className="ml-auto text-[color:var(--app-text)]/55 underline hover:text-[color:var(--app-text)]"
                   onClick={() => {
                     setSelectedLeadId(null)
                     setLeadQuery('')
@@ -300,7 +300,7 @@ export function CreateTaskModal({
               </div>
             )}
             {!selectedLead && leadQuery.trim().length > 0 && leadSuggestions.length > 0 && (
-              <ul className="max-h-40 overflow-auto rounded-lg border border-[var(--green-border)] bg-[#031712] text-xs">
+              <ul className="max-h-40 overflow-auto rounded-lg border border-[var(--green-border)] bg-[var(--green-deep)] text-xs">
                 {leadSuggestions.map(lead => (
                   <li key={lead.id}>
                     <button
@@ -311,8 +311,8 @@ export function CreateTaskModal({
                         setLeadQuery('')
                       }}
                     >
-                      <span className="font-medium text-[#d0e8df]">{lead.name ?? 'Без имени'}</span>
-                      <span className="text-[#d0e8df]/50">
+                      <span className="font-medium text-[color:var(--app-text)]">{lead.name ?? 'Без имени'}</span>
+                      <span className="text-[color:var(--app-text)]/50">
                         {lead.id} · {mockPhoneForLead(lead.id)}
                       </span>
                     </button>
@@ -323,7 +323,7 @@ export function CreateTaskModal({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="task-desc" className="text-[#d0e8df]/80">
+            <Label htmlFor="task-desc" className="text-[color:var(--app-text)]">
               Описание
             </Label>
             <Textarea
@@ -332,12 +332,12 @@ export function CreateTaskModal({
               onChange={e => setDescription(e.target.value)}
               placeholder="Введите описание задачи..."
               rows={4}
-              className="resize-y border-[var(--green-border)] bg-[#031712] text-[#d0e8df]"
+              className="resize-y border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]"
             />
           </div>
 
           <div className="space-y-2">
-            <span className="text-xs font-medium text-[#d0e8df]/80">Срочность и важность</span>
+            <span className="text-xs font-medium text-[color:var(--app-text)]">Срочность и важность</span>
             <EisenhowerChips
               variant="dark"
               urgent={urgent}
@@ -348,7 +348,7 @@ export function CreateTaskModal({
           </div>
 
           <div className="space-y-2">
-            <span className="text-xs font-medium text-[#d0e8df]/80">Категория задачи</span>
+            <span className="text-xs font-medium text-[color:var(--app-text)]">Категория задачи</span>
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
@@ -357,7 +357,7 @@ export function CreateTaskModal({
                   'inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold transition-colors',
                   category === 'work'
                     ? 'border-[#4ade80]/45 bg-[#4ade80]/12 text-[#86efac]'
-                    : 'border-white/10 bg-transparent text-[#d0e8df]/60 hover:bg-white/5',
+                    : 'border-white/10 bg-transparent text-[color:var(--app-text)]/60 hover:bg-white/5',
                 )}
               >
                 <Briefcase className="h-3.5 w-3.5" />
@@ -370,7 +370,7 @@ export function CreateTaskModal({
                   'inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold transition-colors',
                   category === 'personal'
                     ? 'border-[#e6c364]/45 bg-[#e6c364]/12 text-[#e6c364]'
-                    : 'border-white/10 bg-transparent text-[#d0e8df]/60 hover:bg-white/5',
+                    : 'border-white/10 bg-transparent text-[color:var(--app-text)]/60 hover:bg-white/5',
                 )}
               >
                 <MapPin className="h-3.5 w-3.5" />
@@ -380,7 +380,7 @@ export function CreateTaskModal({
           </div>
 
           <div className="space-y-2">
-            <span className="text-xs font-medium text-[#d0e8df]/80">Цветовая метка</span>
+            <span className="text-xs font-medium text-[color:var(--app-text)]">Цветовая метка</span>
             <div className="flex flex-wrap items-center gap-2">
               {COLOR_PRESETS.map((c, i) => (
                 <button
@@ -394,14 +394,14 @@ export function CreateTaskModal({
                   )}
                   style={c ? { backgroundColor: c } : undefined}
                 >
-                  {!c && <span className="text-[10px] text-[#d0e8df]/40">∅</span>}
+                  {!c && <span className="text-[10px] text-[color:var(--app-text)]/40">∅</span>}
                 </button>
               ))}
             </div>
           </div>
 
           <div className="space-y-2">
-            <span className="text-xs font-medium text-[#d0e8df]/80">Напоминания</span>
+            <span className="text-xs font-medium text-[color:var(--app-text)]">Напоминания</span>
             <div className="flex flex-wrap gap-2">
               {REMINDER_PRESETS.map(({ minutes, label }) => {
                 const on = reminders.includes(minutes)
@@ -414,7 +414,7 @@ export function CreateTaskModal({
                       'rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition-colors',
                       on
                         ? 'border-[#e6c364]/50 bg-[#e6c364]/15 text-[#e6c364]'
-                        : 'border-white/10 bg-[#031712] text-[#d0e8df]/65 hover:bg-white/5',
+                        : 'border-white/10 bg-[var(--green-deep)] text-[color:var(--app-text)]/65 hover:bg-white/5',
                     )}
                   >
                     {label}
@@ -426,20 +426,20 @@ export function CreateTaskModal({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label className="text-[#d0e8df]/80">
+              <Label className="text-[color:var(--app-text)]">
                 Срок начала <span className="text-rose-400">*</span>
               </Label>
               <Input
                 type="date"
                 value={startDate}
                 onChange={e => setStartDate(e.target.value)}
-                className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]"
+                className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]"
               />
               <Select value={startTime} onValueChange={setStartTime}>
-                <SelectTrigger className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]">
+                <SelectTrigger className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]">
                   <SelectValue placeholder="Время" />
                 </SelectTrigger>
-                <SelectContent className="max-h-[min(280px,45vh)] border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df]">
+                <SelectContent className="max-h-[min(280px,45vh)] border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)]">
                   {TIME_OPTIONS.map(t => (
                     <SelectItem key={t} value={t} className="focus:bg-white/10">
                       {t}
@@ -449,18 +449,18 @@ export function CreateTaskModal({
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[#d0e8df]/80">Срок окончания</Label>
+              <Label className="text-[color:var(--app-text)]">Срок окончания</Label>
               <Input
                 type="date"
                 value={endDate}
                 onChange={e => setEndDate(e.target.value)}
-                className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]"
+                className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]"
               />
               <Select value={endTime} onValueChange={setEndTime}>
-                <SelectTrigger className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]">
+                <SelectTrigger className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]">
                   <SelectValue placeholder="Время" />
                 </SelectTrigger>
-                <SelectContent className="max-h-[min(280px,45vh)] border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df]">
+                <SelectContent className="max-h-[min(280px,45vh)] border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)]">
                   {TIME_OPTIONS.map(t => (
                     <SelectItem key={`e-${t}`} value={t} className="focus:bg-white/10">
                       {t}
@@ -480,9 +480,9 @@ export function CreateTaskModal({
               + Добавить подзадачу
             </button>
             {subtaskDrafts.length > 0 && (
-              <ul className="space-y-1 text-xs text-[#d0e8df]/80">
+              <ul className="space-y-1 text-xs text-[color:var(--app-text)]">
                 {subtaskDrafts.map((s, i) => (
-                  <li key={i} className="flex items-center gap-2 rounded border border-white/10 bg-[#031712] px-2 py-1">
+                  <li key={i} className="flex items-center gap-2 rounded border border-white/10 bg-[var(--green-deep)] px-2 py-1">
                     <span className="flex-1">{s}</span>
                     <button
                       type="button"
@@ -505,7 +505,7 @@ export function CreateTaskModal({
                 }
               }}
               placeholder="Текст подзадачи, Enter — добавить"
-              className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]"
+              className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]"
             />
           </div>
 
@@ -513,13 +513,13 @@ export function CreateTaskModal({
             <input id={`${formId}-files`} type="file" multiple className="sr-only" onChange={onFilesPick} />
             <label
               htmlFor={`${formId}-files`}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[var(--green-border)] bg-[#031712] px-3 py-2 text-xs font-medium text-[#d0e8df]/80 hover:bg-white/5"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[var(--green-border)] bg-[var(--green-deep)] px-3 py-2 text-xs font-medium text-[color:var(--app-text)] hover:bg-white/5"
             >
               <Paperclip className="h-3.5 w-3.5" />
               Прикрепить файлы (макс. 10)
             </label>
             {attachmentNames.length > 0 && (
-              <p className="text-[11px] text-[#d0e8df]/55">Выбрано: {attachmentNames.join(', ')}</p>
+              <p className="text-[11px] text-[color:var(--app-text)]/55">Выбрано: {attachmentNames.join(', ')}</p>
             )}
           </div>
 
@@ -531,7 +531,7 @@ export function CreateTaskModal({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-[var(--green-border)] bg-transparent text-[#d0e8df]"
+            className="border-[var(--green-border)] bg-transparent text-[color:var(--app-text)]"
           >
             Отмена
           </Button>

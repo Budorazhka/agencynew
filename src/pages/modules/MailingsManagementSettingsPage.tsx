@@ -1,26 +1,16 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { MailingsEditor } from '@/components/mailings/MailingsEditor'
 import { useDashboard } from '@/context/DashboardContext'
-import { getCityById, getCountryByCityId } from '@/data/mock'
+import { getCountryByCityId } from '@/data/mock'
 import type { Mailing } from '@/types/mailings'
 import { Button } from '@/components/ui/button'
 
-export function CityMailingsPage() {
-  const { cityId } = useParams<{ cityId: string }>()
+export default function MailingsManagementSettingsPage() {
   const { state, dispatch } = useDashboard()
-
-  const city = cityId ? getCityById(state.cities, cityId) : undefined
+  const city = state.cities[0]
   const country = city ? getCountryByCityId(city.id) : undefined
   const allPartners = state.cities.flatMap((c) => c.partners)
-
-  if (!city) {
-    return (
-      <div className="flex min-h-[50vh] items-center justify-center bg-[var(--app-bg)] text-[color:var(--app-text-muted)]">
-        <p>Город не найден</p>
-      </div>
-    )
-  }
 
   const handleAddMailing = (mailing: Mailing) => {
     dispatch({ type: 'ADD_MAILING', mailing })
@@ -30,8 +20,19 @@ export function CityMailingsPage() {
     dispatch({ type: 'CANCEL_SCHEDULED_MAILING', mailingId })
   }
 
+  if (!city) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 bg-[var(--app-bg)] p-8 text-[color:var(--app-text)]">
+        <p className="text-[color:var(--app-text-muted)]">Нет городов в демо-данных — рассылки недоступны.</p>
+        <Button variant="outline" asChild className="border-[var(--green-border)] text-[color:var(--app-text)]">
+          <Link to="/dashboard/settings/news-mailings">Назад</Link>
+        </Button>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-6 text-[color:var(--app-text)]">
+    <div className="min-h-full space-y-6 bg-[var(--app-bg)] p-6 text-[color:var(--app-text)] lg:p-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Button
@@ -40,14 +41,15 @@ export function CityMailingsPage() {
             asChild
             className="shrink-0 text-[color:var(--app-text-muted)] hover:bg-[var(--dropdown-hover)] hover:text-[color:var(--app-text)]"
           >
-            <Link to={`/dashboard/city/${city.id}`} aria-label="Назад к городу">
+            <Link to="/dashboard/settings/news-mailings" aria-label="Назад">
               <ArrowLeft className="size-5" />
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-[color:var(--app-text)]">Редактор рассылок</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-[color:var(--app-text)]">Рассылки</h1>
             <p className="text-[color:var(--app-text-muted)]">
-              {country?.name} · {city.name}
+              {country?.name ? `${country.name} · ` : ''}
+              {city.name} — аудитория и каналы доставки
             </p>
           </div>
         </div>

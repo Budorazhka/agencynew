@@ -9,6 +9,9 @@ export interface NewsArticle {
   publishedAt: string
   pinned?: boolean
   emoji: string
+  /** Внешняя ссылка (показывается в карточке новости) */
+  linkUrl?: string
+  linkLabel?: string
 }
 
 export interface Reminder {

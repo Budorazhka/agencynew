@@ -4,6 +4,7 @@ import { HashRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { DashboardProvider } from '@/context/DashboardContext'
 import { LeadsProvider } from '@/context/LeadsContext'
 import { AuthProvider, useAuth } from '@/context/AuthContext'
+import { NewsFeedProvider } from '@/context/NewsFeedContext'
 import { ThemeProvider } from '@/context/ThemeContext'
 import { MockProvider } from '@/providers/MockProvider'
 import { LoadingProvider } from '@/providers/LoadingProvider'
@@ -71,6 +72,9 @@ import TeamPage from '@/pages/modules/TeamPage'
 import LearningPage from '@/pages/modules/LearningPage'
 import InfoPage from '@/pages/modules/InfoPage'
 import SettingsHubPage from '@/pages/modules/SettingsHubPage'
+import SettingsNewsMailingsHubPage from '@/pages/modules/SettingsNewsMailingsHubPage'
+import NewsManagementSettingsPage from '@/pages/modules/NewsManagementSettingsPage'
+import MailingsManagementSettingsPage from '@/pages/modules/MailingsManagementSettingsPage'
 import '@fontsource/montserrat/400.css'
 import '@fontsource/montserrat/500.css'
 import '@fontsource/montserrat/600.css'
@@ -140,7 +144,7 @@ createRoot(document.getElementById('root')!).render(
 
                       {/* Защищённые маршруты */}
                       <Route element={<RequireAuth />}>
-                        <Route path="/dashboard" element={<App />}>
+                        <Route path="/dashboard" element={<NewsFeedProvider><App /></NewsFeedProvider>}>
                           {/* Главный экран — наша новая HomePage */}
                           <Route index element={<DashboardErrorBoundary><HomePage /></DashboardErrorBoundary>} />
 
@@ -194,6 +198,9 @@ createRoot(document.getElementById('root')!).render(
                           <Route path="settings/notifications" element={<NotificationsSettingsPage />} />
                           <Route path="settings/theme" element={<ThemeSettingsPage />} />
                           <Route path="settings/tariff" element={<TariffPage />} />
+                          <Route path="settings/news-mailings" element={<SettingsNewsMailingsHubPage />} />
+                          <Route path="settings/news-mailings/news" element={<NewsManagementSettingsPage />} />
+                          <Route path="settings/news-mailings/mailings" element={<MailingsManagementSettingsPage />} />
 
                           {/* Рабочие страницы из agency */}
                           <Route path="overview" element={<DashboardErrorBoundary><OverviewGuard /></DashboardErrorBoundary>} />
@@ -203,7 +210,22 @@ createRoot(document.getElementById('root')!).render(
                           <Route path="my-properties" element={<MyPropertiesPage />} />
                           <Route path="personnel" element={<Navigate to="/dashboard/team/org" replace />} />
                           <Route path="lms" element={<LMSPage />} />
-                          <Route path="settings" element={<SettingsErrorBoundary><SettingsPage /></SettingsErrorBoundary>} />
+                          <Route
+                            path="settings/branding"
+                            element={(
+                              <SettingsErrorBoundary>
+                                <SettingsPage key="settings-branding" initialSection="branding" />
+                              </SettingsErrorBoundary>
+                            )}
+                          />
+                          <Route
+                            path="settings"
+                            element={(
+                              <SettingsErrorBoundary>
+                                <SettingsPage key="settings-root" />
+                              </SettingsErrorBoundary>
+                            )}
+                          />
                           <Route path="product" element={<ProductErrorBoundary><RuntimeErrorBoundary><ProductPage /></RuntimeErrorBoundary></ProductErrorBoundary>} />
                           <Route path="city/:cityId" element={<CityPage />} />
                           <Route path="city/:cityId/mailings" element={<CityMailingsPage />} />

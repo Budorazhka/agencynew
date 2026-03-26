@@ -1,5 +1,5 @@
 import ModuleHub from '@/components/ModuleHub'
-import { CreditCard, Palette, Bell, SlidersHorizontal, Settings, Paintbrush } from 'lucide-react'
+import { CreditCard, Palette, Bell, SlidersHorizontal, Settings, Paintbrush, Megaphone } from 'lucide-react'
 
 export default function SettingsHubPage() {
   return (
@@ -24,8 +24,8 @@ export default function SettingsHubPage() {
         {
           icon: <Paintbrush size={20} color="#c9a84c" />,
           title: 'Брендинг агентства',
-          description: 'Название и логотип агентства.',
-          route: '/dashboard/settings',
+          description: 'Логотип и название для шапки CRM, главного экрана и клиентских материалов.',
+          route: '/dashboard/settings/branding',
         },
         {
           icon: <CreditCard size={20} color="#c9a84c" />,
@@ -36,8 +36,14 @@ export default function SettingsHubPage() {
         {
           icon: <SlidersHorizontal size={20} color="#c9a84c" />,
           title: 'Системные настройки',
-          description: 'Расширенные параметры платформы, профиль и безопасность.',
+          description: 'Профиль, компания, уведомления, безопасность, лиды и менеджеры — без дублирования брендинга.',
           route: '/dashboard/settings',
+        },
+        {
+          icon: <Megaphone size={20} color="#c9a84c" />,
+          title: 'Новости и рассылки',
+          description: 'Управление лентой новостей и массовыми оповещениями в CRM и личный кабинет.',
+          route: '/dashboard/settings/news-mailings',
         },
       ]}
     />

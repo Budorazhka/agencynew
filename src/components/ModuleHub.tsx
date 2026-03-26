@@ -99,8 +99,8 @@ export default function ModuleHub({
         <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
           <div style={{
             width: 68, height: 68, flexShrink: 0,
-            background: 'rgba(15,35,30,0.9)',
-            border: '1px solid rgba(230,195,100,0.3)',
+            background: 'var(--hub-card-bg)',
+            border: '1px solid var(--hub-card-border-hover)',
             borderRadius: 12,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             boxShadow: '0 0 20px rgba(230,195,100,0.08)',
@@ -111,7 +111,7 @@ export default function ModuleHub({
             <h1 style={{ margin: 0, fontSize: 30, fontWeight: 900, color: '#e6c364', letterSpacing: '0.04em', textTransform: 'uppercase', lineHeight: 1.1 }}>
               {moduleName}
             </h1>
-            <p style={{ margin: '6px 0 0', fontSize: 13, color: 'rgba(179,205,187,0.55)', maxWidth: 540, lineHeight: 1.5 }}>
+            <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--hub-desc)', maxWidth: 540, lineHeight: 1.5 }}>
               {moduleDescription}
             </p>
           </div>
@@ -140,7 +140,7 @@ export default function ModuleHub({
               cursor: 'pointer',
               transition: 'background 0.15s',
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(230,195,100,0.07)')}
+            onMouseEnter={e => (e.currentTarget.style.background = 'var(--hub-action-hover)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
           >
             {actionButton.label}
@@ -153,7 +153,7 @@ export default function ModuleHub({
       <div style={{
         flexShrink: 0,
         height: 1,
-        background: 'linear-gradient(to right, rgba(230,195,100,0.35), rgba(66,72,70,0.1) 60%, transparent)',
+        background: 'var(--hub-header-line)',
         marginBottom: 24,
       }} />
 
@@ -176,11 +176,11 @@ export default function ModuleHub({
               onMouseEnter={() => setHoveredIdx(i)}
               onMouseLeave={() => setHoveredIdx(null)}
               style={{
-                background: hovered ? 'rgba(25,46,40,0.9)' : 'rgba(15,35,30,0.8)',
+                background: hovered ? 'var(--hub-card-bg-hover)' : 'var(--hub-card-bg)',
                 backdropFilter: 'blur(20px)',
                 boxShadow: hovered
-                  ? 'inset 0 0 0 1px rgba(230,195,100,0.4)'
-                  : 'inset 0 0 0 1px rgba(230,195,100,0.15)',
+                  ? 'inset 0 0 0 1px var(--hub-card-border-hover)'
+                  : 'inset 0 0 0 1px var(--hub-card-border)',
                 borderRadius: 6,
                 padding: '32px 24px',
                 cursor: clickable ? 'pointer' : 'default',
@@ -238,7 +238,7 @@ export default function ModuleHub({
               </h3>
 
               {/* Description */}
-              <p style={{ margin: 0, fontSize: 13, color: 'rgba(194,200,196,0.7)', lineHeight: 1.6, maxWidth: 280 }}>
+              <p style={{ margin: 0, fontSize: 13, color: 'var(--hub-body)', lineHeight: 1.6, maxWidth: 280 }}>
                 {s.description}
               </p>
             </div>
@@ -252,26 +252,26 @@ export default function ModuleHub({
           flexShrink: 0,
           marginTop: 24,
           paddingTop: 20,
-          borderTop: '1px solid rgba(66,72,70,0.15)',
+          borderTop: '1px solid var(--divider-subtle)',
           display: 'grid',
           gridTemplateColumns: `repeat(${stats.length}, 1fr)`,
           gap: 24,
         }}>
           {stats.map((stat, i) => (
             <div key={i}>
-              <div style={{ fontSize: 9, color: 'rgba(230,195,100,0.5)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 6 }}>
+              <div style={{ fontSize: 9, color: 'var(--hub-stat-label)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 6 }}>
                 {stat.label}
               </div>
-              <div style={{ fontSize: 24, fontWeight: 700, color: '#d0e8df', letterSpacing: '-0.02em', lineHeight: 1 }}>
+              <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--workspace-text)', letterSpacing: '-0.02em', lineHeight: 1 }}>
                 {stat.value}
               </div>
               {stat.sub && (
-                <div style={{ fontSize: 10, color: stat.sub.startsWith('+') ? '#4ade80' : 'rgba(179,205,187,0.4)', marginTop: 5 }}>
+                <div style={{ fontSize: 10, color: stat.sub.startsWith('+') ? '#4ade80' : 'var(--workspace-text-dim)', marginTop: 5 }}>
                   {stat.sub}
                 </div>
               )}
               {stat.progress !== undefined && (
-                <div style={{ marginTop: 8, height: 3, background: 'rgba(15,35,30,0.8)', borderRadius: 2, overflow: 'hidden' }}>
+                <div style={{ marginTop: 8, height: 3, background: 'var(--hub-progress-track)', borderRadius: 2, overflow: 'hidden' }}>
                   <div style={{ height: '100%', width: `${stat.progress}%`, background: '#e6c364', borderRadius: 2 }} />
                 </div>
               )}

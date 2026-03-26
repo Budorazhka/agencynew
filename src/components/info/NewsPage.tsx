@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Pin, Search } from 'lucide-react'
+import { ExternalLink, Pin, Search } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
-import { NEWS_MOCK, type NewsCategory } from '@/data/info-mock'
+import { useNewsFeed } from '@/context/NewsFeedContext'
+import type { NewsArticle, NewsCategory } from '@/data/info-mock'
 
 const C = {
   gold: 'var(--gold)',
@@ -34,13 +35,18 @@ function formatDate(iso: string) {
 }
 
 export function NewsPage() {
+  const { allArticles } = useNewsFeed()
   const [filter, setFilter] = useState<CategoryFilter>('all')
   const [search, setSearch] = useState('')
   const [expanded, setExpanded] = useState<string | null>(null)
 
-  const articles = NEWS_MOCK.filter(a => {
+  const articles = allArticles.filter(a => {
     const matchCat = filter === 'all' || a.category === filter
-    const matchQ = !search.trim() || a.title.toLowerCase().includes(search.toLowerCase())
+    const q = search.trim().toLowerCase()
+    const matchQ =
+      !q ||
+      a.title.toLowerCase().includes(q) ||
+      a.body.toLowerCase().includes(q)
     return matchCat && matchQ
   })
 
@@ -106,7 +112,7 @@ export function NewsPage() {
 }
 
 function ArticleCard({ article, expanded, onToggle, pinned }: {
-  article: typeof NEWS_MOCK[0]
+  article: NewsArticle
   expanded: boolean
   onToggle: () => void
   pinned?: boolean
@@ -139,7 +145,28 @@ function ArticleCard({ article, expanded, onToggle, pinned }: {
           </div>
           {expanded && (
             <div style={{ marginTop: 12, fontSize: 13, color: C.whiteMid, lineHeight: 1.7, borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12 }}>
-              {article.body}
+              <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{article.body}</p>
+              {article.linkUrl && (
+                <a
+                  href={article.linkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={e => e.stopPropagation()}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    marginTop: 12,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: C.gold,
+                    textDecoration: 'none',
+                  }}
+                >
+                  <ExternalLink size={14} />
+                  {article.linkLabel ?? 'Ссылка'}
+                </a>
+              )}
             </div>
           )}
         </div>

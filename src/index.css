@@ -13,6 +13,59 @@
   --app-text: #ffffff;
   --rail-bg: #00110d;
   --rail-surface: rgba(10, 31, 26, 0.8);
+
+  /* Текстовая иерархия (тёмная тема) */
+  --app-text-muted: rgba(255, 255, 255, 0.72);
+  --app-text-subtle: rgba(255, 255, 255, 0.48);
+  --nav-item-text: rgba(255, 255, 255, 0.55);
+  --nav-item-bg-active: rgba(201, 168, 76, 0.1);
+  --sidebar-user-name: rgba(255, 255, 255, 0.88);
+  --sidebar-icon-muted: rgba(255, 255, 255, 0.4);
+  --logout-muted: rgba(255, 255, 255, 0.35);
+
+  /* Шапка / поиск (CRM shell) */
+  --shell-search-bg: rgba(255, 255, 255, 0.06);
+  --shell-search-border: rgba(255, 255, 255, 0.1);
+  --shell-search-fg: rgba(255, 255, 255, 0.88);
+  --shell-search-ph: rgba(255, 255, 255, 0.45);
+  --shell-elevated-bg: rgba(10, 31, 26, 0.95);
+  --shell-elevated-border: rgba(255, 255, 255, 0.08);
+  --dropdown-bg: var(--green-card);
+  --dropdown-text: #ffffff;
+  --dropdown-text-muted: rgba(255, 255, 255, 0.5);
+  --dropdown-hover: rgba(255, 255, 255, 0.08);
+  --dropdown-border: rgba(255, 255, 255, 0.12);
+  --dropdown-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --header-user-text: #d0e8df;
+  --header-avatar-bg: #243933;
+  --header-avatar-border: rgba(230, 195, 100, 0.25);
+  --divider-subtle: rgba(66, 72, 70, 0.45);
+
+  /* Хабы модулей / карточки рабочего стола */
+  --hub-card-bg: rgba(15, 35, 30, 0.85);
+  --hub-card-bg-hover: rgba(25, 46, 40, 0.92);
+  --hub-card-border: rgba(230, 195, 100, 0.18);
+  --hub-card-border-hover: rgba(230, 195, 100, 0.38);
+  --hub-desc: rgba(179, 205, 187, 0.55);
+  --hub-body: rgba(194, 200, 196, 0.75);
+
+  --workspace-card-bg: rgba(15, 35, 30, 0.8);
+  --workspace-card-hover: rgba(25, 46, 40, 0.9);
+  --workspace-card-ring: rgba(230, 195, 100, 0.15);
+  --workspace-card-ring-hover: rgba(230, 195, 100, 0.35);
+  --workspace-text: #d0e8df;
+  --workspace-text-muted: rgba(194, 200, 196, 0.55);
+  --workspace-text-dim: rgba(194, 200, 196, 0.4);
+  --workspace-row-bg: rgba(0, 17, 13, 0.35);
+  --workspace-row-border: rgba(230, 195, 100, 0.08);
+  --hub-stat-label: rgba(230, 195, 100, 0.5);
+  --hub-progress-track: rgba(15, 35, 30, 0.8);
+  --hub-action-hover: rgba(230, 195, 100, 0.07);
+  --hub-header-line: linear-gradient(to right, rgba(230, 195, 100, 0.35), rgba(66, 72, 70, 0.1) 60%, transparent);
+  --workspace-cal-nav-bg: rgba(15, 35, 30, 0.6);
+  --workspace-cal-cell-fill: rgba(255, 255, 255, 0.03);
+  --workspace-cal-day-row-border: rgba(230, 195, 100, 0.08);
+  --workspace-cal-dot-fallback: rgba(255, 255, 255, 0.3);
 }
 
 * {
@@ -28,17 +81,74 @@ body {
 }
 
 :root[data-theme='light'] {
-  --app-bg: #ffffff;
+  /* Фон чуть ниже белого — карточки и текст читаются лучше */
+  --app-bg: #e2e8f0;
   --app-text: #0f172a;
 
-  /* Переиспользуем текущие переменные, чтобы интерфейс стал "белым обычным" без редизайна компонентов. */
-  --green-bg: #f6f7f9;
+  --green-bg: #f1f5f9;
   --green-card: #ffffff;
-  --green-card-hover: #f3f4f6;
-  --green-border: rgba(15, 23, 42, 0.12);
-  --green-deep: #ffffff;
+  --green-card-hover: #f8fafc;
+  --green-border: #cbd5e1;
+  --green-deep: #f8fafc;
   --rail-bg: #ffffff;
-  --rail-surface: rgba(15, 23, 42, 0.04);
+  --rail-surface: #f1f5f9;
+
+  --app-text-muted: #475569;
+  --app-text-subtle: #64748b;
+  --nav-item-text: #334155;
+  --nav-item-bg-active: rgba(201, 168, 76, 0.14);
+  --sidebar-user-name: #0f172a;
+  --sidebar-icon-muted: #64748b;
+  --logout-muted: #64748b;
+
+  --shell-search-bg: #ffffff;
+  --shell-search-border: #94a3b8;
+  --shell-search-fg: #0f172a;
+  --shell-search-ph: #64748b;
+  --shell-elevated-bg: #ffffff;
+  --shell-elevated-border: #cbd5e1;
+  --dropdown-bg: #ffffff;
+  --dropdown-text: #0f172a;
+  --dropdown-text-muted: #64748b;
+  --dropdown-hover: #f1f5f9;
+  --dropdown-border: #e2e8f0;
+  --dropdown-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
+  --header-user-text: #1e293b;
+  --header-avatar-bg: #e2e8f0;
+  --header-avatar-border: rgba(201, 168, 76, 0.45);
+  --divider-subtle: #cbd5e1;
+
+  --hub-card-bg: #ffffff;
+  --hub-card-bg-hover: #f8fafc;
+  --hub-card-border: #e2e8f0;
+  --hub-card-border-hover: rgba(201, 168, 76, 0.45);
+  --hub-desc: #64748b;
+  --hub-body: #475569;
+
+  --workspace-card-bg: #ffffff;
+  --workspace-card-hover: #f8fafc;
+  --workspace-card-ring: #e2e8f0;
+  --workspace-card-ring-hover: rgba(201, 168, 76, 0.35);
+  --workspace-text: #0f172a;
+  --workspace-text-muted: #64748b;
+  --workspace-text-dim: #94a3b8;
+  --workspace-row-bg: #f1f5f9;
+  --workspace-row-border: #e2e8f0;
+  --hub-stat-label: #a07828;
+  --hub-progress-track: #e2e8f0;
+  --hub-action-hover: rgba(201, 168, 76, 0.12);
+  --hub-header-line: linear-gradient(to right, rgba(201, 168, 76, 0.45), #cbd5e1 50%, transparent);
+  --workspace-cal-nav-bg: #f1f5f9;
+  --workspace-cal-cell-fill: #f8fafc;
+  --workspace-cal-day-row-border: #e2e8f0;
+  --workspace-cal-dot-fallback: #cbd5e1;
+}
+
+:root[data-theme='light'] ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+:root[data-theme='light'] ::-webkit-scrollbar-thumb {
+  background: #94a3b8;
 }
 
 .gold-text {
@@ -123,7 +233,11 @@ body {
 }
 .open-btn:hover {
   background: var(--gold);
-  color: #0d2818;
+  color: #1a1406;
+}
+
+:root[data-theme='light'] .open-btn:hover {
+  color: #1a1406;
 }
 
 /* Sidebar */

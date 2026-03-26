@@ -14,11 +14,12 @@ import {
   PanelLeftClose,
   PanelLeft,
 } from 'lucide-react'
-import { getBranding } from '@/store/agencyStore'
+import { useAgencyBranding } from '@/hooks/useAgencyBranding'
 import { useAuth } from '@/context/AuthContext'
 import { ROLE_LABEL } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
 import { useSidebarRail } from '@/context/SidebarRailContext'
+import { useTheme } from '@/hooks/useTheme'
 
 const RAIL = [
   { label: 'Рабочий стол', to: '/dashboard', icon: LayoutDashboard, end: true },
@@ -30,8 +31,7 @@ const RAIL = [
       p.startsWith('/dashboard/crm') ||
       p.startsWith('/dashboard/leads') ||
       p.startsWith('/dashboard/clients') ||
-      p.startsWith('/dashboard/deals') ||
-      p.startsWith('/dashboard/bookings'),
+      p.startsWith('/dashboard/deals'),
   },
   {
     label: 'Аналитика',
@@ -102,8 +102,10 @@ export function DashboardAppRail() {
   const navigate = useNavigate()
   const location = useLocation()
   const { currentUser, logout } = useAuth()
-  const branding = getBranding()
+  const branding = useAgencyBranding()
   const { railCollapsed, toggleRail } = useSidebarRail()
+  const { theme } = useTheme()
+  const isLight = theme === 'light'
 
   const userName = currentUser?.name ?? 'Пользователь'
   const shortName =
@@ -125,9 +127,10 @@ export function DashboardAppRail() {
   return (
     <aside
       className={cn(
-        'z-50 flex h-screen shrink-0 flex-col border-r border-emerald-900/20 bg-[var(--rail-bg)]',
-        'py-4 shadow-[inset_-1px_0_0_rgba(201,168,76,0.1),30px_0_30px_rgba(0,17,13,0.4)]',
-        'transition-[width] duration-200 ease-out',
+        'z-50 flex h-screen shrink-0 flex-col border-r bg-[var(--rail-bg)] py-4 transition-[width] duration-200 ease-out',
+        isLight
+          ? 'border-[var(--green-border)] shadow-sm'
+          : 'border-emerald-900/20 shadow-[inset_-1px_0_0_rgba(201,168,76,0.1),30px_0_30px_rgba(0,17,13,0.4)]',
         railCollapsed ? RAIL_COLLAPSED_W : RAIL_EXPANDED_W,
       )}
     >
@@ -140,7 +143,10 @@ export function DashboardAppRail() {
             title={railCollapsed ? 'Развернуть меню' : 'Свернуть до иконок'}
             aria-expanded={!railCollapsed}
             className={cn(
-              'flex items-center rounded-md border border-emerald-900/30 bg-[var(--rail-surface)] p-2 text-emerald-100/70 transition-colors hover:border-[#e6c364]/30 hover:text-[#e6c364]',
+              'flex items-center rounded-md border p-2 transition-colors',
+              isLight
+                ? 'border-slate-200 bg-slate-100 text-slate-600 hover:border-[var(--gold)]/50 hover:text-slate-900'
+                : 'border-emerald-900/30 bg-[var(--rail-surface)] text-emerald-100/70 hover:border-[#e6c364]/30 hover:text-[#e6c364]',
               railCollapsed ? 'justify-center' : 'gap-3',
             )}
           >
@@ -163,7 +169,9 @@ export function DashboardAppRail() {
               </div>
               <div className="min-w-0">
                 <h1 className="truncate text-lg font-bold tracking-tight text-[#e6c364]">{productTitle}</h1>
-                <p className="font-[Inter] text-[10px] uppercase tracking-widest opacity-60">{productSub}</p>
+                <p className="font-[Inter] text-[10px] uppercase tracking-widest text-[color:var(--app-text-muted)]">
+                  {productSub}
+                </p>
               </div>
             </div>
           ) : (
@@ -194,8 +202,16 @@ export function DashboardAppRail() {
                 'group flex items-center font-[Inter] text-sm font-bold uppercase tracking-wide transition-all duration-200',
                 railCollapsed ? 'justify-center px-0 py-3' : 'px-6 py-3',
                 active
-                  ? 'translate-x-0 border-l-2 border-[#e6c364] bg-emerald-900/30 text-[#e6c364] sm:translate-x-1'
-                  : 'border-l-2 border-transparent text-emerald-100/60 hover:bg-emerald-900/20 hover:text-emerald-50',
+                  ? cn(
+                      'translate-x-0 border-l-2 border-[#e6c364] text-[#e6c364] sm:translate-x-1',
+                      isLight ? 'bg-[var(--nav-item-bg-active)]' : 'bg-emerald-900/30',
+                    )
+                  : cn(
+                      'border-l-2 border-transparent',
+                      isLight
+                        ? 'text-[color:var(--nav-item-text)] hover:bg-slate-100 hover:text-slate-900'
+                        : 'text-emerald-100/60 hover:bg-emerald-900/20 hover:text-emerald-50',
+                    ),
               )}
             >
               <Icon
@@ -214,7 +230,10 @@ export function DashboardAppRail() {
           onClick={() => navigate('/dashboard/settings-hub')}
           title="Настройки"
           className={cn(
-            'flex w-full items-center py-3 font-[Inter] text-sm uppercase tracking-wide text-emerald-100/60 transition-colors hover:text-emerald-50',
+            'flex w-full items-center py-3 font-[Inter] text-sm uppercase tracking-wide transition-colors',
+            isLight
+              ? 'text-[color:var(--nav-item-text)] hover:bg-slate-100 hover:text-slate-900'
+              : 'text-emerald-100/60 hover:text-emerald-50',
             railCollapsed ? 'justify-center' : '',
           )}
         >
@@ -223,13 +242,18 @@ export function DashboardAppRail() {
         </button>
 
         {!railCollapsed ? (
-          <div className="mt-4 flex items-center gap-3 border-t border-emerald-900/20 pt-4">
+          <div
+            className={cn(
+              'mt-4 flex items-center gap-3 border-t pt-4',
+              isLight ? 'border-[var(--green-border)]' : 'border-emerald-900/20',
+            )}
+          >
             <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-[#e6c364]/20 bg-[var(--rail-surface)] text-[10px] font-bold text-[#e6c364]">
               {shortName}
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
-              <p className="truncate text-xs font-bold">{displayLast}</p>
-              <p className="truncate text-[10px] opacity-50">{roleLabel}</p>
+              <p className="truncate text-xs font-bold text-[color:var(--app-text)]">{displayLast}</p>
+              <p className="truncate text-[10px] text-[color:var(--app-text-muted)]">{roleLabel}</p>
             </div>
             <button
               type="button"
@@ -238,13 +262,21 @@ export function DashboardAppRail() {
                 logout()
                 navigate('/')
               }}
-              className="shrink-0 text-emerald-100/40 hover:text-[#e6c364]"
+              className={cn(
+                'shrink-0 hover:text-[#e6c364]',
+                isLight ? 'text-slate-400' : 'text-emerald-100/40',
+              )}
             >
               <LogOut className="size-4" />
             </button>
           </div>
         ) : (
-          <div className="mt-2 flex flex-col items-center gap-2 border-t border-emerald-900/20 pt-3">
+          <div
+            className={cn(
+              'mt-2 flex flex-col items-center gap-2 border-t pt-3',
+              isLight ? 'border-[var(--green-border)]' : 'border-emerald-900/20',
+            )}
+          >
             <div
               className="flex size-8 items-center justify-center rounded-full border border-[#e6c364]/20 bg-[var(--rail-surface)] text-[10px] font-bold text-[#e6c364]"
               title={`${displayLast} · ${roleLabel}`}
@@ -258,7 +290,7 @@ export function DashboardAppRail() {
                 logout()
                 navigate('/')
               }}
-              className="text-emerald-100/40 hover:text-[#e6c364]"
+              className={cn('hover:text-[#e6c364]', isLight ? 'text-slate-400' : 'text-emerald-100/40')}
             >
               <LogOut className="size-4" />
             </button>

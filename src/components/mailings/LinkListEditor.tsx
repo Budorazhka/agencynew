@@ -40,34 +40,46 @@ export function LinkListEditor({ links, onChange, className }: LinkListEditorPro
   return (
     <div className={cn('space-y-3', className)}>
       <div className="flex items-center justify-between">
-        <Label className="text-base">Ссылки</Label>
-        <Button type="button" variant="outline" size="sm" onClick={addLink}>
+        <Label className="text-base text-[color:var(--app-text-muted)]">Ссылки</Label>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={addLink}
+          className="border-[var(--green-border)] bg-transparent text-[color:var(--app-text)] hover:bg-[var(--dropdown-hover)]"
+        >
           <Plus className="mr-1 size-4" />
           Добавить ссылку
         </Button>
       </div>
       {displayLinks.map((link, index) => (
-        <div key={index} className="flex flex-wrap items-end gap-2 rounded-md border border-input p-3">
+        <div
+          key={index}
+          className="flex flex-wrap items-end gap-2 rounded-md border border-[var(--green-border)] bg-[var(--green-deep)] p-3"
+        >
           <div className="min-w-0 flex-1 space-y-1">
-            <Label className="text-sm">URL</Label>
+            <Label className="text-sm text-[color:var(--app-text-muted)]">URL</Label>
             <Input
               type="url"
               placeholder="https://..."
               value={link.url}
               onChange={(e) => updateLink(index, { url: e.target.value })}
-              className="text-base"
+              className="text-base border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)] placeholder:text-[color:var(--app-text-subtle)]"
             />
           </div>
           <div className="min-w-0 flex-1 space-y-1">
             <div className="flex items-center gap-1.5">
-              <Label className="text-sm">Текст ссылки (опционально)</Label>
+              <Label className="text-sm text-[color:var(--app-text-muted)]">Текст ссылки (опционально)</Label>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="inline-flex cursor-help text-muted-foreground hover:text-foreground">
+                  <span className="inline-flex cursor-help text-[color:var(--app-text-muted)] hover:text-[color:var(--app-text)]">
                     <HelpCircle className="size-4" aria-hidden />
                   </span>
                 </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-[240px]">
+                <TooltipContent
+                  side="top"
+                  className="max-w-[240px] border border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)]"
+                >
                   Анкор — это видимый текст ссылки, по которому кликает получатель. Если не указать, в рассылке будет показан сам URL.
                 </TooltipContent>
               </Tooltip>
@@ -76,14 +88,14 @@ export function LinkListEditor({ links, onChange, className }: LinkListEditorPro
               placeholder="Анкор"
               value={link.label ?? ''}
               onChange={(e) => updateLink(index, { label: e.target.value })}
-              className="text-base"
+              className="text-base border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)] placeholder:text-[color:var(--app-text-subtle)]"
             />
           </div>
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="shrink-0 text-muted-foreground hover:text-destructive"
+            className="shrink-0 text-[color:var(--app-text-muted)] hover:text-red-400"
             onClick={() => removeLink(index)}
             title="Удалить"
           >

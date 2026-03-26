@@ -38,10 +38,10 @@ export function FileUpload({ value, onChange, className }: FileUploadProps) {
 
   return (
     <div className={cn('space-y-2', className)}>
-      <Label className="text-base">Файл</Label>
+      <Label className="text-base text-[color:var(--app-text-muted)]">Файл</Label>
       {value ? (
-        <div className="flex items-center gap-2 rounded-md border border-input px-3 py-2">
-          <span className="min-w-0 flex-1 truncate text-base" title={value.fileName}>
+        <div className="flex items-center gap-2 rounded-md border border-[var(--green-border)] bg-[var(--green-deep)] px-3 py-2">
+          <span className="min-w-0 flex-1 truncate text-base text-[color:var(--app-text)]" title={value.fileName}>
             {value.fileName}
           </span>
           <Button
@@ -68,6 +68,7 @@ export function FileUpload({ value, onChange, className }: FileUploadProps) {
             variant="outline"
             size="sm"
             onClick={() => inputRef.current?.click()}
+            className="border-[var(--green-border)] bg-transparent text-[color:var(--app-text)] hover:bg-[var(--dropdown-hover)]"
           >
             <FilePlus className="mr-2 size-4" />
             Прикрепить файл

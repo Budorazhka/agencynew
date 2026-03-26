@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Building2, Home, Send, Trash2, Users, X } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { cn } from '@/lib/utils'
-import { getBranding } from '@/store/agencyStore'
+import { useAgencyBranding } from '@/hooks/useAgencyBranding'
 import { useAuth } from '@/context/AuthContext'
 import { useLeads } from '@/context/LeadsContext'
 import { mockPhoneForLead } from '@/lib/lead-contact-mock'
@@ -189,7 +189,7 @@ export function SelectionsNewPage() {
   const navigate = useNavigate()
   const { currentUser } = useAuth()
   const { state: leadsState } = useLeads()
-  const branding = getBranding()
+  const branding = useAgencyBranding()
 
   const [title, setTitle] = useState('')
   const [leadQuery, setLeadQuery] = useState('')

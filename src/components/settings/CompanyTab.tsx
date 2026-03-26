@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Upload, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 function FeltInput({
   label,
@@ -31,7 +32,6 @@ function FeltInput({
 }
 
 export function CompanyTab() {
-  const [name,    setName]    = useState('Агентство Недвижимости Премьер')
   const [legal,   setLegal]   = useState('ООО «Премьер»')
   const [inn,     setInn]     = useState('7712345678')
   const [address, setAddress] = useState('г. Москва, ул. Тверская, 12')
@@ -46,26 +46,15 @@ export function CompanyTab() {
 
   return (
     <div className="space-y-8 max-w-xl">
-      {/* Logo upload */}
-      <div className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-wide text-[rgba(242,207,141,0.55)]">Логотип компании</p>
-        <div className="flex items-center gap-4">
-          <div className="flex size-16 items-center justify-center rounded-2xl border-2 border-dashed border-[rgba(242,207,141,0.25)] bg-[rgba(242,207,141,0.05)] text-2xl font-bold text-[rgba(242,207,141,0.4)]">
-            П
-          </div>
-          <button className="flex items-center gap-2 rounded-xl border border-[rgba(242,207,141,0.2)] px-4 py-2 text-sm font-medium text-[rgba(242,207,141,0.7)] hover:border-[rgba(242,207,141,0.4)] hover:text-[#fcecc8] transition-colors">
-            <Upload className="size-4" />
-            Загрузить логотип
-          </button>
-          <p className="text-xs text-[rgba(242,207,141,0.3)]">PNG, JPG до 2 МБ</p>
-        </div>
-      </div>
+      <p className="rounded-xl border border-[rgba(242,207,141,0.12)] bg-[rgba(242,207,141,0.04)] px-4 py-3 text-xs leading-relaxed text-[rgba(242,207,141,0.5)]">
+        Название и логотип для шапки CRM, главного экрана и клиентских материалов настраиваются в разделе{' '}
+        <Link to="/dashboard/settings/branding" className="font-semibold text-[rgba(201,168,76,0.85)] underline-offset-2 hover:underline">
+          Брендинг агентства
+        </Link>
+        .
+      </p>
 
-      {/* Company fields */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="sm:col-span-2">
-          <FeltInput label="Название компании" value={name} onChange={setName} placeholder="ООО «Название»" />
-        </div>
         <FeltInput label="Юридическое название" value={legal} onChange={setLegal} placeholder="ООО «Полное название»" />
         <FeltInput label="ИНН" value={inn} onChange={setInn} placeholder="7712345678" />
         <div className="sm:col-span-2">

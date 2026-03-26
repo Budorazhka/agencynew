@@ -62,16 +62,16 @@ function LeadBookingSelect({
       value={value ? value : NO_LEAD_VALUE}
       onValueChange={v => onChange(v === NO_LEAD_VALUE ? '' : v)}
     >
-      <SelectTrigger className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]">
+      <SelectTrigger className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]">
         <SelectValue placeholder="Выберите лида" />
       </SelectTrigger>
-      <SelectContent className="max-h-[min(320px,50vh)] border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df]">
-        <SelectItem value={NO_LEAD_VALUE} className="focus:bg-white/10">
+      <SelectContent className="max-h-[min(320px,50vh)] border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)]">
+        <SelectItem value={NO_LEAD_VALUE} className="focus:bg-[var(--dropdown-hover)]">
           Без лида
         </SelectItem>
         {leads.map(lead => (
-          <SelectItem key={lead.id} value={lead.id} className="focus:bg-white/10">
-            <span className="font-mono text-[11px] text-[#d0e8df]/55">{lead.id}</span>
+          <SelectItem key={lead.id} value={lead.id} className="focus:bg-[var(--dropdown-hover)]">
+            <span className="font-mono text-[11px] text-[color:var(--app-text-subtle)]">{lead.id}</span>
             {' · '}
             {lead.name ?? 'Без имени'}
             {' · '}
@@ -105,7 +105,7 @@ function BookingHoursField({
           type="button"
           variant="outline"
           size="icon"
-          className="h-10 w-10 shrink-0 border-[var(--green-border)] bg-[#031712] text-[#d0e8df] hover:bg-white/10"
+          className="h-10 w-10 shrink-0 border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)] hover:bg-[var(--dropdown-hover)]"
           onClick={() => bump(-24)}
           aria-label="Уменьшить срок на 24 часа"
         >
@@ -126,14 +126,14 @@ function BookingHoursField({
             if (!Number.isFinite(x) || x < 1) onChange('72')
             else onChange(String(Math.min(720, x)))
           }}
-          className="border-[var(--green-border)] bg-[#031712] text-center text-[#d0e8df] tabular-nums max-w-[5rem]"
+          className="border-[var(--green-border)] bg-[var(--green-deep)] text-center text-[color:var(--app-text)] tabular-nums max-w-[5rem]"
         />
-        <span className="text-sm text-[#d0e8df]/60 shrink-0">ч</span>
+        <span className="text-sm text-[color:var(--app-text-muted)] shrink-0">ч</span>
         <Button
           type="button"
           variant="outline"
           size="icon"
-          className="h-10 w-10 shrink-0 border-[var(--green-border)] bg-[#031712] text-[#d0e8df] hover:bg-white/10"
+          className="h-10 w-10 shrink-0 border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)] hover:bg-[var(--dropdown-hover)]"
           onClick={() => bump(24)}
           aria-label="Увеличить срок на 24 часа"
         >
@@ -149,7 +149,7 @@ function BookingHoursField({
             className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
               safe === h
                 ? 'border-[#e6c364] bg-[#e6c364]/15 text-[#e6c364]'
-                : 'border-white/10 bg-transparent text-[#d0e8df]/70 hover:bg-white/5'
+                : 'border-[var(--green-border)] bg-transparent text-[color:var(--app-text-muted)] hover:bg-[var(--dropdown-hover)]'
             }`}
           >
             {h} ч
@@ -630,17 +630,17 @@ export function BookingsPage() {
       </div>
 
       <Dialog open={primaryOpen} onOpenChange={setPrimaryOpen}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df] sm:max-w-md">
+        <DialogContent className="max-h-[90vh] overflow-y-auto border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)] sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-[#f5f5f5]">Бронь · новостройка</DialogTitle>
-            <DialogDescription className="text-[#d0e8df]/70">
+            <DialogDescription className="text-[color:var(--app-text-muted)]">
               Два шага: сначала ЖК, затем при брони квартиры — лот (шахматка / каталог). Список позже подгрузится с сервера.
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-1">
             <div className="flex flex-wrap gap-2">
-              <span className="w-full text-[10px] font-bold uppercase tracking-wider text-[#d0e8df]/50">Что бронируем</span>
+              <span className="w-full text-[10px] font-bold uppercase tracking-wider text-[color:var(--app-text-subtle)]">Что бронируем</span>
               {(['client', 'apartment'] as const).map(k => (
                 <button
                   key={k}
@@ -652,7 +652,7 @@ export function BookingsPage() {
                   className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
                     primKind === k
                       ? 'border-[#e6c364] bg-[#e6c364]/15 text-[#e6c364]'
-                      : 'border-white/10 bg-transparent text-[#d0e8df]/70 hover:bg-white/5'
+                      : 'border-[var(--green-border)] bg-transparent text-[color:var(--app-text-muted)] hover:bg-[var(--dropdown-hover)]'
                   }`}
                 >
                   {k === 'client' ? 'Клиента в ЖК' : 'Квартиру'}
@@ -661,7 +661,7 @@ export function BookingsPage() {
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-[#d0e8df]/80">1. Жилой комплекс</Label>
+              <Label className="text-[color:var(--app-text)]">1. Жилой комплекс</Label>
               <Select
                 value={primRcId || undefined}
                 onValueChange={v => {
@@ -669,12 +669,12 @@ export function BookingsPage() {
                   setPrimAptId('')
                 }}
               >
-                <SelectTrigger className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]">
+                <SelectTrigger className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]">
                   <SelectValue placeholder="Выберите ЖК" />
                 </SelectTrigger>
-                <SelectContent className="border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df]">
+                <SelectContent className="border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)]">
                   {NEW_BUILD_COMPLEXES_MOCK.map(rc => (
-                    <SelectItem key={rc.id} value={rc.id} className="focus:bg-white/10">
+                    <SelectItem key={rc.id} value={rc.id} className="focus:bg-[var(--dropdown-hover)]">
                       {rc.name} · {rc.developerName}
                     </SelectItem>
                   ))}
@@ -684,18 +684,18 @@ export function BookingsPage() {
 
             {primKind === 'apartment' && (
               <div className="space-y-1.5">
-                <Label className="text-[#d0e8df]/80">2. Квартира (лот)</Label>
+                <Label className="text-[color:var(--app-text)]">2. Квартира (лот)</Label>
                 <Select
                   value={primAptId || undefined}
                   onValueChange={setPrimAptId}
                   disabled={!primRcId || apartmentsForRc.length === 0}
                 >
-                  <SelectTrigger className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df] disabled:opacity-50">
+                  <SelectTrigger className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)] disabled:opacity-50">
                     <SelectValue placeholder={primRcId ? 'Выберите квартиру' : 'Сначала выберите ЖК'} />
                   </SelectTrigger>
-                  <SelectContent className="border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df]">
+                  <SelectContent className="border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)]">
                     {apartmentsForRc.map(apt => (
-                      <SelectItem key={apt.id} value={apt.id} className="focus:bg-white/10">
+                      <SelectItem key={apt.id} value={apt.id} className="focus:bg-[var(--dropdown-hover)]">
                         {apt.label} · {apt.typology}
                       </SelectItem>
                     ))}
@@ -705,36 +705,36 @@ export function BookingsPage() {
             )}
 
             <div className="space-y-1.5">
-              <Label htmlFor="prim-client" className="text-[#d0e8df]/80">Клиент (ФИО)</Label>
+              <Label htmlFor="prim-client" className="text-[color:var(--app-text)]">Клиент (ФИО)</Label>
               <Input
                 id="prim-client"
                 value={primClient}
                 onChange={e => setPrimClient(e.target.value)}
                 placeholder="Иванов И.И."
-                className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]"
+                className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]"
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[#d0e8df]/80">Лид (из вашей базы, необязательно)</Label>
+              <Label className="text-[color:var(--app-text)]">Лид (из вашей базы, необязательно)</Label>
               <LeadBookingSelect value={primLeadId} onChange={setPrimLeadId} leads={leadsSorted} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="prim-hours" className="text-[#d0e8df]/80">Срок брони</Label>
+              <Label htmlFor="prim-hours" className="text-[color:var(--app-text)]">Срок брони</Label>
               <BookingHoursField id="prim-hours" value={primHours} onChange={setPrimHours} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="prim-notes" className="text-[#d0e8df]/80">Комментарий</Label>
+              <Label htmlFor="prim-notes" className="text-[color:var(--app-text)]">Комментарий</Label>
               <Input
                 id="prim-notes"
                 value={primNotes}
                 onChange={e => setPrimNotes(e.target.value)}
-                className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]"
+                className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]"
               />
             </div>
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button type="button" variant="outline" onClick={() => setPrimaryOpen(false)} className="border-[var(--green-border)] bg-transparent text-[#d0e8df]">
+            <Button type="button" variant="outline" onClick={() => setPrimaryOpen(false)} className="border-[var(--green-border)] bg-transparent text-[color:var(--app-text)]">
               Отмена
             </Button>
             <Button type="button" onClick={submitPrimaryBooking} className="bg-[var(--gold-dark)] text-[#3d2e00] hover:brightness-110">
@@ -745,24 +745,24 @@ export function BookingsPage() {
       </Dialog>
 
       <Dialog open={secondaryOpen} onOpenChange={setSecondaryOpen}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df] sm:max-w-md">
+        <DialogContent className="max-h-[90vh] overflow-y-auto border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)] sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-[#f5f5f5]">Бронь · вторичка</DialogTitle>
-            <DialogDescription className="text-[#d0e8df]/70">
+            <DialogDescription className="text-[color:var(--app-text-muted)]">
               Выбор объекта из внутренней базы агентства (позже — ваша CRM / каталог). Отдельный процесс от новостроек.
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-1">
             <div className="space-y-1.5">
-              <Label className="text-[#d0e8df]/80">Объект из своей базы</Label>
+              <Label className="text-[color:var(--app-text)]">Объект из своей базы</Label>
               <Select value={secLotId || undefined} onValueChange={setSecLotId}>
-                <SelectTrigger className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]">
+                <SelectTrigger className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]">
                   <SelectValue placeholder="Выберите лот" />
                 </SelectTrigger>
-                <SelectContent className="border-[var(--green-border)] bg-[#0a1f1a] text-[#d0e8df]">
+                <SelectContent className="border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)]">
                   {AGENCY_SECONDARY_LOTS_MOCK.map(lot => (
-                    <SelectItem key={lot.id} value={lot.id} className="focus:bg-white/10">
+                    <SelectItem key={lot.id} value={lot.id} className="focus:bg-[var(--dropdown-hover)]">
                       {lot.address} · {lot.propertyType}
                     </SelectItem>
                   ))}
@@ -770,35 +770,35 @@ export function BookingsPage() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="sec-client" className="text-[#d0e8df]/80">Клиент (ФИО)</Label>
+              <Label htmlFor="sec-client" className="text-[color:var(--app-text)]">Клиент (ФИО)</Label>
               <Input
                 id="sec-client"
                 value={secClient}
                 onChange={e => setSecClient(e.target.value)}
-                className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]"
+                className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]"
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[#d0e8df]/80">Лид (из вашей базы, необязательно)</Label>
+              <Label className="text-[color:var(--app-text)]">Лид (из вашей базы, необязательно)</Label>
               <LeadBookingSelect value={secLeadId} onChange={setSecLeadId} leads={leadsSorted} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="sec-hours" className="text-[#d0e8df]/80">Срок брони</Label>
+              <Label htmlFor="sec-hours" className="text-[color:var(--app-text)]">Срок брони</Label>
               <BookingHoursField id="sec-hours" value={secHours} onChange={setSecHours} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="sec-notes" className="text-[#d0e8df]/80">Комментарий</Label>
+              <Label htmlFor="sec-notes" className="text-[color:var(--app-text)]">Комментарий</Label>
               <Input
                 id="sec-notes"
                 value={secNotes}
                 onChange={e => setSecNotes(e.target.value)}
-                className="border-[var(--green-border)] bg-[#031712] text-[#d0e8df]"
+                className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--app-text)]"
               />
             </div>
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button type="button" variant="outline" onClick={() => setSecondaryOpen(false)} className="border-[var(--green-border)] bg-transparent text-[#d0e8df]">
+            <Button type="button" variant="outline" onClick={() => setSecondaryOpen(false)} className="border-[var(--green-border)] bg-transparent text-[color:var(--app-text)]">
               Отмена
             </Button>
             <Button type="button" onClick={submitSecondaryBooking} className="bg-[var(--gold-dark)] text-[#3d2e00] hover:brightness-110">

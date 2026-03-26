@@ -15,10 +15,10 @@ export function SelectionsHubPage() {
 
   return (
     <div
-      className="flex min-h-screen w-full flex-col bg-[#031712] text-[#d0e8df] antialiased"
+      className="flex min-h-screen w-full flex-col bg-[var(--app-bg)] text-[color:var(--app-text)] antialiased"
       style={{ fontFamily: 'Inter, Montserrat, system-ui, sans-serif' }}
     >
-      <header className="sticky top-0 z-40 w-full border-b border-[#424846]/25 bg-[#031712]/90 backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b border-[color:var(--divider-subtle)] bg-[color-mix(in_srgb,var(--app-bg)_92%,transparent)] backdrop-blur-md">
         <div className="flex h-14 w-full items-center justify-between px-5 md:px-8">
           <div className="flex min-w-0 items-center gap-4 md:gap-6">
             <button
@@ -36,14 +36,14 @@ export function SelectionsHubPage() {
           <div className="flex shrink-0 items-center gap-4 md:gap-6">
             <button
               type="button"
-              className="cursor-pointer text-[#b3cdbb]/60 transition-opacity hover:opacity-100"
+              className="cursor-pointer text-[color:var(--app-text-muted)] transition-opacity hover:opacity-100"
               aria-label="Уведомления"
             >
               <Bell className="size-[22px] stroke-[1.5]" />
             </button>
             <button
               type="button"
-              className="cursor-pointer text-[#b3cdbb]/60 transition-opacity hover:opacity-100"
+              className="cursor-pointer text-[color:var(--app-text-muted)] transition-opacity hover:opacity-100"
               aria-label="Профиль"
             >
               <UserCircle className="size-[22px] stroke-[1.5]" />
@@ -58,7 +58,7 @@ export function SelectionsHubPage() {
             <h1 className="text-3xl font-extrabold uppercase leading-tight tracking-tight text-[#e6c364] sm:text-4xl md:text-[44px] lg:text-[52px]">
               Подборки
             </h1>
-            <p className="max-w-3xl text-sm leading-relaxed text-[#c2c8c4]">
+            <p className="max-w-3xl text-sm leading-relaxed text-[color:var(--hub-desc)]">
               Управление персональными коллекциями объектов недвижимости для ваших клиентов. Отслеживайте
               вовлечённость и конвертируйте просмотры в сделки.
             </p>
@@ -68,26 +68,26 @@ export function SelectionsHubPage() {
             <button
               type="button"
               onClick={() => navigate('/dashboard/selections/list')}
-              className="group flex min-h-[200px] cursor-pointer flex-col justify-between bg-[#0a1f1a] p-6 text-left transition-colors gold-inner-glow hover:bg-[#0f231e] md:min-h-[220px] md:p-8"
+              className="group flex min-h-[200px] cursor-pointer flex-col justify-between bg-[var(--green-card)] p-6 text-left transition-colors gold-inner-glow hover:bg-[var(--green-card-hover)] md:min-h-[220px] md:p-8"
             >
               <div className="flex items-start justify-between">
                 <List className="size-9 text-[#e6c364]/40 md:size-10" strokeWidth={1.25} />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#b3cdbb]/60">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--app-text-muted)]">
                   Архив
                 </span>
               </div>
               <div>
-                <h2 className="text-xl font-bold uppercase tracking-tight text-[#d0e8df] md:text-2xl">
+                <h2 className="text-xl font-bold uppercase tracking-tight text-[color:var(--app-text)] md:text-2xl">
                   Все подборки
                 </h2>
-                <p className="mt-1 text-xs text-[#b3cdbb]/50">Просмотр и редактирование активных коллекций</p>
+                <p className="mt-1 text-xs text-[color:var(--app-text-subtle)]">Просмотр и редактирование активных коллекций</p>
               </div>
             </button>
 
             <button
               type="button"
               onClick={() => navigate('/dashboard/selections/new')}
-              className="group flex min-h-[200px] cursor-pointer flex-col justify-between bg-[#0a1f1a] p-6 text-left transition-colors gold-inner-glow hover:bg-[#0f231e] md:min-h-[220px] md:p-8"
+              className="group flex min-h-[200px] cursor-pointer flex-col justify-between bg-[var(--green-card)] p-6 text-left transition-colors gold-inner-glow hover:bg-[var(--green-card-hover)] md:min-h-[220px] md:p-8"
             >
               <div className="flex items-start justify-between">
                 <Send className="size-9 text-[#e6c364] md:size-10" strokeWidth={1.35} />
@@ -95,10 +95,10 @@ export function SelectionsHubPage() {
               </div>
               <div className="space-y-5 md:space-y-6">
                 <div>
-                  <h2 className="text-xl font-bold uppercase tracking-tight text-[#d0e8df] md:text-2xl">
+                  <h2 className="text-xl font-bold uppercase tracking-tight text-[color:var(--app-text)] md:text-2xl">
                     Создать подборку
                   </h2>
-                  <p className="mt-1 text-xs text-[#b3cdbb]/50">Конфигуратор новых предложений для клиента</p>
+                  <p className="mt-1 text-xs text-[color:var(--app-text-subtle)]">Конфигуратор новых предложений для клиента</p>
                 </div>
                 <span className="inline-flex w-fit border border-[#e6c364]/40 px-5 py-2 text-[10px] font-bold uppercase tracking-widest text-[#e6c364] transition-all group-hover:bg-[#e6c364] group-hover:text-[#3d2e00] md:px-6">
                   Быстрый запуск
@@ -108,14 +108,14 @@ export function SelectionsHubPage() {
           </section>
 
           <section className="grid w-full grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,340px)] xl:gap-8">
-            <div className="min-w-0 overflow-hidden bg-[#0a1f1a] gold-inner-glow">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#424846]/10 px-5 py-4 md:px-8 md:py-6">
+            <div className="min-w-0 overflow-hidden bg-[var(--green-card)] gold-inner-glow">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[color:var(--divider-subtle)] px-5 py-4 md:px-8 md:py-6">
                 <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#e6c364]">
                   Последняя активность
                 </h3>
-                <span className="text-[10px] font-medium text-[#b3cdbb]/40">Обновлено 2 мин назад</span>
+                <span className="text-[10px] font-medium text-[color:var(--app-text-subtle)]">Обновлено 2 мин назад</span>
               </div>
-              <div className="divide-y divide-[#424846]/10">
+              <div className="divide-y divide-[color:var(--divider-subtle)]">
                 {[
                   {
                     id: 'sel-001',
@@ -146,11 +146,11 @@ export function SelectionsHubPage() {
                     key={row.title}
                     type="button"
                     onClick={() => navigate(`/dashboard/selections/${row.id}`)}
-                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-[#0f231e] md:px-8 md:py-5"
+                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-[var(--green-card-hover)] md:px-8 md:py-5"
                   >
                     <div className="flex min-w-0 flex-1 flex-col">
-                      <span className="block text-sm font-semibold text-[#d0e8df]">{row.title}</span>
-                      <span className="mt-0.5 block text-[11px] text-[#b3cdbb]/50">{row.sub}</span>
+                      <span className="block text-sm font-semibold text-[color:var(--app-text)]">{row.title}</span>
+                      <span className="mt-0.5 block text-[11px] text-[color:var(--app-text-subtle)]">{row.sub}</span>
                     </div>
                     <div className="flex shrink-0 items-center gap-3 md:gap-6">
                       <div className="flex items-center gap-2">
@@ -159,23 +159,23 @@ export function SelectionsHubPage() {
                           {row.status}
                         </span>
                       </div>
-                      <ChevronRight className="size-4 shrink-0 text-[#b3cdbb]/40" strokeWidth={2} />
+                      <ChevronRight className="size-4 shrink-0 text-[color:var(--app-text-subtle)]" strokeWidth={2} />
                     </div>
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="flex min-h-[280px] flex-col justify-between bg-[#0a1f1a] p-6 gold-inner-glow md:min-h-0 md:p-8">
+            <div className="flex min-h-[280px] flex-col justify-between bg-[var(--green-card)] p-6 gold-inner-glow md:min-h-0 md:p-8">
               <div>
                 <h3 className="mb-6 text-[10px] font-bold uppercase tracking-[0.2em] text-[#e6c364] md:mb-8">
                   Статистика охвата
                 </h3>
                 <div className="flex flex-wrap items-baseline gap-2">
-                  <span className="text-5xl font-extrabold tracking-tighter text-[#d0e8df] md:text-6xl">84%</span>
+                  <span className="text-5xl font-extrabold tracking-tighter text-[color:var(--app-text)] md:text-6xl">84%</span>
                   <span className="text-xs font-bold text-emerald-400">+12.4%</span>
                 </div>
-                <p className="mt-2 text-[10px] font-medium uppercase tracking-widest text-[#b3cdbb]/50">
+                <p className="mt-2 text-[10px] font-medium uppercase tracking-widest text-[color:var(--app-text-subtle)]">
                   Конверсия в просмотр подборок
                 </p>
               </div>
@@ -185,7 +185,7 @@ export function SelectionsHubPage() {
                     key={i}
                     className={cn(
                       'flex-1 rounded-t-[2px]',
-                      i === 5 ? 'bg-[#e6c364]' : 'bg-[#243933]',
+                      i === 5 ? 'bg-[#e6c364]' : 'bg-[var(--header-avatar-bg)]',
                     )}
                     style={{ height: `${h}%` }}
                   />

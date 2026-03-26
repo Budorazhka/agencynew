@@ -33,13 +33,13 @@ export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
 
   return (
     <div className={cn('space-y-2', className)}>
-      <Label className="text-base">Изображение</Label>
+      <Label className="text-base text-[color:var(--app-text-muted)]">Изображение</Label>
       {value ? (
         <div className="relative inline-block">
           <img
             src={value}
             alt="Превью"
-            className="max-h-40 rounded-md border border-input object-contain"
+            className="max-h-40 rounded-md border border-[var(--green-border)] object-contain"
           />
           <Button
             type="button"
@@ -66,11 +66,12 @@ export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
             variant="outline"
             size="sm"
             onClick={() => inputRef.current?.click()}
+            className="border-[var(--green-border)] bg-transparent text-[color:var(--app-text)] hover:bg-[var(--dropdown-hover)]"
           >
             <ImagePlus className="mr-2 size-4" />
             Прикрепить изображение
           </Button>
-          <span className="text-sm text-muted-foreground">до {MAX_SIZE_MB} МБ</span>
+          <span className="text-sm text-[color:var(--app-text-muted)]">до {MAX_SIZE_MB} МБ</span>
         </div>
       )}
     </div>
