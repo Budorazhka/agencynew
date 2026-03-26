@@ -1,5 +1,5 @@
 import ModuleHub from '@/components/ModuleHub'
-import { GitBranch, Users, ShieldCheck, BarChart2 } from 'lucide-react'
+import { GitBranch, Users, ShieldCheck, UserCog } from 'lucide-react'
 
 export default function TeamPage() {
   return (
@@ -16,15 +16,15 @@ export default function TeamPage() {
           route: '/dashboard/team/org',
         },
         {
-          icon: <BarChart2 size={20} color="#c9a84c" />,
-          title: 'KPI команды',
-          description: 'Показатели по лидам, сделкам и выручке за текущий месяц.',
+          icon: <UserCog size={20} color="#c9a84c" />,
+          title: 'Управление командой',
+          description: 'Сотрудники, роли, структура и управление составом команды.',
           route: '/dashboard/team/kpi',
         },
         {
           icon: <ShieldCheck size={20} color="#c9a84c" />,
-          title: 'Матрица доступов',
-          description: 'Матрица ролей и прав, scopes доступа для каждого пользователя.',
+          title: 'Управление доступами',
+          description: 'Матрица ролей, прав и уровней доступа.',
           route: '/dashboard/team/access',
         },
       ]}

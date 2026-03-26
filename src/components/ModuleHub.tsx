@@ -246,10 +246,6 @@ export default function ModuleHub({
                 {s.title}
               </h3>
 
-              {/* Description */}
-              <p style={{ margin: 0, fontSize: 13, color: 'var(--hub-body)', lineHeight: 1.6, maxWidth: 280 }}>
-                {s.description}
-              </p>
             </div>
           )
         })}

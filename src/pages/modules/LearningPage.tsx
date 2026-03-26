@@ -1,7 +1,6 @@
 import ModuleHub from '@/components/ModuleHub'
-import { BookOpen, FileText, GraduationCap, MessageSquare, Plus, Presentation } from 'lucide-react'
+import { BookOpen, FileText, GraduationCap, MessageSquare, Presentation } from 'lucide-react'
 
-/** Плитки = бывшие вкладки LMS: каждая ведёт в базу знаний с нужной вкладкой. */
 export default function LearningPage() {
   return (
     <ModuleHub
@@ -30,7 +29,7 @@ export default function LearningPage() {
         },
         {
           icon: <FileText size={20} color="#c9a84c" />,
-          title: 'PDF',
+          title: 'Файлы',
           description: 'Документы для скачивания и просмотра.',
           route: '/dashboard/lms/browse?tab=pdfs',
         },
@@ -39,12 +38,6 @@ export default function LearningPage() {
           title: 'Курсы',
           description: 'Программы с уроками и проверочными тестами.',
           route: '/dashboard/lms/browse?tab=courses',
-        },
-        {
-          icon: <Plus size={20} color="#c9a84c" />,
-          title: 'Добавить материал',
-          description: 'Новая запись в базе знаний (для ролей с правом администрирования).',
-          route: '/dashboard/lms/add',
         },
       ]}
     />

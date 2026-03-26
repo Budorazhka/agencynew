@@ -7,20 +7,20 @@ export default function BookingsHubPage() {
     <ModuleHub
       moduleIcon={<KeyRound size={32} color="#c9a84c" />}
       moduleName="Брони / Регистрации"
-      moduleDescription="Регистрация покупателя (бронь квартиры) и регистрация клиента (фиксация в жилом комплексе)."
+      moduleDescription="Бронирование клиента и квартиры."
       backRoute="/dashboard"
       sections={[
         {
-          icon: <KeyRound size={20} color="#c9a84c" />,
-          title: 'Брони № 1',
-          description: 'Бронь квартиры: новостройка (лот в ЖК) или вторичка из базы агентства.',
-          route: '/dashboard/bookings/register-buyer',
-        },
-        {
           icon: <UserRoundPlus size={20} color="#c9a84c" />,
-          title: 'Регистрация № 2',
+          title: 'Забронировать клиента',
           description: 'Фиксация приведённого клиента за жилым комплексом в новостройке (несколько таких регистраций на клиента допустимы).',
           route: '/dashboard/bookings/register-client',
+        },
+        {
+          icon: <KeyRound size={20} color="#c9a84c" />,
+          title: 'Забронировать квартиру',
+          description: 'Бронь квартиры: новостройка (лот в ЖК) или вторичка из базы агентства.',
+          route: '/dashboard/bookings/register-buyer',
         },
       ]}
     />
