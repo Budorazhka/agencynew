@@ -40,7 +40,7 @@ export function PartnerCardPage() {
   const partner = PARTNERS_MOCK.find(p => p.id === partnerId)
   if (!partner) {
     return (
-      <DashboardShell>
+      <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/partners/list' }}>
         <div style={{ ...S.page, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>Партнёр не найден</div>
         </div>
@@ -49,7 +49,7 @@ export function PartnerCardPage() {
   }
 
   return (
-    <DashboardShell>
+    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/partners/list' }}>
       <div style={S.page}>
         {/* Back */}
         <button

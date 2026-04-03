@@ -202,17 +202,17 @@ const S = {
   topBackBtn: {
     display: 'flex',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
     flexShrink: 0,
-    height: 32,
-    padding: '0 12px',
+    height: 38,
+    padding: '0 18px',
     background: 'rgba(201,168,76,0.1)',
     border: '1px solid rgba(201,168,76,0.35)',
-    borderRadius: 8,
+    borderRadius: 10,
     color: 'var(--gold)',
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: 700,
-    letterSpacing: '0.06em',
+    letterSpacing: '0.04em',
     cursor: 'pointer',
     fontFamily: 'inherit',
   } as React.CSSProperties,
@@ -335,284 +335,24 @@ export function DashboardShell({ children, hideSidebar = true, topBack }: Dashbo
   }
 
   return (
-    <div style={S.root}>
-      {/* Sidebar */}
-      {!hideSidebar && (
-      <aside style={S.sidebar}>
-        <div style={S.sidebarLogo}>
-          {branding.logoDataUrl && (
-            <img
-              src={branding.logoDataUrl}
-              alt="logo"
-              style={{ height: 28, marginBottom: 6, objectFit: 'contain' }}
-            />
-          )}
-          <div style={S.sidebarLogoTitle}>
-            {branding.name || 'Estate Portal'}
-          </div>
-          <div style={S.sidebarLogoSub}>PropTech Platform</div>
-        </div>
-
-        <nav style={S.navScroll}>
-          {navItems.map(item => {
-            const Icon = item.icon
-            const active = isActive(item.route)
-            return (
-              <div
-                key={item.label}
-                style={S.navItem(active)}
-                onClick={() => go(item.route, item.external)}
-              >
-                <Icon size={14} />
-                {item.label}
-              </div>
-            )
-          })}
-        </nav>
-
-        {/* Footer: user info + logout */}
-        <div style={S.sidebarFooter}>
-          {currentUser && (
-            <div style={S.userRow}>
-              <User size={14} color="var(--sidebar-icon-muted)" />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={S.userName}>{currentUser.name}</div>
-                <div style={S.userRole}>{ROLE_LABEL[currentUser.role]}</div>
-              </div>
-            </div>
-          )}
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, background: 'var(--app-bg)', fontFamily: 'Inter, sans-serif', overflow: 'hidden' }}>
+      {/* Minimal back button — no heavy header */}
+      {topBack && (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 16px 0', flexShrink: 0 }}>
           <button
-            style={S.logoutBtn}
-            onClick={() => { logout(); navigate('/') }}
-            onMouseEnter={e => (e.currentTarget.style.color = 'var(--app-text-muted)')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'var(--logout-muted)')}
+            type="button"
+            style={S.topBackBtn}
+            onClick={() => navigate(topBack.route)}
           >
-            <LogOut size={12} />
-            Выйти
+            <ArrowLeft size={14} />
+            {topBack.label}
           </button>
         </div>
-      </aside>
       )}
 
-      {/* Main content area */}
-      <div style={S.content}>
-        {/* Top bar */}
-        {hideSidebar ? (
-          <div
-            style={{
-              ...S.topbar,
-              justifyContent: 'space-between',
-              gap: 16,
-              padding: '0 24px',
-            }}
-          >
-            <div style={{ flexShrink: 0 }}>
-              {topBack && (
-                <button
-                  type="button"
-                  style={{
-                    ...S.topBackBtn,
-                    height: 36,
-                    borderRadius: 10,
-                  }}
-                  onClick={() => navigate(topBack.route)}
-                >
-                  <ArrowLeft size={18} strokeWidth={2} />
-                  {topBack.label}
-                </button>
-              )}
-            </div>
-            <div
-              style={{
-                flex: 1,
-                display: 'flex',
-                justifyContent: 'center',
-                minWidth: 0,
-                padding: '0 16px',
-              }}
-            >
-              <div
-                ref={searchRef}
-                style={{
-                  width: '100%',
-                  maxWidth: 720,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  background: 'var(--shell-elevated-bg)',
-                  border: '1px solid var(--shell-elevated-border)',
-                  borderRadius: 12,
-                  padding: '0 14px 0 44px',
-                  height: 36,
-                  position: 'relative',
-                }}
-              >
-                <Search
-                  size={20}
-                  color="var(--shell-search-ph)"
-                  style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)' }}
-                />
-                <input
-                  style={{
-                    ...S.searchInput,
-                    fontSize: 13,
-                  }}
-                  placeholder="Поиск по клиентам, сделкам, задачам..."
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  onFocus={() => setSearchFocused(true)}
-                />
-                {searchFocused && searchQuery.trim().length >= 2 && (
-                  <div style={{ ...S.searchDropdown, left: 0, right: 0 }}>
-                    {searchResults.length === 0 ? (
-                      <div style={S.searchEmpty}>Ничего не найдено</div>
-                    ) : searchResults.map(item => {
-                      const Icon = CATEGORY_ICON[item.category]
-                      const color = CATEGORY_COLOR[item.category]
-                      return (
-                        <div
-                          key={item.id + item.category}
-                          style={S.searchResultItem}
-                          onMouseDown={() => { navigate(item.route); setSearchQuery(''); setSearchFocused(false) }}
-                          onMouseEnter={e => (e.currentTarget.style.background = 'var(--dropdown-hover)')}
-                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                        >
-                          <div style={{ width: 28, height: 28, borderRadius: 6, background: `${color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                            <Icon size={13} color={color} />
-                          </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--dropdown-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</div>
-                            <div style={{ fontSize: 10, color: 'var(--dropdown-text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.sub}</div>
-                          </div>
-                          <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color, flexShrink: 0 }}>{CATEGORY_LABEL[item.category]}</span>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexShrink: 0 }}>
-              <NotificationCenter />
-              {currentUser && (
-                <>
-                  <div style={{ width: 1, height: 24, background: 'var(--divider-subtle)' }} />
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--header-user-text)', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {shortDisplayName(currentUser.name)}
-                      </div>
-                      <div style={{ fontSize: 9, fontWeight: 700, color: '#e6c364', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-                        {ROLE_LABEL[currentUser.role]}
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: '50%',
-                        background: 'var(--header-avatar-bg)',
-                        border: '1px solid var(--header-avatar-border)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        overflow: 'hidden',
-                        flexShrink: 0,
-                        fontSize: 11,
-                        fontWeight: 700,
-                        color: '#e6c364',
-                      }}
-                    >
-                      {userInitials(currentUser.name)}
-                    </div>
-                    <button
-                      type="button"
-                      title="Выйти"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: 4,
-                        border: 'none',
-                        background: 'transparent',
-                        cursor: 'pointer',
-                        color: 'var(--app-text-muted)',
-                      }}
-                      onClick={() => { logout(); navigate('/') }}
-                      onMouseEnter={e => { e.currentTarget.style.color = '#b91c1c' }}
-                      onMouseLeave={e => { e.currentTarget.style.color = 'var(--app-text-muted)' }}
-                    >
-                      <LogOut size={20} />
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div style={S.topbar}>
-            {topBack && (
-              <button
-                type="button"
-                style={S.topBackBtn}
-                onClick={() => navigate(topBack.route)}
-              >
-                <ArrowLeft size={14} />
-                {topBack.label}
-              </button>
-            )}
-            <div
-              ref={searchRef}
-              style={{
-                ...S.searchWrap,
-                position: 'relative',
-              }}
-            >
-              <Search size={13} color="var(--shell-search-ph)" />
-              <input
-                style={S.searchInput}
-                placeholder="Поиск по клиентам, сделкам, задачам..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                onFocus={() => setSearchFocused(true)}
-              />
-              {searchFocused && searchQuery.trim().length >= 2 && (
-                <div style={S.searchDropdown}>
-                  {searchResults.length === 0 ? (
-                    <div style={S.searchEmpty}>Ничего не найдено</div>
-                  ) : searchResults.map(item => {
-                    const Icon = CATEGORY_ICON[item.category]
-                    const color = CATEGORY_COLOR[item.category]
-                    return (
-                      <div
-                        key={item.id + item.category}
-                        style={S.searchResultItem}
-                        onMouseDown={() => { navigate(item.route); setSearchQuery(''); setSearchFocused(false) }}
-                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--dropdown-hover)')}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                      >
-                        <div style={{ width: 28, height: 28, borderRadius: 6, background: `${color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <Icon size={13} color={color} />
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--dropdown-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</div>
-                          <div style={{ fontSize: 10, color: 'var(--dropdown-text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.sub}</div>
-                        </div>
-                        <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color, flexShrink: 0 }}>{CATEGORY_LABEL[item.category]}</span>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-            <NotificationCenter />
-          </div>
-        )}
-
-        <main style={S.main}>
-          {children}
-        </main>
-      </div>
+      <main style={S.main}>
+        {children}
+      </main>
     </div>
   )
 }

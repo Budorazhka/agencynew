@@ -18,7 +18,7 @@ export function ThemeSettingsPage() {
   const themeMode: ThemeMode = preference === 'light' ? 'light' : 'standard'
 
   return (
-    <DashboardShell>
+    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/settings-hub' }}>
       <div style={{ padding: '24px 28px 48px', maxWidth: 680 }}>
         <div style={{ marginBottom: 24 }}>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.text, marginBottom: 4 }}>Внешний вид</div>

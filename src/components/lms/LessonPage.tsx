@@ -115,7 +115,7 @@ export function LessonPage() {
 
   if (!lesson || !course) {
     return (
-      <DashboardShell>
+      <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/learning' }}>
         <div style={{ ...S.root, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ color: S.dim, fontSize: 14 }}>Урок не найден</span>
         </div>
@@ -127,7 +127,7 @@ export function LessonPage() {
   const nextLesson = lessonIdx < course.lessons.length - 1 ? course.lessons[lessonIdx + 1] : null
 
   return (
-    <DashboardShell>
+    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/learning' }}>
     <div style={S.root}>
       {/* Back */}
       <button

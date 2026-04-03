@@ -38,7 +38,7 @@ export function CoursePage() {
   const course = LMS_COURSES.find(c => c.id === courseId)
   if (!course) {
     return (
-      <DashboardShell>
+      <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/learning' }}>
         <div style={{ ...S.root, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ color: S.dim, fontSize: 14 }}>Курс не найден</span>
         </div>
@@ -49,7 +49,7 @@ export function CoursePage() {
   const progress = course.lessons.length > 0 ? Math.round((completed.size / course.lessons.length) * 100) : 0
 
   return (
-    <DashboardShell>
+    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/learning' }}>
     <div style={S.root}>
       {/* Back */}
       <button

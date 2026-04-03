@@ -181,7 +181,7 @@ export function DealsKanbanPage() {
   }
 
   return (
-    <DashboardShell>
+    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/deals' }}>
       <div
         style={{
           padding: '24px 28px 40px',

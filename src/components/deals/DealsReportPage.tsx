@@ -57,7 +57,7 @@ export function DealsReportPage() {
   const activeDeals = deals.filter(d => !successStages.has(d.stage))
 
   return (
-    <DashboardShell>
+    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/deals' }}>
       <div style={{ padding: '24px 28px 40px', maxWidth: 900 }}>
         <div style={{ marginBottom: 20, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 }}>
           <button type="button" onClick={() => navigate('/dashboard/crm')} style={backToCrmBtn}>

@@ -119,7 +119,7 @@ export function DealCardPage() {
 
   if (!deal) {
     return (
-      <DashboardShell>
+      <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/deals/kanban' }}>
         <div style={{ padding: 40, color: C.whiteLow }}>
           <button type="button" onClick={() => navigate('/dashboard/crm')} style={{ ...S.backToCrm, marginBottom: 16 }}>
             <ArrowLeft size={20} strokeWidth={2} />
@@ -156,7 +156,7 @@ export function DealCardPage() {
   const linkedLead = linkedLeadId ? getLeadWithHistory(linkedLeadId) : null
 
   return (
-    <DashboardShell>
+    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/deals/kanban' }}>
       <div
         style={{
           padding: '24px 28px 40px',

@@ -34,7 +34,7 @@ export function TestPage() {
 
   if (!lesson?.quiz || !course) {
     return (
-      <DashboardShell>
+      <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/learning' }}>
         <div style={{ ...S.root, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ color: S.dim, fontSize: 14 }}>Тест не найден</span>
         </div>
@@ -56,7 +56,7 @@ export function TestPage() {
   const passed = score >= course.passingScore
 
   return (
-    <DashboardShell>
+    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/learning' }}>
     <div style={S.root}>
       {/* Back */}
       <button

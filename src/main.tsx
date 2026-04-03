@@ -11,6 +11,7 @@ import { LoadingProvider } from '@/providers/LoadingProvider'
 import App from './App'
 import HomePage from '@/pages/HomePage'
 import { OverviewGuard } from '@/components/dashboard/OverviewGuard'
+import { MyReportPage } from '@/components/dashboard/MyReportPage'
 import { CityPage } from '@/components/city/CityPage'
 import { CityMailingsPage } from '@/components/city/CityMailingsPage'
 import { SupremeOwnerDashboardPage } from '@/components/owner/SupremeOwnerDashboardPage'
@@ -209,6 +210,7 @@ createRoot(document.getElementById('root')!).render(
 
                           {/* Рабочие страницы из agency */}
                           <Route path="overview" element={<DashboardErrorBoundary><OverviewGuard /></DashboardErrorBoundary>} />
+                          <Route path="my-report" element={<MyReportPage />} />
                           <Route path="leads" element={<LeadsErrorBoundary><RuntimeErrorBoundary><LeadsAdminPage /></RuntimeErrorBoundary></LeadsErrorBoundary>} />
                           <Route path="leads/poker" element={<LeadsErrorBoundary><RuntimeErrorBoundary><LeadsPokerPage /></RuntimeErrorBoundary></LeadsErrorBoundary>} />
                           <Route path="leads/analytics" element={<Navigate to="/dashboard/leads" replace />} />

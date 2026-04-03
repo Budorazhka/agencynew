@@ -101,7 +101,7 @@ export function TasksPage() {
   ]
 
   return (
-    <DashboardShell>
+    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/tasks' }}>
       <div style={{ padding: '28px 28px 40px', maxWidth: 1000 }}>
         <div style={{ marginBottom: 20 }}>
           <button type="button" onClick={() => navigate('/dashboard/tasks')} style={backToTasksHubBtn}>

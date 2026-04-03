@@ -21,87 +21,187 @@ const EVENT_DOT: Record<string, string> = {
   signing: 'bg-emerald-400',
 }
 
-const MONTH_NAMES = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+const MONTH_NAMES = [
+  'Январь',
+  'Февраль',
+  'Март',
+  'Апрель',
+  'Май',
+  'Июнь',
+  'Июль',
+  'Август',
+  'Сентябрь',
+  'Октябрь',
+  'Ноябрь',
+  'Декабрь',
+]
 const DAY_NAMES = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
 
+const WEEK_SLOTS = 42
+
+type MiniCalendarProps = {
+  /**
+   * `workspace` — плотная сетка на 6 недель, ячейки делят высоту (весь месяц в кадре).
+   * `default` — прежний компактный вид с фиксированной минимальной высотой ячеек.
+   */
+  variant?: 'default' | 'workspace'
+  /** Скрыть нижнюю ссылку «Полный календарь» (если ссылка снаружи) */
+  hideFooterLink?: boolean
+  /** Не показывать блок «События выбранного дня» под сеткой (например, меню снаружи) */
+  hideDayPanel?: boolean
+  /** Контролируемая выбранная дата `YYYY-MM-DD` */
+  selectedDate?: string
+  onSelectedDateChange?: (dateIso: string) => void
+}
+
 /** Компактный календарь для виджета рабочего стола. */
-export function MiniCalendar() {
+export function MiniCalendar({
+  variant = 'default',
+  hideFooterLink = false,
+  hideDayPanel = false,
+  selectedDate: selectedDateProp,
+  onSelectedDateChange,
+}: MiniCalendarProps) {
+  const isWorkspace = variant === 'workspace'
   const today = useMemo(() => new Date(), [])
   const fmt = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
   const todayStr = fmt(today)
 
   const [viewDate, setViewDate] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1))
-  const [selectedDate, setSelectedDate] = useState(todayStr)
+  const [uncontrolledSelected, setUncontrolledSelected] = useState(todayStr)
+  const isSelControlled = selectedDateProp !== undefined
+  const selectedDate = isSelControlled ? selectedDateProp : uncontrolledSelected
+
+  function selectDate(dateIso: string) {
+    if (!isSelControlled) setUncontrolledSelected(dateIso)
+    onSelectedDateChange?.(dateIso)
+  }
 
   const year = viewDate.getFullYear()
   const month = viewDate.getMonth()
   const daysInMonth = getDaysInMonth(year, month)
   const firstDow = getFirstDayOfWeek(year, month)
 
-  const cells = Array.from({ length: firstDow + daysInMonth }, (_, i) => {
-    if (i < firstDow) return null
-    const day = i - firstDow + 1
-    return `${year}-${pad(month + 1)}-${pad(day)}`
-  })
+  const cellsBase: (string | null)[] = []
+  for (let i = 0; i < firstDow; i++) cellsBase.push(null)
+  for (let day = 1; day <= daysInMonth; day++) {
+    cellsBase.push(`${year}-${pad(month + 1)}-${pad(day)}`)
+  }
+  const cells: (string | null)[] = isWorkspace
+    ? (() => {
+        const c = [...cellsBase]
+        while (c.length < WEEK_SLOTS) c.push(null)
+        return c
+      })()
+    : cellsBase
 
-  const eventsForDate = (date: string) => CALENDAR_EVENTS_MOCK.filter(e => e.date === date)
+  const eventsForDate = (date: string) => CALENDAR_EVENTS_MOCK.filter((e) => e.date === date)
   const selectedEvents = eventsForDate(selectedDate)
 
   function prevMonth() {
-    setViewDate(d => new Date(d.getFullYear(), d.getMonth() - 1, 1))
+    setViewDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1))
   }
   function nextMonth() {
-    setViewDate(d => new Date(d.getFullYear(), d.getMonth() + 1, 1))
+    setViewDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1))
   }
   function goThisMonth() {
     setViewDate(new Date(today.getFullYear(), today.getMonth(), 1))
-    setSelectedDate(todayStr)
+    selectDate(todayStr)
   }
 
+  const cellMinH = isWorkspace ? '' : 'min-h-[52px]'
+  const dayNumClass = isWorkspace
+    ? 'mb-0 flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-medium'
+    : 'mb-0.5 flex size-6 items-center justify-center rounded-full text-[11px] font-medium'
+  const headerMonthClass = isWorkspace
+    ? 'text-sm font-bold tracking-tight text-[color:var(--workspace-text)] sm:text-base'
+    : 'text-sm font-bold tracking-tight text-[color:var(--workspace-text)]'
+  const dowClass = isWorkspace
+    ? 'text-center text-[10px] font-semibold uppercase tracking-wider text-[color:var(--workspace-text-dim)]'
+    : 'text-center text-[9px] font-semibold uppercase tracking-wider text-[color:var(--workspace-text-dim)]'
+
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <div className="min-w-0 text-sm font-bold tracking-tight text-[color:var(--workspace-text)]">
+    <div
+      className={cn(
+        'flex flex-col',
+        isWorkspace
+          ? 'h-full min-h-0 w-full min-w-0 flex-1'
+          : 'min-h-0 flex-1',
+      )}
+    >
+      <div className={cn('flex shrink-0 items-center justify-between gap-1.5', isWorkspace ? 'mb-0.5' : 'mb-3')}>
+        <div className={cn('min-w-0', headerMonthClass)}>
           {MONTH_NAMES[month]} <span className="text-[color:var(--workspace-cal-accent)]">{year}</span>
         </div>
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex shrink-0 items-center gap-0.5">
           <button
             type="button"
             onClick={prevMonth}
-            className="rounded-md border border-[color:var(--hub-card-border)] bg-[var(--workspace-cal-nav-bg)] p-1.5 text-[color:var(--workspace-text-muted)] transition-colors hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--theme-accent-link)]"
+            className={cn(
+              'rounded-md border border-[color:var(--hub-card-border)] bg-[var(--workspace-cal-nav-bg)] text-[color:var(--workspace-text-muted)] transition-colors hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--theme-accent-link)]',
+              isWorkspace ? 'p-0.5' : 'p-1',
+            )}
             aria-label="Предыдущий месяц"
           >
-            <ChevronLeft className="size-4" />
+            <ChevronLeft className={cn(isWorkspace ? 'size-3' : 'size-4')} />
           </button>
           <button
             type="button"
             onClick={goThisMonth}
-            className="rounded-md border border-[color:var(--workspace-cal-chip-border)] bg-[var(--workspace-cal-chip-bg)] px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[color:var(--workspace-cal-chip-text)]"
+            className={cn(
+              'rounded-md border border-[color:var(--workspace-cal-chip-border)] bg-[var(--workspace-cal-chip-bg)] font-bold uppercase tracking-wider text-[color:var(--workspace-cal-chip-text)]',
+              isWorkspace ? 'px-1.5 py-px text-[9px]' : 'px-2 py-0.5 text-[10px]',
+            )}
           >
             Сегодня
           </button>
           <button
             type="button"
             onClick={nextMonth}
-            className="rounded-md border border-[color:var(--hub-card-border)] bg-[var(--workspace-cal-nav-bg)] p-1.5 text-[color:var(--workspace-text-muted)] transition-colors hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--theme-accent-link)]"
+            className={cn(
+              'rounded-md border border-[color:var(--hub-card-border)] bg-[var(--workspace-cal-nav-bg)] text-[color:var(--workspace-text-muted)] transition-colors hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--theme-accent-link)]',
+              isWorkspace ? 'p-0.5' : 'p-1',
+            )}
             aria-label="Следующий месяц"
           >
-            <ChevronRight className="size-4" />
+            <ChevronRight className={cn(isWorkspace ? 'size-3' : 'size-4')} />
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-0.5 border-b border-[color:var(--workspace-cal-day-row-border)] pb-1">
-        {DAY_NAMES.map(d => (
-          <div key={d} className="text-center text-[9px] font-semibold uppercase tracking-wider text-[color:var(--workspace-text-dim)]">
+      <div
+        className={cn(
+          'grid grid-cols-7 border-b border-[color:var(--workspace-cal-day-row-border)]',
+          isWorkspace ? 'shrink-0 gap-0.5 pb-0.5' : 'gap-0.5 pb-0.5 pb-1',
+        )}
+      >
+        {DAY_NAMES.map((d) => (
+          <div key={d} className={dowClass}>
             {d}
           </div>
         ))}
       </div>
 
-      <div className="grid flex-1 grid-cols-7 gap-0.5 pt-1">
+      <div
+        className={cn(
+          'grid min-h-0 grid-cols-7',
+          isWorkspace
+            ? 'flex-1 gap-0.5 pt-0.5 lg:min-h-0'
+            : 'min-h-0 flex-1 gap-0.5 pt-1',
+        )}
+        style={isWorkspace ? { gridTemplateRows: 'repeat(6, minmax(0, 1fr))' } : undefined}
+      >
         {cells.map((date, i) => {
-          if (!date) return <div key={`e-${i}`} className="min-h-[52px]" />
+          if (!date) {
+            return (
+              <div
+                key={`e-${i}`}
+                className={cn(
+                  isWorkspace ? 'min-h-0 rounded-md' : 'min-h-[52px] rounded-md',
+                )}
+              />
+            )
+          }
           const dayEvents = eventsForDate(date)
           const isToday = date === todayStr
           const isSelected = date === selectedDate
@@ -110,9 +210,12 @@ export function MiniCalendar() {
             <button
               key={date}
               type="button"
-              onClick={() => setSelectedDate(date)}
+              onClick={() => selectDate(date)}
               className={cn(
-                'flex min-h-[52px] flex-col items-stretch rounded-md border p-0.5 text-left transition-colors',
+                'flex min-h-0 flex-col items-stretch border text-left transition-colors',
+                isWorkspace
+                  ? 'h-full min-h-0 w-full min-w-0 overflow-hidden rounded-lg border p-1'
+                  : cn('rounded-md p-0.5', cellMinH),
                 isSelected
                   ? 'border-[rgba(230,195,100,0.45)] bg-[rgba(230,195,100,0.1)]'
                   : isToday
@@ -122,15 +225,25 @@ export function MiniCalendar() {
             >
               <span
                 className={cn(
-                  'mb-0.5 flex size-6 items-center justify-center rounded-full text-[11px] font-medium',
-                  isToday ? 'bg-[color:var(--workspace-cal-today-bg)] font-bold text-[color:var(--workspace-cal-today-fg)]' : 'text-[color:var(--workspace-text)] opacity-85',
+                  dayNumClass,
+                  isToday
+                    ? 'bg-[color:var(--workspace-cal-today-bg)] font-bold text-[color:var(--workspace-cal-today-fg)]'
+                    : 'text-[color:var(--workspace-text)] opacity-85',
                 )}
               >
                 {parseInt(d, 10)}
               </span>
-              <div className="flex flex-wrap gap-px">
-                {dayEvents.slice(0, 4).map(ev => (
-                  <span key={ev.id} className={cn('size-1.5 rounded-full', EVENT_DOT[ev.type] ?? 'bg-[var(--workspace-cal-dot-fallback)]')} title={`${ev.time} ${ev.title}`} />
+              <div className="flex min-h-0 flex-1 flex-wrap content-center justify-center gap-px">
+                {dayEvents.slice(0, isWorkspace ? 3 : 4).map((ev) => (
+                  <span
+                    key={ev.id}
+                    className={cn(
+                      'rounded-full',
+                      isWorkspace ? 'size-1.5' : 'size-1.5',
+                      EVENT_DOT[ev.type] ?? 'bg-[var(--workspace-cal-dot-fallback)]',
+                    )}
+                    title={`${ev.time} ${ev.title}`}
+                  />
                 ))}
               </div>
             </button>
@@ -138,31 +251,65 @@ export function MiniCalendar() {
         })}
       </div>
 
-      <div className="mt-3 min-h-[72px] flex-shrink-0 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] p-2">
-        <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)]">
-          {new Date(selectedDate + 'T12:00:00').toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'long' })}
-        </div>
-        {selectedEvents.length === 0 ? (
-          <p className="text-[11px] text-[color:var(--workspace-text-dim)]">Нет событий</p>
-        ) : (
-          <ul className="max-h-[56px] space-y-1 overflow-y-auto pr-1">
-            {selectedEvents.map(ev => (
-              <li key={ev.id} className="truncate text-[11px] leading-tight text-[color:var(--workspace-text-muted)]">
-                <span className="text-[color:var(--theme-accent-link)]">{ev.time}</span> · {ev.title}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      <div className="mt-2 text-right">
-        <Link
-          to="/dashboard/calendar"
-          className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] underline-offset-2 hover:text-[color:var(--theme-accent-link)] hover:underline"
+      {!hideDayPanel ? (
+        <div
+          className={cn(
+            'flex-shrink-0 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]',
+            isWorkspace ? 'mt-1.5 w-full p-2' : 'mt-3 min-h-[72px] p-2',
+          )}
         >
-          Полный календарь
-        </Link>
-      </div>
+          <div
+            className={cn(
+              'font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)]',
+              isWorkspace ? 'mb-0.5 text-[10px]' : 'mb-1.5 text-[10px]',
+            )}
+          >
+            {new Date(selectedDate + 'T12:00:00').toLocaleDateString('ru-RU', {
+              weekday: 'short',
+              day: 'numeric',
+              month: 'long',
+            })}
+          </div>
+          {selectedEvents.length === 0 ? (
+            <p className="text-[10px] text-[color:var(--workspace-text-dim)]">Нет событий</p>
+          ) : (
+            <ul
+              className={cn(
+                'space-y-0.5',
+                !isWorkspace && 'max-h-[56px] overflow-y-auto pr-0.5',
+              )}
+            >
+              {(isWorkspace ? selectedEvents.slice(0, 2) : selectedEvents).map((ev) => (
+                <li
+                  key={ev.id}
+                  className={cn(
+                    'text-[color:var(--workspace-text-muted)]',
+                    isWorkspace ? 'line-clamp-2 text-[10px] leading-snug' : 'truncate text-[11px] leading-tight',
+                  )}
+                >
+                  <span className="text-[color:var(--theme-accent-link)]">{ev.time}</span> · {ev.title}
+                </li>
+              ))}
+              {isWorkspace && selectedEvents.length > 2 ? (
+                <li className="text-[9px] text-[color:var(--workspace-text-dim)]">
+                  +ещё {selectedEvents.length - 2}
+                </li>
+              ) : null}
+            </ul>
+          )}
+        </div>
+      ) : null}
+
+      {!hideFooterLink ? (
+        <div className={cn(isWorkspace ? 'mt-1.5 text-center' : 'mt-2 text-right')}>
+          <Link
+            to="/dashboard/calendar"
+            className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] underline-offset-2 hover:text-[color:var(--theme-accent-link)] hover:underline"
+          >
+            Полный календарь
+          </Link>
+        </div>
+      ) : null}
     </div>
   )
 }

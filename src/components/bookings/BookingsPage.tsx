@@ -470,7 +470,7 @@ export function BookingsPage() {
   }, [bookings, variant])
 
   return (
-    <DashboardShell>
+    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/bookings' }}>
       <div
         style={{
           flex: 1,

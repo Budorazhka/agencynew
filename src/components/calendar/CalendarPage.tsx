@@ -47,8 +47,8 @@ function getFirstDayOfWeek(year: number, month: number) {
   return d === 0 ? 6 : d - 1
 }
 
-/** Высота области под шапку DashboardShell (topbar ≈52px) — один экран без скролла main */
-const VIEWPORT_H = 'calc(100vh - 52px)'
+/** Высота области — заполняет оставшееся пространство (хедер убран, кнопка назад ~40px) */
+const VIEWPORT_H = 'calc(100vh - 40px)'
 
 export function CalendarPage() {
   const [viewDate, setViewDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1))
@@ -95,7 +95,7 @@ export function CalendarPage() {
   }
 
   return (
-    <DashboardShell>
+    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard' }}>
       <div
         style={{
           height: VIEWPORT_H,

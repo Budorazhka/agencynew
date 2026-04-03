@@ -55,7 +55,7 @@ export function PartnersListPage() {
   const totalLeads = PARTNERS_MOCK.reduce((s, p) => s + p.leadsCount, 0)
 
   return (
-    <DashboardShell>
+    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/partners' }}>
       <div style={S.page}>
         <div style={S.title}>Партнёры</div>
         <div style={S.sub}>Рефералы · Посредники · Собственники</div>

@@ -148,7 +148,7 @@ export function TeamKpiPage() {
   const overplan = managers.filter(e => (MOCK_KPI[e.id]?.plan || 0) >= 100).length
 
   return (
-    <DashboardShell>
+    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/team' }}>
       <div style={{ padding: '24px 28px 40px' }}>
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 4 }}>KPI команды</div>
