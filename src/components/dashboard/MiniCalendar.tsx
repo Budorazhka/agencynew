@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Eye, Phone, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { CALENDAR_EVENTS_MOCK } from '@/data/calendar-events-mock'
 import { cn } from '@/lib/utils'
@@ -14,11 +14,17 @@ function getFirstDayOfWeek(year: number, month: number) {
   return d === 0 ? 6 : d - 1
 }
 
-const EVENT_DOT: Record<string, string> = {
-  showing: 'bg-blue-400',
-  meeting: 'bg-[color:var(--workspace-cal-meeting-dot)]',
-  call: 'bg-violet-400',
-  signing: 'bg-emerald-400',
+function calendarCellIcon(type: string) {
+  switch (type) {
+    case 'showing':
+      return <Eye className="size-3 text-blue-300" />
+    case 'call':
+      return <Phone className="size-3 text-violet-300" />
+    case 'meeting':
+      return <Users className="size-3 text-[color:var(--workspace-cal-meeting-dot)]" />
+    default:
+      return null
+  }
 }
 
 const MONTH_NAMES = [
@@ -233,18 +239,20 @@ export function MiniCalendar({
               >
                 {parseInt(d, 10)}
               </span>
-              <div className="flex min-h-0 flex-1 flex-wrap content-center justify-center gap-px">
-                {dayEvents.slice(0, isWorkspace ? 3 : 4).map((ev) => (
-                  <span
-                    key={ev.id}
-                    className={cn(
-                      'rounded-full',
-                      isWorkspace ? 'size-1.5' : 'size-1.5',
-                      EVENT_DOT[ev.type] ?? 'bg-[var(--workspace-cal-dot-fallback)]',
-                    )}
-                    title={`${ev.time} ${ev.title}`}
-                  />
-                ))}
+              <div className="flex min-h-0 flex-1 flex-wrap content-center justify-center gap-0.5">
+                {dayEvents
+                  .map((ev) => ({ ev, icon: calendarCellIcon(ev.type) }))
+                  .filter((x) => x.icon != null)
+                  .slice(0, isWorkspace ? 3 : 4)
+                  .map(({ ev, icon }) => (
+                    <span
+                      key={ev.id}
+                      className="flex size-3.5 items-center justify-center"
+                      title={`${ev.time} ${ev.title}`}
+                    >
+                      {icon}
+                    </span>
+                  ))}
               </div>
             </button>
           )

@@ -7,11 +7,14 @@ import {
   Check,
   CheckCircle,
   Clock,
+  Eye,
   Flame,
   Info,
   ListTodo,
+  Phone,
   Plus,
   Target,
+  Users,
   Zap,
 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
@@ -46,6 +49,9 @@ const TASKS_PREVIEW = 12
 const LEADS_PREVIEW = 12
 const NOTIFS_PREVIEW = 8
 const FEED_ITEM_HEIGHT_CLASS = 'h-[76px]'
+const FEED_TITLE_CLASS = 'line-clamp-1 text-[13px] font-medium leading-snug text-[color:var(--workspace-text)]'
+const FEED_BODY_CLASS = 'line-clamp-1 text-[12px] leading-snug text-[color:var(--workspace-text)]'
+const FEED_META_CLASS = 'text-[11px] text-[color:var(--workspace-text-muted)]'
 
 const DAY_STATUS_LABEL = {
   done: 'Выполнено',
@@ -130,7 +136,7 @@ function TabBtn({
       type="button"
       onClick={onClick}
       className={cn(
-        'relative inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider transition-colors',
+        'relative inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wider transition-colors',
         active
           ? 'bg-[rgba(230,195,100,0.18)] text-[color:var(--workspace-text)]'
           : 'text-[color:var(--workspace-text-muted)] hover:bg-[rgba(255,255,255,0.04)] hover:text-[color:var(--workspace-text)]',
@@ -138,7 +144,7 @@ function TabBtn({
     >
       {children}
       {badge != null && badge > 0 && (
-        <span className="flex size-4 items-center justify-center rounded-full bg-[#e11d48] text-[8px] font-bold leading-none text-white">
+        <span className="flex size-4 items-center justify-center rounded-full bg-[#e11d48] text-[9px] font-bold leading-none text-white">
           {badge > 9 ? '9+' : badge}
         </span>
       )}
@@ -381,7 +387,7 @@ export function DashboardWorkspace() {
                     type="button"
                     onClick={() => setTaskMode(m.id)}
                     className={cn(
-                      'rounded px-1 py-px text-[10px] font-semibold uppercase tracking-wide transition-colors',
+                      'rounded px-1 py-px text-[11px] font-semibold uppercase tracking-wide transition-colors',
                       taskMode === m.id
                         ? 'bg-[rgba(230,195,100,0.2)] text-[color:var(--workspace-text)]'
                         : 'text-[color:var(--workspace-text-muted)] hover:text-[color:var(--workspace-text)]',
@@ -392,7 +398,7 @@ export function DashboardWorkspace() {
                 ))}
                 <Link
                   to="/dashboard/tasks"
-                  className="ml-auto flex items-center gap-0.5 text-[11px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                  className="ml-auto flex items-center gap-0.5 text-[12px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
                 >
                   <Plus className="size-3" strokeWidth={2.5} />
                   В задачи
@@ -400,7 +406,7 @@ export function DashboardWorkspace() {
               </div>
 
               {filteredTasks.length === 0 ? (
-                <p className="py-1 text-center text-[11px] text-[color:var(--workspace-text-dim)]">Нет задач</p>
+                <p className="py-1 text-center text-[12px] text-[color:var(--workspace-text-muted)]">Нет задач</p>
               ) : (
                 <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
                   {filteredTasks.slice(0, TASKS_PREVIEW).map((t) => {
@@ -416,19 +422,19 @@ export function DashboardWorkspace() {
                         )}
                       >
                         <div className="flex items-start justify-between gap-1">
-                          <p className="line-clamp-1 text-[12px] font-medium leading-snug text-[color:var(--workspace-text)]">
+                          <p className="line-clamp-1 text-[14px] font-medium leading-snug text-[color:var(--workspace-text)]">
                             {t.title}
                           </p>
                           <span className={cn(
-                            'shrink-0 rounded px-1 py-px text-[9px] font-bold uppercase',
+                            'shrink-0 rounded px-1 py-px text-[10px] font-bold uppercase',
                             t.priority === 'critical' ? 'bg-red-500/20 text-red-300' :
                             t.priority === 'high' ? 'bg-orange-500/20 text-orange-300' :
-                            'bg-[rgba(255,255,255,0.06)] text-[color:var(--workspace-text-dim)]',
+                            'bg-[rgba(255,255,255,0.06)] text-[color:var(--workspace-text-muted)]',
                           )}>
                             {PRIORITY_LABELS[t.priority]}
                           </span>
                         </div>
-                        <div className="mt-px flex flex-wrap items-center gap-x-1 text-[9px] text-[color:var(--workspace-text-dim)]">
+                        <div className="mt-px flex flex-wrap items-center gap-x-1 text-[11px] text-[color:var(--workspace-text-muted)]">
                           <span className={cn(overdue && 'font-bold text-red-400')}>
                             {STATUS_LABELS[t.status]}
                           </span>
@@ -447,7 +453,7 @@ export function DashboardWorkspace() {
                 </ul>
               )}
               {filteredTasks.length > TASKS_PREVIEW && (
-                <p className="mt-0.5 shrink-0 text-[10px] text-[color:var(--workspace-text-dim)]">
+                <p className="mt-0.5 shrink-0 text-[11px] text-[color:var(--workspace-text-muted)]">
                   +ещё {filteredTasks.length - TASKS_PREVIEW} →{' '}
                   <Link to="/dashboard/tasks" className="font-semibold text-[color:var(--theme-accent-link-dim)] hover:underline">перейти в задачи</Link>
                 </p>
@@ -456,17 +462,17 @@ export function DashboardWorkspace() {
           ) : (
             <>
               <div className="mb-0.5 flex items-center justify-between">
-                <p className="text-[10px] text-[color:var(--workspace-text-muted)]">Очередь «Новый лид»</p>
+                <p className="text-[11px] text-[color:var(--workspace-text-muted)]">Очередь «Новый лид»</p>
                 <Link
                   to="/dashboard/leads-hub"
-                  className="flex items-center gap-0.5 text-[11px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                  className="flex items-center gap-0.5 text-[12px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
                 >
                   <Plus className="size-3" strokeWidth={2.5} />
                   В лиды
                 </Link>
               </div>
               {newLeads.length === 0 ? (
-                <p className="py-1 text-center text-[11px] text-[color:var(--workspace-text-dim)]">Нет новых лидов</p>
+                <p className="py-1 text-center text-[12px] text-[color:var(--workspace-text-muted)]">Нет новых лидов</p>
               ) : (
                 <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
                   {newLeads.slice(0, LEADS_PREVIEW).map((l) => {
@@ -477,14 +483,14 @@ export function DashboardWorkspace() {
                         className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1"
                       >
                         <div className="flex items-start justify-between gap-1">
-                          <p className="line-clamp-1 text-[12px] font-medium text-[color:var(--workspace-text)]">
+                          <p className="line-clamp-1 text-[14px] font-medium text-[color:var(--workspace-text)]">
                             {l.name ?? l.id}
                           </p>
-                          <span className="shrink-0 rounded px-1 py-px text-[9px] font-bold uppercase text-amber-400/90">
+                          <span className="shrink-0 rounded px-1 py-px text-[10px] font-bold uppercase text-amber-400/90">
                             {leadUrgency(l)}
                           </span>
                         </div>
-                        <div className="mt-px flex flex-wrap items-center gap-x-1 text-[9px] text-[color:var(--workspace-text-dim)]">
+                        <div className="mt-px flex flex-wrap items-center gap-x-1 text-[11px] text-[color:var(--workspace-text-muted)]">
                           <span>{SOURCE_LABELS[l.source]}</span>
                           <span className="opacity-40">·</span>
                           <span>
@@ -497,7 +503,7 @@ export function DashboardWorkspace() {
                             {LEAD_STATUS_LABELS[st]}
                           </span>
                         </div>
-                        <div className="mt-px text-[9px] text-[color:var(--workspace-text-muted)]">
+                        <div className="mt-px text-[11px] text-[color:var(--workspace-text-muted)]">
                           Отв.: {managerName(l.managerId)}
                         </div>
                       </li>
@@ -506,7 +512,7 @@ export function DashboardWorkspace() {
                 </ul>
               )}
               {newLeads.length > LEADS_PREVIEW && (
-                <p className="mt-0.5 shrink-0 text-[10px] text-[color:var(--workspace-text-dim)]">
+                <p className="mt-0.5 shrink-0 text-[11px] text-[color:var(--workspace-text-muted)]">
                   +ещё {newLeads.length - LEADS_PREVIEW} в очереди
                 </p>
               )}
@@ -546,11 +552,19 @@ export function DashboardWorkspace() {
           {/* bottom bar: events button + legend */}
           <div className="mt-1 flex shrink-0 items-center gap-2">
             <WorkspaceDayEventsMenu className="min-w-0 flex-1" dateIso={workspaceCalDate} />
-            <div className="flex shrink-0 items-center gap-2.5 text-[10px] text-[color:var(--workspace-text-muted)]">
-              <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-blue-400" />Показ</span>
-              <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-[color:var(--workspace-cal-meeting-dot)]" />Встреча</span>
-              <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-violet-400" />Звонок</span>
-              <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-emerald-400" />Подпис.</span>
+            <div className="flex shrink-0 items-center gap-2.5 text-[11px] text-[color:var(--workspace-text-muted)]">
+              <span className="flex items-center gap-1">
+                <Eye className="size-3.5 text-blue-300" />
+                Показ
+              </span>
+              <span className="flex items-center gap-1">
+                <Phone className="size-3.5 text-violet-300" />
+                Звонок
+              </span>
+              <span className="flex items-center gap-1">
+                <Users className="size-3.5 text-[color:var(--workspace-cal-meeting-dot)]" />
+                Встреча
+              </span>
             </div>
           </div>
         </div>
@@ -584,7 +598,7 @@ export function DashboardWorkspace() {
             <>
               <Link
                 to="/dashboard/info"
-                className="mb-0.5 shrink-0 self-start text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
               >
                 Все уведомления →
               </Link>
@@ -599,13 +613,13 @@ export function DashboardWorkspace() {
                   >
                     {notifIcon(n.type)}
                     <div className="flex min-w-0 flex-1 flex-col justify-between">
-                      <p className="line-clamp-1 text-[11px] font-medium leading-snug text-[color:var(--workspace-text)]">
+                      <p className={FEED_TITLE_CLASS}>
                         {n.title}
                       </p>
-                      <p className="line-clamp-1 text-[11px] leading-snug text-[color:var(--workspace-text-muted)]">
+                      <p className={FEED_BODY_CLASS}>
                         {n.body}
                       </p>
-                      <p className="text-[10px] text-[color:var(--workspace-text-dim)]">{n.time}</p>
+                      <p className={FEED_META_CLASS}>{n.time}</p>
                     </div>
                   </li>
                 ))}
@@ -617,7 +631,7 @@ export function DashboardWorkspace() {
             <>
               <Link
                 to="/dashboard/info/reminders"
-                className="mb-0.5 shrink-0 self-start text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
               >
                 Все напоминания →
               </Link>
@@ -632,12 +646,12 @@ export function DashboardWorkspace() {
                   >
                     <Clock className="mt-0.5 size-3.5 shrink-0 text-[color:var(--theme-accent-link-dim)]" />
                     <div className="flex min-w-0 flex-1 flex-col justify-between">
-                      <p className="line-clamp-1 text-[11px] font-medium leading-snug text-[color:var(--workspace-text)]">
+                      <p className="line-clamp-1 text-[12px] font-medium leading-snug text-[color:var(--workspace-text)]">
                         {r.title}
                       </p>
-                      <p className="flex items-center gap-0.5 text-[10px] text-[color:var(--theme-accent-link-dim)]">
+                      <p className="flex items-center gap-0.5 text-[11px] text-[color:var(--theme-accent-link)]">
                         {formatReminderDue(r.dueAt)}
-                        {r.entityLabel && <span className="text-[color:var(--workspace-text-dim)]"> · {r.entityLabel}</span>}
+                        {r.entityLabel && <span className="text-[color:var(--workspace-text-muted)]"> · {r.entityLabel}</span>}
                       </p>
                     </div>
                   </li>
@@ -650,7 +664,7 @@ export function DashboardWorkspace() {
             <>
               <Link
                 to="/dashboard/info/news"
-                className="mb-0.5 shrink-0 self-start text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
               >
                 Все новости →
               </Link>
@@ -659,16 +673,24 @@ export function DashboardWorkspace() {
                   <li
                     key={a.id}
                     className={cn(
-                      'flex flex-col justify-between overflow-hidden rounded-md border-l-2 border-[rgba(230,195,100,0.3)] bg-[var(--workspace-row-bg)] px-2 py-1',
+                      'flex gap-1.5 overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1',
                       FEED_ITEM_HEIGHT_CLASS,
                     )}
                   >
-                    <p className="line-clamp-1 text-[11px] font-medium leading-snug text-[color:var(--workspace-text)]">
-                      {a.emoji} {a.title}
-                    </p>
-                    <p className="text-[10px] text-[color:var(--workspace-text-dim)]">
-                      {new Date(a.publishedAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} · {a.author}
-                    </p>
+                    <span className="flex size-3.5 shrink-0 items-center justify-center text-[12px] leading-none">
+                      {a.emoji}
+                    </span>
+                    <div className="flex min-w-0 flex-1 flex-col justify-between">
+                      <p className={FEED_TITLE_CLASS}>
+                        {a.title}
+                      </p>
+                      <p className={FEED_BODY_CLASS}>
+                        {a.body}
+                      </p>
+                      <p className={FEED_META_CLASS}>
+                        {new Date(a.publishedAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} · {a.author}
+                      </p>
+                    </div>
                   </li>
                 ))}
               </ul>
