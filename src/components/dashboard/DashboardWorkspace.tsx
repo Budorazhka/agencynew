@@ -46,6 +46,9 @@ const SOURCE_LABELS: Record<LeadSource, string> = {
 }
 
 const DESK_PREVIEW = 3
+const TASKS_PREVIEW = 4
+const LEADS_PREVIEW = 4
+const NOTIFS_PREVIEW = 3
 
 const DAY_STATUS_LABEL = {
   done: 'Выполнено',
@@ -105,7 +108,7 @@ function WidgetHeader({
         >
           {icon}
         </div>
-        <h3 className="text-[11px] font-bold uppercase tracking-[0.1em] text-[color:var(--workspace-widget-title)]">
+        <h3 className="text-[12px] font-bold uppercase tracking-[0.1em] text-[color:var(--workspace-widget-title)]">
           {title}
         </h3>
       </div>
@@ -130,7 +133,7 @@ function TabBtn({
       type="button"
       onClick={onClick}
       className={cn(
-        'relative inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider transition-colors',
+        'relative inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider transition-colors',
         active
           ? 'bg-[rgba(230,195,100,0.18)] text-[color:var(--workspace-text)]'
           : 'text-[color:var(--workspace-text-muted)] hover:bg-[rgba(255,255,255,0.04)] hover:text-[color:var(--workspace-text)]',
@@ -138,7 +141,7 @@ function TabBtn({
     >
       {children}
       {badge != null && badge > 0 && (
-        <span className="flex size-3.5 items-center justify-center rounded-full bg-[#e11d48] text-[7px] font-bold leading-none text-white">
+        <span className="flex size-4 items-center justify-center rounded-full bg-[#e11d48] text-[8px] font-bold leading-none text-white">
           {badge > 9 ? '9+' : badge}
         </span>
       )}
@@ -373,7 +376,7 @@ export function DashboardWorkspace() {
                     type="button"
                     onClick={() => setTaskMode(m.id)}
                     className={cn(
-                      'rounded px-1 py-px text-[9px] font-semibold uppercase tracking-wide transition-colors',
+                      'rounded px-1 py-px text-[10px] font-semibold uppercase tracking-wide transition-colors',
                       taskMode === m.id
                         ? 'bg-[rgba(230,195,100,0.2)] text-[color:var(--workspace-text)]'
                         : 'text-[color:var(--workspace-text-muted)] hover:text-[color:var(--workspace-text)]',
@@ -384,7 +387,7 @@ export function DashboardWorkspace() {
                 ))}
                 <Link
                   to="/dashboard/tasks"
-                  className="ml-auto flex items-center gap-0.5 text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                  className="ml-auto flex items-center gap-0.5 text-[11px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
                 >
                   <Plus className="size-3" strokeWidth={2.5} />
                   В задачи
@@ -394,8 +397,8 @@ export function DashboardWorkspace() {
               {filteredTasks.length === 0 ? (
                 <p className="py-1 text-center text-[11px] text-[color:var(--workspace-text-dim)]">Нет задач</p>
               ) : (
-                <ul className="min-h-0 flex-1 space-y-0.5 overflow-y-auto">
-                  {filteredTasks.slice(0, 5).map((t) => {
+                <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
+                  {filteredTasks.slice(0, TASKS_PREVIEW).map((t) => {
                     const overdue = isTaskOverdue(t, todayIso)
                     return (
                       <li
@@ -408,11 +411,11 @@ export function DashboardWorkspace() {
                         )}
                       >
                         <div className="flex items-start justify-between gap-1">
-                          <p className="line-clamp-1 text-[11px] font-medium leading-snug text-[color:var(--workspace-text)]">
+                          <p className="line-clamp-1 text-[12px] font-medium leading-snug text-[color:var(--workspace-text)]">
                             {t.title}
                           </p>
                           <span className={cn(
-                            'shrink-0 rounded px-1 py-px text-[8px] font-bold uppercase',
+                            'shrink-0 rounded px-1 py-px text-[9px] font-bold uppercase',
                             t.priority === 'critical' ? 'bg-red-500/20 text-red-300' :
                             t.priority === 'high' ? 'bg-orange-500/20 text-orange-300' :
                             'bg-[rgba(255,255,255,0.06)] text-[color:var(--workspace-text-dim)]',
@@ -420,7 +423,7 @@ export function DashboardWorkspace() {
                             {PRIORITY_LABELS[t.priority]}
                           </span>
                         </div>
-                        <div className="mt-px flex flex-wrap items-center gap-x-1 text-[8px] text-[color:var(--workspace-text-dim)]">
+                        <div className="mt-px flex flex-wrap items-center gap-x-1 text-[9px] text-[color:var(--workspace-text-dim)]">
                           <span className={cn(overdue && 'font-bold text-red-400')}>
                             {STATUS_LABELS[t.status]}
                           </span>
@@ -438,9 +441,9 @@ export function DashboardWorkspace() {
                   })}
                 </ul>
               )}
-              {filteredTasks.length > 5 && (
-                <p className="mt-0.5 shrink-0 text-[9px] text-[color:var(--workspace-text-dim)]">
-                  +ещё {filteredTasks.length - 5} →{' '}
+              {filteredTasks.length > TASKS_PREVIEW && (
+                <p className="mt-0.5 shrink-0 text-[10px] text-[color:var(--workspace-text-dim)]">
+                  +ещё {filteredTasks.length - TASKS_PREVIEW} →{' '}
                   <Link to="/dashboard/tasks" className="font-semibold text-[color:var(--theme-accent-link-dim)] hover:underline">перейти в задачи</Link>
                 </p>
               )}
@@ -448,10 +451,10 @@ export function DashboardWorkspace() {
           ) : (
             <>
               <div className="mb-0.5 flex items-center justify-between">
-                <p className="text-[9px] text-[color:var(--workspace-text-muted)]">Очередь «Новый лид»</p>
+                <p className="text-[10px] text-[color:var(--workspace-text-muted)]">Очередь «Новый лид»</p>
                 <Link
                   to="/dashboard/leads-hub"
-                  className="flex items-center gap-0.5 text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                  className="flex items-center gap-0.5 text-[11px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
                 >
                   <Plus className="size-3" strokeWidth={2.5} />
                   В лиды
@@ -460,8 +463,8 @@ export function DashboardWorkspace() {
               {newLeads.length === 0 ? (
                 <p className="py-1 text-center text-[11px] text-[color:var(--workspace-text-dim)]">Нет новых лидов</p>
               ) : (
-                <ul className="min-h-0 flex-1 space-y-0.5 overflow-y-auto">
-                  {newLeads.slice(0, 5).map((l) => {
+                <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
+                  {newLeads.slice(0, LEADS_PREVIEW).map((l) => {
                     const st = l.status ?? 'new'
                     return (
                       <li
@@ -469,14 +472,14 @@ export function DashboardWorkspace() {
                         className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1"
                       >
                         <div className="flex items-start justify-between gap-1">
-                          <p className="line-clamp-1 text-[11px] font-medium text-[color:var(--workspace-text)]">
+                          <p className="line-clamp-1 text-[12px] font-medium text-[color:var(--workspace-text)]">
                             {l.name ?? l.id}
                           </p>
-                          <span className="shrink-0 rounded px-1 py-px text-[8px] font-bold uppercase text-amber-400/90">
+                          <span className="shrink-0 rounded px-1 py-px text-[9px] font-bold uppercase text-amber-400/90">
                             {leadUrgency(l)}
                           </span>
                         </div>
-                        <div className="mt-px flex flex-wrap items-center gap-x-1 text-[8px] text-[color:var(--workspace-text-dim)]">
+                        <div className="mt-px flex flex-wrap items-center gap-x-1 text-[9px] text-[color:var(--workspace-text-dim)]">
                           <span>{SOURCE_LABELS[l.source]}</span>
                           <span className="opacity-40">·</span>
                           <span>
@@ -489,7 +492,7 @@ export function DashboardWorkspace() {
                             {LEAD_STATUS_LABELS[st]}
                           </span>
                         </div>
-                        <div className="mt-px text-[8px] text-[color:var(--workspace-text-muted)]">
+                        <div className="mt-px text-[9px] text-[color:var(--workspace-text-muted)]">
                           Отв.: {managerName(l.managerId)}
                         </div>
                       </li>
@@ -497,9 +500,9 @@ export function DashboardWorkspace() {
                   })}
                 </ul>
               )}
-              {newLeads.length > 5 && (
-                <p className="mt-0.5 shrink-0 text-[8px] text-[color:var(--workspace-text-dim)]">
-                  +ещё {newLeads.length - 5} в очереди
+              {newLeads.length > LEADS_PREVIEW && (
+                <p className="mt-0.5 shrink-0 text-[10px] text-[color:var(--workspace-text-dim)]">
+                  +ещё {newLeads.length - LEADS_PREVIEW} в очереди
                 </p>
               )}
             </>
@@ -518,7 +521,7 @@ export function DashboardWorkspace() {
           right={
             <Link
               to="/dashboard/calendar"
-              className="text-[8px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+              className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
             >
               Полный календарь →
             </Link>
@@ -538,7 +541,7 @@ export function DashboardWorkspace() {
           {/* bottom bar: events button + legend */}
           <div className="mt-1 flex shrink-0 items-center gap-2">
             <WorkspaceDayEventsMenu className="min-w-0 flex-1" dateIso={workspaceCalDate} />
-            <div className="flex shrink-0 items-center gap-2.5 text-[9px] text-[color:var(--workspace-text-muted)]">
+            <div className="flex shrink-0 items-center gap-2.5 text-[10px] text-[color:var(--workspace-text-muted)]">
               <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-blue-400" />Показ</span>
               <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-[color:var(--workspace-cal-meeting-dot)]" />Встреча</span>
               <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-violet-400" />Звонок</span>
@@ -576,22 +579,22 @@ export function DashboardWorkspace() {
             <>
               <Link
                 to="/dashboard/info"
-                className="mb-0.5 shrink-0 self-start text-[8px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                className="mb-0.5 shrink-0 self-start text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
               >
                 Все уведомления →
               </Link>
-              <ul className="min-h-0 flex-1 space-y-0.5 overflow-y-auto">
-                {DASHBOARD_NOTIFICATIONS_PREVIEW.slice(0, 4).map((n) => (
+              <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
+                {DASHBOARD_NOTIFICATIONS_PREVIEW.slice(0, NOTIFS_PREVIEW).map((n) => (
                   <li key={n.id} className="flex gap-1.5 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1">
                     {notifIcon(n.type)}
                     <div className="min-w-0 flex-1">
                       <p className="line-clamp-1 text-[11px] font-medium leading-snug text-[color:var(--workspace-text)]">
                         {n.title}
                       </p>
-                      <p className="line-clamp-1 text-[10px] leading-snug text-[color:var(--workspace-text-muted)]">
+                      <p className="line-clamp-1 text-[11px] leading-snug text-[color:var(--workspace-text-muted)]">
                         {n.body}
                       </p>
-                      <p className="text-[9px] text-[color:var(--workspace-text-dim)]">{n.time}</p>
+                      <p className="text-[10px] text-[color:var(--workspace-text-dim)]">{n.time}</p>
                     </div>
                   </li>
                 ))}
@@ -603,11 +606,11 @@ export function DashboardWorkspace() {
             <>
               <Link
                 to="/dashboard/info/reminders"
-                className="mb-0.5 shrink-0 self-start text-[8px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                className="mb-0.5 shrink-0 self-start text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
               >
                 Все напоминания →
               </Link>
-              <ul className="min-h-0 flex-1 space-y-0.5 overflow-y-auto">
+              <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
                 {remindersPreview.map((r) => (
                   <li
                     key={r.id}
@@ -618,7 +621,7 @@ export function DashboardWorkspace() {
                       <p className="line-clamp-1 text-[11px] font-medium leading-snug text-[color:var(--workspace-text)]">
                         {r.title}
                       </p>
-                      <p className="flex items-center gap-0.5 text-[9px] text-[color:var(--theme-accent-link-dim)]">
+                      <p className="flex items-center gap-0.5 text-[10px] text-[color:var(--theme-accent-link-dim)]">
                         {formatReminderDue(r.dueAt)}
                         {r.entityLabel && <span className="text-[color:var(--workspace-text-dim)]"> · {r.entityLabel}</span>}
                       </p>
@@ -633,17 +636,17 @@ export function DashboardWorkspace() {
             <>
               <Link
                 to="/dashboard/info/news"
-                className="mb-0.5 shrink-0 self-start text-[8px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                className="mb-0.5 shrink-0 self-start text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
               >
                 Все новости →
               </Link>
-              <ul className="min-h-0 flex-1 space-y-0.5 overflow-y-auto">
+              <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
                 {newsPreview.map((a) => (
                   <li key={a.id} className="rounded-md border-l-2 border-[rgba(230,195,100,0.3)] bg-[var(--workspace-row-bg)] px-2 py-1">
                     <p className="line-clamp-1 text-[11px] font-medium leading-snug text-[color:var(--workspace-text)]">
                       {a.emoji} {a.title}
                     </p>
-                    <p className="text-[9px] text-[color:var(--workspace-text-dim)]">
+                    <p className="text-[10px] text-[color:var(--workspace-text-dim)]">
                       {new Date(a.publishedAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} · {a.author}
                     </p>
                   </li>
@@ -665,23 +668,23 @@ export function DashboardWorkspace() {
           right={
             <Link
               to="/dashboard/my-report"
-              className="text-[8px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+              className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
             >
               Отчёт →
             </Link>
           }
         />
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-1.5">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-3 py-1.5">
           {/* progress bars: day + week — bigger, breathing */}
           <div className="mb-1.5 grid shrink-0 grid-cols-2 gap-x-5">
             <div>
-              <div className="mb-1 flex items-center justify-between text-[10px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
+              <div className="mb-1 flex items-center justify-between text-[11px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
                 <span>План дня</span>
                 <span className="flex items-center gap-1 tabular-nums">
                   <span className="text-[13px] text-[color:var(--workspace-text)]">{progress.dayPlanPercent}%</span>
                   <span className={cn(
-                    'rounded px-1 py-px text-[8px]',
+                    'rounded px-1 py-px text-[9px]',
                     progress.dayPlanStatus === 'done' ? 'bg-emerald-500/20 text-emerald-300' :
                     progress.dayPlanStatus === 'at_risk' ? 'bg-red-500/20 text-red-300' :
                     'bg-blue-500/20 text-blue-300',
@@ -695,7 +698,7 @@ export function DashboardWorkspace() {
               </div>
             </div>
             <div>
-              <div className="mb-1 flex items-center justify-between text-[10px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
+              <div className="mb-1 flex items-center justify-between text-[11px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
                 <span>План недели</span>
                 <span className="text-[13px] tabular-nums text-[color:var(--workspace-text)]">{progress.weekPlanPercent}%</span>
               </div>
@@ -715,10 +718,10 @@ export function DashboardWorkspace() {
                 { label: 'Лиды', value: `${progress.leadsToday.count}`, sub: `/ ${progress.leadsToday.plan}`, pct: progress.leadsToday.plan > 0 ? (progress.leadsToday.count / progress.leadsToday.plan) * 100 : 0, color: '#60a5fa' },
               ].map((m) => (
                 <div key={m.label} className="w-[5.5rem] rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1.5">
-                  <p className="text-[8px] font-bold uppercase text-[color:var(--workspace-text-dim)]">{m.label}</p>
+                  <p className="text-[10px] font-bold uppercase text-[color:var(--workspace-text-dim)]">{m.label}</p>
                   <p className="text-sm font-bold leading-tight text-[color:var(--workspace-text)]">
                     {m.value}
-                    {m.sub && <span className="text-[9px] font-normal text-[color:var(--workspace-text-muted)]"> {m.sub}</span>}
+                    {m.sub && <span className="text-[10px] font-normal text-[color:var(--workspace-text-muted)]"> {m.sub}</span>}
                   </p>
                   <MiniBar pct={m.pct} color={m.color} />
                 </div>
@@ -729,7 +732,7 @@ export function DashboardWorkspace() {
             <div className="min-w-0 flex-1 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/60 px-3 py-1.5">
               <div className="mb-1 flex items-center gap-1.5">
                 <TrendingUp className="size-3.5 text-[color:var(--theme-accent-link-dim)]" />
-                <p className="text-[10px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
+                <p className="text-[11px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
                   Нормативы
                 </p>
               </div>
@@ -783,7 +786,7 @@ export function DashboardWorkspace() {
                     >
                       {s.active ? <Check className="size-4" strokeWidth={3} /> : s.weekday[0].toUpperCase()}
                     </div>
-                    <span className="text-[7px] font-semibold uppercase text-orange-100/50">{s.weekday}</span>
+                    <span className="text-[8px] font-semibold uppercase text-orange-100/50">{s.weekday}</span>
                   </div>
                 ))}
               </div>
