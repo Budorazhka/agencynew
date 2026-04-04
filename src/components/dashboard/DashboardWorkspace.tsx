@@ -6,18 +6,14 @@ import {
   CalendarDays,
   Check,
   CheckCircle,
-
   Clock,
   Flame,
-
   Info,
   ListTodo,
   Plus,
   Target,
-  TrendingUp,
   Zap,
 } from 'lucide-react'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuth } from '@/context/AuthContext'
 import { useLeads } from '@/context/LeadsContext'
 import { cn } from '@/lib/utils'
@@ -45,10 +41,11 @@ const SOURCE_LABELS: Record<LeadSource, string> = {
   ad_campaigns: 'Реклама',
 }
 
-const DESK_PREVIEW = 3
-const TASKS_PREVIEW = 4
-const LEADS_PREVIEW = 4
-const NOTIFS_PREVIEW = 3
+const DESK_PREVIEW = 6
+const TASKS_PREVIEW = 12
+const LEADS_PREVIEW = 12
+const NOTIFS_PREVIEW = 8
+const FEED_ITEM_HEIGHT_CLASS = 'h-[76px]'
 
 const DAY_STATUS_LABEL = {
   done: 'Выполнено',
@@ -323,29 +320,37 @@ export function DashboardWorkspace() {
   const progress = HOME_PROGRESS_MOCK
   const streak = HOME_STREAK_MOCK
   const xpPct = streak.xpToday.goal > 0 ? Math.min(100, Math.round((streak.xpToday.current / streak.xpToday.goal) * 100)) : 0
+  const dayPlanGapPct = Math.max(0, 100 - progress.dayPlanPercent)
+  const focusKpi = useMemo(() => {
+    if (!progress.activityKpis.length) return null
+    return progress.activityKpis.reduce((worst, kpi) => {
+      const worstRatio = worst.plan > 0 ? worst.current / worst.plan : 1
+      const ratio = kpi.plan > 0 ? kpi.current / kpi.plan : 1
+      return ratio < worstRatio ? kpi : worst
+    })
+  }, [progress.activityKpis])
+  const focusGap = focusKpi ? Math.max(0, focusKpi.plan - focusKpi.current) : 0
 
   /* ═══════════════════ RENDER ═══════════════════ */
 
   /*
-   * Layout: narrow left sidebar (tasks + feed) + wide right area (calendar + plans).
+   * Layout: full-height left tasks, center calendar/plans, full-height right feed.
    * Everything fits in one viewport — no page-level scroll.
    *
-   * ┌──────────┬───────────────────────────┐
-   * │ Tasks /  │        Calendar           │
-   * │ Leads    │   (big, room for grid)    │
-   * ├──────────┼───────────────────────────┤
-   * │  Feed    │  Plans + Streak + Gamif.  │
-   * │ (notifs) │                           │
-   * └──────────┴───────────────────────────┘
+   * ┌─────────────┬───────────────────┬──────────────┐
+   * │ Tasks/Leads │     Calendar      │     Feed     │
+   * │   (full)    ├───────────────────┤   (full)     │
+   * │             │ Plans/Efficiency  │              │
+   * └─────────────┴───────────────────┴──────────────┘
    */
 
   return (
-    <div className="grid h-full min-h-0 w-full min-w-0 grid-cols-1 gap-1.5 lg:grid-cols-[minmax(220px,1fr)_minmax(0,2.4fr)] lg:grid-rows-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-1.5 lg:overflow-hidden">
+    <div className="grid h-full min-h-0 w-full min-w-0 grid-cols-1 gap-1.5 lg:grid-cols-[minmax(300px,1.25fr)_minmax(0,1.55fr)_minmax(300px,1.35fr)] lg:grid-rows-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:gap-1.5 lg:overflow-hidden">
 
       {/* ╔══════════════════════════════════════════╗
          ║  1. ЗАДАЧИ / НОВЫЕ ЛИДЫ  (top-left)     ║
          ╚══════════════════════════════════════════╝ */}
-      <HubWidgetShell accent="rgba(230,195,100,0.6)">
+      <HubWidgetShell accent="rgba(230,195,100,0.6)" className="lg:row-span-2">
         <WidgetHeader
           icon={<ListTodo className="size-3.5" strokeWidth={2} />}
           title="Задачи / Лиды"
@@ -554,7 +559,7 @@ export function DashboardWorkspace() {
       {/* ╔══════════════════════════════════════════╗
          ║  3. УВЕДОМЛЕНИЯ / НАПОМИНАНИЯ / НОВОСТИ  ║
          ╚══════════════════════════════════════════╝ */}
-      <HubWidgetShell accent="rgba(52,211,153,0.5)">
+      <HubWidgetShell accent="rgba(52,211,153,0.5)" className="lg:col-start-3 lg:row-span-2 lg:row-start-1">
         <WidgetHeader
           icon={<Bell className="size-3.5" strokeWidth={2} />}
           title="Лента"
@@ -585,9 +590,15 @@ export function DashboardWorkspace() {
               </Link>
               <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
                 {DASHBOARD_NOTIFICATIONS_PREVIEW.slice(0, NOTIFS_PREVIEW).map((n) => (
-                  <li key={n.id} className="flex gap-1.5 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1">
+                  <li
+                    key={n.id}
+                    className={cn(
+                      'flex gap-1.5 overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1',
+                      FEED_ITEM_HEIGHT_CLASS,
+                    )}
+                  >
                     {notifIcon(n.type)}
-                    <div className="min-w-0 flex-1">
+                    <div className="flex min-w-0 flex-1 flex-col justify-between">
                       <p className="line-clamp-1 text-[11px] font-medium leading-snug text-[color:var(--workspace-text)]">
                         {n.title}
                       </p>
@@ -614,10 +625,13 @@ export function DashboardWorkspace() {
                 {remindersPreview.map((r) => (
                   <li
                     key={r.id}
-                    className="flex items-start gap-1.5 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1"
+                    className={cn(
+                      'flex items-start gap-1.5 overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1',
+                      FEED_ITEM_HEIGHT_CLASS,
+                    )}
                   >
                     <Clock className="mt-0.5 size-3.5 shrink-0 text-[color:var(--theme-accent-link-dim)]" />
-                    <div className="min-w-0 flex-1">
+                    <div className="flex min-w-0 flex-1 flex-col justify-between">
                       <p className="line-clamp-1 text-[11px] font-medium leading-snug text-[color:var(--workspace-text)]">
                         {r.title}
                       </p>
@@ -642,7 +656,13 @@ export function DashboardWorkspace() {
               </Link>
               <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
                 {newsPreview.map((a) => (
-                  <li key={a.id} className="rounded-md border-l-2 border-[rgba(230,195,100,0.3)] bg-[var(--workspace-row-bg)] px-2 py-1">
+                  <li
+                    key={a.id}
+                    className={cn(
+                      'flex flex-col justify-between overflow-hidden rounded-md border-l-2 border-[rgba(230,195,100,0.3)] bg-[var(--workspace-row-bg)] px-2 py-1',
+                      FEED_ITEM_HEIGHT_CLASS,
+                    )}
+                  >
                     <p className="line-clamp-1 text-[11px] font-medium leading-snug text-[color:var(--workspace-text)]">
                       {a.emoji} {a.title}
                     </p>
@@ -660,7 +680,7 @@ export function DashboardWorkspace() {
       {/* ╔══════════════════════════════════════════╗
          ║  4. ПЛАНЫ + STREAK + GAMIFICATION        ║
          ╚══════════════════════════════════════════╝ */}
-      <HubWidgetShell accent="rgba(251,146,60,0.6)">
+      <HubWidgetShell accent="rgba(251,146,60,0.6)" className="lg:col-start-2 lg:row-start-2">
         <WidgetHeader
           icon={<Target className="size-3.5" strokeWidth={2} />}
           title="Планы и эффективность"
@@ -675,16 +695,15 @@ export function DashboardWorkspace() {
           }
         />
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-3 py-1.5">
-          {/* progress bars: day + week — bigger, breathing */}
-          <div className="mb-1.5 grid shrink-0 grid-cols-2 gap-x-5">
-            <div>
-              <div className="mb-1 flex items-center justify-between text-[11px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
+        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-hidden px-3 py-2">
+          <div className="grid shrink-0 grid-cols-1 gap-2 lg:grid-cols-2">
+            <div className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5">
+              <div className="mb-1.5 flex items-center justify-between text-[10px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
                 <span>План дня</span>
                 <span className="flex items-center gap-1 tabular-nums">
-                  <span className="text-[13px] text-[color:var(--workspace-text)]">{progress.dayPlanPercent}%</span>
+                  <span className="text-[14px] leading-none text-[color:var(--workspace-text)]">{progress.dayPlanPercent}%</span>
                   <span className={cn(
-                    'rounded px-1 py-px text-[9px]',
+                    'rounded px-1.5 py-px text-[8px]',
                     progress.dayPlanStatus === 'done' ? 'bg-emerald-500/20 text-emerald-300' :
                     progress.dayPlanStatus === 'at_risk' ? 'bg-red-500/20 text-red-300' :
                     'bg-blue-500/20 text-blue-300',
@@ -693,120 +712,128 @@ export function DashboardWorkspace() {
                   </span>
                 </span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">
+              <div className="h-2.5 overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">
                 <div className="h-full rounded-full" style={{ width: `${Math.min(100, progress.dayPlanPercent)}%`, background: 'linear-gradient(90deg, #e6c364, #c9a84c)' }} />
               </div>
             </div>
-            <div>
-              <div className="mb-1 flex items-center justify-between text-[11px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
+
+            <div className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5">
+              <div className="mb-1.5 flex items-center justify-between text-[10px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
                 <span>План недели</span>
-                <span className="text-[13px] tabular-nums text-[color:var(--workspace-text)]">{progress.weekPlanPercent}%</span>
+                <span className="text-[14px] leading-none tabular-nums text-[color:var(--workspace-text)]">{progress.weekPlanPercent}%</span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">
+              <div className="h-2.5 overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">
                 <div className="h-full rounded-full" style={{ width: `${Math.min(100, progress.weekPlanPercent)}%`, background: 'linear-gradient(90deg, #60a5fa, #3b82f6)' }} />
               </div>
             </div>
           </div>
 
-          {/* top row: metrics + KPIs side by side */}
-          <div className="flex shrink-0 gap-2">
-            {/* metric cards row */}
-            <div className="flex shrink-0 gap-1.5">
-              {[
-                { label: 'Выручка', value: progress.revenue.currentLabel, sub: `/ ${progress.revenue.planLabel}`, pct: progress.revenue.percent, color: '#e6c364' },
-                { label: 'Воронка', value: `${progress.funnelProgress.percent}%`, sub: '', pct: progress.funnelProgress.percent, color: '#34d399' },
-                { label: 'Лиды', value: `${progress.leadsToday.count}`, sub: `/ ${progress.leadsToday.plan}`, pct: progress.leadsToday.plan > 0 ? (progress.leadsToday.count / progress.leadsToday.plan) * 100 : 0, color: '#60a5fa' },
-              ].map((m) => (
-                <div key={m.label} className="w-[5.5rem] rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1.5">
-                  <p className="text-[10px] font-bold uppercase text-[color:var(--workspace-text-dim)]">{m.label}</p>
-                  <p className="text-sm font-bold leading-tight text-[color:var(--workspace-text)]">
-                    {m.value}
-                    {m.sub && <span className="text-[10px] font-normal text-[color:var(--workspace-text-muted)]"> {m.sub}</span>}
-                  </p>
-                  <MiniBar pct={m.pct} color={m.color} />
-                </div>
-              ))}
-            </div>
-
-            {/* KPI activity grid */}
-            <div className="min-w-0 flex-1 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/60 px-3 py-1.5">
-              <div className="mb-1 flex items-center gap-1.5">
-                <TrendingUp className="size-3.5 text-[color:var(--theme-accent-link-dim)]" />
-                <p className="text-[11px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
-                  Нормативы
+          <div className="grid shrink-0 grid-cols-1 gap-2 lg:grid-cols-3">
+            {[
+              { label: 'Выручка', value: progress.revenue.currentLabel, sub: `/ ${progress.revenue.planLabel}`, pct: progress.revenue.percent, color: '#e6c364' },
+              { label: 'Воронка', value: `${progress.funnelProgress.percent}%`, sub: '', pct: progress.funnelProgress.percent, color: '#34d399' },
+              { label: 'Лиды', value: `${progress.leadsToday.count}`, sub: `/ ${progress.leadsToday.plan}`, pct: progress.leadsToday.plan > 0 ? (progress.leadsToday.count / progress.leadsToday.plan) * 100 : 0, color: '#60a5fa' },
+            ].map((m) => (
+              <div key={m.label} className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">{m.label}</p>
+                <p className="mb-1 text-[24px] font-bold leading-none text-[color:var(--workspace-text)]">
+                  {m.value}
+                  {m.sub && <span className="text-[10px] font-normal text-[color:var(--workspace-text-muted)]"> {m.sub}</span>}
                 </p>
+                <MiniBar pct={m.pct} color={m.color} />
               </div>
-              <div className="grid grid-cols-3 gap-x-4 gap-y-1">
-                {progress.activityKpis.map((k) => {
-                  const pct = k.plan > 0 ? Math.round((k.current / k.plan) * 100) : 0
-                  return (
-                    <div key={k.label}>
-                      <div className="flex justify-between gap-1 text-[11px] text-[color:var(--workspace-text)]">
-                        <span className="truncate">{k.label}</span>
-                        <span className="shrink-0 tabular-nums font-semibold text-[color:var(--workspace-text-dim)]">
-                          {k.current}/{k.plan}
-                        </span>
-                      </div>
-                      <MiniBar pct={pct} color={pct >= 100 ? '#34d399' : 'rgba(230,195,100,0.5)'} />
-                    </div>
-                  )
-                })}
+            ))}
+          </div>
+
+          <div className="min-h-0 flex-1 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/65 px-3 py-2">
+            <div className="flex h-full min-h-0 flex-col gap-2">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-[11px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
+                  Фокус дня
+                </p>
+                <span className={cn(
+                  'rounded px-1.5 py-px text-[8px] font-bold uppercase',
+                  dayPlanGapPct > 0 ? 'bg-amber-500/20 text-amber-300' : 'bg-emerald-500/20 text-emerald-300',
+                )}>
+                  {dayPlanGapPct > 0 ? `-${dayPlanGapPct}% к плану` : 'План закрыт'}
+                </span>
+              </div>
+
+              {focusKpi ? (
+                <p className="text-[12px] text-[color:var(--workspace-text)]">
+                  Узкое место: <span className="font-semibold">{focusKpi.label}</span> ({focusKpi.current}/{focusKpi.plan})
+                </p>
+              ) : (
+                <p className="text-[12px] text-[color:var(--workspace-text)]">
+                  Все нормативы в норме.
+                </p>
+              )}
+
+              <div className="mt-auto flex items-center justify-between gap-2">
+                <p className="text-[10px] text-[color:var(--workspace-text-muted)]">
+                  Следующий шаг: {focusGap > 0 ? `закрыть +${focusGap} по фокусу` : 'удержать текущий темп'}
+                </p>
+                <Link
+                  to={focusGap > 0 ? '/dashboard/tasks' : '/dashboard/my-report'}
+                  className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                >
+                  {focusGap > 0 ? 'Открыть задачи →' : 'К отчёту →'}
+                </Link>
               </div>
             </div>
           </div>
 
-          {/* streak + gamification — full width, fills remaining space */}
-          <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-          <div className="flex min-h-0 flex-1 cursor-default flex-col justify-center rounded-lg border border-orange-400/25 bg-gradient-to-r from-[#f97316]/[0.12] via-[#f97316]/[0.06] to-transparent px-4 py-3">
-            <div className="flex items-center gap-3">
-              <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#fb923c] to-[#ea580c] shadow-md shadow-orange-900/30">
-                <Flame className="size-6 text-white" strokeWidth={2.2} fill="rgba(255,255,255,0.25)" />
-              </div>
-              <div className="min-w-0">
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-2xl font-black tabular-nums leading-none text-[#fff7ed]">{streak.currentStreak}</span>
-                  <span className="text-[13px] font-bold uppercase text-orange-200/80">дн. подряд</span>
+          <div className="h-[104px] shrink-0 rounded-lg border border-orange-400/25 bg-gradient-to-r from-[#f97316]/[0.12] via-[#f97316]/[0.06] to-transparent px-3 py-1.5">
+            <div className="flex h-full min-h-0 flex-col gap-1.5">
+              <div className="flex items-center gap-2">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#fb923c] to-[#ea580c] shadow-md shadow-orange-900/30">
+                  <Flame className="size-5 text-white" strokeWidth={2.2} fill="rgba(255,255,255,0.25)" />
                 </div>
-                <p className="mt-0.5 text-[11px] text-orange-100/55">рекорд: <span className="font-semibold text-orange-100">{streak.bestStreak}</span> дней</p>
-              </div>
-              {/* week dots */}
-              <div className="ml-auto flex shrink-0 gap-1">
-                {streak.slots.map((s, i) => (
-                  <div key={i} className="flex flex-col items-center gap-0.5">
-                    <div
-                      className={cn(
-                        'flex size-7 items-center justify-center rounded-full border-2 text-[9px] font-bold transition-colors',
-                        s.active
-                          ? 'border-[#fbbf24] bg-gradient-to-b from-[#fbbf24] to-[#f59e0b] text-[#422006] shadow shadow-amber-500/30'
-                          : s.isToday
-                            ? 'border-dashed border-[#fdba74] bg-[#f97316]/15'
-                            : 'border-orange-200/20 bg-black/10 text-orange-100/40',
-                      )}
-                    >
-                      {s.active ? <Check className="size-4" strokeWidth={3} /> : s.weekday[0].toUpperCase()}
-                    </div>
-                    <span className="text-[8px] font-semibold uppercase text-orange-100/50">{s.weekday}</span>
+                <div className="min-w-0">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-[22px] font-black tabular-nums leading-none text-[#fff7ed]">{streak.currentStreak}</span>
+                    <span className="text-[11px] font-bold uppercase text-orange-200/80">дн. подряд</span>
                   </div>
-                ))}
+                  <p className="text-[9px] text-orange-100/55">
+                    рекорд: <span className="font-semibold text-orange-100">{streak.bestStreak}</span> дней
+                  </p>
+                </div>
+
+                <div className="ml-auto flex shrink-0 gap-1">
+                  {streak.slots.map((s, i) => (
+                    <div key={i} className="flex flex-col items-center gap-0.5">
+                      <div
+                        className={cn(
+                          'flex size-6 items-center justify-center rounded-full border-2 text-[8px] font-bold transition-colors',
+                          s.active
+                            ? 'border-[#fbbf24] bg-gradient-to-b from-[#fbbf24] to-[#f59e0b] text-[#422006] shadow shadow-amber-500/30'
+                            : s.isToday
+                              ? 'border-dashed border-[#fdba74] bg-[#f97316]/15'
+                              : 'border-orange-200/20 bg-black/10 text-orange-100/40',
+                        )}
+                      >
+                        {s.active ? <Check className="size-3.5" strokeWidth={3} /> : s.weekday[0].toUpperCase()}
+                      </div>
+                      <span className="text-[7px] font-semibold uppercase text-orange-100/50">{s.weekday}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-            {/* XP progress bar */}
-            <div className="mt-3">
-              <div className="mb-1 flex items-center justify-between text-[11px] font-bold uppercase text-orange-100/80">
-                <span>Цель дня</span>
-                <span className="tabular-nums">{streak.xpToday.current} / {streak.xpToday.goal}</span>
-              </div>
-              <div className="h-2.5 overflow-hidden rounded-full bg-black/25">
-                <div className="h-full rounded-full bg-gradient-to-r from-[#fde047] via-[#facc15] to-[#eab308] transition-all" style={{ width: `${xpPct}%` }} />
+
+              <div className="mt-auto">
+                <div className="mb-0.5 flex items-center justify-between text-[10px] font-bold uppercase text-orange-100/80">
+                  <span>Цель дня</span>
+                  <span className="text-[14px] leading-none tabular-nums">{streak.xpToday.current} / {streak.xpToday.goal}</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-black/25">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-[#fde047] via-[#facc15] to-[#eab308] transition-all"
+                    style={{ width: `${xpPct}%` }}
+                  />
+                </div>
               </div>
             </div>
           </div>
-          </TooltipTrigger>
-          <TooltipContent side="right" align="center" className="z-50 max-w-[260px] text-balance" sideOffset={8}>
-            Серия — сколько дней подряд вы выполняли хотя бы одну цель. Кружки — текущая неделя. Прогресс-бар — мини-цель на сегодня. Чем длиннее серия, тем больше бонусов и привилегий в системе.
-          </TooltipContent>
-          </Tooltip>
         </div>
       </HubWidgetShell>
     </div>
