@@ -58,6 +58,8 @@ type MiniCalendarProps = {
   /** Контролируемая выбранная дата `YYYY-MM-DD` */
   selectedDate?: string
   onSelectedDateChange?: (dateIso: string) => void
+  /** Повторный выбор текущего календарного дня «сегодня» (вторая активация той же даты) */
+  onTodayReactivate?: () => void
 }
 
 /** Компактный календарь для виджета рабочего стола. */
@@ -67,6 +69,7 @@ export function MiniCalendar({
   hideDayPanel = false,
   selectedDate: selectedDateProp,
   onSelectedDateChange,
+  onTodayReactivate,
 }: MiniCalendarProps) {
   const isWorkspace = variant === 'workspace'
   const today = useMemo(() => new Date(), [])
@@ -79,8 +82,10 @@ export function MiniCalendar({
   const selectedDate = isSelControlled ? selectedDateProp : uncontrolledSelected
 
   function selectDate(dateIso: string) {
+    const duplicateToday = dateIso === todayStr && selectedDate === dateIso
     if (!isSelControlled) setUncontrolledSelected(dateIso)
     onSelectedDateChange?.(dateIso)
+    if (duplicateToday) onTodayReactivate?.()
   }
 
   const year = viewDate.getFullYear()

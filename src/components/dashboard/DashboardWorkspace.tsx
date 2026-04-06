@@ -1,8 +1,9 @@
-import { useMemo, useState, useCallback, useEffect } from 'react'
+import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   AlertTriangle,
   Bell,
+  CalendarClock,
   CalendarDays,
   Check,
   CheckCircle,
@@ -15,6 +16,7 @@ import {
   Plus,
   Target,
   Users,
+  X,
   Zap,
 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
@@ -34,7 +36,11 @@ import {
 } from '@/data/home-workspace-mock'
 import { INITIAL_LEAD_MANAGERS } from '@/data/leads-mock'
 import { MiniCalendar } from '@/components/dashboard/MiniCalendar'
-import { WorkspaceDayEventsMenu } from '@/components/dashboard/WorkspaceDayEventsMenu'
+import {
+  formatWorkspaceDayShort,
+  WorkspaceDayEventsMenu,
+  WorkspaceDayEventsPanel,
+} from '@/components/dashboard/WorkspaceDayEventsMenu'
 import { PRIORITY_LABELS, STATUS_LABELS, type Task } from '@/types/tasks'
 import { LEAD_STATUS_LABELS, LEAD_STATUS_COLORS, type Lead, type LeadSource } from '@/types/leads'
 import { buildDeskBootstrapSeen, useDeskSeenState } from '@/hooks/useDeskSeenState'
@@ -99,7 +105,7 @@ function WidgetHeader({
   accentColor,
 }: {
   icon: React.ReactNode
-  title: string
+  title?: string | null
   right?: React.ReactNode
   accentColor?: string
 }) {
@@ -115,9 +121,11 @@ function WidgetHeader({
         >
           {icon}
         </div>
-        <h3 className="line-clamp-2 text-[12px] font-bold leading-snug tracking-tight text-[color:var(--workspace-widget-title)] sm:text-[13px]">
-          {title}
-        </h3>
+        {title ? (
+          <h3 className="line-clamp-2 text-[12px] font-bold leading-snug tracking-tight text-[color:var(--workspace-widget-title)] sm:text-[13px]">
+            {title}
+          </h3>
+        ) : null}
       </div>
       {right != null && <div className="shrink-0">{right}</div>}
     </div>
@@ -125,6 +133,48 @@ function WidgetHeader({
 }
 
 function TabBtn({
+  active,
+  onClick,
+  children,
+  badge,
+  variant = 'default',
+}: {
+  active: boolean
+  onClick: () => void
+  children: React.ReactNode
+  badge?: number
+  variant?: 'default' | 'deskMain'
+}) {
+  const main = variant === 'deskMain'
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'relative inline-flex items-center gap-0.5 transition-colors',
+        main
+          ? 'rounded-lg px-2.5 py-1 text-[13px] font-extrabold tracking-tight sm:text-[14px]'
+          : 'rounded-md px-1.5 py-0.5 text-[12px] font-bold uppercase tracking-wide',
+        active
+          ? main
+            ? 'bg-[color-mix(in_srgb,var(--gold)_24%,transparent)] text-[color:var(--workspace-text)]'
+            : 'bg-[color-mix(in_srgb,var(--gold)_18%,transparent)] text-[color:var(--workspace-text)]'
+          : main
+            ? 'text-[color:var(--workspace-text-muted)] hover:bg-[rgba(255,255,255,0.05)] hover:text-[color:var(--workspace-text)]'
+            : 'text-[color:var(--workspace-text-muted)] hover:bg-[rgba(255,255,255,0.04)] hover:text-[color:var(--workspace-text)]',
+      )}
+    >
+      {children}
+      {badge != null && badge > 0 && (
+        <span className="flex size-4 items-center justify-center rounded-full bg-[#e11d48] text-[9px] font-bold leading-none text-white">
+          {badge > 9 ? '9+' : badge}
+        </span>
+      )}
+    </button>
+  )
+}
+
+function InfoTabBtn({
   active,
   onClick,
   children,
@@ -140,15 +190,15 @@ function TabBtn({
       type="button"
       onClick={onClick}
       className={cn(
-        'relative inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[12px] font-bold uppercase tracking-wide transition-colors',
+        'relative flex min-w-0 flex-1 items-center justify-center gap-1 rounded-md border px-1 py-1.5 text-[11px] font-bold transition-colors sm:px-1.5 sm:text-[12px]',
         active
-          ? 'bg-[color-mix(in_srgb,var(--gold)_18%,transparent)] text-[color:var(--workspace-text)]'
-          : 'text-[color:var(--workspace-text-muted)] hover:bg-[rgba(255,255,255,0.04)] hover:text-[color:var(--workspace-text)]',
+          ? 'border-[color:var(--workspace-row-border)] bg-[color-mix(in_srgb,var(--gold)_14%,transparent)] text-[color:var(--workspace-text)] shadow-[inset_0_-2px_0_0_var(--gold)]'
+          : 'border-transparent text-[color:var(--workspace-text-muted)] hover:border-[color:var(--workspace-row-border)] hover:bg-[rgba(255,255,255,0.04)] hover:text-[color:var(--workspace-text)]',
       )}
     >
-      {children}
+      <span className="min-w-0 truncate">{children}</span>
       {badge != null && badge > 0 && (
-        <span className="flex size-4 items-center justify-center rounded-full bg-[#e11d48] text-[9px] font-bold leading-none text-white">
+        <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-[#e11d48] text-[9px] font-bold leading-none text-white">
           {badge > 9 ? '9+' : badge}
         </span>
       )}
@@ -229,6 +279,8 @@ export function DashboardWorkspace() {
 
   const todayIso = useMemo(() => new Date().toISOString().split('T')[0], [])
   const [workspaceCalDate, setWorkspaceCalDate] = useState(() => workspaceCalDateInitial())
+  const todayLocalIso = useMemo(() => workspaceCalDateInitial(), [])
+  const workspaceCalPrevRef = useRef(workspaceCalDate)
   const isManager = currentUser?.role === 'manager'
   const managerId = isManager ? currentUser?.id ?? null : null
 
@@ -299,11 +351,45 @@ export function DashboardWorkspace() {
   const [mainTab, setMainTab] = useState<'tasks' | 'leads'>('tasks')
   const [taskMode, setTaskMode] = useState<'all' | 'today' | 'overdue'>('today')
   const [infoTab, setInfoTab] = useState<'notifs' | 'reminders' | 'news'>('notifs')
+  const [todayTasksOverlayOpen, setTodayTasksOverlayOpenState] = useState(false)
+  const [workspaceEventsOpen, setWorkspaceEventsOpenState] = useState(false)
+
+  const setTodayTasksOverlayOpen = useCallback((value: boolean | ((b: boolean) => boolean)) => {
+    setTodayTasksOverlayOpenState((prev) => {
+      const next = typeof value === 'function' ? (value as (b: boolean) => boolean)(prev) : value
+      if (next) setWorkspaceEventsOpenState(false)
+      return next
+    })
+  }, [])
+
+  const setWorkspaceEventsOpen = useCallback((value: boolean | ((b: boolean) => boolean)) => {
+    setWorkspaceEventsOpenState((prev) => {
+      const next = typeof value === 'function' ? (value as (b: boolean) => boolean)(prev) : value
+      if (next) setTodayTasksOverlayOpenState(false)
+      return next
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!deskShowCalendar) setWorkspaceEventsOpenState(false)
+  }, [deskShowCalendar])
 
   useEffect(() => {
     if (!deskShowLeads && mainTab === 'leads') setMainTab('tasks')
     if (!deskShowTasks && mainTab === 'tasks' && deskShowLeads) setMainTab('leads')
   }, [deskShowLeads, deskShowTasks, mainTab])
+
+  useEffect(() => {
+    if (workspaceCalDate !== todayLocalIso) setTodayTasksOverlayOpen(false)
+  }, [workspaceCalDate, todayLocalIso])
+
+  useEffect(() => {
+    const prev = workspaceCalPrevRef.current
+    workspaceCalPrevRef.current = workspaceCalDate
+    if (workspaceCalDate === todayLocalIso && prev !== workspaceCalDate) {
+      setTodayTasksOverlayOpen(true)
+    }
+  }, [workspaceCalDate, todayLocalIso])
 
   const openMainTab = (tab: 'tasks' | 'leads') => {
     setMainTab(tab)
@@ -330,6 +416,17 @@ export function DashboardWorkspace() {
     const db = `${b.dueDate}T${b.dueTime ?? '00:00'}`
     return da.localeCompare(db)
   })
+
+  const todayOverlayTasks = useMemo(() => {
+    const base = TASKS_MOCK.filter(mineTask).filter((t) => t.dueDate === todayIso && t.status !== 'done')
+    const list = [...base]
+    list.sort((a, b) => {
+      const da = `${a.dueDate}T${a.dueTime ?? '00:00'}`
+      const db = `${b.dueDate}T${b.dueTime ?? '00:00'}`
+      return da.localeCompare(db)
+    })
+    return list
+  }, [mineTask, todayIso])
 
   /* ── бейджи ── */
   const leadTabIds = useMemo(() => newLeads.map((l) => l.id), [newLeads])
@@ -391,20 +488,30 @@ export function DashboardWorkspace() {
           icon={<ListTodo className="size-3.5" strokeWidth={2} />}
           title={
             deskShowTasks && deskShowLeads
-              ? 'Задачи / новые лиды'
+              ? null
               : deskShowTasks
                 ? 'Задачи'
                 : deskShowLeads
-                  ? 'Новые лиды'
+                  ? 'Лиды'
                   : 'Рабочий стол'
           }
           right={
             deskShowTasks && deskShowLeads ? (
-              <div className="flex gap-0.5 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] p-0.5">
-                <TabBtn active={mainTab === 'tasks'} badge={badgeTasks} onClick={() => openMainTab('tasks')}>
+              <div className="flex gap-1 rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] p-1">
+                <TabBtn
+                  variant="deskMain"
+                  active={mainTab === 'tasks'}
+                  badge={badgeTasks}
+                  onClick={() => openMainTab('tasks')}
+                >
                   Задачи
                 </TabBtn>
-                <TabBtn active={mainTab === 'leads'} badge={badgeLeads} onClick={() => openMainTab('leads')}>
+                <TabBtn
+                  variant="deskMain"
+                  active={mainTab === 'leads'}
+                  badge={badgeLeads}
+                  onClick={() => openMainTab('leads')}
+                >
                   Лиды
                 </TabBtn>
               </div>
@@ -642,9 +749,10 @@ export function DashboardWorkspace() {
       </HubWidgetShell>
 
       {/* ╔══════════════════════════════════════════╗
-         ║  2. КАЛЕНДАРЬ  (сверху справа, крупный)  ║
+         ║  2–4. Центр: календарь + планы (оверлей дел) ║
          ╚══════════════════════════════════════════╝ */}
-      <HubWidgetShell accent="rgba(96,165,250,0.6)">
+      <div className="flex min-h-0 flex-col gap-1.5 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+      <HubWidgetShell accent="rgba(96,165,250,0.6)" className="min-h-0 flex-1">
         <WidgetHeader
           icon={<CalendarDays className="size-3.5" strokeWidth={2} />}
           title="Календарь"
@@ -670,10 +778,16 @@ export function DashboardWorkspace() {
                   hideDayPanel
                   selectedDate={workspaceCalDate}
                   onSelectedDateChange={setWorkspaceCalDate}
+                  onTodayReactivate={() => setTodayTasksOverlayOpen((o) => !o)}
                 />
               </div>
               <div className="mt-1 flex shrink-0 items-center gap-2">
-                <WorkspaceDayEventsMenu className="min-w-0 flex-1" dateIso={workspaceCalDate} />
+                <WorkspaceDayEventsMenu
+                  className="min-w-0 flex-1"
+                  dateIso={workspaceCalDate}
+                  open={workspaceEventsOpen}
+                  onOpenChange={setWorkspaceEventsOpen}
+                />
                 <div className="flex shrink-0 items-center gap-2.5 text-[12px] text-[color:var(--workspace-text-muted)]">
                   <span className="flex items-center gap-1">
                     <Eye className="size-3.5 text-blue-300" />
@@ -700,145 +814,11 @@ export function DashboardWorkspace() {
         </div>
       </HubWidgetShell>
 
+      <div className="relative min-h-0 flex-1">
       {/* ╔══════════════════════════════════════════╗
-         ║  3. УВЕДОМЛЕНИЯ / НАПОМИНАНИЯ / НОВОСТИ  ║
+         ║  4. ПЛАНЫ + СТРИК (нижняя половина центра)  ║
          ╚══════════════════════════════════════════╝ */}
-      <HubWidgetShell accent="rgba(52,211,153,0.5)" className="lg:col-start-3 lg:row-span-2 lg:row-start-1">
-        <WidgetHeader
-          icon={<Bell className="size-3.5" strokeWidth={2} />}
-          title="Уведомления · напоминания · новости"
-          accentColor="#34d399"
-          right={
-            <div className="flex gap-0.5 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] p-0.5">
-              <TabBtn active={infoTab === 'notifs'} badge={badgeNotifs} onClick={() => openInfoTab('notifs')}>
-                Уведомл.
-              </TabBtn>
-              <TabBtn active={infoTab === 'reminders'} badge={badgeReminders} onClick={() => openInfoTab('reminders')}>
-                Напомин.
-              </TabBtn>
-              <TabBtn active={infoTab === 'news'} badge={badgeNews} onClick={() => openInfoTab('news')}>
-                Новости
-              </TabBtn>
-            </div>
-          }
-        />
-
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-2.5 py-1">
-          {infoTab === 'notifs' && (
-            <>
-              {deskShowInfo ? (
-                <Link
-                  to="/dashboard/settings/info"
-                  className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
-                >
-                  Все уведомления →
-                </Link>
-              ) : null}
-              <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
-                {DASHBOARD_NOTIFICATIONS_PREVIEW.slice(0, NOTIFS_PREVIEW).map((n) => (
-                  <li
-                    key={n.id}
-                    className={cn(
-                      'flex gap-1.5 overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1',
-                      FEED_ITEM_HEIGHT_CLASS,
-                    )}
-                  >
-                    {notifIcon(n.type)}
-                    <div className="flex min-w-0 flex-1 flex-col justify-between">
-                      <p className={FEED_TITLE_CLASS}>
-                        {n.title}
-                      </p>
-                      <p className={FEED_BODY_CLASS}>
-                        {n.body}
-                      </p>
-                      <p className={FEED_META_CLASS}>{n.time}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-
-          {infoTab === 'reminders' && (
-            <>
-              {deskShowInfo ? (
-                <Link
-                  to="/dashboard/settings/info/reminders"
-                  className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
-                >
-                  Все напоминания →
-                </Link>
-              ) : null}
-              <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
-                {remindersPreview.map((r) => (
-                  <li
-                    key={r.id}
-                    className={cn(
-                      'flex items-start gap-1.5 overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1',
-                      FEED_ITEM_HEIGHT_CLASS,
-                    )}
-                  >
-                    <Clock className="mt-0.5 size-3.5 shrink-0 text-[color:var(--theme-accent-link-dim)]" />
-                    <div className="flex min-w-0 flex-1 flex-col justify-between">
-                      <p className="line-clamp-1 text-[12px] font-medium leading-snug text-[color:var(--workspace-text)]">
-                        {r.title}
-                      </p>
-                      <p className="flex items-center gap-0.5 text-[11px] text-[color:var(--theme-accent-link)]">
-                        {formatReminderDue(r.dueAt)}
-                        {r.entityLabel && <span className="text-[color:var(--workspace-text-muted)]"> · {r.entityLabel}</span>}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-
-          {infoTab === 'news' && (
-            <>
-              {deskShowInfo ? (
-                <Link
-                  to="/dashboard/settings/info/news"
-                  className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
-                >
-                  Все новости →
-                </Link>
-              ) : null}
-              <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
-                {newsPreview.map((a) => (
-                  <li
-                    key={a.id}
-                    className={cn(
-                      'flex gap-1.5 overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1',
-                      FEED_ITEM_HEIGHT_CLASS,
-                    )}
-                  >
-                    <span className="flex size-3.5 shrink-0 items-center justify-center text-[12px] leading-none">
-                      {a.emoji}
-                    </span>
-                    <div className="flex min-w-0 flex-1 flex-col justify-between">
-                      <p className={FEED_TITLE_CLASS}>
-                        {a.title}
-                      </p>
-                      <p className={FEED_BODY_CLASS}>
-                        {a.body}
-                      </p>
-                      <p className={FEED_META_CLASS}>
-                        {new Date(a.publishedAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} · {a.author}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      </HubWidgetShell>
-
-      {/* ╔══════════════════════════════════════════╗
-         ║  4. ПЛАНЫ + СТРИК + ГЕЙМИФИКАЦИЯ        ║
-         ╚══════════════════════════════════════════╝ */}
-      <HubWidgetShell accent="rgba(251,146,60,0.6)" className="lg:col-start-2 lg:row-start-2">
+      <HubWidgetShell accent="rgba(251,146,60,0.6)" className="flex h-full min-h-0 flex-col">
         <WidgetHeader
           icon={<Target className="size-3.5" strokeWidth={2} />}
           title="Выполнение планов"
@@ -996,6 +976,252 @@ export function DashboardWorkspace() {
               </div>
             </div>
           </div>
+        </div>
+      </HubWidgetShell>
+
+      {workspaceEventsOpen && deskShowCalendar ? (
+        <HubWidgetShell
+          accent="rgba(96,165,250,0.65)"
+          className="absolute inset-0 z-[24] flex min-h-0 flex-col overflow-hidden rounded-lg shadow-[0_16px_48px_rgba(0,0,0,0.55)]"
+        >
+          <WidgetHeader
+            icon={<CalendarClock className="size-3.5" strokeWidth={2} />}
+            title={`Мероприятия · ${formatWorkspaceDayShort(workspaceCalDate)}`}
+            accentColor="#60a5fa"
+            right={
+              <button
+                type="button"
+                onClick={() => setWorkspaceEventsOpen(false)}
+                className="inline-flex size-8 items-center justify-center rounded-md border border-[color:var(--workspace-row-border)] text-[color:var(--workspace-text-muted)] transition-colors hover:bg-[var(--workspace-row-bg)] hover:text-[color:var(--workspace-text)]"
+                aria-label="Закрыть мероприятия"
+              >
+                <X className="size-4" strokeWidth={2} />
+              </button>
+            }
+          />
+          <WorkspaceDayEventsPanel dateIso={workspaceCalDate} />
+        </HubWidgetShell>
+      ) : null}
+
+      {todayTasksOverlayOpen && deskShowCalendar && deskShowTasks ? (
+        <HubWidgetShell
+          accent="rgba(96,165,250,0.65)"
+          className="absolute inset-0 z-[25] flex min-h-0 flex-col overflow-hidden rounded-lg shadow-[0_16px_48px_rgba(0,0,0,0.55)]"
+        >
+          <WidgetHeader
+            icon={<ListTodo className="size-3.5" strokeWidth={2} />}
+            title="Дела на сегодня"
+            accentColor="#60a5fa"
+            right={
+              <button
+                type="button"
+                onClick={() => setTodayTasksOverlayOpen(false)}
+                className="inline-flex size-8 items-center justify-center rounded-md border border-[color:var(--workspace-row-border)] text-[color:var(--workspace-text-muted)] transition-colors hover:bg-[var(--workspace-row-bg)] hover:text-[color:var(--workspace-text)]"
+                aria-label="Закрыть список дел"
+              >
+                <X className="size-4" strokeWidth={2} />
+              </button>
+            }
+          />
+          <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-2.5 py-2">
+            {todayOverlayTasks.length === 0 ? (
+              <p className="py-2 text-center text-[12px] text-[color:var(--workspace-text-muted)]">
+                Нет задач на сегодня
+              </p>
+            ) : (
+              <ul className="min-h-0 space-y-0.5">
+                {todayOverlayTasks.map((t) => {
+                  const overdue = isTaskOverdue(t, todayIso)
+                  return (
+                    <li
+                      key={t.id}
+                      className={cn(
+                        'rounded-md border px-2 py-1',
+                        overdue
+                          ? 'border-red-500/25 bg-red-500/[0.06]'
+                          : 'border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]',
+                      )}
+                    >
+                      <div className="flex items-start justify-between gap-1">
+                        <p className="line-clamp-2 text-[13px] font-medium leading-snug text-[color:var(--workspace-text)]">
+                          {t.title}
+                        </p>
+                        <span
+                          className={cn(
+                            'shrink-0 rounded px-1 py-px text-[10px] font-bold uppercase',
+                            t.priority === 'critical'
+                              ? 'bg-red-500/20 text-red-300'
+                              : t.priority === 'high'
+                                ? 'bg-orange-500/20 text-orange-300'
+                                : 'bg-[rgba(255,255,255,0.06)] text-[color:var(--workspace-text-muted)]',
+                          )}
+                        >
+                          {PRIORITY_LABELS[t.priority]}
+                        </span>
+                      </div>
+                      <div className="mt-px flex flex-wrap items-center gap-x-1 text-[11px] text-[color:var(--workspace-text-muted)]">
+                        <span className={cn(overdue && 'font-bold text-red-400')}>{STATUS_LABELS[t.status]}</span>
+                        <span className="opacity-40">·</span>
+                        <span>
+                          {t.dueDate}
+                          {t.dueTime ? ` ${t.dueTime}` : ''}
+                        </span>
+                        {t.entityLabel ? (
+                          <>
+                            <span className="opacity-40">·</span>
+                            <span className="truncate text-[color:var(--theme-accent-link-dim)]">{t.entityLabel}</span>
+                          </>
+                        ) : null}
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+            <Link
+              to="/dashboard/tasks"
+              className="mt-1 shrink-0 text-center text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+            >
+              Все задачи →
+            </Link>
+          </div>
+        </HubWidgetShell>
+      ) : null}
+      </div>
+      </div>
+
+      {/* ╔══════════════════════════════════════════╗
+         ║  3. УВЕДОМЛЕНИЯ / НАПОМИНАНИЯ / НОВОСТИ  ║
+         ╚══════════════════════════════════════════╝ */}
+      <HubWidgetShell accent="rgba(52,211,153,0.5)" className="lg:col-start-3 lg:row-span-2 lg:row-start-1">
+        <WidgetHeader
+          icon={<Bell className="size-3.5" strokeWidth={2} />}
+          title={null}
+          accentColor="#34d399"
+          right={
+            <div className="flex min-w-0 max-w-[min(100%,20rem)] gap-0.5 rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] p-0.5 sm:max-w-none">
+              <InfoTabBtn active={infoTab === 'notifs'} badge={badgeNotifs} onClick={() => openInfoTab('notifs')}>
+                Уведомления
+              </InfoTabBtn>
+              <InfoTabBtn active={infoTab === 'reminders'} badge={badgeReminders} onClick={() => openInfoTab('reminders')}>
+                Напоминания
+              </InfoTabBtn>
+              <InfoTabBtn active={infoTab === 'news'} badge={badgeNews} onClick={() => openInfoTab('news')}>
+                Новости
+              </InfoTabBtn>
+            </div>
+          }
+        />
+
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-2.5 py-1">
+          {infoTab === 'notifs' && (
+            <>
+              {deskShowInfo ? (
+                <Link
+                  to="/dashboard/settings/info"
+                  className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                >
+                  Все уведомления →
+                </Link>
+              ) : null}
+              <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
+                {DASHBOARD_NOTIFICATIONS_PREVIEW.slice(0, NOTIFS_PREVIEW).map((n) => (
+                  <li
+                    key={n.id}
+                    className={cn(
+                      'flex gap-1.5 overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1',
+                      FEED_ITEM_HEIGHT_CLASS,
+                    )}
+                  >
+                    {notifIcon(n.type)}
+                    <div className="flex min-w-0 flex-1 flex-col justify-between">
+                      <p className={FEED_TITLE_CLASS}>
+                        {n.title}
+                      </p>
+                      <p className={FEED_BODY_CLASS}>
+                        {n.body}
+                      </p>
+                      <p className={FEED_META_CLASS}>{n.time}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          {infoTab === 'reminders' && (
+            <>
+              {deskShowInfo ? (
+                <Link
+                  to="/dashboard/settings/info/reminders"
+                  className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                >
+                  Все напоминания →
+                </Link>
+              ) : null}
+              <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
+                {remindersPreview.map((r) => (
+                  <li
+                    key={r.id}
+                    className={cn(
+                      'flex items-start gap-1.5 overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1',
+                      FEED_ITEM_HEIGHT_CLASS,
+                    )}
+                  >
+                    <Clock className="mt-0.5 size-3.5 shrink-0 text-[color:var(--theme-accent-link-dim)]" />
+                    <div className="flex min-w-0 flex-1 flex-col justify-between">
+                      <p className="line-clamp-1 text-[12px] font-medium leading-snug text-[color:var(--workspace-text)]">
+                        {r.title}
+                      </p>
+                      <p className="flex items-center gap-0.5 text-[11px] text-[color:var(--theme-accent-link)]">
+                        {formatReminderDue(r.dueAt)}
+                        {r.entityLabel && <span className="text-[color:var(--workspace-text-muted)]"> · {r.entityLabel}</span>}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          {infoTab === 'news' && (
+            <>
+              {deskShowInfo ? (
+                <Link
+                  to="/dashboard/settings/info/news"
+                  className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                >
+                  Все новости →
+                </Link>
+              ) : null}
+              <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
+                {newsPreview.map((a) => (
+                  <li
+                    key={a.id}
+                    className={cn(
+                      'flex gap-1.5 overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1',
+                      FEED_ITEM_HEIGHT_CLASS,
+                    )}
+                  >
+                    <span className="flex size-3.5 shrink-0 items-center justify-center text-[12px] leading-none">
+                      {a.emoji}
+                    </span>
+                    <div className="flex min-w-0 flex-1 flex-col justify-between">
+                      <p className={FEED_TITLE_CLASS}>
+                        {a.title}
+                      </p>
+                      <p className={FEED_BODY_CLASS}>
+                        {a.body}
+                      </p>
+                      <p className={FEED_META_CLASS}>
+                        {new Date(a.publishedAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} · {a.author}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       </HubWidgetShell>
     </div>

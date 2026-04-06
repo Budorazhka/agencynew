@@ -97,6 +97,7 @@ export function DashboardTopHeader() {
           type="button"
           className={cn(
             btn,
+            'min-h-11 gap-2 px-3.5 py-2.5 text-[14px] font-bold',
             'ring-1 ring-transparent hover:ring-[color-mix(in_srgb,var(--gold)_42%,transparent)]',
           )}
           title="AI — в разработке"
@@ -105,7 +106,7 @@ export function DashboardTopHeader() {
           aria-expanded={aiOpen}
           onClick={() => setAiOpen(true)}
         >
-          <Sparkles className="size-[18px] shrink-0 text-[color:var(--gold)]" strokeWidth={2} />
+          <Sparkles className="size-[22px] shrink-0 text-[color:var(--gold)]" strokeWidth={2} />
           <span>AI</span>
         </button>
 
@@ -114,10 +115,8 @@ export function DashboardTopHeader() {
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
-            btn,
-            isLight
-              ? 'text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800'
-              : 'text-emerald-400 hover:bg-emerald-950/40 hover:text-emerald-300',
+            'inline-flex min-h-9 shrink-0 items-center justify-center rounded-md px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white transition-[filter,transform] hover:brightness-110 active:scale-[0.98]',
+            'bg-[var(--corporate-green)] shadow-sm shadow-black/20',
           )}
           title="Перейти на baza.sale"
           aria-label="Marketplace — baza.sale"

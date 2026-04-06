@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowUpRight } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export interface HubSection {
   icon: React.ReactNode
@@ -44,13 +45,6 @@ export default function ModuleHub({
     if (s.route) navigate(s.route)
   }
 
-  /** Как в CRM: при двух строках сетки высота одной ячейки ~половина области. При 1–3 плитках одна строка тянула бы плитку на весь экран — добавляем вторую пустую строку 1fr. */
-  const computedRows =
-    sections.length === 0 ? 0 : Math.ceil(sections.length / 3)
-  const minRowsToMatchCrmCellHeight =
-    sections.length > 0 && sections.length < 4 ? 2 : 0
-  const rows = Math.max(computedRows, minRowsToMatchCrmCellHeight)
-
   return (
     <div style={{
       position: 'absolute',
@@ -58,7 +52,7 @@ export default function ModuleHub({
       display: 'flex',
       flexDirection: 'column',
       background: 'var(--app-bg)',
-      padding: '32px 40px',
+      padding: 'clamp(20px, 3vh, 32px) clamp(16px, 2.5vw, 40px)',
       fontFamily: "'Montserrat', sans-serif",
       overflowY: 'auto',
     }}>
@@ -127,41 +121,31 @@ export default function ModuleHub({
         )}
       </div>
 
-      {/* ── Sections grid — flex:1 fills remaining space ─────────────── */}
-      <div style={{
-        flex: 1,
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gridTemplateRows: `repeat(${rows}, 1fr)`,
-        gap: 16,
-        minHeight: 0,
-      }}>
+      {/* ── Sections grid: 6 в ряд от ~1536px viewport, карточки 9:5 ─────── */}
+      <div className="module-hub-sections-grid">
         {sections.map((s, i) => {
           const hovered = hoveredIdx === i
           const clickable = !!(s.route || s.externalUrl)
           return (
             <div
               key={i}
+              role={clickable ? 'button' : undefined}
+              tabIndex={clickable ? 0 : undefined}
               onClick={() => handleSection(s)}
+              onKeyDown={(e) => {
+                if (!clickable) return
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  handleSection(s)
+                }
+              }}
               onMouseEnter={() => setHoveredIdx(i)}
               onMouseLeave={() => setHoveredIdx(null)}
-              style={{
-                background: hovered ? 'var(--hub-card-bg-hover)' : 'var(--hub-card-bg)',
-                backdropFilter: 'blur(20px)',
-                boxShadow: hovered
-                  ? 'inset 0 0 0 1px var(--hub-card-border-hover)'
-                  : 'inset 0 0 0 1px var(--hub-card-border)',
-                borderRadius: 6,
-                padding: '32px 24px',
-                cursor: clickable ? 'pointer' : 'default',
-                transition: 'all 0.2s',
-                position: 'relative',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-              }}
+              className={cn(
+                'module-hub-section-card',
+                hovered && 'module-hub-section-card--hover',
+                clickable && 'cursor-pointer',
+              )}
             >
               {/* Arrow top-right */}
               <ArrowUpRight
@@ -183,13 +167,14 @@ export default function ModuleHub({
 
               {/* Icon */}
               <div style={{
-                width: 56, height: 56,
+                width: 'clamp(40px, 7vw, 52px)',
+                height: 'clamp(40px, 7vw, 52px)',
                 background: hovered ? 'var(--hub-tile-icon-hover-bg)' : 'var(--hub-tile-icon-bg)',
                 border: '1px solid var(--hub-tile-icon-border)',
                 borderRadius: 10,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'background 0.2s',
-                marginBottom: 20,
+                marginBottom: 'clamp(6px, 1vw, 12px)',
                 flexShrink: 0,
               }}>
                 <span
@@ -201,13 +186,18 @@ export default function ModuleHub({
               </div>
 
               {/* Title */}
-              <h3 style={{
-                margin: '0 0 10px',
-                fontSize: 15, fontWeight: 700,
-                color: 'var(--theme-accent-heading)',
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-              }}>
+              <h3
+                className="line-clamp-2 w-full min-w-0 px-0.5"
+                style={{
+                  margin: 0,
+                  fontSize: 'clamp(10px, 1.05vw, 13px)',
+                  fontWeight: 700,
+                  color: 'var(--theme-accent-heading)',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  lineHeight: 1.25,
+                }}
+              >
                 {s.title}
               </h3>
 

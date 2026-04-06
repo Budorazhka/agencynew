@@ -1,23 +1,10 @@
-import { useAuth } from '@/context/AuthContext'
 import { DashboardWorkspace } from '@/components/dashboard/DashboardWorkspace'
 
 export default function HomePage() {
-  const { currentUser } = useAuth()
-
-  const userName = currentUser?.name ?? 'Пользователь'
-  const firstName = userName.trim().split(/\s+/)[0] || userName
-
   return (
     <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-[var(--app-bg)] font-sans text-[color:var(--workspace-text)] antialiased">
-      <main className="min-h-0 min-w-0 flex-1 overflow-hidden px-2 pb-2 pt-1 sm:px-2.5 sm:pb-2 sm:pt-1 lg:px-4 lg:pb-2 lg:pt-1">
+      <main className="min-h-0 min-w-0 flex-1 overflow-hidden px-2 pb-2 pt-0 sm:px-2.5 sm:pb-2 lg:px-4 lg:pb-2">
         <div className="flex h-full w-full min-w-0 flex-col">
-          <header className="mb-0.5 flex shrink-0 items-center justify-between gap-3 lg:mb-1">
-            <div className="min-w-0">
-              <h2 className="text-[1.2rem] font-extrabold leading-tight tracking-tight text-[color:var(--app-text)] sm:text-[1.35rem] lg:text-[1.4rem]">
-                Добро пожаловать, {firstName}
-              </h2>
-            </div>
-          </header>
           <div className="min-h-0 flex-1">
             <DashboardWorkspace />
           </div>

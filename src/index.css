@@ -10,6 +10,8 @@ html {
 }
 
 :root {
+  /* Корпоративный зелёный (витрина Marketplace, акценты) — насыщенный, как в палитре дизайна */
+  --corporate-green: #22c55e;
   --gold: #c9a84c;
   --gold-light: #e2c97e;
   --gold-dark: #a07828;
@@ -304,6 +306,7 @@ body {
 }
 
 :root[data-theme='light'] {
+  --corporate-green: #16a34a;
   /* Фон чуть ниже белого — карточки и текст читаются лучше */
   --app-bg: #e2e8f0;
   --app-text: #0f172a;
@@ -508,6 +511,65 @@ body {
 .module-card:hover {
   border-color: rgba(201, 168, 76, 0.6);
   background: var(--green-card-hover);
+}
+
+/*
+ * ModuleHub (экран раздела после клика по сайдбару):
+ * — до 6 колонок на широкой области (~15" 1920×1080 с сайдбаром, логическая ширина ≥1536px);
+ * — карточки 9 : 5 (ширина к высоте).
+ */
+.module-hub-sections-grid {
+  flex: 1;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  grid-auto-rows: auto;
+  min-height: 0;
+  align-content: start;
+}
+@media (min-width: 640px) {
+  .module-hub-sections-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 900px) {
+  .module-hub-sections-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1200px) {
+  .module-hub-sections-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1536px) {
+  .module-hub-sections-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+.module-hub-section-card {
+  aspect-ratio: 9 / 5;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 6px;
+  padding: clamp(8px, 1.1vw, 18px) clamp(6px, 0.9vw, 14px);
+  backdrop-filter: blur(20px);
+  transition: background 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+  background: var(--hub-card-bg);
+  box-shadow: inset 0 0 0 1px var(--hub-card-border);
+}
+.module-hub-section-card.module-hub-section-card--hover {
+  background: var(--hub-card-bg-hover);
+  box-shadow: inset 0 0 0 1px var(--hub-card-border-hover);
 }
 
 /* Open button */
