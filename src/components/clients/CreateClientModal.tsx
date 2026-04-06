@@ -4,9 +4,9 @@ import { X, User, Building2, Megaphone } from 'lucide-react'
 import { CLIENT_SOURCE_GROUPS } from '@/data/clients-mock'
 import { type Client, type ClientRequestType, type ClientType, CLIENT_REQUEST_TYPE_LABEL } from '@/types/clients'
 
-const PRIMARY = '#e6c364'
-const SURFACE = '#0a1f12'
-const DIALOG_BG = '#040d0a'
+const PRIMARY = 'var(--gold)'
+const SURFACE = 'var(--green-deep)'
+const DIALOG_BG = 'var(--rail-bg)'
 
 const DEFAULT_SOURCE = CLIENT_SOURCE_GROUPS[0]?.sources[0] ?? 'Baza.sale'
 
@@ -281,7 +281,7 @@ export function CreateClientModal({
                       height: 44,
                       borderRadius: 10,
                       border: active ? `2px solid ${PRIMARY}` : '1px solid rgba(255,255,255,0.12)',
-                      background: active ? 'rgba(230,195,100,0.12)' : SURFACE,
+                      background: active ? 'color-mix(in srgb, var(--gold) 12%, transparent)' : SURFACE,
                       color: active ? PRIMARY : 'rgba(220,230,224,0.85)',
                       fontSize: 13,
                       fontWeight: active ? 700 : 600,
@@ -425,7 +425,7 @@ export function CreateClientModal({
               marginBottom: 18,
               padding: 14,
               borderRadius: 12,
-              border: '1px solid rgba(230,195,100,0.28)',
+              border: '1px solid color-mix(in srgb, var(--gold) 28%, transparent)',
               background: 'rgba(15, 35, 30, 0.65)',
             }}
           >
@@ -435,7 +435,7 @@ export function CreateClientModal({
                   width: 36,
                   height: 36,
                   borderRadius: 10,
-                  background: 'rgba(230,195,100,0.15)',
+                  background: 'color-mix(in srgb, var(--gold) 15%, transparent)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',

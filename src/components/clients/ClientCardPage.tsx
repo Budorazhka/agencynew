@@ -46,10 +46,7 @@ export function ClientCardPage() {
 
   if (!client) {
     return (
-      <DashboardShell
-        hideSidebar
-        topBack={{ label: 'Назад', route: '/dashboard/clients' }}
-      >
+      <DashboardShell hideSidebar>
         <div style={{ padding: 40, color: C.whiteLow }}>
           Клиент не найден.
         </div>
@@ -58,10 +55,7 @@ export function ClientCardPage() {
   }
 
   return (
-    <DashboardShell
-      hideSidebar
-      topBack={{ label: 'Назад', route: '/dashboard/clients' }}
-    >
+    <DashboardShell hideSidebar>
       <div style={{ padding: '24px 32px 40px', width: '100%', maxWidth: 960, margin: '0 auto', boxSizing: 'border-box' }}>
         {/* Client header */}
         <div style={{

@@ -311,7 +311,7 @@ export function MailingsEditor({
                       {m.channels.map((ch) => (ch === 'crm' ? 'CRM' : 'ЛК')).join(', ')}
                     </p>
                     {isScheduled && m.scheduledAt && (
-                      <p className="mt-1 text-sm text-[#e6c364]">
+                      <p className="mt-1 text-sm text-[color:var(--theme-accent-heading)]">
                         Запланировано на {formatDate(m.scheduledAt)}
                       </p>
                     )}

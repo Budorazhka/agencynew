@@ -272,7 +272,7 @@ export function NotificationCenter() {
           {/* Footer */}
           <div style={{ padding: '10px 16px', borderTop: '1px solid var(--green-border)' }}>
             <button
-              onClick={() => { navigate('/dashboard/info'); setOpen(false) }}
+              onClick={() => { navigate('/dashboard/settings/info'); setOpen(false) }}
               style={{
                 width: '100%',
                 padding: '8px',

@@ -69,26 +69,26 @@ function ItemCard({
     <div className="relative group">
       <button
         onClick={onClick}
-        className="group/card flex flex-col gap-3 rounded-2xl border border-[rgba(242,207,141,0.2)] bg-[rgba(18,48,36,0.7)] p-5 text-left transition-all hover:border-[rgba(242,207,141,0.45)] hover:bg-[rgba(242,207,141,0.07)] w-full"
+        className="group/card flex flex-col gap-3 rounded-2xl border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] p-5 text-left transition-all hover:border-[color:var(--hub-card-border-hover)] hover:bg-[var(--hub-action-hover)] w-full"
       >
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-[#fcecc8] leading-snug">{item.title}</p>
-            <p className="mt-1 text-sm text-[rgba(242,207,141,0.5)] line-clamp-2">{item.description}</p>
+            <p className="font-semibold text-[color:var(--app-text)] leading-snug">{item.title}</p>
+            <p className="mt-1 text-sm text-[color:var(--hub-desc)] line-clamp-2">{item.description}</p>
           </div>
-          <ChevronRight className="size-4 shrink-0 text-[rgba(242,207,141,0.25)] transition-transform group-hover/card:translate-x-0.5 group-hover/card:text-[rgba(242,207,141,0.7)] mt-1" />
+          <ChevronRight className="size-4 shrink-0 text-[color:var(--theme-accent-icon-dim)] transition-transform group-hover/card:translate-x-0.5 group-hover/card:text-[color:var(--theme-accent-link-dim)] mt-1" />
         </div>
         <div className="flex flex-wrap items-center gap-2 mt-auto">
           {item.targetRole !== 'all' && (
-            <span className="rounded-full border border-[rgba(242,207,141,0.2)] bg-[rgba(242,207,141,0.07)] px-2.5 py-0.5 text-xs text-[rgba(242,207,141,0.6)]">
+            <span className="rounded-full border border-[color:var(--hub-card-border)] bg-[var(--hub-action-hover)] px-2.5 py-0.5 text-xs text-[color:var(--hub-badge-soon-fg)]">
               {ROLE_LABELS[item.targetRole]}
             </span>
           )}
           {item.tags?.map(t => (
-            <span key={t} className="rounded-full bg-[rgba(242,207,141,0.08)] px-2.5 py-0.5 text-xs text-[rgba(242,207,141,0.5)]">{t}</span>
+            <span key={t} className="rounded-full bg-[var(--nav-item-bg-active)] px-2.5 py-0.5 text-xs text-[color:var(--hub-desc)]">{t}</span>
           ))}
           {item.readTime && (
-            <span className="ml-auto flex items-center gap-1 text-xs text-[rgba(242,207,141,0.35)] shrink-0">
+            <span className="ml-auto flex items-center gap-1 text-xs text-[color:var(--theme-accent-icon-dim)] shrink-0">
               <Clock className="size-3" />
               {item.readTime}
             </span>
@@ -96,14 +96,14 @@ function ItemCard({
         </div>
       </button>
 
-      {/* Admin controls — visible only when admin props passed */}
+      {/* Кнопки админа — только если переданы onEdit / onDelete */}
       {(onEdit || onDelete) && (
         <div className="absolute top-3 right-9 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           {onEdit && (
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onEdit() }}
-              className="flex size-7 items-center justify-center rounded-full bg-[rgba(9,36,28,0.85)] border border-[rgba(242,207,141,0.2)] text-[rgba(242,207,141,0.6)] hover:text-emerald-300 hover:border-emerald-500/40 transition-colors"
+              className="flex size-7 items-center justify-center rounded-full bg-[rgba(9,36,28,0.85)] border border-[color:var(--hub-card-border)] text-[color:var(--hub-badge-soon-fg)] hover:text-emerald-300 hover:border-emerald-500/40 transition-colors"
               title="Редактировать"
             >
               <Pencil className="size-3.5" />
@@ -113,7 +113,7 @@ function ItemCard({
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onDelete() }}
-              className="flex size-7 items-center justify-center rounded-full bg-[rgba(9,36,28,0.85)] border border-[rgba(242,207,141,0.2)] text-[rgba(242,207,141,0.6)] hover:text-red-400 hover:border-red-500/40 transition-colors"
+              className="flex size-7 items-center justify-center rounded-full bg-[rgba(9,36,28,0.85)] border border-[color:var(--hub-card-border)] text-[color:var(--hub-badge-soon-fg)] hover:text-red-400 hover:border-red-500/40 transition-colors"
               title="Удалить"
             >
               <Trash2 className="size-3.5" />
@@ -125,13 +125,13 @@ function ItemCard({
   )
 }
 
-// ─── ArticleViewer ────────────────────────────────────────────────────────────
+// ─── Просмотр статьи (разметка) ───────────────────────────────────────────────
 
 function renderInline(text: string): React.ReactNode {
   const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/)
   return parts.map((p, i) => {
-    if (p.startsWith('**') && p.endsWith('**')) return <strong key={i} className="font-semibold text-[#f2cf8d]">{p.slice(2, -2)}</strong>
-    if (p.startsWith('`') && p.endsWith('`')) return <code key={i} className="rounded bg-[rgba(242,207,141,0.1)] px-1 py-0.5 font-mono text-xs text-[#f2cf8d]">{p.slice(1, -1)}</code>
+    if (p.startsWith('**') && p.endsWith('**')) return <strong key={i} className="font-semibold text-[color:var(--gold-light)]">{p.slice(2, -2)}</strong>
+    if (p.startsWith('`') && p.endsWith('`')) return <code key={i} className="rounded bg-[var(--hub-tile-icon-bg)] px-1 py-0.5 font-mono text-xs text-[color:var(--gold-light)]">{p.slice(1, -1)}</code>
     return p
   })
 }
@@ -141,9 +141,9 @@ function TableRow({ line }: { line: string }) {
   const isHeader = cells.every(c => /^-+$/.test(c))
   if (isHeader) return null
   return (
-    <div className="grid gap-0 border-b border-[rgba(242,207,141,0.1)] last:border-0" style={{ gridTemplateColumns: `repeat(${cells.length}, 1fr)` }}>
+    <div className="grid gap-0 border-b border-[color:var(--hub-tile-icon-border)] last:border-0" style={{ gridTemplateColumns: `repeat(${cells.length}, 1fr)` }}>
       {cells.map((c, i) => (
-        <div key={i} className="px-3 py-2 text-xs text-[rgba(247,236,212,0.75)] border-r border-[rgba(242,207,141,0.1)] last:border-0">{c}</div>
+        <div key={i} className="px-3 py-2 text-xs text-[color:var(--hub-body)] border-r border-[color:var(--hub-tile-icon-border)] last:border-0">{c}</div>
       ))}
     </div>
   )
@@ -151,10 +151,10 @@ function TableRow({ line }: { line: string }) {
 
 function ArticleViewer({ body }: { body: string }) {
   return (
-    <div className="space-y-3 text-sm leading-relaxed text-[rgba(247,236,212,0.85)]">
+    <div className="space-y-3 text-sm leading-relaxed text-[color:var(--app-text-muted)]">
       {body.split('\n').map((line, i) => {
-        if (line.startsWith('## ')) return <h2 key={i} className="text-base font-bold text-[#fcecc8] mt-5 mb-2">{line.slice(3)}</h2>
-        if (line.startsWith('### ')) return <h3 key={i} className="text-sm font-bold text-[#f2cf8d] mt-4 mb-1">{line.slice(4)}</h3>
+        if (line.startsWith('## ')) return <h2 key={i} className="text-base font-bold text-[color:var(--app-text)] mt-5 mb-2">{line.slice(3)}</h2>
+        if (line.startsWith('### ')) return <h3 key={i} className="text-sm font-bold text-[color:var(--gold-light)] mt-4 mb-1">{line.slice(4)}</h3>
         if (line.startsWith('- ')) return <li key={i} className="ml-4 list-disc">{renderInline(line.slice(2))}</li>
         if (line.startsWith('```')) return null
         if (/^\d+\./.test(line)) return <li key={i} className="ml-4 list-decimal">{renderInline(line.replace(/^\d+\.\s/, ''))}</li>
@@ -166,7 +166,7 @@ function ArticleViewer({ body }: { body: string }) {
   )
 }
 
-// ─── ScriptViewer ─────────────────────────────────────────────────────────────
+// ─── Просмотр скрипта (диалог) ────────────────────────────────────────────────
 
 function ScriptViewer({ lines }: { lines: Array<{ speaker: 'manager' | 'client'; text: string }> }) {
   return (
@@ -175,24 +175,24 @@ function ScriptViewer({ lines }: { lines: Array<{ speaker: 'manager' | 'client';
         const isManager = line.speaker === 'manager'
         return (
           <div key={i} className={cn('flex gap-3', isManager ? 'flex-row-reverse' : 'flex-row')}>
-            <div className={cn('flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold', isManager ? 'bg-[rgba(126,200,227,0.2)] text-[#7ec8e3]' : 'bg-[rgba(242,207,141,0.1)] text-[rgba(242,207,141,0.6)]')}>
+            <div className={cn('flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold', isManager ? 'bg-[rgba(126,200,227,0.2)] text-[#7ec8e3]' : 'bg-[var(--hub-tile-icon-bg)] text-[color:var(--hub-badge-soon-fg)]')}>
               {isManager ? 'М' : 'К'}
             </div>
-            <div className={cn('max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed', isManager ? 'rounded-tr-sm bg-[rgba(126,200,227,0.15)] text-[#c8e8f5] border border-[rgba(126,200,227,0.25)]' : 'rounded-tl-sm bg-[rgba(255,255,255,0.05)] text-[rgba(247,236,212,0.85)] border border-[rgba(242,207,141,0.12)]')}>
+            <div className={cn('max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed', isManager ? 'rounded-tr-sm bg-[rgba(126,200,227,0.15)] text-[#c8e8f5] border border-[rgba(126,200,227,0.25)]' : 'rounded-tl-sm bg-[rgba(255,255,255,0.05)] text-[color:var(--app-text-muted)] border border-[color:var(--hub-tile-icon-border)]')}>
               {line.text}
             </div>
           </div>
         )
       })}
-      <div className="mt-4 flex items-center gap-4 rounded-xl border border-[rgba(242,207,141,0.12)] bg-[rgba(255,255,255,0.03)] px-4 py-3 text-xs text-[rgba(242,207,141,0.5)]">
+      <div className="mt-4 flex items-center gap-4 rounded-xl border border-[color:var(--hub-tile-icon-border)] bg-[rgba(255,255,255,0.03)] px-4 py-3 text-xs text-[color:var(--hub-desc)]">
         <div className="flex items-center gap-1.5"><span className="inline-flex size-5 rounded-full bg-[rgba(126,200,227,0.2)] text-[#7ec8e3] font-bold text-[10px] items-center justify-center">М</span>Менеджер</div>
-        <div className="flex items-center gap-1.5"><span className="inline-flex size-5 rounded-full bg-[rgba(242,207,141,0.1)] text-[rgba(242,207,141,0.6)] font-bold text-[10px] items-center justify-center">К</span>Клиент</div>
+        <div className="flex items-center gap-1.5"><span className="inline-flex size-5 rounded-full bg-[var(--hub-tile-icon-bg)] text-[color:var(--hub-badge-soon-fg)] font-bold text-[10px] items-center justify-center">К</span>Клиент</div>
       </div>
     </div>
   )
 }
 
-// ─── PresentationViewer ───────────────────────────────────────────────────────
+// ─── Просмотр презентации (слайды) ────────────────────────────────────────────
 
 function PresentationViewer({ slides }: { slides: Array<{ title: string; body: string }> }) {
   const [current, setCurrent] = useState(0)
@@ -209,22 +209,22 @@ function PresentationViewer({ slides }: { slides: Array<{ title: string; body: s
         </div>
       </div>
       <div className="flex items-center justify-between gap-3">
-        <Button variant="outline" size="sm" onClick={() => setCurrent(c => c - 1)} disabled={current === 0} className="border-[rgba(242,207,141,0.3)] bg-[rgba(242,207,141,0.07)] text-[rgba(242,207,141,0.8)] hover:bg-[rgba(242,207,141,0.12)]">← Назад</Button>
+        <Button variant="outline" size="sm" onClick={() => setCurrent(c => c - 1)} disabled={current === 0} className="border-[color:var(--hub-card-border-hover)] bg-[var(--hub-action-hover)] text-[color:var(--app-text-muted)] hover:bg-[var(--nav-item-bg-active)]">← Назад</Button>
         <div className="flex items-center gap-1.5">
           {slides.map((_, i) => (
             <button key={i} onClick={() => setCurrent(i)}
-              className={cn('rounded-full transition-all', i === current ? 'size-2.5 bg-[#f2cf8d]' : 'size-2 bg-[rgba(242,207,141,0.25)] hover:bg-[rgba(242,207,141,0.5)]')}
+              className={cn('rounded-full transition-all', i === current ? 'size-2.5 bg-[var(--gold-light)]' : 'size-2 bg-[var(--gold)]/25 hover:bg-[var(--gold)]/50')}
             />
           ))}
         </div>
-        <Button variant="outline" size="sm" onClick={() => setCurrent(c => c + 1)} disabled={current === total - 1} className="border-[rgba(242,207,141,0.3)] bg-[rgba(242,207,141,0.07)] text-[rgba(242,207,141,0.8)] hover:bg-[rgba(242,207,141,0.12)]">Далее →</Button>
+        <Button variant="outline" size="sm" onClick={() => setCurrent(c => c + 1)} disabled={current === total - 1} className="border-[color:var(--hub-card-border-hover)] bg-[var(--hub-action-hover)] text-[color:var(--app-text-muted)] hover:bg-[var(--nav-item-bg-active)]">Далее →</Button>
       </div>
-      <div className="rounded-xl border border-[rgba(242,207,141,0.15)] divide-y divide-[rgba(242,207,141,0.08)] overflow-hidden">
+      <div className="rounded-xl border border-[color:var(--hub-card-border)] divide-y divide-[color:var(--hub-card-border)] overflow-hidden">
         {slides.map((s, i) => (
           <button key={i} onClick={() => setCurrent(i)}
-            className={cn('flex items-center gap-3 w-full px-4 py-2.5 text-left text-sm transition-colors hover:bg-[rgba(242,207,141,0.05)]', i === current ? 'bg-[rgba(242,207,141,0.08)] font-semibold text-[#fcecc8]' : 'text-[rgba(247,236,212,0.5)]')}
+            className={cn('flex items-center gap-3 w-full px-4 py-2.5 text-left text-sm transition-colors hover:bg-[var(--hub-action-hover)]', i === current ? 'bg-[var(--nav-item-bg-active)] font-semibold text-[color:var(--app-text)]' : 'text-[color:var(--hub-desc)]')}
           >
-            <span className={cn('inline-flex size-5 shrink-0 rounded-full text-[10px] font-bold items-center justify-center', i === current ? 'bg-[#f2cf8d] text-[#0a2619]' : 'bg-[rgba(242,207,141,0.1)] text-[rgba(242,207,141,0.5)]')}>{i + 1}</span>
+            <span className={cn('inline-flex size-5 shrink-0 rounded-full text-[10px] font-bold items-center justify-center', i === current ? 'bg-[var(--gold-light)] text-[#0a2619]' : 'bg-[var(--hub-tile-icon-bg)] text-[color:var(--hub-desc)]')}>{i + 1}</span>
             {s.title}
           </button>
         ))}
@@ -233,20 +233,20 @@ function PresentationViewer({ slides }: { slides: Array<{ title: string; body: s
   )
 }
 
-// ─── PdfViewer ────────────────────────────────────────────────────────────────
+// ─── Просмотр PDF ───────────────────────────────────────────────────────────────
 
 function PdfViewer({ url, description }: { url: string; description?: string }) {
   return (
     <div className="space-y-4">
-      <div className="overflow-hidden rounded-xl border border-[rgba(242,207,141,0.2)] bg-[rgba(0,0,0,0.2)]" style={{ height: 520 }}>
+      <div className="overflow-hidden rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.2)]" style={{ height: 520 }}>
         <iframe src={`${url}#toolbar=1`} title="PDF" className="h-full w-full" />
       </div>
-      {description && <p className="text-sm text-[rgba(247,236,212,0.65)] leading-relaxed">{description}</p>}
+      {description && <p className="text-sm text-[color:var(--hub-body)] leading-relaxed">{description}</p>}
       <a
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 rounded-full border border-[rgba(242,207,141,0.3)] bg-[rgba(242,207,141,0.07)] px-4 py-2 text-sm text-[rgba(242,207,141,0.8)] hover:bg-[rgba(242,207,141,0.12)] transition-colors"
+        className="inline-flex items-center gap-2 rounded-full border border-[color:var(--hub-card-border-hover)] bg-[var(--hub-action-hover)] px-4 py-2 text-sm text-[color:var(--app-text-muted)] hover:bg-[var(--nav-item-bg-active)] transition-colors"
       >
         <ExternalLink className="size-4" />
         Открыть в новой вкладке
@@ -255,7 +255,7 @@ function PdfViewer({ url, description }: { url: string; description?: string }) 
   )
 }
 
-// ─── QuizViewer ───────────────────────────────────────────────────────────────
+// ─── Просмотр теста (вопросы) ─────────────────────────────────────────────────
 
 function QuizViewer({ questions }: { questions: Array<{ question: string; options: string[]; correct: number }> }) {
   const [answers, setAnswers] = useState<Record<number, number>>({})
@@ -267,7 +267,7 @@ function QuizViewer({ questions }: { questions: Array<{ question: string; option
     return (
       <div className="space-y-6">
         <div className={cn('rounded-2xl border p-6 text-center', score === questions.length ? 'border-[rgba(111,207,151,0.4)] bg-[rgba(111,207,151,0.08)]' : score >= questions.length / 2 ? 'border-[rgba(244,185,106,0.4)] bg-[rgba(244,185,106,0.08)]' : 'border-[rgba(252,129,129,0.4)] bg-[rgba(252,129,129,0.08)]')}>
-          <p className="text-3xl font-bold text-[#fcecc8]">{score} / {questions.length}</p>
+          <p className="text-3xl font-bold text-[color:var(--app-text)]">{score} / {questions.length}</p>
           <p className={cn('mt-1 text-sm font-medium', score === questions.length ? 'text-[#6fcf97]' : score >= questions.length / 2 ? 'text-[#f4b96a]' : 'text-[#fc8181]')}>
             {score === questions.length ? 'Отлично! Все правильно.' : score >= questions.length / 2 ? 'Хороший результат.' : 'Повторите материал.'}
           </p>
@@ -276,14 +276,14 @@ function QuizViewer({ questions }: { questions: Array<{ question: string; option
           {questions.map((q, qi) => {
             const isCorrect = answers[qi] === q.correct
             return (
-              <div key={qi} className="rounded-xl border border-[rgba(242,207,141,0.15)] bg-[rgba(255,255,255,0.02)] p-4 space-y-3">
+              <div key={qi} className="rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(255,255,255,0.02)] p-4 space-y-3">
                 <div className="flex items-start gap-2">
                   {isCorrect ? <CheckCircle2 className="size-5 shrink-0 text-[#6fcf97] mt-0.5" /> : <XCircle className="size-5 shrink-0 text-[#fc8181] mt-0.5" />}
-                  <p className="text-sm font-medium text-[#fcecc8]">{q.question}</p>
+                  <p className="text-sm font-medium text-[color:var(--app-text)]">{q.question}</p>
                 </div>
                 <div className="space-y-1.5 pl-7">
                   {q.options.map((opt, oi) => (
-                    <div key={oi} className={cn('rounded-lg px-3 py-2 text-sm', oi === q.correct ? 'bg-[rgba(111,207,151,0.12)] text-[#6fcf97] font-medium' : oi === answers[qi] && !isCorrect ? 'bg-[rgba(252,129,129,0.1)] text-[#fc8181] line-through' : 'text-[rgba(247,236,212,0.4)]')}>
+                    <div key={oi} className={cn('rounded-lg px-3 py-2 text-sm', oi === q.correct ? 'bg-[rgba(111,207,151,0.12)] text-[#6fcf97] font-medium' : oi === answers[qi] && !isCorrect ? 'bg-[rgba(252,129,129,0.1)] text-[#fc8181] line-through' : 'text-[color:var(--workspace-text-muted)]')}>
                       {opt}
                     </div>
                   ))}
@@ -292,7 +292,7 @@ function QuizViewer({ questions }: { questions: Array<{ question: string; option
             )
           })}
         </div>
-        <Button variant="outline" onClick={() => { setAnswers({}); setSubmitted(false) }} className="w-full border-[rgba(242,207,141,0.3)] bg-[rgba(242,207,141,0.07)] text-[rgba(242,207,141,0.8)] hover:bg-[rgba(242,207,141,0.12)]">Пройти заново</Button>
+        <Button variant="outline" onClick={() => { setAnswers({}); setSubmitted(false) }} className="w-full border-[color:var(--hub-card-border-hover)] bg-[var(--hub-action-hover)] text-[color:var(--app-text-muted)] hover:bg-[var(--nav-item-bg-active)]">Пройти заново</Button>
       </div>
     )
   }
@@ -300,21 +300,21 @@ function QuizViewer({ questions }: { questions: Array<{ question: string; option
   return (
     <div className="space-y-6">
       {questions.map((q, qi) => (
-        <div key={qi} className="rounded-xl border border-[rgba(242,207,141,0.15)] bg-[rgba(255,255,255,0.02)] p-4 space-y-3">
-          <p className="text-sm font-semibold text-[#fcecc8]">
-            <span className="mr-2 inline-flex size-5 items-center justify-center rounded-full bg-[rgba(242,207,141,0.12)] text-xs font-bold text-[rgba(242,207,141,0.7)]">{qi + 1}</span>
+        <div key={qi} className="rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(255,255,255,0.02)] p-4 space-y-3">
+          <p className="text-sm font-semibold text-[color:var(--app-text)]">
+            <span className="mr-2 inline-flex size-5 items-center justify-center rounded-full bg-[var(--nav-item-bg-active)] text-xs font-bold text-[color:var(--theme-accent-link-dim)]">{qi + 1}</span>
             {q.question}
           </p>
           <div className="space-y-2">
             {q.options.map((opt, oi) => (
               <button key={oi} onClick={() => setAnswers(prev => ({ ...prev, [qi]: oi }))}
-                className={cn('w-full rounded-lg border px-4 py-2.5 text-left text-sm transition-colors', answers[qi] === oi ? 'border-[rgba(126,200,227,0.5)] bg-[rgba(126,200,227,0.1)] text-[#c8e8f5] font-medium' : 'border-[rgba(242,207,141,0.15)] bg-[rgba(255,255,255,0.02)] text-[rgba(247,236,212,0.7)] hover:border-[rgba(242,207,141,0.3)] hover:bg-[rgba(242,207,141,0.05)]')}
+                className={cn('w-full rounded-lg border px-4 py-2.5 text-left text-sm transition-colors', answers[qi] === oi ? 'border-[rgba(126,200,227,0.5)] bg-[rgba(126,200,227,0.1)] text-[#c8e8f5] font-medium' : 'border-[color:var(--hub-card-border)] bg-[rgba(255,255,255,0.02)] text-[color:var(--app-text-muted)] hover:border-[color:var(--hub-card-border-hover)] hover:bg-[var(--hub-action-hover)]')}
               >{opt}</button>
             ))}
           </div>
         </div>
       ))}
-      <Button onClick={() => setSubmitted(true)} disabled={!allAnswered} className="w-full bg-[rgba(242,207,141,0.15)] border border-[rgba(242,207,141,0.35)] text-[#f2cf8d] hover:bg-[rgba(242,207,141,0.22)] disabled:opacity-40">
+      <Button variant="sectionPrimary" onClick={() => setSubmitted(true)} disabled={!allAnswered} className="w-full !normal-case">
         {allAnswered ? 'Проверить ответы' : `Ответьте на все вопросы (${Object.keys(answers).length}/${questions.length})`}
       </Button>
     </div>
@@ -329,37 +329,37 @@ function ItemDetail({ item, onBack }: { item: LMSItem; onBack: () => void }) {
       <div className="leads-page-bg" aria-hidden />
       <div className="leads-page-ornament" aria-hidden />
       <div className="leads-page relative z-10 p-6 lg:p-8 space-y-5 max-w-3xl mx-auto">
-        {/* Breadcrumb */}
+        {/* Навигация «назад» */}
         <div className="flex items-center gap-2 text-sm">
           <Button variant="ghost" size="sm" onClick={onBack}
-            className="gap-2 text-[rgba(242,207,141,0.7)] hover:text-[#fcecc8] hover:bg-transparent px-0">
+            className="gap-2 text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--app-text)] hover:bg-transparent px-0">
             <ArrowLeft className="size-4" />
             Обучение
           </Button>
-          <span className="text-[rgba(242,207,141,0.3)]">/</span>
-          <span className="text-[rgba(242,207,141,0.75)] font-medium truncate max-w-[200px]">{item.title}</span>
+          <span className="text-[color:var(--theme-accent-icon-dim)]">/</span>
+          <span className="text-[color:var(--app-text-muted)] font-medium truncate max-w-[200px]">{item.title}</span>
         </div>
 
-        {/* Meta */}
+        {/* Метаданные материала */}
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
             {item.targetRole !== 'all' && (
-              <span className="rounded-full border border-[rgba(242,207,141,0.2)] bg-[rgba(242,207,141,0.08)] px-2.5 py-0.5 text-xs text-[rgba(242,207,141,0.65)]">
+              <span className="rounded-full border border-[color:var(--hub-card-border)] bg-[var(--nav-item-bg-active)] px-2.5 py-0.5 text-xs text-[color:var(--hub-body)]">
                 {ROLE_LABELS[item.targetRole]}
               </span>
             )}
             {item.readTime && (
-              <span className="flex items-center gap-1 text-xs text-[rgba(242,207,141,0.4)]">
+              <span className="flex items-center gap-1 text-xs text-[color:var(--workspace-text-muted)]">
                 <Clock className="size-3" />{item.readTime}
               </span>
             )}
           </div>
-          <h1 className="text-2xl font-bold text-[#fcecc8]">{item.title}</h1>
-          <p className="text-sm text-[rgba(242,207,141,0.5)]">{item.description}</p>
+          <h1 className="text-2xl font-bold text-[color:var(--app-text)]">{item.title}</h1>
+          <p className="text-sm text-[color:var(--hub-desc)]">{item.description}</p>
         </div>
 
-        {/* Content card */}
-        <div className="rounded-2xl border border-[rgba(242,207,141,0.18)] bg-[rgba(10,35,24,0.85)] shadow-xl overflow-hidden p-5 sm:p-6">
+        {/* Карточка с содержимым */}
+        <div className="rounded-2xl border border-[color:var(--hub-card-border)] bg-[rgba(10,35,24,0.85)] shadow-xl overflow-hidden p-5 sm:p-6">
           {item.content.type === 'article' && <ArticleViewer body={item.content.body} />}
           {item.content.type === 'video' && (
             <div className="space-y-4">
@@ -397,16 +397,16 @@ function CoursesTab() {
         <div
           key={course.id}
           onClick={() => navigate(`/dashboard/lms/course/${course.id}`)}
-          className="rounded-2xl border border-[rgba(242,207,141,0.15)] bg-[rgba(10,30,22,0.5)] p-5 cursor-pointer hover:border-[rgba(242,207,141,0.35)] hover:bg-[rgba(242,207,141,0.04)] transition-all"
+          className="rounded-2xl border border-[color:var(--hub-card-border)] bg-[rgba(10,30,22,0.5)] p-5 cursor-pointer hover:border-[color:var(--hub-card-border-hover)] hover:bg-[var(--hub-action-hover)] transition-all"
         >
           <div className="text-3xl mb-3">{course.emoji}</div>
           <div className="space-y-2">
-            <p className="font-semibold text-[rgba(242,207,141,0.9)] leading-snug">{course.title}</p>
-            <p className="text-sm text-[rgba(242,207,141,0.4)]">{course.description}</p>
+            <p className="font-semibold text-[color:var(--theme-accent-heading)] leading-snug">{course.title}</p>
+            <p className="text-sm text-[color:var(--workspace-text-muted)]">{course.description}</p>
           </div>
           <div className="mt-4 flex items-center justify-between">
-            <span className="text-xs text-[rgba(242,207,141,0.35)]">{course.lessons.length} уроков</span>
-            <span className="text-xs font-semibold text-[rgba(242,207,141,0.6)] flex items-center gap-1">
+            <span className="text-xs text-[color:var(--theme-accent-icon-dim)]">{course.lessons.length} уроков</span>
+            <span className="text-xs font-semibold text-[color:var(--hub-badge-soon-fg)] flex items-center gap-1">
               Начать <ChevronRight className="size-3" />
             </span>
           </div>
@@ -432,7 +432,7 @@ export function LMSPage() {
   const [search, setSearch] = useState('')
   const [openItem, setOpenItem] = useState<LMSItem | null>(null)
 
-  // Admin dialog state
+  // Состояние админ-диалога
   const [adminOpen, setAdminOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<LMSItem | null>(null)
 
@@ -509,26 +509,11 @@ export function LMSPage() {
     <>
       <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)]">
         <div className="space-y-8 p-6 lg:p-8">
-          {(location.pathname.includes('/lms/browse') || location.pathname.includes('/lms/add')) && (
-            <div className="-mb-2">
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/dashboard/learning')}
-                className="h-9 gap-2 px-3 text-[rgba(242,207,141,0.8)] hover:bg-[rgba(242,207,141,0.08)] hover:text-[#fcecc8]"
-              >
-                <ArrowLeft className="size-5 shrink-0" strokeWidth={2} />
-                Назад
-              </Button>
-            </div>
-          )}
-
           {/* Header */}
           <div>
-            <p className="text-xs uppercase tracking-widest text-[rgba(242,207,141,0.45)] mb-1">База знаний</p>
-            <h1 className="text-3xl font-bold text-[#fcecc8]">Обучение</h1>
-            <p className="mt-1 text-sm text-[rgba(242,207,141,0.45)]">Материалы, скрипты и презентации для работы.</p>
+            <p className="text-xs uppercase tracking-widest text-[color:var(--hub-stat-label)] mb-1">База знаний</p>
+            <h1 className="text-3xl font-bold text-[color:var(--app-text)]">Обучение</h1>
+            <p className="mt-1 text-sm text-[color:var(--hub-stat-label)]">Материалы, скрипты и презентации для работы.</p>
           </div>
 
           {/* Tabs + Add button */}
@@ -556,19 +541,15 @@ export function LMSPage() {
                     {tab.icon}
                     {tab.label}
                     {tab.id === 'courses' && (
-                      <span className="rounded-full bg-[rgba(242,207,141,0.15)] px-1.5 py-0.5 text-[9px] font-bold text-[rgba(242,207,141,0.7)] uppercase tracking-wide">soon</span>
+                      <span className="rounded-full bg-[var(--nav-item-bg-active)] px-1.5 py-0.5 text-[9px] font-bold text-[color:var(--theme-accent-link-dim)] uppercase tracking-wide">soon</span>
                     )}
                   </button>
                 ))}
               </div>
 
               {canAdmin && activeTab !== 'courses' && (
-                <button
-                  type="button"
-                  onClick={handleOpenCreate}
-                  className="flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-300 hover:bg-emerald-500/20 hover:border-emerald-400/60 transition-colors"
-                >
-                  <Plus className="size-4" />
+                <button type="button" onClick={handleOpenCreate} className="alphabase-section-primary !normal-case">
+                  <Plus className="size-4 stroke-[2.5]" />
                   Добавить материал
                 </button>
               )}
@@ -580,18 +561,18 @@ export function LMSPage() {
               <>
                 {/* Search */}
                 <div className="relative max-w-xs">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[rgba(242,207,141,0.35)]" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[color:var(--theme-accent-icon-dim)]" />
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Поиск..."
-                    className="w-full rounded-full border border-[rgba(242,207,141,0.2)] bg-[rgba(18,48,36,0.7)] pl-9 pr-4 py-2 text-sm text-[#fcecc8] placeholder-[rgba(242,207,141,0.3)] outline-none focus:border-[rgba(242,207,141,0.45)]"
+                    className="w-full rounded-full border border-[var(--shell-search-border)] bg-[var(--shell-search-bg)] pl-9 pr-4 py-2 text-sm text-[var(--shell-search-fg)] placeholder:text-[color:var(--shell-search-ph)] outline-none focus:border-[color:var(--hub-card-border-hover)]"
                   />
                 </div>
 
                 {/* Grid */}
                 {filtered.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-20 text-[rgba(242,207,141,0.35)]">
+                  <div className="flex flex-col items-center justify-center py-20 text-[color:var(--theme-accent-icon-dim)]">
                     <Search className="size-10 mb-4 opacity-40" />
                     <p className="font-medium">Ничего не найдено</p>
                     <p className="text-sm opacity-70">Попробуйте изменить запрос</p>
@@ -610,7 +591,7 @@ export function LMSPage() {
                   </div>
                 )}
 
-                <p className="text-center text-xs text-[rgba(242,207,141,0.3)]">
+                <p className="text-center text-xs text-[color:var(--theme-accent-icon-dim)]">
                   {filtered.length} {filtered.length === 1 ? 'материал' : filtered.length < 5 ? 'материала' : 'материалов'}
                 </p>
               </>

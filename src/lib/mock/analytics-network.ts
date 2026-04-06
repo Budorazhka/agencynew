@@ -422,7 +422,7 @@ function ensureNonZeroMinutesIfOnline(
 ) {
     if (!isOnline) return minutes;
     if (minutes.platformMinutes + minutes.crmMinutes > 0) return minutes;
-    // Keep "online now" logically consistent with today's activity.
+    // Чтобы «сейчас онлайн» не противоречило активности за сегодня.
     return { platformMinutes: 1, crmMinutes: 0 };
 }
 
@@ -494,7 +494,7 @@ function buildReferralChildrenMap() {
         map.set(partnerId, []);
     });
 
-    // Owner has exactly three key Batumi lines in this scenario.
+    // У владельца в этом сценарии ровно три ключевые линии по Батуми.
     validPrimaryPartners.forEach((partnerId) => {
         map.get(CURRENT_USER_ID)?.push(partnerId);
     });
@@ -504,7 +504,7 @@ function buildReferralChildrenMap() {
         (partnerId) => partnerId !== CURRENT_USER_ID && !assigned.has(partnerId)
     );
 
-    // First distribute a direct layer under the three key partners.
+    // Сначала раздаём прямой слой под тремя ключевыми партнёрами.
     const directSeed = createRng(seedFromString("mlm-direct-distribution-v1"));
     const firstWaveCount = Math.min(remaining.length, 18);
     const branchQueue = [...validPrimaryPartners];
@@ -521,7 +521,7 @@ function buildReferralChildrenMap() {
         branchQueue.push(childId);
     }
 
-    // Then deepen branches to make visible "deck thickness" and MLM lines.
+    // Затем углубляем ветки, чтобы была видна «толщина» уровней и линии MLM.
     const deepSeed = createRng(seedFromString("mlm-depth-distribution-v1"));
     for (let index = firstWaveCount; index < remaining.length; index += 1) {
         const childId = remaining[index];
@@ -539,7 +539,7 @@ function buildReferralChildrenMap() {
         map.get(parentId)?.push(childId);
         assigned.add(childId);
 
-        // Rotate queue to keep branches balanced but still hierarchical.
+        // Крутим очередь: ветки остаются сбалансированными, но иерархия сохраняется.
         branchQueue.splice(sampledIndex, 1);
         branchQueue.push(parentId, childId);
     }
@@ -1120,7 +1120,7 @@ export function getPeriodDateRange(period: AnalyticsPeriod): { start: Date; end:
         case "week": {
             const diffToMonday = getDayIndexFromMonday(now);
             start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - diffToMonday);
-            // End of the week (Sunday)
+            // Конец недели (воскресенье)
             end = new Date(start);
             end.setDate(end.getDate() + 6);
             end.setHours(23, 59, 59, 999);
@@ -1128,7 +1128,7 @@ export function getPeriodDateRange(period: AnalyticsPeriod): { start: Date; end:
         }
         case "month":
             start = new Date(now.getFullYear(), now.getMonth(), 1);
-            // End of the month
+            // Конец месяца
             end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
             break;
         case "allTime":

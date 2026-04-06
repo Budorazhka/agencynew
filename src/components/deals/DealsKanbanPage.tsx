@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Briefcase, AlertTriangle, ChevronRight, ArrowLeft } from 'lucide-react'
+import { Plus, Briefcase, AlertTriangle, ChevronRight } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { DEALS_MOCK } from '@/data/deals-mock'
 import { formatUsdMillions } from '@/lib/format-currency'
@@ -16,29 +16,11 @@ const STAGE_COLORS: Record<DealStage, string> = {
 }
 
 const C = {
-  gold: 'var(--gold)',
-  white: '#ffffff',
-  whiteMid: 'rgba(255,255,255,0.7)',
-  whiteLow: 'rgba(255,255,255,0.4)',
+  text: 'var(--app-text)',
+  textMuted: 'var(--app-text-muted)',
+  textSubtle: 'var(--app-text-subtle)',
   border: 'var(--green-border)',
   card: 'var(--green-card)',
-}
-
-const backToCrmBtn: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 6,
-  height: 36,
-  padding: '0 14px',
-  background: 'rgba(201,168,76,0.1)',
-  border: '1px solid rgba(201,168,76,0.35)',
-  borderRadius: 10,
-  color: '#e6c364',
-  fontSize: 11,
-  fontWeight: 700,
-  letterSpacing: '0.06em',
-  cursor: 'pointer',
-  fontFamily: 'inherit',
 }
 
 const DEALS_STORAGE_KEY = 'agency-new.deals.kanban'
@@ -181,27 +163,22 @@ export function DealsKanbanPage() {
   }
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/deals' }}>
+    <DashboardShell>
       <div
         style={{
           padding: '24px 28px 40px',
           width: '100%',
           maxWidth: '100%',
           boxSizing: 'border-box',
+          background: 'var(--app-bg)',
+          minHeight: '100%',
         }}
       >
-        <div style={{ marginBottom: 20 }}>
-          <button type="button" onClick={() => navigate('/dashboard/crm')} style={backToCrmBtn}>
-            <ArrowLeft size={20} strokeWidth={2} />
-            Назад
-          </button>
-        </div>
-
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
           <div>
-            <div style={{ fontSize: 26, fontWeight: 700, color: C.white, letterSpacing: '-0.01em' }}>Сделки</div>
-            <div style={{ fontSize: 13, color: C.whiteLow, marginTop: 4 }}>
+            <div style={{ fontSize: 26, fontWeight: 700, color: C.text, letterSpacing: '-0.01em' }}>Сделки</div>
+            <div style={{ fontSize: 13, color: C.textSubtle, marginTop: 4 }}>
               Канбан воронки · {deals.length} активных сделок
             </div>
           </div>
@@ -210,10 +187,10 @@ export function DealsKanbanPage() {
               onClick={() => navigate('/dashboard/deals/report')}
               style={{
                 padding: '9px 16px',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.12)',
+                background: 'var(--hub-card-bg)',
+                border: '1px solid var(--hub-card-border)',
                 borderRadius: 7,
-                color: C.whiteMid,
+                color: C.textMuted,
                 fontSize: 12,
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -221,22 +198,12 @@ export function DealsKanbanPage() {
             >
               Отчёт
             </button>
-            <button onClick={() => setIsLeadPickerOpen(v => !v)} style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '9px 16px',
-              background: 'var(--gold-dark)',
-              border: 'none',
-              borderRadius: 7,
-              color: '#fff',
-              fontSize: 12,
-              fontWeight: 700,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              cursor: 'pointer',
-            }}>
-              <Plus size={13} /> Новая сделка
+            <button
+              type="button"
+              className="alphabase-section-primary"
+              onClick={() => setIsLeadPickerOpen(v => !v)}
+            >
+              <Plus size={13} strokeWidth={2.5} /> Новая сделка
             </button>
             {isLeadPickerOpen && (
               <div style={{
@@ -252,11 +219,11 @@ export function DealsKanbanPage() {
                 zIndex: 30,
                 boxShadow: '0 12px 30px rgba(0,0,0,0.35)',
               }}>
-                <div style={{ padding: '10px 12px', borderBottom: `1px solid ${C.border}`, fontSize: 11, color: C.whiteLow, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
+                <div style={{ padding: '10px 12px', borderBottom: `1px solid ${C.border}`, fontSize: 11, color: C.textSubtle, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
                   Выбери лида (этапы "в работе")
                 </div>
                 {selectableLeads.length === 0 && (
-                  <div style={{ padding: '14px 12px', color: C.whiteLow, fontSize: 12 }}>
+                  <div style={{ padding: '14px 12px', color: C.textSubtle, fontSize: 12 }}>
                     Нет лидов для создания сделки.
                   </div>
                 )}
@@ -274,11 +241,11 @@ export function DealsKanbanPage() {
                         borderBottom: `1px solid ${C.border}`,
                         padding: '10px 12px',
                         cursor: 'pointer',
-                        color: C.white,
+                        color: C.text,
                       }}
                     >
                       <div style={{ fontSize: 12, fontWeight: 600 }}>{lead.name ?? `Лид ${lead.id}`}</div>
-                      <div style={{ fontSize: 11, color: C.whiteLow, marginTop: 3 }}>
+                      <div style={{ fontSize: 11, color: C.textSubtle, marginTop: 3 }}>
                         Этап: {stageName} · Менеджер: {lead.managerId ? managerNameById.get(lead.managerId) ?? 'Не назначен' : 'Не назначен'}
                       </div>
                     </button>
@@ -330,7 +297,7 @@ export function DealsKanbanPage() {
                     <div style={{ fontSize: 11, fontWeight: 700, color: stageColor, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
                       {STAGE_LABELS[stage]}
                     </div>
-                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
+                    <div style={{ fontSize: 10, color: 'var(--app-text-subtle)', marginTop: 2 }}>
                       {stageDealList.length} сделок · {formatPrice(totalCommission)} комисс.
                     </div>
                   </div>
@@ -354,7 +321,7 @@ export function DealsKanbanPage() {
                 {/* Cards */}
                 <div style={{
                   minHeight: 'clamp(200px, calc(100vh - 280px), 720px)',
-                  background: 'rgba(255,255,255,0.02)',
+                  background: 'var(--green-deep)',
                   border: `1px solid ${stageColor}20`,
                   borderTop: 'none',
                   borderRadius: '0 0 8px 8px',
@@ -373,7 +340,7 @@ export function DealsKanbanPage() {
                     />
                   ))}
                   {stageDealList.length === 0 && (
-                    <div style={{ padding: '20px 0', textAlign: 'center' as const, fontSize: 11, color: 'rgba(255,255,255,0.2)' }}>
+                    <div style={{ padding: '20px 0', textAlign: 'center' as const, fontSize: 11, color: 'var(--app-text-subtle)' }}>
                       Пусто
                     </div>
                   )}
@@ -399,9 +366,8 @@ function DealCard({
   onClick: () => void
 }) {
   const C_local = {
-    white: '#ffffff',
-    whiteMid: 'rgba(255,255,255,0.7)',
-    whiteLow: 'rgba(255,255,255,0.4)',
+    text: 'var(--app-text)',
+    textSubtle: 'var(--app-text-subtle)',
     border: 'var(--green-border)',
     card: 'var(--green-card)',
     gold: 'var(--gold)',
@@ -425,16 +391,16 @@ function DealCard({
     >
       {/* Deal info */}
       <div style={{ marginBottom: 8 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: C_local.white, marginBottom: 2 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: C_local.text, marginBottom: 2 }}>
           {deal.clientName}
         </div>
-        <div style={{ fontSize: 11, color: C_local.whiteLow }}>{deal.propertyAddress}</div>
-        <div style={{ fontSize: 10, color: C_local.whiteLow }}>{deal.propertyType}</div>
+        <div style={{ fontSize: 11, color: C_local.textSubtle }}>{deal.propertyAddress}</div>
+        <div style={{ fontSize: 10, color: C_local.textSubtle }}>{deal.propertyType}</div>
       </div>
 
       {/* Price */}
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: C_local.white }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: C_local.text }}>
           {formatUsdMillions(deal.price, 1)}
         </span>
         <span style={{ fontSize: 11, color: C_local.gold }}>
@@ -446,10 +412,10 @@ function DealCard({
       {totalItems > 0 && (
         <div style={{ marginBottom: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-            <span style={{ fontSize: 10, color: C_local.whiteLow }}>Чеклист</span>
-            <span style={{ fontSize: 10, color: C_local.whiteLow }}>{doneItems}/{totalItems}</span>
+            <span style={{ fontSize: 10, color: C_local.textSubtle }}>Чеклист</span>
+            <span style={{ fontSize: 10, color: C_local.textSubtle }}>{doneItems}/{totalItems}</span>
           </div>
-          <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 2 }}>
+          <div style={{ height: 3, background: 'var(--hub-progress-track)', borderRadius: 2 }}>
             <div style={{
               height: '100%',
               width: `${checklistPct}%`,
@@ -469,7 +435,7 @@ function DealCard({
       )}
 
       {/* Agent */}
-      <div style={{ fontSize: 10, color: C_local.whiteLow, marginBottom: 8 }}>
+      <div style={{ fontSize: 10, color: C_local.textSubtle, marginBottom: 8 }}>
         {deal.agentName}
       </div>
 
@@ -481,10 +447,10 @@ function DealCard({
           style={{
             flex: 1,
             padding: '6px 8px',
-            background: 'rgba(255,255,255,0.07)',
-            border: `1px solid rgba(230, 195, 100, 0.28)`,
+            background: 'var(--hub-tile-icon-bg)',
+            border: '1px solid var(--hub-tile-icon-border)',
             borderRadius: 6,
-            color: 'rgba(255,255,255,0.88)',
+            color: 'var(--app-text)',
             fontSize: 10,
             fontWeight: 600,
             cursor: 'pointer',
@@ -495,15 +461,15 @@ function DealCard({
             transition: 'background 0.15s, border-color 0.15s',
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.background = 'rgba(230, 195, 100, 0.12)'
-            e.currentTarget.style.borderColor = 'rgba(230, 195, 100, 0.45)'
+            e.currentTarget.style.background = 'var(--nav-item-bg-active)'
+            e.currentTarget.style.borderColor = 'var(--hub-card-border-hover)'
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.background = 'rgba(255,255,255,0.07)'
-            e.currentTarget.style.borderColor = 'rgba(230, 195, 100, 0.28)'
+            e.currentTarget.style.background = 'var(--hub-tile-icon-bg)'
+            e.currentTarget.style.borderColor = 'var(--hub-tile-icon-border)'
           }}
         >
-          <Briefcase size={12} strokeWidth={2.25} color="#e6c364" aria-hidden />
+          <Briefcase size={12} strokeWidth={2.25} color="var(--gold)" aria-hidden />
           Карточка
         </button>
         {deal.stage !== 'deal' && (

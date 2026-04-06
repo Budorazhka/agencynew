@@ -55,8 +55,8 @@ export function SelectionCardPage() {
 
   if (!selection) {
     return (
-      <DashboardShell hideSidebar topBack={{ label: 'Назад', route: '/dashboard/selections/list' }}>
-        <div style={{ padding: 48, textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+      <DashboardShell hideSidebar>
+        <div style={{ padding: 48, textAlign: 'center', color: 'var(--app-text-subtle)' }}>
           Подборка не найдена
         </div>
       </DashboardShell>
@@ -83,15 +83,16 @@ export function SelectionCardPage() {
   }
 
   return (
-    <DashboardShell hideSidebar topBack={{ label: 'Назад', route: '/dashboard/selections/list' }}>
+    <DashboardShell hideSidebar>
       <div
         style={{
           padding: '28px 32px',
           minHeight: '100%',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: "'Montserrat', sans-serif",
           width: '100%',
           maxWidth: '100%',
           boxSizing: 'border-box',
+          background: 'var(--app-bg)',
         }}
       >
 
@@ -107,7 +108,7 @@ export function SelectionCardPage() {
           }}
         >
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 20, fontWeight: 700, color: '#fff', marginBottom: 4 }}>
+            <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--app-text)', marginBottom: 4 }}>
               {selection.title}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
@@ -119,7 +120,7 @@ export function SelectionCardPage() {
               }}>
                 {SELECTION_STATUS_LABELS[selection.status].toUpperCase()}
               </span>
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
+              <span style={{ fontSize: 11, color: 'var(--app-text-subtle)' }}>
                 Создана {formatDate(selection.createdAt)}
               </span>
             </div>
@@ -133,9 +134,9 @@ export function SelectionCardPage() {
                 style={{
                   display: 'flex', alignItems: 'center', gap: 6,
                   padding: '8px 14px', borderRadius: 8,
-                  background: copied ? 'rgba(34,197,94,0.12)' : 'rgba(255,255,255,0.05)',
-                  border: `1px solid ${copied ? 'rgba(34,197,94,0.35)' : 'rgba(255,255,255,0.12)'}`,
-                  color: copied ? '#22c55e' : 'rgba(255,255,255,0.6)',
+                  background: copied ? 'rgba(34,197,94,0.12)' : 'var(--hub-tile-icon-bg)',
+                  border: `1px solid ${copied ? 'rgba(34,197,94,0.35)' : 'var(--hub-card-border)'}`,
+                  color: copied ? '#22c55e' : 'var(--app-text-muted)',
                   fontSize: 11, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
                 }}
               >
@@ -148,9 +149,9 @@ export function SelectionCardPage() {
               style={{
                 display: 'flex', alignItems: 'center', gap: 6,
                 padding: '8px 16px', borderRadius: 8,
-                background: sendSuccess ? 'rgba(34,197,94,0.15)' : 'rgba(201,168,76,0.12)',
-                border: `1px solid ${sendSuccess ? 'rgba(34,197,94,0.4)' : 'rgba(201,168,76,0.35)'}`,
-                color: sendSuccess ? '#22c55e' : 'var(--gold)',
+                background: sendSuccess ? 'rgba(34,197,94,0.15)' : 'var(--nav-item-bg-active)',
+                border: `1px solid ${sendSuccess ? 'rgba(34,197,94,0.4)' : 'var(--hub-card-border-hover)'}`,
+                color: sendSuccess ? '#22c55e' : 'var(--theme-accent-heading)',
                 fontSize: 11, fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s',
                 letterSpacing: '0.04em',
               }}
@@ -169,11 +170,11 @@ export function SelectionCardPage() {
             {/* Portal preview */}
             {selection.portalUrl && (
               <div style={{
-                background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)',
+                background: 'var(--nav-item-bg-active)', border: '1px solid var(--hub-tile-icon-border)',
                 borderRadius: 10, padding: '12px 16px',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               }}>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>
+                <div style={{ fontSize: 12, color: 'var(--app-text-muted)' }}>
                   <span style={{ color: 'var(--gold)', fontWeight: 600 }}>Клиентский портал:</span>
                   {' '}{selection.portalUrl}
                 </div>
@@ -183,7 +184,7 @@ export function SelectionCardPage() {
                   rel="noopener noreferrer"
                   style={{
                     display: 'flex', alignItems: 'center', gap: 5,
-                    fontSize: 11, color: 'var(--gold)', fontWeight: 600,
+                    fontSize: 11, color: 'var(--theme-accent-heading)', fontWeight: 600,
                     textDecoration: 'none',
                   }}
                 >
@@ -197,32 +198,32 @@ export function SelectionCardPage() {
             {selection.status !== 'draft' && selection.viewCount > 0 && (
               <div style={{
                 display: 'flex', gap: 16, padding: '12px 16px',
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+                background: 'var(--hub-card-bg)', border: '1px solid var(--hub-card-border)',
                 borderRadius: 10,
               }}>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>{selection.viewCount}</div>
-                  <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.06em' }}>просмотров</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--app-text)' }}>{selection.viewCount}</div>
+                  <div style={{ fontSize: 10, color: 'var(--app-text-subtle)', letterSpacing: '0.06em' }}>просмотров</div>
                 </div>
-                <div style={{ width: 1, background: 'rgba(255,255,255,0.07)' }} />
+                <div style={{ width: 1, background: 'var(--divider-subtle)' }} />
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: likedCount > 0 ? '#22c55e' : '#fff' }}>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: likedCount > 0 ? '#22c55e' : 'var(--app-text)' }}>
                     {likedCount}
                   </div>
-                  <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.06em' }}>понравилось</div>
+                  <div style={{ fontSize: 10, color: 'var(--app-text-subtle)', letterSpacing: '0.06em' }}>понравилось</div>
                 </div>
-                <div style={{ width: 1, background: 'rgba(255,255,255,0.07)' }} />
+                <div style={{ width: 1, background: 'var(--divider-subtle)' }} />
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: 18, fontWeight: 700, color: '#ef4444' }}>
                     {selection.properties.filter(p => p.hidden).length}
                   </div>
-                  <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.06em' }}>скрыто</div>
+                  <div style={{ fontSize: 10, color: 'var(--app-text-subtle)', letterSpacing: '0.06em' }}>скрыто</div>
                 </div>
                 {selection.lastOpenedAt && (
                   <>
-                    <div style={{ width: 1, background: 'rgba(255,255,255,0.07)' }} />
+                    <div style={{ width: 1, background: 'var(--divider-subtle)' }} />
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
+                      <div style={{ fontSize: 11, color: 'var(--app-text-muted)' }}>
                         Последнее открытие: {formatDateTime(selection.lastOpenedAt)}
                       </div>
                     </div>
@@ -274,17 +275,17 @@ export function SelectionCardPage() {
             <button style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
               padding: '10px', borderRadius: 8,
-              background: 'transparent', border: '1px dashed rgba(255,255,255,0.12)',
-              color: 'rgba(255,255,255,0.3)', fontSize: 12, cursor: 'pointer',
+              background: 'transparent', border: '1px dashed var(--hub-card-border)',
+              color: 'var(--app-text-subtle)', fontSize: 12, cursor: 'pointer',
               transition: 'all 0.15s',
             }}
               onMouseEnter={e => {
-                e.currentTarget.style.borderColor = 'rgba(201,168,76,0.3)'
-                e.currentTarget.style.color = 'var(--gold)'
+                e.currentTarget.style.borderColor = 'var(--hub-card-border-hover)'
+                e.currentTarget.style.color = 'var(--theme-accent-heading)'
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'
-                e.currentTarget.style.color = 'rgba(255,255,255,0.3)'
+                e.currentTarget.style.borderColor = 'var(--hub-card-border)'
+                e.currentTarget.style.color = 'var(--app-text-subtle)'
               }}
             >
               <Plus size={13} />
@@ -297,23 +298,23 @@ export function SelectionCardPage() {
 
             {/* Client info */}
             <div style={{
-              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+              background: 'var(--hub-card-bg)', border: '1px solid var(--hub-card-border)',
               borderRadius: 10, padding: '14px 16px',
             }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', marginBottom: 10 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--app-text-subtle)', letterSpacing: '0.1em', marginBottom: 10 }}>
                 КЛИЕНТ
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
                 <div style={{
                   width: 32, height: 32, borderRadius: 6,
-                  background: 'rgba(96,165,250,0.1)',
+                  background: 'rgba(96,165,250,0.12)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                 }}>
-                  <User size={14} color="#60a5fa" />
+                  <User size={14} color={MARKET_COLORS.secondary} />
                 </div>
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: '#fff' }}>{selection.clientName}</div>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{selection.clientPhone}</div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--app-text)' }}>{selection.clientName}</div>
+                  <div style={{ fontSize: 11, color: 'var(--app-text-muted)' }}>{selection.clientPhone}</div>
                 </div>
               </div>
               <button
@@ -321,7 +322,7 @@ export function SelectionCardPage() {
                 style={{
                   width: '100%', padding: '6px', borderRadius: 6,
                   background: 'rgba(96,165,250,0.08)', border: '1px solid rgba(96,165,250,0.2)',
-                  color: '#60a5fa', fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                  color: MARKET_COLORS.secondary, fontSize: 11, fontWeight: 600, cursor: 'pointer',
                 }}
               >
                 Карточка клиента →
@@ -331,10 +332,10 @@ export function SelectionCardPage() {
             {/* Budget */}
             {selection.budget && (
               <div style={{
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+                background: 'var(--hub-card-bg)', border: '1px solid var(--hub-card-border)',
                 borderRadius: 10, padding: '14px 16px',
               }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', marginBottom: 8 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--app-text-subtle)', letterSpacing: '0.1em', marginBottom: 8 }}>
                   БЮДЖЕТ КЛИЕНТА
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -348,21 +349,21 @@ export function SelectionCardPage() {
 
             {/* Agent */}
             <div style={{
-              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+              background: 'var(--hub-card-bg)', border: '1px solid var(--hub-card-border)',
               borderRadius: 10, padding: '14px 16px',
             }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', marginBottom: 8 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--app-text-subtle)', letterSpacing: '0.1em', marginBottom: 8 }}>
                 АГЕНТ
               </div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#fff' }}>{selection.agentName}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--app-text)' }}>{selection.agentName}</div>
             </div>
 
             {/* Timeline */}
             <div style={{
-              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+              background: 'var(--hub-card-bg)', border: '1px solid var(--hub-card-border)',
               borderRadius: 10, padding: '14px 16px',
             }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', marginBottom: 10 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--app-text-subtle)', letterSpacing: '0.1em', marginBottom: 10 }}>
                 ХРОНОЛОГИЯ
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -379,16 +380,16 @@ export function SelectionCardPage() {
             {/* Notes */}
             {selection.notes && (
               <div style={{
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+                background: 'var(--hub-card-bg)', border: '1px solid var(--hub-card-border)',
                 borderRadius: 10, padding: '14px 16px',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                  <MessageSquare size={12} color="rgba(255,255,255,0.35)" />
-                  <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>
+                  <MessageSquare size={12} color="var(--app-text-subtle)" />
+                  <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--app-text-subtle)', letterSpacing: '0.1em' }}>
                     ЗАМЕТКИ
                   </span>
                 </div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5 }}>
+                <div style={{ fontSize: 12, color: 'var(--app-text-muted)', lineHeight: 1.5 }}>
                   {selection.notes}
                 </div>
               </div>
@@ -423,8 +424,8 @@ function PropertyRow({ prop }: { prop: SelectionProperty }) {
   return (
     <div style={{
       display: 'flex', alignItems: 'center', gap: 12,
-      background: isLiked ? 'rgba(34,197,94,0.05)' : isHidden ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.03)',
-      border: `1px solid ${isLiked ? 'rgba(34,197,94,0.2)' : isHidden ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.07)'}`,
+      background: isLiked ? 'rgba(34,197,94,0.05)' : isHidden ? 'var(--green-deep)' : 'var(--hub-card-bg)',
+      border: `1px solid ${isLiked ? 'rgba(34,197,94,0.2)' : isHidden ? 'var(--divider-subtle)' : 'var(--hub-card-border)'}`,
       borderRadius: 8, padding: '12px 14px',
       opacity: isHidden ? 0.5 : 1,
     }}>
@@ -444,26 +445,26 @@ function PropertyRow({ prop }: { prop: SelectionProperty }) {
       {/* Address */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
-          fontSize: 12, fontWeight: 600, color: isHidden ? 'rgba(255,255,255,0.4)' : '#fff',
+          fontSize: 12, fontWeight: 600, color: isHidden ? 'var(--app-text-subtle)' : 'var(--app-text)',
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2,
         }}>
           {prop.address}
         </div>
-        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
+        <div style={{ fontSize: 11, color: 'var(--app-text-muted)' }}>
           {prop.rooms === 0 ? 'Студия' : `${prop.rooms}-комн.`} · {prop.area} м² · {prop.floor} эт.
           {prop.developer && ` · ${prop.developer}`}
         </div>
       </div>
 
       {/* Price */}
-      <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
+      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--app-text)', flexShrink: 0 }}>
         {formatPrice(prop.price)}
       </div>
 
       {/* Reaction */}
       <div style={{ flexShrink: 0, width: 20 }}>
         {isLiked && <ThumbsUp size={14} color="#22c55e" />}
-        {isHidden && <EyeOff size={14} color="rgba(255,255,255,0.3)" />}
+        {isHidden && <EyeOff size={14} color="var(--app-text-subtle)" />}
       </div>
 
       {/* Market label */}
@@ -482,16 +483,16 @@ function TimelineItem({ icon, label, date }: { icon: React.ReactNode; label: str
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
       <div style={{
         width: 22, height: 22, borderRadius: 4,
-        background: 'rgba(201,168,76,0.1)',
+        background: 'var(--hub-tile-icon-bg)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         color: 'var(--gold)', flexShrink: 0,
       }}>
         {icon}
       </div>
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>{label}</div>
+        <div style={{ fontSize: 10, color: 'var(--app-text-muted)' }}>{label}</div>
       </div>
-      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>
+      <div style={{ fontSize: 10, color: 'var(--app-text-subtle)' }}>
         {new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
       </div>
     </div>

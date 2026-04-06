@@ -10,7 +10,7 @@ interface StatCardProps {
     value: string | number
     label: string
   }>
-  // CSS-класс для акцентного цвета (обычно цвет верхней рамки)
+  // Класс стиля для акцентного цвета (часто верхняя рамка карточки)
   accentClass?: string
   className?: string
   size?: 'sm' | 'md' | 'lg'

@@ -62,46 +62,46 @@ function ManagerLeadsView() {
 
         {/* Приветствие */}
         <div>
-          <h2 className="text-2xl font-bold text-[#fcecc8]">Добро пожаловать, {firstName}!</h2>
-          <p className="mt-1 text-sm text-[rgba(242,207,141,0.55)]">{currentUser?.companyName} · Менеджер</p>
+          <h2 className="text-2xl font-bold text-[color:var(--app-text)]">Добро пожаловать, {firstName}!</h2>
+          <p className="mt-1 text-sm text-[color:var(--hub-stat-label)]">{currentUser?.companyName} · Менеджер</p>
         </div>
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="rounded-xl border border-[rgba(242,207,141,0.18)] bg-[rgba(18,45,36,0.65)] px-4 py-4">
+          <div className="rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(18,45,36,0.65)] px-4 py-4">
             <div className="flex items-center gap-2 mb-1">
-              <Layers className="size-4 text-[rgba(242,207,141,0.55)]" />
-              <span className="text-xs text-[rgba(242,207,141,0.55)] uppercase tracking-wide">Всего</span>
+              <Layers className="size-4 text-[color:var(--hub-stat-label)]" />
+              <span className="text-xs text-[color:var(--hub-stat-label)] uppercase tracking-wide">Всего</span>
             </div>
-            <p className="text-2xl font-bold text-[#fcecc8]">{myLeads.length}</p>
-            <p className="text-xs text-[rgba(242,207,141,0.4)] mt-0.5">назначено на меня</p>
+            <p className="text-2xl font-bold text-[color:var(--app-text)]">{myLeads.length}</p>
+            <p className="text-xs text-[color:var(--workspace-text-muted)] mt-0.5">назначено на меня</p>
           </div>
 
-          <div className="rounded-xl border border-[rgba(242,207,141,0.18)] bg-[rgba(18,45,36,0.65)] px-4 py-4">
+          <div className="rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(18,45,36,0.65)] px-4 py-4">
             <div className="flex items-center gap-2 mb-1">
-              <Clock className="size-4 text-[rgba(242,207,141,0.55)]" />
-              <span className="text-xs text-[rgba(242,207,141,0.55)] uppercase tracking-wide">Новые</span>
+              <Clock className="size-4 text-[color:var(--hub-stat-label)]" />
+              <span className="text-xs text-[color:var(--hub-stat-label)] uppercase tracking-wide">Новые</span>
             </div>
-            <p className="text-2xl font-bold text-[#fcecc8]">{newCount}</p>
-            <p className="text-xs text-[rgba(242,207,141,0.4)] mt-0.5">требуют обработки</p>
+            <p className="text-2xl font-bold text-[color:var(--app-text)]">{newCount}</p>
+            <p className="text-xs text-[color:var(--workspace-text-muted)] mt-0.5">требуют обработки</p>
           </div>
 
-          <div className="rounded-xl border border-[rgba(242,207,141,0.18)] bg-[rgba(18,45,36,0.65)] px-4 py-4">
+          <div className="rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(18,45,36,0.65)] px-4 py-4">
             <div className="flex items-center gap-2 mb-1">
-              <CheckCircle2 className="size-4 text-[rgba(242,207,141,0.55)]" />
-              <span className="text-xs text-[rgba(242,207,141,0.55)] uppercase tracking-wide">С задачами</span>
+              <CheckCircle2 className="size-4 text-[color:var(--hub-stat-label)]" />
+              <span className="text-xs text-[color:var(--hub-stat-label)] uppercase tracking-wide">С задачами</span>
             </div>
-            <p className="text-2xl font-bold text-[#fcecc8]">{withTaskCount}</p>
-            <p className="text-xs text-[rgba(242,207,141,0.4)] mt-0.5">есть активные задачи</p>
+            <p className="text-2xl font-bold text-[color:var(--app-text)]">{withTaskCount}</p>
+            <p className="text-xs text-[color:var(--workspace-text-muted)] mt-0.5">есть активные задачи</p>
           </div>
 
-          <div className={`rounded-xl border px-4 py-4 ${overdueCount > 0 ? 'border-[rgba(239,68,68,0.35)] bg-[rgba(60,15,15,0.55)]' : 'border-[rgba(242,207,141,0.18)] bg-[rgba(18,45,36,0.65)]'}`}>
+          <div className={`rounded-xl border px-4 py-4 ${overdueCount > 0 ? 'border-[rgba(239,68,68,0.35)] bg-[rgba(60,15,15,0.55)]' : 'border-[color:var(--hub-card-border)] bg-[rgba(18,45,36,0.65)]'}`}>
             <div className="flex items-center gap-2 mb-1">
-              <AlertCircle className={`size-4 ${overdueCount > 0 ? 'text-[rgba(239,68,68,0.8)]' : 'text-[rgba(242,207,141,0.55)]'}`} />
-              <span className="text-xs text-[rgba(242,207,141,0.55)] uppercase tracking-wide">Просроченные</span>
+              <AlertCircle className={`size-4 ${overdueCount > 0 ? 'text-[rgba(239,68,68,0.8)]' : 'text-[color:var(--hub-stat-label)]'}`} />
+              <span className="text-xs text-[color:var(--hub-stat-label)] uppercase tracking-wide">Просроченные</span>
             </div>
-            <p className={`text-2xl font-bold ${overdueCount > 0 ? 'text-red-400' : 'text-[#fcecc8]'}`}>{overdueCount}</p>
-            <p className="text-xs text-[rgba(242,207,141,0.4)] mt-0.5">задачи с просрочкой</p>
+            <p className={`text-2xl font-bold ${overdueCount > 0 ? 'text-red-400' : 'text-[color:var(--app-text)]'}`}>{overdueCount}</p>
+            <p className="text-xs text-[color:var(--workspace-text-muted)] mt-0.5">задачи с просрочкой</p>
           </div>
         </div>
 
@@ -118,7 +118,7 @@ function ManagerLeadsView() {
           if (newLeads.length === 0) return null
           return (
             <section>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[rgba(242,207,141,0.5)] mb-3">SLA — Первый контакт</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--hub-desc)] mb-3">SLA — Первый контакт</p>
               <div className="flex flex-col gap-2">
                 {newLeads.map(lead => {
                   const level = getSlaLevel(lead.createdAt)
@@ -127,18 +127,18 @@ function ManagerLeadsView() {
                     <div key={lead.id} className="rounded-xl border px-4 py-3 flex items-center justify-between gap-4"
                       style={{ borderColor, background: 'rgba(18,45,36,0.55)' }}>
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="size-8 rounded-full bg-[rgba(242,207,141,0.1)] flex items-center justify-center flex-shrink-0">
-                          <span className="text-xs font-bold text-[rgba(242,207,141,0.7)]">{(lead.name ?? '?')[0]}</span>
+                        <div className="size-8 rounded-full bg-[var(--hub-tile-icon-bg)] flex items-center justify-center flex-shrink-0">
+                          <span className="text-xs font-bold text-[color:var(--theme-accent-link-dim)]">{(lead.name ?? '?')[0]}</span>
                         </div>
                         <div className="min-w-0">
-                          <div className="text-sm font-semibold text-[#fcecc8] truncate">{lead.name ?? `Лид #${lead.id}`}</div>
-                          <div className="text-xs text-[rgba(242,207,141,0.45)] capitalize">{lead.channel ?? 'Канал неизвестен'}</div>
+                          <div className="text-sm font-semibold text-[color:var(--app-text)] truncate">{lead.name ?? `Лид #${lead.id}`}</div>
+                          <div className="text-xs text-[color:var(--hub-stat-label)] capitalize">{lead.channel ?? 'Канал неизвестен'}</div>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 flex-shrink-0">
                         <SlaTimer createdAt={lead.createdAt} />
                         <button
-                          className="text-xs font-semibold px-3 py-1 rounded-lg border border-[rgba(242,207,141,0.3)] text-[rgba(242,207,141,0.8)] hover:bg-[rgba(242,207,141,0.08)] transition-colors"
+                          className="text-xs font-semibold px-3 py-1 rounded-lg border border-[color:var(--hub-card-border-hover)] text-[color:var(--app-text-muted)] hover:bg-[var(--nav-item-bg-active)] transition-colors"
                           onClick={() => navigate('/dashboard/leads/poker')}
                         >
                           Взять
@@ -154,7 +154,7 @@ function ManagerLeadsView() {
 
         {/* Статусы лидов менеджера */}
         <section>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[rgba(242,207,141,0.5)] mb-3">Мои лиды по статусу</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--hub-desc)] mb-3">Мои лиды по статусу</p>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
             {(Object.keys(LEAD_STATUS_LABELS) as LeadStatus[]).map(status => {
               const count = myLeads.filter(l => (l.status ?? 'in_progress') === status).length + (status === 'new' ? newCount : 0)
@@ -191,15 +191,15 @@ function RoundRobinPanel() {
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[rgba(242,207,141,0.5)]">Распределение Round-Robin</p>
-        <span className="text-xs text-[rgba(242,207,141,0.35)]">Нераспределено: {unassigned.length}</span>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--hub-desc)]">Распределение Round-Robin</p>
+        <span className="text-xs text-[color:var(--theme-accent-icon-dim)]">Нераспределено: {unassigned.length}</span>
       </div>
 
       {/* Очередь менеджеров */}
-      <div className="rounded-2xl border border-[rgba(242,207,141,0.15)] bg-[rgba(18,45,36,0.55)] overflow-hidden">
+      <div className="rounded-2xl border border-[color:var(--hub-card-border)] bg-[rgba(18,45,36,0.55)] overflow-hidden">
         <div className="grid grid-cols-4 gap-0 px-4 py-2 border-b border-[rgba(255,255,255,0.06)]">
           {['Менеджер', 'Очередь', 'Активных лидов', 'Источники'].map(h => (
-            <span key={h} className="text-xs font-semibold uppercase tracking-widest text-[rgba(242,207,141,0.35)]">{h}</span>
+            <span key={h} className="text-xs font-semibold uppercase tracking-widest text-[color:var(--theme-accent-icon-dim)]">{h}</span>
           ))}
         </div>
         {managers.map((mgr, idx) => {
@@ -208,12 +208,12 @@ function RoundRobinPanel() {
           return (
             <div key={mgr.id}
               className="grid grid-cols-4 gap-0 px-4 py-3 border-b border-[rgba(255,255,255,0.04)] last:border-0 items-center"
-              style={{ background: isNext ? 'rgba(242,207,141,0.06)' : undefined }}>
+              style={{ background: isNext ? 'color-mix(in srgb, var(--gold) 6%, transparent)' : undefined }}>
               <div className="flex items-center gap-2">
-                {isNext && <span className="size-1.5 rounded-full bg-[#f2cf8d] inline-block" />}
-                <span className="text-sm text-[#fcecc8] font-medium">{mgr.name}</span>
+                {isNext && <span className="size-1.5 rounded-full bg-[var(--gold-light)] inline-block" />}
+                <span className="text-sm text-[color:var(--app-text)] font-medium">{mgr.name}</span>
               </div>
-              <span className="text-sm font-bold" style={{ color: isNext ? '#f2cf8d' : 'rgba(255,255,255,0.4)' }}>
+              <span className="text-sm font-bold" style={{ color: isNext ? 'var(--gold-light)' : 'rgba(255,255,255,0.4)' }}>
                 #{(idx % managers.length) + 1}
               </span>
               <span className="text-sm text-[rgba(255,255,255,0.6)]">{activeCnt}</span>
@@ -226,13 +226,13 @@ function RoundRobinPanel() {
       {/* Нераспределённые лиды */}
       {unassigned.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[rgba(242,207,141,0.35)]">Ожидают распределения</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--theme-accent-icon-dim)]">Ожидают распределения</p>
           {unassigned.map(lead => (
             <div key={lead.id} className="flex items-center justify-between rounded-xl border border-[rgba(255,255,255,0.07)] bg-[rgba(18,45,36,0.5)] px-4 py-3">
               <div className="flex items-center gap-3">
-                <UserCheck className="size-4 text-[rgba(242,207,141,0.4)]" />
+                <UserCheck className="size-4 text-[color:var(--workspace-text-muted)]" />
                 <div>
-                  <span className="text-sm font-medium text-[#fcecc8]">{lead.name ?? `Лид #${lead.id}`}</span>
+                  <span className="text-sm font-medium text-[color:var(--app-text)]">{lead.name ?? `Лид #${lead.id}`}</span>
                   <span className="ml-2 text-xs text-[rgba(255,255,255,0.35)]">{lead.channel}</span>
                 </div>
               </div>
@@ -241,7 +241,7 @@ function RoundRobinPanel() {
           ))}
           <button
             onClick={assignNext}
-            className="w-full flex items-center justify-center gap-2 rounded-xl border border-[rgba(242,207,141,0.3)] bg-[rgba(242,207,141,0.08)] py-2.5 text-sm font-semibold text-[#f2cf8d] hover:bg-[rgba(242,207,141,0.14)] transition-colors"
+            className="w-full flex items-center justify-center gap-2 rounded-xl border border-[color:var(--hub-card-border-hover)] bg-[var(--nav-item-bg-active)] py-2.5 text-sm font-semibold text-[color:var(--gold-light)] hover:bg-[color-mix(in_srgb,var(--gold)_14%,transparent)] transition-colors"
           >
             <RefreshCw className="size-4" />
             Назначить следующему: {INITIAL_LEAD_MANAGERS[rrIndex % INITIAL_LEAD_MANAGERS.length].name}
@@ -316,8 +316,8 @@ export function LeadsAdminPage() {
         {canViewLeadAnalytics && (
           <section className="space-y-6">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[rgba(242,207,141,0.5)]">Аналитика</p>
-              <h2 className="mt-2 text-2xl font-bold text-[#fcecc8]">Кабинет маркетолога</h2>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--hub-desc)]">Аналитика</p>
+              <h2 className="mt-2 text-2xl font-bold text-[color:var(--app-text)]">Кабинет маркетолога</h2>
             </div>
             <LeadAnalyticsTab />
           </section>

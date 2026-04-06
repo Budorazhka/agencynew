@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, BookOpen, MessageSquare, CheckCircle2, Circle, GraduationCap } from 'lucide-react'
+import { BookOpen, MessageSquare, CheckCircle2, Circle, GraduationCap } from 'lucide-react'
 import { LMS_COURSES } from '@/data/lms-mock'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 
 const S = {
-  root: { fontFamily: 'Inter, sans-serif', padding: '28px 28px 64px' } as React.CSSProperties,
+  root: { fontFamily: "'Montserrat', sans-serif", padding: '28px 28px 64px' } as React.CSSProperties,
   gold: 'var(--gold)',
   white: 'rgba(255,255,255,0.85)',
   dim:   'rgba(255,255,255,0.4)',
@@ -32,13 +32,13 @@ const TYPE_LABEL: Record<string, string> = {
 export function CoursePage() {
   const { courseId } = useParams<{ courseId: string }>()
   const navigate = useNavigate()
-  // Track completed lessons in state (demo: persists during session)
+  // Пройденные уроки в состоянии (демо: живут до перезагрузки вкладки)
   const [completed, setCompleted] = useState<Set<string>>(new Set())
 
   const course = LMS_COURSES.find(c => c.id === courseId)
   if (!course) {
     return (
-      <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/learning' }}>
+      <DashboardShell>
         <div style={{ ...S.root, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ color: S.dim, fontSize: 14 }}>Курс не найден</span>
         </div>
@@ -49,17 +49,8 @@ export function CoursePage() {
   const progress = course.lessons.length > 0 ? Math.round((completed.size / course.lessons.length) * 100) : 0
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/learning' }}>
+    <DashboardShell>
     <div style={S.root}>
-      {/* Back */}
-      <button
-        onClick={() => navigate('/dashboard/lms/browse?tab=courses')}
-        style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: S.dim, fontSize: 12, marginBottom: 24 }}
-      >
-        <ArrowLeft size={14} />
-        К обучению
-      </button>
-
       {/* Hero */}
       <div style={{ marginBottom: 32 }}>
         <div style={{ fontSize: 40, marginBottom: 8 }}>{course.emoji}</div>

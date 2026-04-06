@@ -61,7 +61,7 @@ export function SettingsPage({ initialSection }: SettingsPageProps) {
     }
   }, [initialSection, visibleIdsKey])
 
-  // Ensure activeSection is always valid
+  // Раздел activeSection всегда должен быть из списка секций
   const resolvedSection = visibleItems.find((i) => i.id === activeSection)
     ? activeSection
     : visibleItems[0]?.id ?? 'profile'
@@ -72,39 +72,39 @@ export function SettingsPage({ initialSection }: SettingsPageProps) {
 
         {/* Header */}
         <div className="mb-8">
-          <p className="text-xs uppercase tracking-widest text-[rgba(242,207,141,0.45)] mb-1">Управление</p>
-          <h1 className="text-3xl font-bold text-[#fcecc8]">Настройки</h1>
+          <p className="text-xs uppercase tracking-widest text-[color:var(--hub-stat-label)] mb-1">Управление</p>
+          <h1 className="text-3xl font-bold text-[color:var(--app-text)]">Настройки</h1>
         </div>
 
         {/* Body: sidebar + content */}
         <div className="flex gap-8 items-start">
 
           {/* Sidebar — в том же стиле, что и блоки контента */}
-          <nav className="w-52 shrink-0 rounded-xl border border-[rgba(242,207,141,0.14)] bg-[var(--green-card)] p-2">
+          <nav className="w-52 shrink-0 rounded-xl border border-[color:var(--hub-card-border)] bg-[var(--green-card)] p-2">
             {visibleItems.map((item, idx) => {
               const showSep = item.separator && idx > 0
               return (
                 <div key={item.id}>
                   {showSep && (
-                    <div className="my-2 h-px bg-[rgba(242,207,141,0.1)]" />
+                    <div className="my-2 h-px bg-[var(--hub-tile-icon-bg)]" />
                   )}
                   <button
                     onClick={() => setActiveSection(item.id)}
                     className={cn(
                       'group relative w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all text-left',
                       resolvedSection === item.id
-                        ? 'bg-[rgba(242,207,141,0.12)] text-[#fcecc8]'
-                        : 'text-[rgba(242,207,141,0.5)] hover:bg-[rgba(242,207,141,0.06)] hover:text-[rgba(242,207,141,0.8)]'
+                        ? 'bg-[var(--nav-item-bg-active)] text-[color:var(--app-text)]'
+                        : 'text-[color:var(--hub-desc)] hover:bg-[var(--hub-action-hover)] hover:text-[color:var(--app-text-muted)]'
                     )}
                   >
                     {resolvedSection === item.id && (
-                      <span className="absolute left-2 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-full bg-[rgba(242,207,141,0.6)]" />
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-full bg-[var(--gold)]" />
                     )}
                     <span className={cn(
                       'transition-colors',
                       resolvedSection === item.id
-                        ? 'text-[rgba(242,207,141,0.8)]'
-                        : 'text-[rgba(242,207,141,0.35)] group-hover:text-[rgba(242,207,141,0.6)]'
+                        ? 'text-[color:var(--app-text-muted)]'
+                        : 'text-[color:var(--theme-accent-icon-dim)] group-hover:text-[color:var(--theme-accent-link-dim)]'
                     )}>
                       {item.icon}
                     </span>
@@ -125,7 +125,7 @@ export function SettingsPage({ initialSection }: SettingsPageProps) {
             {resolvedSection === 'billing'       && <BillingTab />}
             {resolvedSection === 'security'      && <SecurityTab />}
             {resolvedSection === 'branding'      && (
-              <div className="rounded-xl border border-[rgba(242,207,141,0.14)] bg-[var(--green-card)] p-6">
+              <div className="rounded-xl border border-[color:var(--hub-card-border)] bg-[var(--green-card)] p-6">
                 <BrandingTab />
               </div>
             )}

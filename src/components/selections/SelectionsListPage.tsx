@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useSelectionsBasePath, useSelectionsMarket } from '@/hooks/useSelectionsBasePath'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { SELECTIONS_MOCK } from '@/data/selections-mock'
 import { loadExtraSelections } from '@/lib/selections-storage'
@@ -48,9 +49,13 @@ function formatDate(iso: string) {
 export function SelectionsListPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  const selectionsBase = useSelectionsBasePath()
+  const market = useSelectionsMarket()
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<SelectionStatus | 'all'>('all')
-  const [marketFilter, setMarketFilter] = useState<PropertyMarket | 'all'>('all')
+  const [marketFilter, setMarketFilter] = useState<PropertyMarket | 'all'>(
+    () => (market === 'newbuild' ? 'primary' : 'secondary'),
+  )
 
   const allSelections = useMemo(
     () => [...loadExtraSelections(), ...SELECTIONS_MOCK],
@@ -77,34 +82,30 @@ export function SelectionsListPage() {
   }, [allSelections, query, statusFilter, marketFilter])
 
   return (
-    <DashboardShell hideSidebar topBack={{ label: 'Назад', route: '/dashboard/selections' }}>
+    <DashboardShell hideSidebar>
       <div
         style={{
           padding: '28px 32px',
           minHeight: '100%',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: "'Montserrat', sans-serif",
           width: '100%',
           maxWidth: '100%',
           boxSizing: 'border-box',
+          background: 'var(--app-bg)',
         }}
       >
 
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-          <div style={{ fontSize: 22, fontWeight: 700, color: '#fff', letterSpacing: '0.02em' }}>
-            Подборки
+          <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--app-text)', letterSpacing: '0.02em' }}>
+            {market === 'newbuild' ? 'Подборки · новостройки' : 'Подборки · вторичка'}
           </div>
           <button
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '9px 18px', borderRadius: 8,
-              background: 'rgba(201,168,76,0.12)', border: '1px solid rgba(201,168,76,0.35)',
-              color: 'var(--gold)', fontSize: 12, fontWeight: 700, cursor: 'pointer',
-              letterSpacing: '0.05em',
-            }}
-            onClick={() => navigate('/dashboard/selections/new')}
+            type="button"
+            className="alphabase-section-primary"
+            onClick={() => navigate(`${selectionsBase}/new`)}
           >
-            <Plus size={14} />
+            <Plus size={14} strokeWidth={2.5} />
             Новая подборка
           </button>
         </div>
@@ -114,17 +115,17 @@ export function SelectionsListPage() {
           {/* Search */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 8,
-            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--green-deep)', border: '1px solid var(--green-border)',
             borderRadius: 8, padding: '0 12px', height: 34, minWidth: 240,
           }}>
-            <Search size={13} color="rgba(255,255,255,0.35)" />
+            <Search size={13} color="var(--app-text-subtle)" />
             <input
               value={query}
               onChange={e => setQuery(e.target.value)}
               placeholder="Клиент, агент, название..."
               style={{
                 background: 'transparent', border: 'none', outline: 'none',
-                fontSize: 12, color: 'rgba(255,255,255,0.7)', fontFamily: 'inherit', flex: 1,
+                fontSize: 12, color: 'var(--app-text)', fontFamily: 'inherit', flex: 1,
               }}
             />
           </div>
@@ -138,9 +139,9 @@ export function SelectionsListPage() {
                 style={{
                   padding: '5px 12px', borderRadius: 20, fontSize: 11, fontWeight: 600,
                   cursor: 'pointer', border: '1px solid',
-                  background: statusFilter === f.value ? 'rgba(201,168,76,0.15)' : 'transparent',
-                  borderColor: statusFilter === f.value ? 'rgba(201,168,76,0.5)' : 'rgba(255,255,255,0.1)',
-                  color: statusFilter === f.value ? 'var(--gold)' : 'rgba(255,255,255,0.45)',
+                  background: statusFilter === f.value ? 'var(--nav-item-bg-active)' : 'transparent',
+                  borderColor: statusFilter === f.value ? 'var(--hub-card-border-hover)' : 'var(--green-border)',
+                  color: statusFilter === f.value ? 'var(--theme-accent-heading)' : 'var(--app-text-subtle)',
                   transition: 'all 0.15s',
                 }}
               >
@@ -159,8 +160,8 @@ export function SelectionsListPage() {
                   padding: '5px 12px', borderRadius: 20, fontSize: 11, fontWeight: 600,
                   cursor: 'pointer', border: '1px solid',
                   background: marketFilter === f.value ? 'rgba(96,165,250,0.12)' : 'transparent',
-                  borderColor: marketFilter === f.value ? 'rgba(96,165,250,0.4)' : 'rgba(255,255,255,0.1)',
-                  color: marketFilter === f.value ? '#60a5fa' : 'rgba(255,255,255,0.45)',
+                  borderColor: marketFilter === f.value ? 'rgba(96,165,250,0.4)' : 'var(--green-border)',
+                  color: marketFilter === f.value ? MARKET_COLORS.secondary : 'var(--app-text-subtle)',
                   transition: 'all 0.15s',
                 }}
               >
@@ -171,14 +172,14 @@ export function SelectionsListPage() {
         </div>
 
         {/* Count */}
-        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginBottom: 12, letterSpacing: '0.05em' }}>
+        <div style={{ fontSize: 11, color: 'var(--app-text-subtle)', marginBottom: 12, letterSpacing: '0.05em' }}>
           ПОКАЗАНО {filtered.length} ИЗ {SELECTIONS_MOCK.length}
         </div>
 
         {/* List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {filtered.length === 0 && (
-            <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.25)', padding: '48px 0', fontSize: 13 }}>
+            <div style={{ textAlign: 'center', color: 'var(--app-text-subtle)', padding: '48px 0', fontSize: 13 }}>
               Подборок не найдено
             </div>
           )}
@@ -191,10 +192,10 @@ export function SelectionsListPage() {
             return (
               <div
                 key={sel.id}
-                onClick={() => navigate(`/dashboard/selections/${sel.id}`)}
+                onClick={() => navigate(`${selectionsBase}/${sel.id}`)}
                 style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.07)',
+                  background: 'var(--hub-card-bg)',
+                  border: '1px solid var(--hub-card-border)',
                   borderRadius: 10,
                   padding: '14px 18px',
                   cursor: 'pointer',
@@ -204,18 +205,18 @@ export function SelectionsListPage() {
                   gap: 16,
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = 'rgba(201,168,76,0.25)'
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)'
+                  e.currentTarget.style.borderColor = 'var(--hub-card-border-hover)'
+                  e.currentTarget.style.background = 'var(--hub-card-bg-hover)'
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.03)'
+                  e.currentTarget.style.borderColor = 'var(--hub-card-border)'
+                  e.currentTarget.style.background = 'var(--hub-card-bg)'
                 }}
               >
                 {/* Icon */}
                 <div style={{
                   width: 40, height: 40, borderRadius: 8, flexShrink: 0,
-                  background: 'rgba(201,168,76,0.1)',
+                  background: 'var(--hub-tile-icon-bg)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
                   <FileText size={18} color="var(--gold)" />
@@ -224,13 +225,13 @@ export function SelectionsListPage() {
                 {/* Main info */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{
-                    fontSize: 13, fontWeight: 600, color: '#fff',
+                    fontSize: 13, fontWeight: 600, color: 'var(--app-text)',
                     overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                     marginBottom: 3,
                   }}>
                     {sel.title}
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 11, color: 'var(--app-text-muted)' }}>
                     <span>{sel.clientName}</span>
                     <span>·</span>
                     <span>{sel.agentName}</span>
@@ -249,7 +250,7 @@ export function SelectionsListPage() {
                     <div style={{
                       display: 'flex', alignItems: 'center', gap: 4,
                       padding: '3px 8px', borderRadius: 12,
-                      background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)',
+                      background: 'var(--hub-tile-icon-bg)', border: '1px solid var(--hub-tile-icon-border)',
                       fontSize: 10, fontWeight: 700, color: MARKET_COLORS.primary,
                     }}>
                       <Building2 size={10} />
@@ -272,22 +273,22 @@ export function SelectionsListPage() {
                 {/* Stats */}
                 <div style={{ display: 'flex', gap: 16, flexShrink: 0, minWidth: 120 }}>
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>{sel.properties.length}</div>
-                    <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.06em' }}>объектов</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--app-text)' }}>{sel.properties.length}</div>
+                    <div style={{ fontSize: 9, color: 'var(--app-text-subtle)', letterSpacing: '0.06em' }}>объектов</div>
                   </div>
                   {sel.viewCount > 0 && (
                     <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                        <Eye size={12} color="rgba(255,255,255,0.5)" />
-                        <span style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>{sel.viewCount}</span>
+                        <Eye size={12} color="var(--app-text-muted)" />
+                        <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--app-text)' }}>{sel.viewCount}</span>
                       </div>
-                      <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.06em' }}>просмотров</div>
+                      <div style={{ fontSize: 9, color: 'var(--app-text-subtle)', letterSpacing: '0.06em' }}>просмотров</div>
                     </div>
                   )}
                   {likedCount > 0 && (
                     <div style={{ textAlign: 'center' }}>
                       <div style={{ fontSize: 15, fontWeight: 700, color: '#22c55e' }}>+{likedCount}</div>
-                      <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.06em' }}>лайков</div>
+                      <div style={{ fontSize: 9, color: 'var(--app-text-subtle)', letterSpacing: '0.06em' }}>лайков</div>
                     </div>
                   )}
                 </div>
@@ -304,12 +305,12 @@ export function SelectionsListPage() {
                     {sel.status === 'sent' && <Send size={9} />}
                     {SELECTION_STATUS_LABELS[sel.status].toUpperCase()}
                   </div>
-                  <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>
+                  <div style={{ fontSize: 10, color: 'var(--app-text-subtle)' }}>
                     {formatDate(sel.sentAt || sel.createdAt)}
                   </div>
                 </div>
 
-                <ChevronRight size={14} color="rgba(255,255,255,0.2)" style={{ flexShrink: 0 }} />
+                <ChevronRight size={14} color="var(--app-text-subtle)" style={{ flexShrink: 0 }} />
               </div>
             )
           })}

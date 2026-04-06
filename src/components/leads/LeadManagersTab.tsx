@@ -14,9 +14,9 @@ const SOURCE_LABELS: Record<LeadSource, string> = {
 }
 
 const FIELD =
-  'w-full rounded-xl border border-[rgba(242,207,141,0.2)] bg-[rgba(0,0,0,0.25)] px-4 py-2.5 text-sm text-[#fcecc8] placeholder:text-[rgba(242,207,141,0.3)] outline-none focus:border-[rgba(242,207,141,0.5)] focus:ring-1 focus:ring-[rgba(242,207,141,0.2)] transition-all'
+  'w-full rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.25)] px-4 py-2.5 text-sm text-[color:var(--app-text)] placeholder:text-[color:var(--shell-search-ph)] outline-none focus:border-[color:var(--hub-card-border-hover)] focus:ring-1 focus:ring-[color:var(--hub-card-border)] transition-all'
 
-const LABEL = 'block text-xs font-medium uppercase tracking-wide text-[rgba(242,207,141,0.55)] mb-1.5'
+const LABEL = 'block text-xs font-medium uppercase tracking-wide text-[color:var(--hub-stat-label)] mb-1.5'
 
 export function LeadManagersTab() {
   const { state, dispatch } = useLeads()
@@ -62,20 +62,20 @@ export function LeadManagersTab() {
     <div className="space-y-5 max-w-2xl">
 
       {!canManageTeam && (
-        <div className="flex items-start gap-3 rounded-xl border border-[rgba(242,207,141,0.15)] bg-[rgba(0,0,0,0.15)] px-4 py-3">
-          <Info className="size-4 shrink-0 mt-0.5 text-[rgba(242,207,141,0.45)]" />
-          <p className="text-sm text-[rgba(242,207,141,0.55)]">
+        <div className="flex items-start gap-3 rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.15)] px-4 py-3">
+          <Info className="size-4 shrink-0 mt-0.5 text-[color:var(--hub-stat-label)]" />
+          <p className="text-sm text-[color:var(--hub-stat-label)]">
             Добавление и редактирование менеджеров доступно только директору.
           </p>
         </div>
       )}
 
       {/* Panel */}
-      <div className="rounded-xl border border-[rgba(242,207,141,0.15)] bg-[rgba(0,0,0,0.15)] overflow-hidden">
+      <div className="rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.15)] overflow-hidden">
 
         {/* Header */}
-        <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-[rgba(242,207,141,0.1)]">
-          <h3 className="font-semibold text-[#fcecc8]">Менеджеры по лидам</h3>
+        <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-[color:var(--hub-tile-icon-border)]">
+          <h3 className="font-semibold text-[color:var(--app-text)]">Менеджеры по лидам</h3>
           {canManageTeam && (
             <button
               type="button"
@@ -89,22 +89,22 @@ export function LeadManagersTab() {
         </div>
 
         {/* List */}
-        <ul className="divide-y divide-[rgba(242,207,141,0.07)]">
+        <ul className="divide-y divide-[color:var(--hub-action-hover)]">
           {leadManagers.map((m) => (
-            <li key={m.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 transition-colors hover:bg-[rgba(242,207,141,0.04)]">
+            <li key={m.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 transition-colors hover:bg-[var(--hub-action-hover)]">
               <div className="flex items-center gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[rgba(242,207,141,0.1)] text-sm font-semibold text-[#fcecc8]">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[var(--hub-tile-icon-bg)] text-sm font-semibold text-[color:var(--app-text)]">
                   {m.name.charAt(0)}
                 </div>
                 <div>
-                  <span className="font-medium text-[#fcecc8]">{m.name}</span>
-                  <span className="ml-2 text-sm text-[rgba(242,207,141,0.45)]">{m.login}</span>
+                  <span className="font-medium text-[color:var(--app-text)]">{m.name}</span>
+                  <span className="ml-2 text-sm text-[color:var(--hub-stat-label)]">{m.login}</span>
                 </div>
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
                 {m.sourceTypes.map((s) => (
-                  <span key={s} className="rounded-full border border-[rgba(242,207,141,0.2)] bg-[rgba(242,207,141,0.08)] px-2.5 py-0.5 text-xs text-[rgba(242,207,141,0.75)]">
+                  <span key={s} className="rounded-full border border-[color:var(--hub-card-border)] bg-[var(--nav-item-bg-active)] px-2.5 py-0.5 text-xs text-[color:var(--app-text-muted)]">
                     {SOURCE_LABELS[s]}
                   </span>
                 ))}
@@ -113,7 +113,7 @@ export function LeadManagersTab() {
                     <button
                       type="button"
                       onClick={() => openEdit(m)}
-                      className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm text-[rgba(242,207,141,0.55)] hover:text-[#fcecc8] hover:bg-[rgba(242,207,141,0.07)] transition-colors"
+                      className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm text-[color:var(--hub-stat-label)] hover:text-[color:var(--app-text)] hover:bg-[var(--hub-action-hover)] transition-colors"
                     >
                       <Pencil className="size-3.5" />
                       Редактировать
@@ -121,7 +121,7 @@ export function LeadManagersTab() {
                     <button
                       type="button"
                       onClick={() => dispatch({ type: 'REMOVE_LEAD_MANAGER', managerId: m.id })}
-                      className="rounded-lg px-2.5 py-1.5 text-sm text-[rgba(242,207,141,0.4)] hover:text-red-400 hover:bg-red-900/15 transition-colors"
+                      className="rounded-lg px-2.5 py-1.5 text-sm text-[color:var(--workspace-text-muted)] hover:text-red-400 hover:bg-red-900/15 transition-colors"
                     >
                       Удалить
                     </button>
@@ -135,9 +135,9 @@ export function LeadManagersTab() {
 
       {/* Dialog */}
       <Dialog open={open} onOpenChange={(v) => !v && closeDialog()}>
-        <DialogContent showCloseButton={false} className="max-w-md rounded-2xl border border-[rgba(242,207,141,0.16)] bg-[linear-gradient(180deg,rgba(9,36,28,0.99),rgba(6,20,16,0.98))] p-0 shadow-2xl">
-          <div className="flex items-center justify-between border-b border-[rgba(242,207,141,0.1)] px-6 py-4">
-            <h2 className="text-base font-semibold text-[#fcecc8]">
+        <DialogContent showCloseButton={false} className="max-w-md rounded-2xl border border-[color:var(--hub-card-border)] bg-[linear-gradient(180deg,rgba(9,36,28,0.99),rgba(6,20,16,0.98))] p-0 shadow-2xl">
+          <div className="flex items-center justify-between border-b border-[color:var(--hub-tile-icon-border)] px-6 py-4">
+            <h2 className="text-base font-semibold text-[color:var(--app-text)]">
               {isEdit ? 'Редактировать менеджера' : 'Добавить менеджера'}
             </h2>
           </div>
@@ -165,7 +165,7 @@ export function LeadManagersTab() {
                         'rounded-full border px-3.5 py-1.5 text-sm font-medium transition-all',
                         active
                           ? 'border-emerald-400/60 bg-emerald-400/12 text-emerald-300'
-                          : 'border-[rgba(242,207,141,0.2)] bg-[rgba(242,207,141,0.06)] text-[rgba(242,207,141,0.55)] hover:border-[rgba(242,207,141,0.4)] hover:text-[#fcecc8]'
+                          : 'border-[color:var(--hub-card-border)] bg-[var(--hub-action-hover)] text-[color:var(--hub-stat-label)] hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--app-text)]'
                       )}
                     >
                       {SOURCE_LABELS[s]}
@@ -173,17 +173,17 @@ export function LeadManagersTab() {
                   )
                 })}
               </div>
-              <p className="mt-2 text-[11px] text-[rgba(242,207,141,0.35)]">
+              <p className="mt-2 text-[11px] text-[color:var(--theme-accent-icon-dim)]">
                 Выберите очереди, к которым у менеджера есть доступ.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2 border-t border-[rgba(242,207,141,0.1)] px-6 py-4">
+          <div className="flex items-center justify-end gap-2 border-t border-[color:var(--hub-tile-icon-border)] px-6 py-4">
             <button
               type="button"
               onClick={closeDialog}
-              className="rounded-full border border-[rgba(242,207,141,0.2)] px-5 py-2 text-sm font-medium text-[rgba(242,207,141,0.65)] hover:border-[rgba(242,207,141,0.4)] hover:text-[#fcecc8] transition-colors"
+              className="rounded-full border border-[color:var(--hub-card-border)] px-5 py-2 text-sm font-medium text-[color:var(--hub-body)] hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--app-text)] transition-colors"
             >
               Отмена
             </button>

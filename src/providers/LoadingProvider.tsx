@@ -12,7 +12,7 @@ const LoadingContext = createContext<LoadingContextValue | null>(null)
 
 // Провайдер состояния загрузки.
 // Хранит глобальный флаг isLoading и именованные состояния по строковому ключу.
-// isLoading = true если активен глобальный флаг или хотя бы одно именованное состояние.
+// Загрузка (true), если включён общий флаг или хотя бы одно именованное состояние.
 export function LoadingProvider({ children }: { children: ReactNode }) {
   const [globalLoading, setGlobalLoading] = useState(false)
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({})

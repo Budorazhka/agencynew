@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useSelectionsBasePath, useSelectionsMarket } from '@/hooks/useSelectionsBasePath'
 import { Building2, Home, Send, Trash2, Users, X } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { cn } from '@/lib/utils'
@@ -15,7 +16,7 @@ import {
   type PrimaryLot,
   type SecondaryLot,
 } from '@/data/selection-catalog-mock'
-import type { Selection, SelectionProperty } from '@/types/selections'
+import { MARKET_COLORS, type Selection, type SelectionProperty } from '@/types/selections'
 import { LEAD_STAGE_COLUMN } from '@/data/leads-mock'
 import { FMT_USD } from '@/lib/format-currency'
 
@@ -81,26 +82,26 @@ function SelectionSendPreview({
 }) {
   return (
     <div
-      className="rounded-xl border border-[#e6c364]/20 bg-[#f8faf9] text-slate-900 shadow-inner"
-      style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+      className="rounded-xl border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] text-[color:var(--app-text)] shadow-[inset_0_0_0_1px_var(--hub-card-border)]"
+      style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}
     >
-      <div className="border-b border-slate-200/90 px-6 py-5">
+      <div className="border-b border-[color:var(--divider-subtle)] px-6 py-5">
         {logoDataUrl ? (
           <img src={logoDataUrl} alt="" className="max-h-14 max-w-[200px] object-contain object-left" />
         ) : (
-          <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Логотип агентства</div>
+          <div className="text-xs font-bold uppercase tracking-widest text-[color:var(--hub-desc)]">Логотип агентства</div>
         )}
-        <h2 className="mt-4 text-lg font-bold text-slate-900">{title || 'Подборка объектов'}</h2>
-        <p className="mt-1 text-sm text-slate-600">Для: {recipientLabel || '— выберите получателей из лидов'}</p>
+        <h2 className="mt-4 text-lg font-bold text-[color:var(--app-text)]">{title || 'Подборка объектов'}</h2>
+        <p className="mt-1 text-sm text-[color:var(--hub-body)]">Для: {recipientLabel || '— выберите получателей из лидов'}</p>
       </div>
 
       <div className="space-y-0 px-6 py-4">
         {basket.length === 0 ? (
-          <p className="py-8 text-center text-sm text-slate-500">Добавьте лоты из первички или вторички</p>
+          <p className="py-8 text-center text-sm text-[color:var(--app-text-muted)]">Добавьте лоты из первички или вторички</p>
         ) : (
           basket.map((item, i) => (
             <div key={item.key}>
-              {i > 0 && <div className="my-6 border-t-2 border-dashed border-slate-300" aria-hidden />}
+              {i > 0 && <div className="my-6 border-t-2 border-dashed border-[color:var(--divider-subtle)]" aria-hidden />}
               {item.kind === 'primary' ? (
                 <PrimaryLotPreview complex={item.complex} lot={item.lot} index={i + 1} />
               ) : (
@@ -111,11 +112,11 @@ function SelectionSendPreview({
         )}
       </div>
 
-      <div className="border-t border-slate-200 bg-slate-50/80 px-6 py-4 text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+      <div className="border-t border-[color:var(--divider-subtle)] bg-[var(--green-deep)] px-6 py-4 text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--hub-desc)]">
           {agencyName || 'Название агентства'}
         </p>
-        <p className="mt-1 text-[11px] text-slate-400">Подборка сформирована в системе агентства</p>
+        <p className="mt-1 text-[11px] text-[color:var(--app-text-subtle)]">Подборка сформирована в системе агентства</p>
       </div>
     </div>
   )
@@ -123,9 +124,9 @@ function SelectionSendPreview({
 
 function ParamRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between gap-4 border-b border-slate-100 py-1.5 text-sm last:border-0">
-      <span className="text-slate-500">{label}</span>
-      <span className="font-medium text-slate-800 text-right">{value}</span>
+    <div className="flex justify-between gap-4 border-b border-[color:var(--divider-subtle)] py-1.5 text-sm last:border-0">
+      <span className="text-[color:var(--hub-body)]">{label}</span>
+      <span className="text-right font-medium text-[color:var(--app-text)]">{value}</span>
     </div>
   )
 }
@@ -134,20 +135,20 @@ function PrimaryLotPreview({ complex, lot, index }: { complex: PrimaryComplex; l
   return (
     <article className="space-y-3">
       <div className="flex items-start gap-3">
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#e6c364]/20 text-xs font-bold text-[#8a7020]">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--hub-tile-icon-bg)] text-xs font-bold text-[color:var(--gold)]">
           {index}
         </span>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#c9a84c]">Новостройка</p>
-          <h3 className="text-base font-bold text-slate-900">{complex.name}</h3>
-          <p className="text-sm text-slate-600">{lot.label}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--gold)]">Новостройка</p>
+          <h3 className="text-base font-bold text-[color:var(--app-text)]">{complex.name}</h3>
+          <p className="text-sm text-[color:var(--hub-body)]">{lot.label}</p>
         </div>
       </div>
-      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+      <div className="overflow-hidden rounded-lg border border-[color:var(--green-border)] bg-[var(--green-card)]">
         <img src={lot.imageUrl} alt="" className="aspect-[16/10] w-full object-cover" />
       </div>
-      <p className="text-sm leading-relaxed text-slate-700">{lot.description}</p>
-      <div className="rounded-lg bg-white p-3 ring-1 ring-slate-100">
+      <p className="text-sm leading-relaxed text-[color:var(--hub-body)]">{lot.description}</p>
+      <div className="rounded-lg bg-[var(--green-card)] p-3 ring-1 ring-[color:var(--green-border)]">
         <ParamRow label="Застройщик" value={complex.developer} />
         <ParamRow label="Адрес" value={complex.address} />
         <ParamRow label="Комнат" value={String(lot.rooms)} />
@@ -163,19 +164,24 @@ function SecondaryLotPreview({ lot, index }: { lot: SecondaryLot; index: number 
   return (
     <article className="space-y-3">
       <div className="flex items-start gap-3">
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-sky-100 text-xs font-bold text-sky-800">
+        <span
+          className="flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+          style={{ background: 'rgba(96,165,250,0.15)', color: MARKET_COLORS.secondary }}
+        >
           {index}
         </span>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-sky-600">Вторичка</p>
-          <h3 className="text-base font-bold text-slate-900">{lot.address}</h3>
+          <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: MARKET_COLORS.secondary }}>
+            Вторичка
+          </p>
+          <h3 className="text-base font-bold text-[color:var(--app-text)]">{lot.address}</h3>
         </div>
       </div>
-      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+      <div className="overflow-hidden rounded-lg border border-[color:var(--green-border)] bg-[var(--green-card)]">
         <img src={lot.imageUrl} alt="" className="aspect-[16/10] w-full object-cover" />
       </div>
-      <p className="text-sm leading-relaxed text-slate-700">{lot.description}</p>
-      <div className="rounded-lg bg-white p-3 ring-1 ring-slate-100">
+      <p className="text-sm leading-relaxed text-[color:var(--hub-body)]">{lot.description}</p>
+      <div className="rounded-lg bg-[var(--green-card)] p-3 ring-1 ring-[color:var(--green-border)]">
         <ParamRow label="Комнат" value={String(lot.rooms)} />
         <ParamRow label="Площадь" value={`${lot.area} м²`} />
         <ParamRow label="Этаж" value={lot.floor} />
@@ -187,6 +193,8 @@ function SecondaryLotPreview({ lot, index }: { lot: SecondaryLot; index: number 
 
 export function SelectionsNewPage() {
   const navigate = useNavigate()
+  const selectionsBase = useSelectionsBasePath()
+  const market = useSelectionsMarket()
   const { currentUser } = useAuth()
   const { state: leadsState } = useLeads()
   const branding = useAgencyBranding()
@@ -263,6 +271,10 @@ export function SelectionsNewPage() {
 
   function handleSend() {
     if (!title.trim() || selectedLeadIds.size === 0 || basket.length === 0) return
+    const hasPrimary = basket.some((b) => b.kind === 'primary')
+    const hasSecondary = basket.some((b) => b.kind === 'secondary')
+    if (market === 'newbuild' && hasSecondary) return
+    if (market === 'secondary' && hasPrimary) return
     const props = basketToSelectionProperties(basket)
     const agentId = currentUser?.id ?? 'agent'
     const agentName = currentUser?.name ?? 'Агент'
@@ -293,90 +305,98 @@ export function SelectionsNewPage() {
     if (created.length === 0) return
     prependSelections(created)
     setSentOk(true)
-    setTimeout(() => navigate('/dashboard/selections/list'), 600)
+    setTimeout(() => navigate(`${selectionsBase}/list`), 600)
   }
 
-  const canSend = title.trim().length > 0 && selectedLeadIds.size > 0 && basket.length > 0
+  const canSend =
+    title.trim().length > 0 &&
+    selectedLeadIds.size > 0 &&
+    basket.length > 0 &&
+    !(market === 'newbuild' && basket.some((b) => b.kind === 'secondary')) &&
+    !(market === 'secondary' && basket.some((b) => b.kind === 'primary'))
 
   return (
-    <DashboardShell hideSidebar topBack={{ label: 'Назад', route: '/dashboard/selections' }}>
+    <DashboardShell hideSidebar>
       <div
-        className="min-h-full w-full max-w-[1600px] box-border px-6 py-8 text-[#d0e8df]"
-        style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+        className="min-h-full w-full max-w-[1600px] box-border bg-[var(--app-bg)] px-6 py-8 text-[color:var(--app-text)]"
+        style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}
       >
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-emerald-900/35 pb-6">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-[color:var(--divider-subtle)] pb-6">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">Отправка подборки</h1>
-            <p className="mt-1 max-w-xl text-sm text-emerald-100/60">
-              Выберите лоты первички (ЖК → квартиры) и вторички, получателей только из лидов в системе. В письме —
-              фото, описание и параметры; несколько лотов разделяются линией. Логотип и название агентства — из
-              настроек бренда.
+            <h1 className="text-2xl font-bold tracking-tight text-[color:var(--app-text)]">
+              {market === 'newbuild' ? 'Подборка · новостройки' : 'Подборка · вторичка'}
+            </h1>
+            <p className="mt-1 max-w-xl text-sm text-[color:var(--hub-body)]">
+              {market === 'newbuild'
+                ? 'Только лоты первички (ЖК → квартиры). Получатели — из лидов в системе. В письме фото, описание и параметры; логотип и название агентства — из настроек бренда.'
+                : 'Только объекты вторичного рынка. Получатели — из лидов в системе. В письме фото, описание и параметры; логотип и название агентства — из настроек бренда.'}
             </p>
           </div>
-          {sentOk && <span className="text-sm font-semibold text-[#e6c364]">Сохранено, переход к списку…</span>}
+          {sentOk && <span className="text-sm font-semibold text-[color:var(--theme-accent-heading)]">Сохранено, переход к списку…</span>}
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[1fr_min(440px,42vw)]">
           <div className="space-y-8">
-            <section className="rounded-xl border border-[#e6c364]/15 bg-[#0a1f1a] p-5 shadow-[inset_0_0_0_1px_rgba(201,168,76,0.06)]">
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#e6c364]/80">
+            <section className="rounded-xl border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] p-5 shadow-[inset_0_0_0_1px_var(--hub-card-border)]">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--hub-desc)]">
                 Название подборки
               </label>
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Например: Варианты 2к у метро"
-                className="mt-2 w-full rounded-lg border border-emerald-800/50 bg-[#00110d] px-3 py-2.5 text-sm text-[#d0e8df] outline-none placeholder:text-emerald-100/35 focus:border-[#e6c364]/45"
+                className="mt-2 w-full rounded-lg border border-[color:var(--green-border)] bg-[var(--green-deep)] px-3 py-2.5 text-sm text-[color:var(--app-text)] outline-none placeholder:text-[color:var(--app-text-subtle)] focus:border-[color:var(--hub-card-border-hover)]"
               />
             </section>
 
-            <section className="rounded-xl border border-[#e6c364]/15 bg-[#0a1f1a] p-5">
-              <div className="flex items-center gap-2 text-[#e6c364]">
+            <section className="rounded-xl border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] p-5 shadow-[inset_0_0_0_1px_var(--hub-card-border)]">
+              <div className="flex items-center gap-2 text-[color:var(--theme-accent-heading)]">
                 <Users className="size-5" />
                 <h2 className="text-sm font-bold uppercase tracking-wide">Получатели из лидов</h2>
               </div>
-              <p className="mt-1 text-xs text-emerald-100/50">
+              <p className="mt-1 text-xs text-[color:var(--hub-body)]">
                 Отправка только тем, кто занесён в воронку (исключены стадии отказа).
               </p>
               <input
                 value={leadQuery}
                 onChange={(e) => setLeadQuery(e.target.value)}
                 placeholder="Поиск по имени или ID…"
-                className="mt-3 w-full rounded-lg border border-emerald-800/50 bg-[#00110d] px-3 py-2 text-sm outline-none focus:border-[#e6c364]/40"
+                className="mt-3 w-full rounded-lg border border-[color:var(--green-border)] bg-[var(--green-deep)] px-3 py-2 text-sm text-[color:var(--app-text)] outline-none placeholder:text-[color:var(--app-text-subtle)] focus:border-[color:var(--hub-card-border-hover)]"
               />
-              <div className="mt-3 max-h-48 overflow-y-auto rounded-lg border border-emerald-900/40">
+              <div className="mt-3 max-h-48 overflow-y-auto rounded-lg border border-[color:var(--green-border)]">
                 {leadRecipients.length === 0 ? (
-                  <p className="p-4 text-center text-sm text-emerald-100/45">Никого не найдено</p>
+                  <p className="p-4 text-center text-sm text-[color:var(--app-text-muted)]">Никого не найдено</p>
                 ) : (
                   leadRecipients.slice(0, 80).map((l) => (
                     <label
                       key={l.id}
-                      className="flex cursor-pointer items-center gap-3 border-b border-emerald-900/25 px-3 py-2 last:border-0 hover:bg-[#e6c364]/5"
+                      className="flex cursor-pointer items-center gap-3 border-b border-[color:var(--divider-subtle)] px-3 py-2 last:border-0 hover:bg-[var(--dropdown-hover)]"
                     >
                       <input
                         type="checkbox"
                         checked={selectedLeadIds.has(l.id)}
                         onChange={() => toggleLead(l.id)}
-                        className="size-4 accent-[#e6c364]"
+                        className="size-4 accent-[var(--gold)]"
                       />
-                      <span className="min-w-0 flex-1 truncate text-sm font-medium">{l.name}</span>
-                      <span className="shrink-0 text-[10px] uppercase text-emerald-100/40">{l.id}</span>
+                      <span className="min-w-0 flex-1 truncate text-sm font-medium text-[color:var(--app-text)]">{l.name}</span>
+                      <span className="shrink-0 text-[10px] uppercase text-[color:var(--app-text-subtle)]">{l.id}</span>
                     </label>
                   ))
                 )}
               </div>
-              <p className="mt-2 text-xs text-emerald-100/45">Выбрано: {selectedLeadIds.size}</p>
+              <p className="mt-2 text-xs text-[color:var(--app-text-muted)]">Выбрано: {selectedLeadIds.size}</p>
             </section>
 
-            <section className="rounded-xl border border-[#e6c364]/15 bg-[#0a1f1a] p-5">
-              <div className="flex items-center gap-2 text-[#e6c364]">
+            {market !== 'secondary' ? (
+            <section className="rounded-xl border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] p-5 shadow-[inset_0_0_0_1px_var(--hub-card-border)]">
+              <div className="flex items-center gap-2 text-[color:var(--theme-accent-heading)]">
                 <Building2 className="size-5" />
                 <h2 className="text-sm font-bold uppercase tracking-wide">Первичка: ЖК и лоты</h2>
               </div>
               <select
                 value={complexId}
                 onChange={(e) => setComplexId(e.target.value)}
-                className="mt-3 w-full rounded-lg border border-emerald-800/50 bg-[#00110d] px-3 py-2 text-sm text-[#d0e8df] outline-none focus:border-[#e6c364]/40"
+                className="mt-3 w-full rounded-lg border border-[color:var(--green-border)] bg-[var(--green-deep)] px-3 py-2 text-sm text-[color:var(--app-text)] outline-none focus:border-[color:var(--hub-card-border-hover)]"
               >
                 {PRIMARY_COMPLEXES_MOCK.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -392,21 +412,21 @@ export function SelectionsNewPage() {
                     <div
                       key={lot.id}
                       className={cn(
-                        'overflow-hidden rounded-lg border bg-[#00110d]/80',
-                        inBasket ? 'border-[#e6c364]/50' : 'border-emerald-900/40',
+                        'overflow-hidden rounded-lg border bg-[var(--green-deep)]',
+                        inBasket ? 'border-[color:var(--hub-card-border-hover)]' : 'border-[color:var(--green-border)]',
                       )}
                     >
                       <img src={lot.imageUrl} alt="" className="aspect-video w-full object-cover opacity-90" />
                       <div className="p-3">
-                        <p className="text-sm font-semibold text-white">{lot.label}</p>
-                        <p className="text-xs text-emerald-100/55">
+                        <p className="text-sm font-semibold text-[color:var(--app-text)]">{lot.label}</p>
+                        <p className="text-xs text-[color:var(--hub-body)]">
                           {lot.rooms}к · {lot.area} м² · {formatPriceUsd(lot.price)}
                         </p>
                         <button
                           type="button"
                           disabled={inBasket}
                           onClick={() => addPrimaryLot(lot)}
-                          className="mt-2 w-full rounded-md border border-[#e6c364]/35 py-1.5 text-xs font-bold uppercase tracking-wide text-[#e6c364] transition-colors hover:bg-[#e6c364]/10 disabled:cursor-not-allowed disabled:opacity-40"
+                          className="mt-2 w-full rounded-md border border-[color:var(--hub-tile-icon-border)] py-1.5 text-xs font-bold uppercase tracking-wide text-[color:var(--theme-accent-heading)] transition-colors hover:bg-[var(--nav-item-bg-active)] disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           {inBasket ? 'В подборке' : 'Добавить'}
                         </button>
@@ -416,9 +436,11 @@ export function SelectionsNewPage() {
                 })}
               </div>
             </section>
+            ) : null}
 
-            <section className="rounded-xl border border-[#e6c364]/15 bg-[#0a1f1a] p-5">
-              <div className="flex items-center gap-2 text-sky-300">
+            {market !== 'newbuild' ? (
+            <section className="rounded-xl border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] p-5 shadow-[inset_0_0_0_1px_var(--hub-card-border)]">
+              <div className="flex items-center gap-2" style={{ color: MARKET_COLORS.secondary }}>
                 <Home className="size-5" />
                 <h2 className="text-sm font-bold uppercase tracking-wide">Вторичка: квартиры</h2>
               </div>
@@ -426,7 +448,7 @@ export function SelectionsNewPage() {
                 value={secQuery}
                 onChange={(e) => setSecQuery(e.target.value)}
                 placeholder="Поиск по адресу…"
-                className="mt-3 w-full rounded-lg border border-emerald-800/50 bg-[#00110d] px-3 py-2 text-sm outline-none focus:border-[#e6c364]/40"
+                className="mt-3 w-full rounded-lg border border-[color:var(--green-border)] bg-[var(--green-deep)] px-3 py-2 text-sm text-[color:var(--app-text)] outline-none placeholder:text-[color:var(--app-text-subtle)] focus:border-[color:var(--hub-card-border-hover)]"
               />
               <div className="mt-4 space-y-3">
                 {secondaryFiltered.map((lot) => {
@@ -435,15 +457,15 @@ export function SelectionsNewPage() {
                   return (
                     <div
                       key={lot.id}
-                      className="flex gap-3 rounded-lg border border-emerald-900/40 bg-[#00110d]/60 p-3"
+                      className="flex gap-3 rounded-lg border border-[color:var(--green-border)] bg-[var(--green-deep)] p-3"
                     >
                       <img src={lot.imageUrl} alt="" className="size-20 shrink-0 rounded-md object-cover" />
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-white">{lot.address}</p>
-                        <p className="text-xs text-emerald-100/55">
+                        <p className="text-sm font-semibold text-[color:var(--app-text)]">{lot.address}</p>
+                        <p className="text-xs text-[color:var(--hub-body)]">
                           {lot.rooms}к · {lot.area} м² · {lot.floor}
                         </p>
-                        <p className="text-xs font-medium text-[#e6c364]">{formatPriceUsd(lot.price)}</p>
+                        <p className="text-xs font-medium text-[color:var(--gold)]">{formatPriceUsd(lot.price)}</p>
                         <button
                           type="button"
                           disabled={inBasket}
@@ -458,20 +480,21 @@ export function SelectionsNewPage() {
                 })}
               </div>
             </section>
+            ) : null}
 
-            <section className="rounded-xl border border-[#e6c364]/15 bg-[#0a1f1a] p-5">
-              <h2 className="text-sm font-bold uppercase tracking-wide text-white">Порядок в подборке ({basket.length})</h2>
-              <p className="text-xs text-emerald-100/45">В превью и отправке лоты идут сверху вниз; между ними — разделительная линия.</p>
+            <section className="rounded-xl border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] p-5 shadow-[inset_0_0_0_1px_var(--hub-card-border)]">
+              <h2 className="text-sm font-bold uppercase tracking-wide text-[color:var(--app-text)]">Порядок в подборке ({basket.length})</h2>
+              <p className="text-xs text-[color:var(--app-text-muted)]">В превью и отправке лоты идут сверху вниз; между ними — разделительная линия.</p>
               {basket.length === 0 ? (
-                <p className="mt-4 text-sm text-emerald-100/45">Пока пусто</p>
+                <p className="mt-4 text-sm text-[color:var(--app-text-muted)]">Пока пусто</p>
               ) : (
                 <ul className="mt-3 space-y-2">
                   {basket.map((item, i) => (
                     <li
                       key={item.key}
-                      className="flex items-center gap-2 rounded-lg border border-emerald-900/35 bg-[#00110d] px-3 py-2 text-sm"
+                      className="flex items-center gap-2 rounded-lg border border-[color:var(--green-border)] bg-[var(--green-deep)] px-3 py-2 text-sm text-[color:var(--app-text)]"
                     >
-                      <span className="text-xs text-emerald-100/40">{i + 1}.</span>
+                      <span className="text-xs text-[color:var(--app-text-subtle)]">{i + 1}.</span>
                       <span className="min-w-0 flex-1 truncate">
                         {item.kind === 'primary'
                           ? `${item.complex.name} — ${item.lot.label}`
@@ -496,7 +519,7 @@ export function SelectionsNewPage() {
                 type="button"
                 disabled={!canSend}
                 onClick={handleSend}
-                className="inline-flex items-center gap-2 rounded-sm bg-[#e6c364] px-6 py-3 text-sm font-semibold text-[#3d2e00] shadow-sm transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+                className="alphabase-section-primary disabled:pointer-events-none"
               >
                 <Send className="size-4" />
                 Сформировать и отправить
@@ -508,7 +531,7 @@ export function SelectionsNewPage() {
                   setSelectedLeadIds(new Set())
                   setTitle('')
                 }}
-                className="inline-flex items-center gap-2 rounded-lg border border-emerald-800/50 px-4 py-3 text-sm text-emerald-100/70 hover:bg-emerald-900/20"
+                className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--green-border)] px-4 py-3 text-sm text-[color:var(--app-text-muted)] hover:bg-[var(--dropdown-hover)]"
               >
                 <X className="size-4" />
                 Очистить
@@ -517,7 +540,7 @@ export function SelectionsNewPage() {
           </div>
 
           <div className="lg:sticky lg:top-4 lg:self-start">
-            <p className="mb-2 text-center text-[10px] font-bold uppercase tracking-widest text-emerald-100/40">
+            <p className="mb-2 text-center text-[10px] font-bold uppercase tracking-widest text-[color:var(--hub-desc)]">
               Предпросмотр письма
             </p>
             <SelectionSendPreview

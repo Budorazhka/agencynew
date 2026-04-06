@@ -25,11 +25,22 @@ const LEAD_STATUS_COLORS: Record<string, string> = {
 type Tab = 'profile' | 'leads' | 'payouts'
 
 const S = {
-  page:  { padding: '28px 28px 48px', minHeight: '100vh', fontFamily: 'Inter, sans-serif' } as React.CSSProperties,
-  gold:  'var(--gold)',
-  white: 'rgba(255,255,255,0.85)',
-  dim:   'rgba(255,255,255,0.4)',
-  card:  { background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '16px 20px' } as React.CSSProperties,
+  page: {
+    padding: '28px 28px 48px',
+    minHeight: '100vh',
+    fontFamily: "'Montserrat', sans-serif",
+    background: 'var(--app-bg)',
+  } as React.CSSProperties,
+  gold: 'var(--gold)',
+  text: 'var(--app-text)',
+  dim: 'var(--app-text-subtle)',
+  rowLine: 'var(--workspace-row-border)',
+  card: {
+    background: 'var(--hub-card-bg)',
+    border: '1px solid var(--hub-card-border)',
+    borderRadius: 12,
+    padding: '16px 20px',
+  } as React.CSSProperties,
 }
 
 export function PartnerCardPage() {
@@ -40,16 +51,16 @@ export function PartnerCardPage() {
   const partner = PARTNERS_MOCK.find(p => p.id === partnerId)
   if (!partner) {
     return (
-      <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/partners/list' }}>
+      <DashboardShell>
         <div style={{ ...S.page, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>Партнёр не найден</div>
+          <div style={{ color: 'var(--app-text-subtle)', fontSize: 14 }}>Партнёр не найден</div>
         </div>
       </DashboardShell>
     )
   }
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/partners/list' }}>
+    <DashboardShell>
       <div style={S.page}>
         {/* Back */}
         <button
@@ -64,7 +75,7 @@ export function PartnerCardPage() {
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20, marginBottom: 28 }}>
           <div style={{
             width: 60, height: 60, borderRadius: '50%', flexShrink: 0,
-            background: 'rgba(242,207,141,0.12)', border: '1px solid rgba(242,207,141,0.3)',
+            background: 'color-mix(in srgb, var(--gold) 12%, transparent)', border: '1px solid color-mix(in srgb, var(--gold) 30%, transparent)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 22, fontWeight: 700, color: S.gold,
           }}>
@@ -81,7 +92,7 @@ export function PartnerCardPage() {
               </span>
               <span style={{
                 fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
-                color: partner.status === 'active' ? '#4ade80' : partner.status === 'pending' ? '#fb923c' : 'rgba(255,255,255,0.3)',
+                color: partner.status === 'active' ? '#4ade80' : partner.status === 'pending' ? '#fb923c' : S.dim,
                 background: 'rgba(255,255,255,0.05)', padding: '3px 8px', borderRadius: 4,
               }}>
                 {PARTNER_STATUS_LABELS[partner.status]}
@@ -115,7 +126,7 @@ export function PartnerCardPage() {
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: 2, borderBottom: '1px solid rgba(255,255,255,0.07)', marginBottom: 20 }}>
+        <div style={{ display: 'flex', gap: 2, borderBottom: '1px solid var(--divider-subtle)', marginBottom: 20 }}>
           {([['profile','Профиль'],['leads','Переданные лиды'],['payouts','Начисления']] as [Tab, string][]).map(([id, label]) => (
             <button key={id} onClick={() => setTab(id)} style={{
               padding: '8px 18px', fontSize: 11, fontWeight: tab === id ? 700 : 500,
@@ -145,9 +156,9 @@ export function PartnerCardPage() {
                 { label: 'Статус', value: PARTNER_STATUS_LABELS[partner.status] },
                 { label: 'Дата регистрации', value: new Date(partner.registeredAt).toLocaleDateString('ru') },
               ].map(row => (
-                <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${S.rowLine}` }}>
                   <span style={{ fontSize: 12, color: S.dim }}>{row.label}</span>
-                  <span style={{ fontSize: 12, color: S.white, fontWeight: 500 }}>{row.value}</span>
+                  <span style={{ fontSize: 12, color: S.text, fontWeight: 500 }}>{row.value}</span>
                 </div>
               ))}
             </div>
@@ -157,9 +168,9 @@ export function PartnerCardPage() {
                 { label: 'Всего передано лидов', value: partner.leadsCount, color: '#60a5fa' },
                 { label: 'Комиссия всего', value: FMT.format(partner.commissionTotal), color: '#4ade80' },
                 { label: 'Текущий баланс', value: FMT.format(partner.balance), color: partner.balance > 0 ? '#4ade80' : S.dim },
-                { label: 'Выплат произведено', value: partner.payouts.length, color: S.white },
+                { label: 'Выплат произведено', value: partner.payouts.length, color: S.text },
               ].map(row => (
-                <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: `1px solid ${S.rowLine}` }}>
                   <span style={{ fontSize: 12, color: S.dim }}>{row.label}</span>
                   <span style={{ fontSize: 14, fontWeight: 700, color: row.color }}>{row.value}</span>
                 </div>
@@ -177,10 +188,10 @@ export function PartnerCardPage() {
             {partner.leads.map((lead, i) => (
               <div key={lead.id} style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '12px 0', borderBottom: i < partner.leads.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
+                padding: '12px 0', borderBottom: i < partner.leads.length - 1 ? `1px solid ${S.rowLine}` : 'none',
               }}>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: S.white }}>{lead.clientName}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: S.text }}>{lead.clientName}</div>
                   <div style={{ fontSize: 11, color: S.dim }}>{new Date(lead.transferredAt).toLocaleDateString('ru')}</div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -206,11 +217,14 @@ export function PartnerCardPage() {
           <div style={S.card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <span style={{ fontSize: 12, color: S.dim }}>История выплат</span>
-              <button style={{
-                padding: '6px 14px', borderRadius: 8, fontSize: 11, fontWeight: 700,
-                background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)',
-                color: '#4ade80', cursor: 'pointer', letterSpacing: '0.05em',
-              }}>
+              <button
+                type="button"
+                style={{
+                  padding: '6px 14px', borderRadius: 'var(--section-cta-radius)', fontSize: 11, fontWeight: 700,
+                  background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)',
+                  color: '#4ade80', cursor: 'pointer', letterSpacing: '0.05em',
+                }}
+              >
                 + Начислить
               </button>
             </div>
@@ -220,20 +234,20 @@ export function PartnerCardPage() {
             {partner.payouts.map((payout, i) => (
               <div key={payout.id} style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '12px 0', borderBottom: i < partner.payouts.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
+                padding: '12px 0', borderBottom: i < partner.payouts.length - 1 ? `1px solid ${S.rowLine}` : 'none',
               }}>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: S.white }}>{FMT.format(payout.amount)}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: S.text }}>{FMT.format(payout.amount)}</div>
                   <div style={{ fontSize: 11, color: S.dim }}>
                     {new Date(payout.date).toLocaleDateString('ru')} · Сделка: {payout.dealId}
                   </div>
                   {payout.comment && <div style={{ fontSize: 11, color: S.dim, marginTop: 2 }}>{payout.comment}</div>}
                 </div>
-                <Building2 size={14} color="rgba(255,255,255,0.2)" />
+                <Building2 size={14} color="var(--app-text-subtle)" />
               </div>
             ))}
             {partner.payouts.length > 0 && (
-              <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ marginTop: 16, paddingTop: 12, borderTop: `1px solid ${S.rowLine}`, display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: 12, color: S.dim }}>Итого выплачено</span>
                 <span style={{ fontSize: 15, fontWeight: 700, color: '#4ade80' }}>
                   {FMT.format(partner.payouts.reduce((s, p) => s + p.amount, 0))}

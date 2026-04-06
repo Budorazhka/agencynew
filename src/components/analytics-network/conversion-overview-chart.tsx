@@ -132,7 +132,7 @@ export function ConversionOverviewChart({ funnel, className, onViewNetwork, vari
                     <div className="min-w-0 flex-1">
                         <CardTitle className={cn(
                             "text-center text-xl font-semibold sm:text-left sm:text-3xl",
-                            isLeads ? "text-[#fcecc8]" : "text-slate-900"
+                            isLeads ? "text-[color:var(--app-text)]" : "text-slate-900"
                         )}>
                             Конверсии
                         </CardTitle>
@@ -150,7 +150,7 @@ export function ConversionOverviewChart({ funnel, className, onViewNetwork, vari
                             className={cn(
                                 "shrink-0",
                                 isLeads
-                                    ? "border-[rgba(229,196,136,0.5)] bg-[rgba(68,43,18,0.6)] text-[#fcecc8] hover:bg-[rgba(88,57,25,0.7)]"
+                                    ? "border-[rgba(229,196,136,0.5)] bg-[rgba(68,43,18,0.6)] text-[color:var(--app-text)] hover:bg-[rgba(88,57,25,0.7)]"
                                     : "border-emerald-500/40 bg-emerald-500/10 text-emerald-800 hover:bg-emerald-500/20"
                             )}
                             onClick={onViewNetwork}
@@ -196,7 +196,7 @@ export function ConversionOverviewChart({ funnel, className, onViewNetwork, vari
                                                 <div className="w-full space-y-1">
                                                     <div className="flex items-center justify-between gap-2">
                                                         <span className={isLeads ? "text-[#e8dcc4]" : "text-muted-foreground"}>{row?.label ?? "Конверсия"}</span>
-                                                        <span className={cn("font-medium tabular-nums", isLeads && "text-[#fcecc8]")}>{Number(value)}%</span>
+                                                        <span className={cn("font-medium tabular-nums", isLeads && "text-[color:var(--app-text)]")}>{Number(value)}%</span>
                                                     </div>
                                                     {row?.description && (
                                                         <p className={cn("text-[11px]", isLeads ? "text-[#e8dcc4]" : "text-muted-foreground")}>{row.description}</p>
@@ -213,8 +213,8 @@ export function ConversionOverviewChart({ funnel, className, onViewNetwork, vari
                                     position="right"
                                     formatter={(value) => `${value ?? 0}%`}
                                     className={labelListClass}
-                                    fill={isLeads ? "#fcecc8" : undefined}
-                                    style={isLeads ? { fill: "#fcecc8" } : undefined}
+                                    fill={isLeads ? 'var(--app-text)' : undefined}
+                                    style={isLeads ? { fill: 'var(--app-text)' } : undefined}
                                 />
                                 {data.map((item) => (
                                     <Cell key={item.key} fill={item.color} />
@@ -240,7 +240,7 @@ export function ConversionOverviewChart({ funnel, className, onViewNetwork, vari
                                     <span className="h-2.5 w-2.5 shrink-0 rounded-full sm:h-3 sm:w-3" style={{ backgroundColor: item.color }} />
                                     <span className={cn("text-base font-medium break-words", isLeads ? "text-[#e8dcc4]" : "text-slate-700")}>{item.label}</span>
                                 </div>
-                                <span className={cn("shrink-0 text-xl font-bold leading-none tabular-nums", isLeads ? "text-[#fcecc8]" : "text-slate-900")}>{item.value}%</span>
+                                <span className={cn("shrink-0 text-xl font-bold leading-none tabular-nums", isLeads ? "text-[color:var(--app-text)]" : "text-slate-900")}>{item.value}%</span>
                             </div>
                             <p className={cn("mt-1 text-sm leading-snug", isLeads ? "text-[#e8dcc4]" : "text-slate-700")}>{item.description}</p>
                         </div>

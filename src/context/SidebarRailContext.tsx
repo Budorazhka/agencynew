@@ -10,7 +10,8 @@ import {
 /** Префиксы «тяжёлых» экранов (для документации / будущих подсказок UI). Состояние rail больше не привязано к маршруту. */
 export const HEAVY_ROUTE_PREFIXES: readonly string[] = [
   '/dashboard/objects',
-  '/dashboard/selections',
+  '/dashboard/objects/selections',
+  '/dashboard/new-buildings/selections',
   '/dashboard/leads/poker',
   '/dashboard/deals/kanban',
   '/dashboard/my-properties',
@@ -38,7 +39,7 @@ function writeStoredCollapsed(collapsed: boolean) {
 }
 
 type SidebarRailContextValue = {
-  /** Узкий режим: ~72px, только иконки 5 разделов */
+  /** Узкий режим: ~72px, только иконки разделов */
   railCollapsed: boolean
   toggleRail: () => void
   expandRail: () => void

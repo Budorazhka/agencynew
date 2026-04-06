@@ -125,7 +125,7 @@ export function LeadCloudTab() {
         </p>
         <Button
           variant="outline"
-          className="gap-2 shrink-0 border-[rgba(229,196,136,0.6)] bg-[rgba(68,43,18,0.5)] text-[#fcecc8] hover:border-[rgba(236,194,112,0.7)] hover:bg-[rgba(88,57,25,0.65)] hover:text-[#fff5e0]"
+          className="gap-2 shrink-0 border-[color:var(--hub-card-border-hover)] bg-[color-mix(in_srgb,var(--gold-dark)_45%,transparent)] text-[color:var(--app-text)] hover:border-[color:var(--hub-card-border-hover)] hover:bg-[color-mix(in_srgb,var(--gold-dark)_55%,transparent)] hover:text-[#fff5e0]"
           onClick={() => setSecretDialogOpen(true)}
         >
           <PlayingCardsIcon className="size-5 shrink-0" />

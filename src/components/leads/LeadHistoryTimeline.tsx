@@ -146,10 +146,10 @@ export function LeadHistoryTimeline({
   const [taskEisenhowerUrgent, setTaskEisenhowerUrgent] = useState<boolean>(false)
   const [taskEisenhowerImportant, setTaskEisenhowerImportant] = useState<boolean>(false)
 
-  // Filter: only tasks
+  // Фильтр: только задачи
   const [onlyTasks, setOnlyTasks] = useState(false)
 
-  // Inline edit state
+  // Состояние правки прямо в списке
   const [editingEventId, setEditingEventId] = useState<string | null>(null)
   const [editTaskName, setEditTaskName] = useState("")
   const [editDeadline, setEditDeadline] = useState("")
@@ -210,7 +210,7 @@ export function LeadHistoryTimeline({
     setEditTaskName(event.payload.taskName ?? '')
     setEditEisenhowerUrgent(event.payload.eisenhowerUrgent ?? false)
     setEditEisenhowerImportant(event.payload.eisenhowerImportant ?? false)
-    // Convert ISO to datetime-local format
+    // Переводим ISO в формат поля datetime-local
     if (event.payload.deadline) {
       const d = new Date(event.payload.deadline)
       const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
@@ -238,7 +238,7 @@ export function LeadHistoryTimeline({
       },
     })
 
-    // Log change as a comment
+    // Пишем изменение как комментарий в историю
     const oldName = event.payload.taskName ?? ''
     const changedParts: string[] = []
     if (editTaskName !== oldName) changedParts.push(`задача: «${editTaskName}»`)
@@ -329,7 +329,7 @@ export function LeadHistoryTimeline({
   return (
     <div className="flex h-full flex-col bg-white overflow-hidden font-sans">
       {/* Scrollable Timeline Area */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 md:p-8 scroll-smooth" style={{ fontFamily: "Inter, sans-serif" }}>
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 md:p-8 scroll-smooth font-sans">
         <div className="max-w-4xl mx-auto pb-6">
           {/* Filter toggle */}
           <div className="flex items-center justify-end mb-4">

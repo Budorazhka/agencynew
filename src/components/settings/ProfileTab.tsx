@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Camera, KeyRound, Check } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
+import { ROLE_LABEL } from '@/lib/permissions'
+import type { UserRole } from '@/types/auth'
 import {
   Dialog,
   DialogContent,
@@ -8,14 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-const ROLE_LABELS: Record<string, string> = {
-  owner:    'Собственник',
-  director: 'Директор',
-  rop:      'РОП',
-  manager:  'Менеджер',
-}
-
-// Styled input for felt theme
+// Поле ввода в стиле темы «сукно»
 function FeltInput({
   label,
   value,
@@ -33,7 +28,7 @@ function FeltInput({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="block text-xs font-medium text-[rgba(242,207,141,0.55)] uppercase tracking-wide">
+      <label className="block text-xs font-medium text-[color:var(--hub-stat-label)] uppercase tracking-wide">
         {label}
       </label>
       <input
@@ -42,7 +37,7 @@ function FeltInput({
         onChange={onChange ? (e) => onChange(e.target.value) : undefined}
         readOnly={readOnly}
         placeholder={placeholder}
-        className="w-full rounded-xl border border-[rgba(242,207,141,0.2)] bg-[rgba(0,0,0,0.25)] px-4 py-2.5 text-sm text-[#fcecc8] placeholder:text-[rgba(242,207,141,0.3)] outline-none focus:border-[rgba(242,207,141,0.5)] focus:ring-1 focus:ring-[rgba(242,207,141,0.2)] transition-all read-only:opacity-50 read-only:cursor-default"
+        className="w-full rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.25)] px-4 py-2.5 text-sm text-[color:var(--app-text)] placeholder:text-[color:var(--theme-accent-icon-dim)] outline-none focus:border-[color:var(--hub-card-border-hover)] focus:ring-1 focus:ring-[color:var(--hub-card-border)] transition-all read-only:opacity-50 read-only:cursor-default"
       />
     </div>
   )
@@ -70,24 +65,25 @@ export function ProfileTab() {
     setOldPwd(''); setNewPwd(''); setConfPwd('')
   }
 
-  const roleLabel = ROLE_LABELS[currentUser?.role ?? ''] ?? currentUser?.role ?? '—'
+  const role = currentUser?.role as UserRole | undefined
+  const roleLabel = role ? ROLE_LABEL[role] : '—'
 
   return (
     <div className="space-y-8 max-w-xl">
       {/* Avatar */}
       <div className="flex items-center gap-5">
         <div className="relative">
-          <div className="flex size-20 items-center justify-center rounded-full border-2 border-[rgba(242,207,141,0.3)] bg-[rgba(242,207,141,0.1)] text-2xl font-bold text-[#fcecc8]">
+          <div className="flex size-20 items-center justify-center rounded-full border-2 border-[color:var(--hub-card-border-hover)] bg-[var(--hub-tile-icon-bg)] text-2xl font-bold text-[color:var(--app-text)]">
             {(currentUser?.name ?? 'U').slice(0, 1).toUpperCase()}
           </div>
-          <button className="absolute -bottom-1 -right-1 flex size-7 items-center justify-center rounded-full border border-[rgba(242,207,141,0.3)] bg-[rgba(9,47,38,0.9)] text-[rgba(242,207,141,0.7)] hover:text-[#fcecc8] transition-colors">
+          <button className="absolute -bottom-1 -right-1 flex size-7 items-center justify-center rounded-full border border-[color:var(--hub-card-border-hover)] bg-[rgba(9,47,38,0.9)] text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--app-text)] transition-colors">
             <Camera className="size-3.5" />
           </button>
         </div>
         <div>
-          <p className="font-semibold text-[#fcecc8]">{currentUser?.name}</p>
-          <p className="text-sm text-[rgba(242,207,141,0.5)]">{currentUser?.companyName}</p>
-          <span className="mt-1 inline-block rounded-full border border-[rgba(242,207,141,0.25)] bg-[rgba(242,207,141,0.08)] px-2.5 py-0.5 text-xs font-medium text-[rgba(242,207,141,0.7)]">
+          <p className="font-semibold text-[color:var(--app-text)]">{currentUser?.name}</p>
+          <p className="text-sm text-[color:var(--hub-desc)]">{currentUser?.companyName}</p>
+          <span className="mt-1 inline-block rounded-full border border-[color:var(--hub-tile-icon-border)] bg-[var(--nav-item-bg-active)] px-2.5 py-0.5 text-xs font-medium text-[color:var(--theme-accent-link-dim)]">
             {roleLabel}
           </span>
         </div>
@@ -111,7 +107,7 @@ export function ProfileTab() {
         </button>
         <button
           onClick={() => setPwdOpen(true)}
-          className="flex items-center gap-2 rounded-xl border border-[rgba(242,207,141,0.2)] px-5 py-2.5 text-sm font-medium text-[rgba(242,207,141,0.7)] hover:border-[rgba(242,207,141,0.4)] hover:text-[#fcecc8] transition-colors"
+          className="flex items-center gap-2 rounded-xl border border-[color:var(--hub-card-border)] px-5 py-2.5 text-sm font-medium text-[color:var(--theme-accent-link-dim)] hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--app-text)] transition-colors"
         >
           <KeyRound className="size-4" />
           Изменить пароль
@@ -120,9 +116,9 @@ export function ProfileTab() {
 
       {/* Password dialog */}
       <Dialog open={pwdOpen} onOpenChange={setPwdOpen}>
-        <DialogContent className="max-w-sm bg-[rgba(9,40,32,0.98)] border-[rgba(242,207,141,0.2)] text-[#fcecc8]">
+        <DialogContent className="max-w-sm bg-[rgba(9,40,32,0.98)] border-[color:var(--hub-card-border)] text-[color:var(--app-text)]">
           <DialogHeader>
-            <DialogTitle className="text-[#fcecc8]">Изменить пароль</DialogTitle>
+            <DialogTitle className="text-[color:var(--app-text)]">Изменить пароль</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
             <FeltInput label="Текущий пароль" value={oldPwd} onChange={setOldPwd} type="password" placeholder="••••••••" />
@@ -130,7 +126,7 @@ export function ProfileTab() {
             <FeltInput label="Подтверждение" value={confPwd} onChange={setConfPwd} type="password" placeholder="••••••••" />
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <button onClick={() => setPwdOpen(false)} className="rounded-xl border border-[rgba(242,207,141,0.2)] px-4 py-2 text-sm text-[rgba(242,207,141,0.6)] hover:text-[#fcecc8] transition-colors">
+            <button onClick={() => setPwdOpen(false)} className="rounded-xl border border-[color:var(--hub-card-border)] px-4 py-2 text-sm text-[color:var(--hub-badge-soon-fg)] hover:text-[color:var(--app-text)] transition-colors">
               Отмена
             </button>
             <button

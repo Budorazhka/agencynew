@@ -41,7 +41,7 @@ export function MailingPreview({
           {title || 'Без названия'}
         </h3>
         <div
-          className="max-w-none text-base leading-relaxed text-[color:var(--app-text-muted)] [&_a]:text-[#e6c364] [&_li]:my-0.5 [&_p]:my-2 [&_ul]:my-2"
+          className="max-w-none text-base leading-relaxed text-[color:var(--app-text-muted)] [&_a]:text-[color:var(--theme-accent-heading)] [&_li]:my-0.5 [&_p]:my-2 [&_ul]:my-2"
           dangerouslySetInnerHTML={{ __html: body || '<p>Нет текста</p>' }}
         />
         {filteredLinks.length > 0 && (
@@ -54,7 +54,7 @@ export function MailingPreview({
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-base text-[#e6c364] underline hover:no-underline"
+                    className="text-base text-[color:var(--theme-accent-heading)] underline hover:no-underline"
                   >
                     {link.label?.trim() || link.url}
                   </a>
@@ -79,7 +79,7 @@ export function MailingPreview({
               href={fileUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-[#e6c364] underline"
+              className="text-sm text-[color:var(--theme-accent-heading)] underline"
             >
               Скачать
             </a>

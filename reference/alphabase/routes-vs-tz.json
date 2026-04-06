@@ -1,0 +1,293 @@
+{
+  "description": "Соответствие пунктов стартового документа дизайна ALPHABASE.sale маршрутам приложения (HashRouter: префикс #). Матрица ролей — в CSV из ALPHABASE_sale_roles_accesses.xlsx (npm run alphabase:export).",
+  "sources": {
+    "designerStartDoc": "ALPHABASE_sale_designer_start_doc (2).docx",
+    "rolesAndAccesses": "ALPHABASE_sale_roles_accesses.xlsx"
+  },
+  "sections": [
+    {
+      "tz": "1. Рабочий стол",
+      "widgetsFromDoc": [
+        "Задачи / Новые лиды",
+        "Календарь",
+        "Уведомления / Напоминания / Новости",
+        "Выполнение планов"
+      ],
+      "routes": [
+        {
+          "path": "/dashboard",
+          "note": "Главный экран (HomePage): виджеты рабочего стола"
+        }
+      ]
+    },
+    {
+      "tz": "2. CRM",
+      "items": [
+        {
+          "label": "Панель: CRM",
+          "path": "/dashboard/clients",
+          "kind": "app"
+        },
+        {
+          "label": "Панель: Модная CRM",
+          "path": null,
+          "kind": "external",
+          "externalUrl": "https://crm.baza.sale/"
+        },
+        {
+          "label": "Панель: Документы",
+          "path": "/dashboard/crm/documents",
+          "kind": "stub"
+        },
+        {
+          "label": "Отчёт: по сделкам",
+          "path": "/dashboard/deals/report",
+          "kind": "app"
+        },
+        {
+          "label": "Отчёт: по менеджеру / команде / KPI / планам",
+          "path": "/dashboard/team/kpi",
+          "kind": "app"
+        }
+      ],
+      "hub": "/dashboard/crm"
+    },
+    {
+      "tz": "3. Лиды",
+      "items": [
+        {
+          "label": "Панель: Распределение лидов",
+          "path": "/dashboard/leads/poker?distribution=1",
+          "kind": "app"
+        },
+        {
+          "label": "Панель: Источники лидов",
+          "path": "/dashboard/leads/sources",
+          "kind": "stub"
+        },
+        {
+          "label": "Отчёт: общий по лидам",
+          "path": "/dashboard/leads/report/general",
+          "kind": "stub"
+        },
+        {
+          "label": "Отчёт: маркетинговый по лидам",
+          "path": "/dashboard/leads/report/marketing",
+          "kind": "stub"
+        }
+      ],
+      "hub": "/dashboard/leads-hub"
+    },
+    {
+      "tz": "4. Новостройки",
+      "items": [
+        {
+          "label": "Панель: Объекты и комиссии",
+          "path": "/dashboard/new-buildings/objects",
+          "kind": "stub"
+        },
+        {
+          "label": "Панель: Брони и регистрации",
+          "path": "/dashboard/new-buildings/bookings-registrations",
+          "kind": "stub"
+        },
+        {
+          "label": "Панель: Новостройки",
+          "path": "/dashboard/new-buildings/catalog",
+          "kind": "stub"
+        },
+        {
+          "label": "Панель: Партнёры первичного рынка",
+          "path": "/dashboard/new-buildings/partners",
+          "kind": "stub"
+        },
+        {
+          "label": "Отчёт: о работе партнёров по первичному рынку",
+          "path": "/dashboard/new-buildings/report-partners",
+          "kind": "stub"
+        }
+      ],
+      "hub": "/dashboard/new-buildings"
+    },
+    {
+      "tz": "5. Объекты вторичного рынка",
+      "items": [
+        {
+          "label": "Панель: Объекты",
+          "path": "/dashboard/objects/list",
+          "kind": "app"
+        },
+        {
+          "label": "Отчёт: по объектам",
+          "path": "/dashboard/objects/report",
+          "kind": "stub"
+        }
+      ],
+      "hub": "/dashboard/objects"
+    },
+    {
+      "tz": "6. MLS",
+      "items": [
+        {
+          "label": "Панель: MLS",
+          "path": "/dashboard/partners/list",
+          "kind": "app"
+        },
+        {
+          "label": "Панель: MLS вторичного рынка",
+          "path": "/dashboard/mls/secondary",
+          "kind": "stub"
+        },
+        {
+          "label": "Панель: Верификация партнёров MLS вторичного рынка",
+          "path": "/dashboard/mls/verification-secondary",
+          "kind": "stub"
+        },
+        {
+          "label": "Панель: MLS аренды",
+          "path": "/dashboard/mls/rent",
+          "kind": "stub"
+        },
+        {
+          "label": "Панель: Верификация партнёров MLS аренды",
+          "path": "/dashboard/mls/verification-rent",
+          "kind": "stub"
+        },
+        {
+          "label": "Отчёт: по MLS",
+          "path": "/dashboard/mls/reports/summary",
+          "kind": "stub"
+        },
+        {
+          "label": "Отчёт: MLS-партнёры вторичка",
+          "path": "/dashboard/mls/reports/partners-secondary",
+          "kind": "stub"
+        },
+        {
+          "label": "Отчёт: MLS-партнёры аренда",
+          "path": "/dashboard/mls/reports/partners-rent",
+          "kind": "stub"
+        }
+      ],
+      "hub": "/dashboard/mls"
+    },
+    {
+      "tz": "7. Команда",
+      "items": [
+        {
+          "label": "Панель: Команда",
+          "path": "/dashboard/team/org",
+          "kind": "app"
+        },
+        {
+          "label": "Панель: Обучение и база знаний",
+          "path": "/dashboard/learning",
+          "kind": "app"
+        },
+        {
+          "label": "Отчёт: по менеджеру / команде / KPI / планам",
+          "path": "/dashboard/team/kpi",
+          "kind": "app"
+        }
+      ],
+      "hub": "/dashboard/team"
+    },
+    {
+      "tz": "8. Финансы",
+      "items": [
+        {
+          "label": "Панель: Финансы",
+          "path": "/dashboard/finance/panel",
+          "kind": "stub"
+        },
+        {
+          "label": "Отчёт: по финансам",
+          "path": "/dashboard/finance/report",
+          "kind": "stub"
+        }
+      ],
+      "hub": "/dashboard/finance"
+    },
+    {
+      "tz": "9. Сообщество",
+      "items": [
+        {
+          "label": "Панель: Сообщество",
+          "path": "/dashboard/community/panel",
+          "kind": "stub"
+        },
+        {
+          "label": "Панель: Партнёры сообщества",
+          "path": "/dashboard/partners/list",
+          "kind": "app",
+          "note": "В стартовом doc путь /dashboard/community/partners — в приложении редирект на каталог партнёров."
+        },
+        {
+          "label": "Отчёт: о формировании сообщества партнёров",
+          "path": "/dashboard/community/report",
+          "kind": "stub"
+        }
+      ],
+      "hub": "/dashboard/community"
+    },
+    {
+      "tz": "10. Настройки",
+      "items": [
+        {
+          "label": "Панель: Доступы",
+          "path": "/dashboard/team/access",
+          "kind": "app"
+        },
+        {
+          "label": "Панель: Автозадачи и триггеры",
+          "path": "/dashboard/settings/automation",
+          "kind": "stub"
+        },
+        {
+          "label": "Панель: Уведомления",
+          "path": "/dashboard/settings/notifications",
+          "kind": "app"
+        },
+        {
+          "label": "Служебный: Настройки системы",
+          "path": "/dashboard/settings/system",
+          "kind": "stub"
+        }
+      ],
+      "hub": "/dashboard/settings-hub",
+      "extraInHubNotInDesignerDoc": [
+        {
+          "label": "Тарифы",
+          "path": "/dashboard/settings/tariff"
+        },
+        {
+          "label": "Тема",
+          "path": "/dashboard/settings/theme"
+        },
+        {
+          "label": "Напоминания",
+          "path": "/dashboard/info/reminders"
+        },
+        {
+          "label": "Расширенные настройки (брендинг, компания…)",
+          "path": "/dashboard/settings"
+        }
+      ]
+    },
+    {
+      "tz": "Хедер (п. 5 стартового doc)",
+      "items": [
+        {
+          "label": "AI / Marketplace / уведомления / быстрые действия / профиль",
+          "path": null,
+          "note": "Реализация в shell App / хедер дашборда; marketplace: /dashboard/marketplace"
+        }
+      ]
+    }
+  ],
+  "kindLegend": {
+    "app": "Рабочий экран с данными или полноценный UI (не заглушка SectionStubPage)",
+    "stub": "SectionStubPage или явная заглушка под API",
+    "external": "Внешняя ссылка"
+  }
+}

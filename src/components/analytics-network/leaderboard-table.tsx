@@ -87,7 +87,7 @@ function SortIcon({ column, currentColumn, direction }: {
     currentColumn: SortColumn;
     direction: SortDirection;
 }) {
-    const iconClass = "h-4 w-4 text-slate-600";
+    const iconClass = "h-4 w-4 text-[color:var(--app-text-muted)]";
     if (column !== currentColumn) {
         return <ArrowUpDown className={iconClass} />;
     }
@@ -117,7 +117,9 @@ export function LeaderboardTable({
         return (
             <Card className={cn("w-full overflow-hidden", className)}>
                 <CardHeader className="pb-3">
-                    <CardTitle className="text-center">Лидерборд: Мои рефералы L1</CardTitle>
+                    <CardTitle className="text-center text-base font-semibold sm:text-lg">
+                        Лидерборд: Мои рефералы L1
+                    </CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-1 items-center justify-center px-6 pb-6">
                     <div className="flex flex-col items-center gap-2 py-10 text-center">
@@ -139,7 +141,9 @@ export function LeaderboardTable({
     return (
         <Card className={cn("flex h-full min-h-0 w-full flex-col overflow-hidden", className)}>
             <CardHeader className="pb-3">
-                <CardTitle className="text-center">Лидерборд: Мои рефералы L1</CardTitle>
+                <CardTitle className="text-center text-base font-semibold sm:text-lg">
+                    Лидерборд: Мои рефералы L1
+                </CardTitle>
             </CardHeader>
             <CardContent className="flex min-h-0 flex-1 flex-col px-0 pb-0">
                 <div className="space-y-2 px-3 pb-3 md:hidden">
@@ -157,8 +161,8 @@ export function LeaderboardTable({
                     <div className="h-full overflow-x-auto">
                         <div className="h-full overflow-y-auto">
                         <Table className="min-w-[860px]">
-                            <TableHeader className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200">
-                                <TableRow className="hover:bg-transparent bg-slate-50 border-0">
+                            <TableHeader className="sticky top-0 z-10 border-b border-slate-200 bg-slate-50/95 backdrop-blur-sm">
+                                <TableRow className="border-0 bg-transparent hover:bg-transparent">
                                 {columns.map((col) => (
                                     <TableHead
                                         key={col.key}
@@ -195,7 +199,7 @@ export function LeaderboardTable({
                                 {partners.map((partner) => (
                                     <TableRow
                                         key={partner.id}
-                                        className="cursor-pointer transition-colors hover:bg-muted/40"
+                                        className="cursor-pointer border-0 transition-colors hover:bg-muted/40"
                                         onClick={() => openPartner(partner.id)}
                                     >
                                         <TableCell className="p-3 ps-6">
@@ -321,16 +325,16 @@ function MobilePartnerCard({
 }) {
     return (
         <div
-            className="space-y-3 rounded-lg border p-3"
+            className="space-y-3 rounded-xl border border-[color:var(--green-border)] bg-[color:var(--green-card)]/35 p-3 shadow-sm"
             onClick={() => onOpenPartner(partner.id)}
         >
             <ParticipantCell partner={partner} />
             <div className="space-y-1">
-                <p className="text-[11px] text-muted-foreground">Лиды</p>
+                <p className="text-xs font-medium text-[color:var(--app-text-muted)]">Лиды</p>
                 <MiniBar value={partner.leadsAdded} maxValue={maxLeadsAdded} color="bg-blue-500" showValue />
             </div>
             <div className="space-y-1">
-                <p className="text-[11px] text-muted-foreground">Прогресс</p>
+                <p className="text-xs font-medium text-[color:var(--app-text-muted)]">Прогресс</p>
                 <MiniBar
                     value={partner.stageChangesCount}
                     maxValue={maxStageChangesCount}
@@ -338,7 +342,7 @@ function MobilePartnerCard({
                     showValue
                 />
             </div>
-            <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-slate-800 tabular-nums">
+            <div className="flex flex-wrap items-center gap-3 text-xs font-medium tabular-nums text-[color:var(--app-text)]">
                 <span className="inline-flex items-center gap-1" title="Звонки">
                     <Phone className="h-3.5 w-3.5 text-orange-500" />
                     {partner.callClicks.toLocaleString("ru-RU")}
@@ -352,9 +356,11 @@ function MobilePartnerCard({
                     {partner.selectionsCreated.toLocaleString("ru-RU")}
                 </span>
             </div>
-            <div className="flex items-center justify-between text-xs text-slate-600">
+            <div className="flex items-center justify-between text-xs text-[color:var(--app-text-muted)]">
                 <span>Онлайн 7 дней: {partner.onlineDaysLast7}/7</span>
-                <span className="font-semibold text-slate-900 tabular-nums">Комиссия: ${partner.commissionUsd.toLocaleString("ru-RU")}</span>
+                <span className="font-semibold tabular-nums text-[color:var(--app-text)]">
+                    Комиссия: ${partner.commissionUsd.toLocaleString("ru-RU")}
+                </span>
             </div>
         </div>
     );

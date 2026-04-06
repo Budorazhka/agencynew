@@ -28,15 +28,15 @@ export function BrandingTab() {
   return (
     <div className="max-w-xl space-y-8">
       <div>
-        <p className="mb-1 text-xs uppercase tracking-widest text-[rgba(242,207,141,0.45)]">Оформление</p>
-        <h2 className="mb-2 text-xl font-bold text-[#fcecc8]">Брендинг агентства</h2>
-        <p className="text-sm text-[rgba(242,207,141,0.55)]">
+        <p className="mb-1 text-xs uppercase tracking-widest text-[color:var(--hub-stat-label)]">Оформление</p>
+        <h2 className="mb-2 text-xl font-bold text-[color:var(--app-text)]">Брендинг агентства</h2>
+        <p className="text-sm text-[color:var(--hub-stat-label)]">
           Название и логотип подставляются в боковую панель CRM, на главный экран и в модули вроде подборок для клиентов.
         </p>
       </div>
 
       <div className="space-y-1.5">
-        <label className="block text-xs font-medium uppercase tracking-wide text-[rgba(242,207,141,0.55)]">
+        <label className="block text-xs font-medium uppercase tracking-wide text-[color:var(--hub-stat-label)]">
           Название компании (как в интерфейсе)
         </label>
         <input
@@ -44,15 +44,15 @@ export function BrandingTab() {
           value={name}
           onChange={e => setName(e.target.value)}
           placeholder="Например, Премьер Недвижимость"
-          className="w-full rounded-xl border border-[rgba(242,207,141,0.2)] bg-[rgba(0,0,0,0.25)] px-4 py-2.5 text-sm text-[#fcecc8] placeholder:text-[rgba(242,207,141,0.3)] outline-none transition-all focus:border-[rgba(242,207,141,0.5)] focus:ring-1 focus:ring-[rgba(242,207,141,0.2)]"
+          className="w-full rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.25)] px-4 py-2.5 text-sm text-[color:var(--app-text)] placeholder:text-[color:var(--theme-accent-icon-dim)] outline-none transition-all focus:border-[color:var(--hub-card-border-hover)] focus:ring-1 focus:ring-[color:var(--hub-card-border)]"
         />
       </div>
 
       <div className="space-y-3">
-        <p className="text-xs font-medium uppercase tracking-wide text-[rgba(242,207,141,0.55)]">Логотип</p>
+        <p className="text-xs font-medium uppercase tracking-wide text-[color:var(--hub-stat-label)]">Логотип</p>
         <div className="flex flex-wrap items-start gap-4">
           <div
-            className="flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-[rgba(242,207,141,0.25)]"
+            className="flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-[color:var(--hub-tile-icon-border)]"
             style={{
               background: 'repeating-conic-gradient(#e2e8f0 0% 25%, #f8fafc 0% 50%) 50% / 12px 12px',
             }}
@@ -67,7 +67,7 @@ export function BrandingTab() {
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="flex items-center gap-2 rounded-xl border border-[rgba(242,207,141,0.2)] px-4 py-2 text-sm font-medium text-[rgba(242,207,141,0.7)] transition-colors hover:border-[rgba(242,207,141,0.4)] hover:text-[#fcecc8]"
+              className="flex items-center gap-2 rounded-xl border border-[color:var(--hub-card-border)] px-4 py-2 text-sm font-medium text-[color:var(--theme-accent-link-dim)] transition-colors hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--app-text)]"
             >
               <Upload className="size-4" />
               Загрузить изображение
@@ -76,7 +76,7 @@ export function BrandingTab() {
               <button
                 type="button"
                 onClick={() => setLogo(null)}
-                className="block text-xs text-[rgba(242,207,141,0.45)] underline-offset-2 hover:text-[rgba(242,207,141,0.75)] hover:underline"
+                className="block text-xs text-[color:var(--hub-stat-label)] underline-offset-2 hover:text-[color:var(--app-text-muted)] hover:underline"
               >
                 Удалить логотип
               </button>
@@ -88,9 +88,9 @@ export function BrandingTab() {
               className="hidden"
               onChange={handleFile}
             />
-            <p className="text-xs leading-relaxed text-[rgba(242,207,141,0.42)]">
+            <p className="text-xs leading-relaxed text-[color:var(--workspace-text-muted)]">
               Загрузите файл на{' '}
-              <span className="text-[rgba(242,207,141,0.6)]">прозрачном фоне</span>
+              <span className="text-[color:var(--hub-badge-soon-fg)]">прозрачном фоне</span>
               {' '}(удобный формат — PNG). Если логотип с белым или цветным фоном, фон лучше убрать в онлайн-сервисе, например{' '}
               <a
                 href="https://www.remove.bg"

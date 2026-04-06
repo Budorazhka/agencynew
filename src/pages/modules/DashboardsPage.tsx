@@ -7,7 +7,6 @@ export default function DashboardsPage() {
       moduleIcon={<BarChart3 size={32} color="#c9a84c" />}
       moduleName="Аналитика"
       moduleDescription="Отчеты по лидам, воронке, команде и личным показателям."
-      backRoute="/dashboard"
       sections={[
         {
           icon: <BarChart3 size={20} color="#c9a84c" />,

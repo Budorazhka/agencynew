@@ -55,7 +55,7 @@ export const STATUS_LABEL: Record<CampaignStatus, string> = {
 export const STATUS_COLOR: Record<CampaignStatus, string> = {
   active: 'border-emerald-500/35 bg-emerald-500/12 text-emerald-400',
   paused: 'border-amber-500/35 bg-amber-500/10 text-amber-400',
-  ended: 'border-[rgba(242,207,141,0.2)] bg-[rgba(242,207,141,0.06)] text-[rgba(242,207,141,0.45)]',
+  ended: 'border-[color:var(--hub-card-border)] bg-[var(--hub-action-hover)] text-[color:var(--hub-stat-label)]',
 }
 
 export function formatDollars(amount: number): string {

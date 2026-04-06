@@ -12,24 +12,24 @@ export function BulkBar({ selectedCount, onApply, onDeleteSelected }: BulkBarPro
 
   if (!hasSelection) {
     return (
-      <div className="flex items-center rounded-xl border border-emerald-900/35 bg-[#0a1f1a]/80 px-4 py-2.5 text-sm text-emerald-100/50">
+      <div className="flex items-center rounded-xl border border-[var(--green-border)] bg-[var(--green-deep)]/80 px-4 py-2.5 text-sm text-[color:var(--app-text-subtle)]">
         Отметьте объекты для массового управления
       </div>
     )
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[#e6c364]/20 bg-[#0a1f1a] px-4 py-2.5 text-sm shadow-[inset_0_0_0_1px_rgba(201,168,76,0.06)]">
-      <p className="font-semibold text-[#d0e8df] min-w-0">
+    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[color:var(--hub-card-border)] bg-[var(--green-deep)] px-4 py-2.5 text-sm shadow-[inset_0_0_0_1px_rgba(201,168,76,0.06)]">
+      <p className="font-semibold text-[color:var(--workspace-text)] min-w-0">
         Выбрано: {selectedCount} {selectedCount === 1 ? 'объект' : selectedCount < 5 ? 'объекта' : 'объектов'}
       </p>
 
       <div className="flex items-center gap-2 flex-wrap ml-auto">
-        <span className="text-xs text-[rgba(230,195,100,0.62)]">Назначить статус:</span>
+        <span className="text-xs text-[color:var(--hub-stat-label)]">Назначить статус:</span>
 
         <button
           onClick={() => onApply('for_sale')}
-          className="flex items-center gap-1.5 rounded-lg border border-[rgba(230,195,100,0.2)] bg-[rgba(0,0,0,0.2)] px-3 py-1.5 text-xs font-medium text-[rgba(230,195,100,0.85)] hover:bg-[rgba(230,195,100,0.1)] hover:border-[rgba(230,195,100,0.4)] hover:text-[#d0e8df] transition-colors"
+          className="flex items-center gap-1.5 rounded-lg border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.2)] px-3 py-1.5 text-xs font-medium text-[color:var(--theme-accent-link-dim)] hover:bg-[var(--nav-item-bg-active)] hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--workspace-text)] transition-colors"
         >
           <span className="size-2 rounded-full bg-emerald-400 shrink-0" />
           В продаже
@@ -37,7 +37,7 @@ export function BulkBar({ selectedCount, onApply, onDeleteSelected }: BulkBarPro
 
         <button
           onClick={() => onApply('booked')}
-          className="flex items-center gap-1.5 rounded-lg border border-[rgba(230,195,100,0.2)] bg-[rgba(0,0,0,0.2)] px-3 py-1.5 text-xs font-medium text-[rgba(230,195,100,0.85)] hover:bg-[rgba(230,195,100,0.1)] hover:border-[rgba(230,195,100,0.4)] hover:text-[#d0e8df] transition-colors"
+          className="flex items-center gap-1.5 rounded-lg border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.2)] px-3 py-1.5 text-xs font-medium text-[color:var(--theme-accent-link-dim)] hover:bg-[var(--nav-item-bg-active)] hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--workspace-text)] transition-colors"
         >
           <span className="size-2 rounded-full bg-amber-400 shrink-0" />
           Забронировано
@@ -45,17 +45,17 @@ export function BulkBar({ selectedCount, onApply, onDeleteSelected }: BulkBarPro
 
         <button
           onClick={() => onApply('sold')}
-          className="flex items-center gap-1.5 rounded-lg border border-[rgba(230,195,100,0.2)] bg-[rgba(0,0,0,0.2)] px-3 py-1.5 text-xs font-medium text-[rgba(230,195,100,0.85)] hover:bg-[rgba(230,195,100,0.1)] hover:border-[rgba(230,195,100,0.4)] hover:text-[#d0e8df] transition-colors"
+          className="flex items-center gap-1.5 rounded-lg border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.2)] px-3 py-1.5 text-xs font-medium text-[color:var(--theme-accent-link-dim)] hover:bg-[var(--nav-item-bg-active)] hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--workspace-text)] transition-colors"
         >
           <span className="size-2 rounded-full bg-orange-400 shrink-0" />
           Продано
         </button>
 
-        <div className="w-px h-5 bg-[rgba(230,195,100,0.15)]" />
+        <div className="w-px h-5 bg-[color:var(--hub-card-border)]" />
 
         <button
           onClick={() => onApply('archive')}
-          className="flex items-center gap-1 rounded-lg border border-[rgba(230,195,100,0.15)] bg-[rgba(0,0,0,0.2)] px-3 py-1.5 text-xs font-medium text-[rgba(230,195,100,0.5)] hover:text-[rgba(230,195,100,0.8)] hover:border-[rgba(230,195,100,0.3)] transition-colors"
+          className="flex items-center gap-1 rounded-lg border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.2)] px-3 py-1.5 text-xs font-medium text-[color:var(--theme-accent-icon-dim)] hover:text-[color:var(--theme-accent-link-dim)] hover:border-[color:var(--hub-card-border-hover)] transition-colors"
         >
           <Archive className="size-3.5" />
           Архивировать

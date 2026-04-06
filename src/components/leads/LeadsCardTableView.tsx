@@ -13,11 +13,9 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core"
-import { ArrowLeft, CheckCircle2, Clock, Filter, Search, UserCheck, X, Eye, Phone, MessageSquare, ListTodo, LayoutList, LayoutGrid } from "lucide-react"
+import { Filter, Search, X, Eye, LayoutList, LayoutGrid } from "lucide-react"
 import { useLeads } from "@/context/LeadsContext"
 import { useAuth } from "@/context/AuthContext"
-import { useRolePermissions } from "@/hooks/useRolePermissions"
-import { LeadsSecretDistributionDialog } from "@/components/leads/LeadsSecretDistributionDialog"
 import type { Lead } from "@/types/leads"
 import { LEAD_STAGES, LEAD_STAGE_COLUMN } from "@/data/leads-mock"
 import {
@@ -45,7 +43,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { LeadHistoryTimeline } from "@/components/leads/LeadHistoryTimeline"
 import { cn } from "@/lib/utils"
 import "./leads-secret-table.css"
@@ -83,11 +80,6 @@ function getDeckVisualState(stageId: string, leads: Lead[]): "neutral" | "critic
   if (REJECTION_STAGE_IDS.has(stageId)) return "critical"
   if (leads.length === 0) return "neutral"
   return leads.some((lead) => getLeadProblemState(lead) === "neutral") ? "neutral" : "critical"
-}
-
-function managerLabel(managerId: string | null, managerNameById: Record<string, string>): string {
-  if (!managerId) return "Не назначен"
-  return managerNameById[managerId] ?? managerId
 }
 
 function stageTopArcPosition(index: number, total: number): { x: number; y: number } {
@@ -161,23 +153,16 @@ export function LeadsCardTableView({
   selectedManagerId,
   onSelectedManagerIdChange,
   onClose,
-  onBack,
 }: {
   variant: LeadsCardTableViewVariant
   selectedManagerId: string
   onSelectedManagerIdChange: (id: string) => void
   onClose?: () => void
-  /** В режиме page — опциональная кнопка «Назад» */
-  onBack?: () => void
 }) {
   const { state, dispatch } = useLeads()
   const { currentUser } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
-  const { isRopOrAbove } = useRolePermissions()
   const isManager = currentUser?.role === "manager"
-  const [distributionOpen, setDistributionOpen] = useState(false)
-  // Кнопка видна РОПу+ или менеджеру назначенному дежурным в ручном режиме
-  const canOpenDistribution = isRopOrAbove || (isManager && state.manualDistributorId === currentUser?.id)
   const { leadPool, leadManagers } = state
   const [cursorByStageId, setCursorByStageId] = useState<Record<string, number>>({})
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null)
@@ -186,14 +171,13 @@ export function LeadsCardTableView({
   const [filterNoManager, setFilterNoManager] = useState(false)
   const [filterOverdue, setFilterOverdue] = useState(false)
 
-  // Force selectedManagerId for manager role
+  // Для роли менеджера принудительно выставляем selectedManagerId
   useEffect(() => {
     if (isManager && currentUser?.id && selectedManagerId !== currentUser.id) {
       onSelectedManagerIdChange(currentUser.id)
     }
   }, [isManager, currentUser?.id, selectedManagerId, onSelectedManagerIdChange])
   const [onlyCritical, setOnlyCritical] = useState(false)
-  const [showStats, setShowStats] = useState(false)
   const [dateFrom, setDateFrom] = useState<string>("")
   const [dateTo, setDateTo] = useState<string>("")
   const [historyOpen, setHistoryOpen] = useState(false)
@@ -212,7 +196,6 @@ export function LeadsCardTableView({
   }, [variant])
 
   const focusLeadIdFromUrl = searchParams.get("lead")
-  const openDistributionFromUrl = searchParams.get("distribution")
 
   /** Переход из карточки сделки: полная карточка лида (?lead=…) */
   useEffect(() => {
@@ -245,25 +228,6 @@ export function LeadsCardTableView({
       { replace: true },
     )
   }, [variant, focusLeadIdFromUrl, leadPool, setSearchParams, onSelectedManagerIdChange])
-
-  /** Глубокая ссылка: открыть «Распределение» сразу при входе (?distribution=1) */
-  useEffect(() => {
-    if (variant !== "page") return
-    if (openDistributionFromUrl !== "1") return
-
-    // чтобы не "зацикливать" параметр, убираем его сразу
-    setSearchParams(
-      (prev) => {
-        const p = new URLSearchParams(prev)
-        p.delete("distribution")
-        return p
-      },
-      { replace: true },
-    )
-
-    if (!canOpenDistribution) return
-    setDistributionOpen(true)
-  }, [variant, openDistributionFromUrl, canOpenDistribution, setSearchParams])
 
   const managerNameById = useMemo(() => {
     const map: Record<string, string> = {}
@@ -328,22 +292,6 @@ export function LeadsCardTableView({
     return map
   }, [filteredLeads])
 
-  const totals = useMemo(() => {
-    const critical = filteredLeads.filter((lead) => getLeadProblemState(lead) === "critical").length
-    const totalCommission = filteredLeads.reduce((sum, lead) => sum + (lead.commissionUsd ?? 0), 0)
-    const criticalCommission = filteredLeads.reduce(
-      (sum, lead) =>
-        sum + (getLeadProblemState(lead) === "critical" ? (lead.commissionUsd ?? 0) : 0),
-      0
-    )
-    return {
-      total: filteredLeads.length,
-      critical,
-      totalCommission,
-      criticalCommission,
-    }
-  }, [filteredLeads])
-
   const dealerName =
     selectedManagerId === "_all"
       ? "Менеджеры: вся сеть"
@@ -373,26 +321,6 @@ export function LeadsCardTableView({
     selectedLeadId
       ? filteredLeads.find((lead) => lead.id === selectedLeadId) ?? fallbackLead
       : fallbackLead
-  const activeStage = activeLead
-    ? LEAD_STAGES.find((stage) => stage.id === activeLead.stageId) ?? null
-    : null
-  const activityDate = activeLead
-    ? new Date(activeLead.updatedAt ?? activeLead.createdAt)
-    : null
-  const activityLabel = activityDate
-    ? `${activityDate.toLocaleDateString("ru-RU", { day: "numeric", month: "short" })}, ${activityDate.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}`
-    : "—"
-  const createdLabel = activeLead
-    ? new Date(activeLead.createdAt).toLocaleDateString("ru-RU", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      })
-    : "—"
-  const taskOk = activeLead ? activeLead.hasTask !== false : false
-  const managerOk = activeLead ? Boolean(activeLead.managerId) : false
-  const overdue = activeLead ? activeLead.taskOverdue === true : false
-  const activeLeadCommission = activeLead?.commissionUsd ?? null
 
   const stepStage = (stageId: string, leads: Lead[], direction: 1 | -1) => {
     if (leads.length === 0) return
@@ -503,7 +431,7 @@ export function LeadsCardTableView({
             >
               Только проблемные
             </DropdownMenuCheckboxItem>
-            <DropdownMenuSeparator className="border-[rgba(242,207,141,0.2)]" />
+            <DropdownMenuSeparator className="border-[color:var(--hub-card-border)]" />
             <DropdownMenuCheckboxItem
               checked={filterNoTask}
               onCheckedChange={(v) => setFilterNoTask(v === true)}
@@ -525,22 +453,9 @@ export function LeadsCardTableView({
             >
               Просрочка по задаче
             </DropdownMenuCheckboxItem>
-            {!isManager && (
-              <>
-                <DropdownMenuSeparator className="border-[rgba(242,207,141,0.2)]" />
-                <DropdownMenuCheckboxItem
-                  checked={showStats}
-                  onCheckedChange={(v) => setShowStats(v === true)}
-                  className="text-sm focus:bg-[rgba(77,53,24,0.45)] focus:text-[#f7e8c6]"
-                >
-                  Показать общую статистику
-                </DropdownMenuCheckboxItem>
-              </>
-            )}
-            
             {(filterNoTask || filterNoManager || filterOverdue) && (
               <>
-                <DropdownMenuSeparator className="border-[rgba(242,207,141,0.2)]" />
+                <DropdownMenuSeparator className="border-[color:var(--hub-card-border)]" />
                 <div 
                   className="px-2 py-1.5 text-xs text-rose-300 font-medium cursor-pointer hover:bg-rose-950/40 hover:text-rose-200 transition-colors text-center"
                   onClick={() => {
@@ -570,22 +485,6 @@ export function LeadsCardTableView({
           </div>
         </div>
 
-        {canOpenDistribution && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setDistributionOpen(true)}
-            className="h-7 shrink-0 gap-1.5 px-2.5 text-[11px] font-medium border-[rgba(229,196,136,0.6)] bg-[rgba(68,43,18,0.5)] text-[#fcecc8] hover:border-[rgba(236,194,112,0.7)] hover:bg-[rgba(88,57,25,0.65)]"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="size-3.5 shrink-0">
-              <rect x="3" y="1" width="15" height="21" rx="2.2" />
-              <rect x="7" y="3" width="15" height="21" rx="2.2" />
-              <path d="M19.5 8.5l1.5 2.5-1.5 2.5-1.5-2.5 1.5-2.5z" fill="currentColor" stroke="none" />
-            </svg>
-            Распределение
-          </Button>
-        )}
-
         <Button
           variant="outline"
           size="sm"
@@ -596,6 +495,20 @@ export function LeadsCardTableView({
           {viewMode === "poker" ? <LayoutList className="size-3" /> : <LayoutGrid className="size-3" />}
           {viewMode === "poker" ? "Список" : "Стол"}
         </Button>
+
+        {viewMode === "poker" && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setHistoryInitialMode("comment")
+              setHistoryOpen(true)
+            }}
+            className="h-7 shrink-0 gap-1 px-2 text-[11px] font-medium border-[rgba(241,208,146,0.28)] bg-[rgba(51,35,18,0.66)] text-[rgba(247,232,198,0.86)] hover:bg-[rgba(88,57,25,0.74)]"
+          >
+            История
+          </Button>
+        )}
 
         {variant === "dialog" && onClose && (
           <Button
@@ -608,20 +521,7 @@ export function LeadsCardTableView({
             Закрыть
           </Button>
         )}
-        {variant === "page" && onBack && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onBack}
-            className="ml-auto h-7 shrink-0 gap-1 px-2 text-[11px] font-medium border-[rgba(241,208,146,0.45)] bg-[rgba(51,35,18,0.66)] text-[rgba(247,232,198,0.86)] hover:bg-[rgba(88,57,25,0.74)]"
-          >
-            <ArrowLeft className="size-3" />
-            Назад
-          </Button>
-        )}
       </header>
-
-      <LeadsSecretDistributionDialog open={distributionOpen} onOpenChange={setDistributionOpen} />
 
       {viewMode === "list" && (
         <div className="relative z-10 min-h-0 flex-1 overflow-auto p-6" style={{ fontFamily: "Montserrat, sans-serif" }}>
@@ -680,7 +580,7 @@ export function LeadsCardTableView({
                           <td className="px-4 py-2.5">
                             <span className={cn(
                               "text-[12px] font-semibold",
-                              isCritical ? "text-rose-200" : "text-[#fcecc8]"
+                              isCritical ? "text-rose-200" : "text-[color:var(--app-text)]"
                             )}>
                               {lead.name ?? lead.id}
                             </span>
@@ -750,7 +650,6 @@ export function LeadsCardTableView({
                     onSelect={setSelectedLeadId}
                     activeLeadId={activeLead?.id ?? null}
                     showControls={leads.length > 1}
-                    showStats={showStats}
                     dealOrderByLeadId={dealOrderByLeadId}
                     dealSession={dealSession}
                     enableDnD={enableDnD}
@@ -759,148 +658,6 @@ export function LeadsCardTableView({
                 </div>
               )
             })}
-          </div>
-
-          <div className="absolute left-1/2 top-[56%] h-[360px] w-[1000px] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border-2 border-[rgba(243,209,139,0.44)] pointer-events-none shadow-[inset_0_0_0_1px_rgba(254,235,186,0.13),0_0_26px_rgba(232,192,122,0.08)]">
-            <div className="absolute inset-[20px] rounded-[50%] border border-[rgba(245,224,176,0.16)] border-dashed" />
-          </div>
-
-          <div className="absolute left-1/2 top-[56%] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center z-10 w-full max-w-[400px]">
-            {!showStats ? (
-              <div
-                className="w-full flex flex-col justify-center text-[#fff4d7] [text-shadow:_0_2px_8px_rgba(0,0,0,0.75),_0_1px_2px_rgba(0,0,0,0.9)]"
-                style={{ fontFamily: "Montserrat, sans-serif" }}
-              >
-                <div className="flex w-full items-center justify-between gap-3 mb-1.5">
-                  <p className="text-[12px] font-extrabold uppercase tracking-widest text-[rgba(243,225,188,0.85)]">
-                    Расклад
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setHistoryOpen(true)}
-                    className="h-6 px-3 text-[10px] font-bold tracking-wide rounded-full border border-[rgba(244,211,147,0.4)] bg-[rgba(68,43,18,0.78)] text-[#fcecc8] hover:bg-[rgba(88,57,25,0.88)] hover:text-[#fff4d7] shadow-[inset_0_1px_0_rgba(255,235,190,0.18)]"
-                  >
-                    История
-                  </Button>
-                </div>
-                <p className="mb-3 text-[10px] font-medium text-[rgba(239,224,192,0.88)] w-full text-left">
-                  От: {createdLabel}
-                </p>
-                <div className="w-full flex flex-col items-center mb-3">
-                  <p className="line-clamp-2 text-center text-[22px] font-black leading-tight text-white mb-0.5">
-                    {activeLead?.name ?? "—"}
-                  </p>
-                  <p className="line-clamp-1 text-center text-[13px] font-semibold text-[#e7fff2]">
-                    {activeStage?.name ?? "Нет этапа"}
-                  </p>
-                </div>
-                <div className="w-full grid grid-cols-3 gap-3 mb-3">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="flex flex-col items-center gap-1 cursor-help">
-                        <CheckCircle2 className={cn("size-6 drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]", taskOk ? "text-[#9bf2ce]" : "text-rose-400")} />
-                        <span className="text-[9px] uppercase tracking-widest text-[rgba(243,225,188,0.85)] mt-0.5">Задача</span>
-                        <span className={cn("text-[13px] font-black leading-none", taskOk ? "text-[#c8f0d8]" : "text-rose-300")}>{taskOk ? "Да" : "Нет"}</span>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" sideOffset={6} className="text-sm font-medium">Задача</TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="flex flex-col items-center gap-1 cursor-help">
-                        <UserCheck className={cn("size-6 drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]", managerOk ? "text-[#9bf2ce]" : "text-rose-400")} />
-                        <span className="text-[9px] uppercase tracking-widest text-[rgba(243,225,188,0.85)] mt-0.5">Менеджер</span>
-                        <span className={cn("text-[13px] font-black leading-none", managerOk ? "text-[#c8f0d8]" : "text-rose-300")}>{managerOk ? "Да" : "Нет"}</span>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" sideOffset={6} className="text-sm font-medium">
-                      Менеджер: {activeLead ? managerLabel(activeLead.managerId, managerNameById) : "—"}
-                    </TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="flex flex-col items-center gap-1 cursor-help">
-                        <Clock className={cn("size-6 drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]", overdue ? "text-rose-400" : "text-[#9bf2ce]")} />
-                        <span className="text-[9px] uppercase tracking-widest text-[rgba(243,225,188,0.85)] mt-0.5">Проср.</span>
-                        <span className={cn("text-[13px] font-black leading-none", overdue ? "text-rose-300" : "text-[#c8f0d8]")}>{overdue ? "Да" : "Нет"}</span>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" sideOffset={6} className="text-sm font-medium">Просрочка по задаче</TooltipContent>
-                  </Tooltip>
-                </div>
-
-                {/* Action buttons */}
-                {activeLead && (
-                  <div className="w-full flex items-center justify-center gap-3 mb-3">
-                    <button
-                      type="button"
-                      className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl border border-[rgba(243,209,139,0.3)] bg-[rgba(18,45,36,0.7)] text-[rgba(243,225,188,0.85)] hover:bg-[rgba(18,65,46,0.9)] hover:border-[rgba(243,225,188,0.5)] transition-colors"
-                      title="Позвонить"
-                    >
-                      <Phone className="size-4" />
-                      <span className="text-[8px] uppercase tracking-widest font-bold">Звонок</span>
-                    </button>
-                    <button
-                      type="button"
-                      className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl border border-[rgba(243,209,139,0.3)] bg-[rgba(18,45,36,0.7)] text-[rgba(243,225,188,0.85)] hover:bg-[rgba(18,65,46,0.9)] hover:border-[rgba(243,225,188,0.5)] transition-colors"
-                      title="Написать"
-                    >
-                      <MessageSquare className="size-4" />
-                      <span className="text-[8px] uppercase tracking-widest font-bold">Написать</span>
-                    </button>
-                    <button
-                      onClick={() => { setHistoryInitialMode("task"); setHistoryOpen(true) }}
-                      className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl border border-[rgba(243,209,139,0.3)] bg-[rgba(18,45,36,0.7)] text-[rgba(243,225,188,0.85)] hover:bg-[rgba(18,65,46,0.9)] hover:border-[rgba(243,225,188,0.5)] transition-colors"
-                      title="Поставить задачу"
-                    >
-                      <ListTodo className="size-4" />
-                      <span className="text-[8px] uppercase tracking-widest font-bold">Задача</span>
-                    </button>
-                  </div>
-                )}
-
-                <div className="w-full flex items-center justify-between border-t border-[rgba(243,209,139,0.25)] pt-2.5">
-                  <div className="text-left">
-                    <p className="text-[9px] font-semibold uppercase tracking-widest text-[rgba(243,225,188,0.85)] mb-0.5">Прогресс</p>
-                    <p className="text-[13px] font-bold leading-none text-[#fff0cb]">{activityLabel}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[9px] font-semibold uppercase tracking-widest text-[rgba(243,225,188,0.85)] mb-0.5">Комиссия</p>
-                    <p className="text-[16px] font-bold leading-none text-[#ffe4a8]">{formatUsd(activeLeadCommission)}</p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div
-                className="grid grid-cols-2 gap-x-8 gap-y-3 rounded-[12px] border border-[rgba(242,210,146,0.35)] bg-[rgba(18,45,36,0.96)] px-6 py-4 text-[#f2e4c1] shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
-                style={{ fontFamily: "Montserrat, sans-serif" }}
-              >
-                <p className="col-span-2 mb-1 text-center text-[10px] font-bold uppercase tracking-widest text-[rgba(249,230,190,0.95)]">Количество по всем этапам</p>
-                <div className="text-center">
-                  <p className="mb-0.5 text-[11px] uppercase tracking-widest text-[rgba(249,230,190,0.9)]">Всего лидов</p>
-                  <p className="text-[24px] font-black leading-none text-white">{totals.total}</p>
-                </div>
-                <div className="text-center">
-                  <p className="mb-0.5 text-[11px] uppercase tracking-widest text-rose-200/80">Проблемные</p>
-                  <p className="text-[24px] font-black leading-none text-rose-200">{totals.critical}</p>
-                </div>
-                <div className="text-center">
-                  <p className="mb-0.5 text-[11px] uppercase tracking-widest text-[rgba(249,230,190,0.9)]">Доля проблемных</p>
-                  <p className="text-[24px] font-black leading-none text-[#ffeab4]">
-                    {totals.total > 0 ? Math.round((totals.critical / totals.total) * 100) : 0}%
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="mb-0.5 text-[11px] uppercase tracking-widest text-[rgba(249,230,190,0.9)]">Комиссия</p>
-                  <p className="text-[24px] font-black leading-none text-[#c8f0d8]">{formatUsd(totals.totalCommission)}</p>
-                </div>
-                <div className="col-span-2 pt-1 text-center border-t border-[rgba(243,209,139,0.25)] mt-1">
-                  <p className="mb-0.5 text-[11px] uppercase tracking-widest text-rose-200/80">Комиссия по проблемным</p>
-                  <p className="text-[20px] font-black leading-none text-rose-200">{formatUsd(totals.criticalCommission)}</p>
-                </div>
-              </div>
-            )}
           </div>
 
           <div className="absolute bottom-10 left-10 flex items-end gap-5">
@@ -919,7 +676,6 @@ export function LeadsCardTableView({
                     onSelect={setSelectedLeadId}
                     activeLeadId={activeLead?.id ?? null}
                     showControls={leads.length > 1}
-                    showStats={showStats}
                     compact
                     dealOrderByLeadId={dealOrderByLeadId}
                     dealSession={dealSession}
@@ -947,7 +703,6 @@ export function LeadsCardTableView({
                     onSelect={setSelectedLeadId}
                     activeLeadId={activeLead?.id ?? null}
                     showControls={leads.length > 1}
-                    showStats={showStats}
                     compact
                     dealOrderByLeadId={dealOrderByLeadId}
                     dealSession={dealSession}
@@ -995,7 +750,7 @@ export function LeadsCardTableView({
       {wrapWithDnD(tableContent)}
 
       <Dialog open={historyOpen} onOpenChange={(open) => { setHistoryOpen(open); if (!open) setHistoryInitialMode("comment") }}>
-        <DialogContent className="sm:max-w-5xl w-full h-[90vh] max-h-[900px] flex flex-col p-0 border-none bg-slate-50 shadow-2xl overflow-hidden rounded-xl">
+        <DialogContent className="sm:max-w-5xl w-full h-[90vh] max-h-[900px] flex flex-col p-0 border-none bg-slate-50 text-slate-900 shadow-2xl overflow-hidden rounded-xl">
           <DialogHeader className="shrink-0 px-6 py-5 border-b border-slate-200 bg-white flex flex-row items-center justify-between">
             <div className="flex flex-col gap-1">
               <DialogTitle className="text-xl font-bold tracking-tight text-slate-900">
@@ -1021,10 +776,10 @@ export function LeadsCardTableView({
                     setTransferConfirm({ newManagerId, newManagerName })
                   }}
                 >
-                  <SelectTrigger className="h-9 w-[220px] bg-white border-slate-200 text-sm">
+                  <SelectTrigger className="h-9 w-[220px] border-slate-200 bg-white text-sm text-slate-900">
                     <SelectValue placeholder="Выберите менеджера" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="border-slate-200 bg-white text-slate-900">
                     <SelectItem value="unassigned" className="text-slate-500 italic">Выберите менеджера</SelectItem>
                     {leadManagers.map((mgr) => (
                       <SelectItem key={mgr.id} value={mgr.id}>
@@ -1044,10 +799,10 @@ export function LeadsCardTableView({
 
       {/* Подтверждение передачи лида */}
       <Dialog open={!!transferConfirm} onOpenChange={(open) => { if (!open) setTransferConfirm(null) }}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white text-slate-900">
           <DialogHeader>
-            <DialogTitle>Передать лида?</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-slate-900">Передать лида?</DialogTitle>
+            <DialogDescription className="text-slate-600">
               {transferConfirm && activeLead && (
                 transferConfirm.newManagerId
                   ? <>Вы уверены, что хотите передать лида <strong>{activeLead.name ?? activeLead.id}</strong> менеджеру <strong>{transferConfirm.newManagerName}</strong>?</>
@@ -1107,7 +862,6 @@ function StageDeckPile({
   onSelect,
   activeLeadId,
   showControls,
-  showStats,
   compact = false,
   dealOrderByLeadId = {},
   dealSession = 0,
@@ -1123,7 +877,6 @@ function StageDeckPile({
   onSelect: (leadId: string) => void
   activeLeadId: string | null
   showControls: boolean
-  showStats: boolean
   dealOrderByLeadId?: Record<string, number>
   dealSession?: number
   compact?: boolean
@@ -1207,7 +960,7 @@ function StageDeckPile({
             {stageLabel}
           </p>
         </div>
-        {!compact && (showStats || showLocalStats) && (
+        {!compact && showLocalStats && (
           <div className="mb-1 flex flex-col items-center gap-0.5 [text-shadow:_0_1px_3px_rgba(0,0,0,0.7)]">
             <div className="flex items-center gap-3.5 text-[11px] font-semibold leading-none text-[#f7ecd4]">
               <span>Всего: {totalLeads}</span>
@@ -1219,7 +972,7 @@ function StageDeckPile({
                 criticalLeads / Math.max(totalLeads, 1) > 0.5
                   ? "bg-rose-600 text-white"
                   : criticalLeads / Math.max(totalLeads, 1) > 0.25
-                    ? "bg-[rgba(88,57,25,0.88)] text-[#fcecc8] border border-[rgba(244,214,150,0.55)]"
+                    ? "bg-[color-mix(in_srgb,var(--gold-dark)_70%,transparent)] text-[color:var(--app-text)] border border-[color:var(--hub-card-border-hover)]"
                     : "bg-[rgba(24,106,78,0.84)] text-[#e7ffef] border border-[rgba(150,255,217,0.62)]"
               )}
             >
@@ -1303,8 +1056,8 @@ function StageDeckPile({
         )}
       </div>
 
-      {!compact && (showStats || showLocalStats) && columnCommission > 0 && (
-        <div className="mt-0.5 text-center text-[13px] font-bold leading-none text-[#fcecc8] [text-shadow:_0_1px_3px_rgba(0,0,0,0.75)]">
+      {!compact && showLocalStats && columnCommission > 0 && (
+        <div className="mt-0.5 text-center text-[13px] font-bold leading-none text-[color:var(--app-text)] [text-shadow:_0_1px_3px_rgba(0,0,0,0.75)]">
           {formatUsd(columnCommission)}
         </div>
       )}

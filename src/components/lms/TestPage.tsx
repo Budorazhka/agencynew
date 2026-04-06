@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { ArrowLeft, CheckCircle2, XCircle, Trophy } from 'lucide-react'
+import { CheckCircle2, XCircle, Trophy } from 'lucide-react'
 import { LMS_COURSES } from '@/data/lms-mock'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 
 const S = {
-  root: { fontFamily: 'Inter, sans-serif', padding: '28px 28px 64px', maxWidth: 640 } as React.CSSProperties,
+  root: { fontFamily: "'Montserrat', sans-serif", padding: '28px 28px 64px', maxWidth: 640 } as React.CSSProperties,
   gold: 'var(--gold)',
   white: 'rgba(255,255,255,0.9)',
   dim:   'rgba(255,255,255,0.4)',
@@ -20,7 +20,7 @@ export function TestPage() {
   const [answers, setAnswers] = useState<Record<number, number>>({})
   const [submitted, setSubmitted] = useState(false)
 
-  // Find lesson
+  // Ищем урок
   let lesson = null
   let course = null
   for (const c of LMS_COURSES) {
@@ -34,7 +34,7 @@ export function TestPage() {
 
   if (!lesson?.quiz || !course) {
     return (
-      <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/learning' }}>
+      <DashboardShell>
         <div style={{ ...S.root, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ color: S.dim, fontSize: 14 }}>Тест не найден</span>
         </div>
@@ -56,17 +56,8 @@ export function TestPage() {
   const passed = score >= course.passingScore
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/learning' }}>
+    <DashboardShell>
     <div style={S.root}>
-      {/* Back */}
-      <button
-        onClick={() => navigate(`/dashboard/lms/lesson/${lesson!.id}?courseId=${course!.id}`)}
-        style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: S.dim, fontSize: 12, marginBottom: 24 }}
-      >
-        <ArrowLeft size={14} />
-        Назад к уроку
-      </button>
-
       <div style={{ fontSize: 22, fontWeight: 700, color: S.gold, marginBottom: 4 }}>{lesson.title}</div>
       <div style={{ fontSize: 12, color: S.dim, marginBottom: 28 }}>
         Проходной балл: {course.passingScore}% · {questions.length} вопросов

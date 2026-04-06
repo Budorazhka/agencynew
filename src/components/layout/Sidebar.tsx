@@ -51,7 +51,7 @@ export function Sidebar({ useFeltStyle = false }: SidebarProps) {
             className={cn(
               'relative flex size-10 items-center justify-center rounded-xl transition-colors',
               useFeltStyle
-                ? 'text-[#e8dcc4] hover:bg-[rgba(68,43,18,0.5)] hover:text-[#fcecc8]'
+                ? 'text-[#e8dcc4] hover:bg-[color-mix(in_srgb,var(--gold-dark)_45%,transparent)] hover:text-[color:var(--app-text)]'
                 : isOnDashboardIndex
                   ? 'bg-slate-100 text-slate-900'
                   : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700',
@@ -79,8 +79,8 @@ export function Sidebar({ useFeltStyle = false }: SidebarProps) {
                   'relative flex size-10 items-center justify-center rounded-xl transition-colors',
                   useFeltStyle
                     ? isActive
-                      ? 'bg-[rgba(236,194,112,0.22)] text-[#fcecc8]'
-                      : 'text-[#e8dcc4] hover:bg-[rgba(68,43,18,0.5)] hover:text-[#fcecc8]'
+                      ? 'bg-[rgba(236,194,112,0.22)] text-[color:var(--app-text)]'
+                      : 'text-[#e8dcc4] hover:bg-[color-mix(in_srgb,var(--gold-dark)_45%,transparent)] hover:text-[color:var(--app-text)]'
                     : isActive
                       ? 'bg-slate-100 text-slate-900'
                       : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700',
@@ -112,7 +112,7 @@ export function Sidebar({ useFeltStyle = false }: SidebarProps) {
                 className={cn(
                   'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold',
                   useFeltStyle
-                    ? 'bg-[rgba(242,207,141,0.2)] text-[#fcecc8]'
+                    ? 'bg-[color-mix(in_srgb,var(--gold)_20%,transparent)] text-[color:var(--app-text)]'
                     : 'bg-slate-200 text-slate-700',
                 )}
               >
@@ -132,7 +132,7 @@ export function Sidebar({ useFeltStyle = false }: SidebarProps) {
                 className={cn(
                   'flex size-8 items-center justify-center rounded-lg transition-colors',
                   useFeltStyle
-                    ? 'text-[rgba(242,207,141,0.5)] hover:text-[#fcecc8] hover:bg-[rgba(68,43,18,0.5)]'
+                    ? 'text-[color:var(--hub-desc)] hover:text-[color:var(--app-text)] hover:bg-[color-mix(in_srgb,var(--gold-dark)_45%,transparent)]'
                     : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100',
                 )}
               >

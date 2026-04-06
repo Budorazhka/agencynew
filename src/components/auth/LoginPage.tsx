@@ -8,10 +8,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Form, Field, FormActions } from '@/components/ui/Form'
 import { ROLE_LABEL, ROLE_COLOR } from '@/lib/permissions'
-import type { UserRole } from '@/types/auth'
+import { USER_ROLES, type UserRole } from '@/types/auth'
 import { cn } from '@/lib/utils'
 
-const ROLES: UserRole[] = ['owner', 'director', 'rop', 'marketer', 'manager']
+const ROLES: UserRole[] = USER_ROLES
 
 export function LoginPage() {
   const { login, enterAs } = useAuth()

@@ -412,7 +412,7 @@ export function SupremeOwnerDashboardPage() {
   }
 
   return (
-    <div className="w-full max-w-full space-y-4 overflow-x-hidden px-3 py-4 sm:px-5">
+    <div className="network-analytics-theme w-full max-w-full space-y-4 overflow-x-hidden px-3 py-4 sm:px-5">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-readable-xs text-muted-high-contrast">
@@ -425,7 +425,7 @@ export function SupremeOwnerDashboardPage() {
             </Badge>
             <Badge
               variant="secondary"
-              className="border border-emerald-500/20 bg-emerald-500/10 text-emerald-700"
+              className="border border-emerald-500/35 bg-emerald-950/40 text-emerald-200"
             >
               {selectedCabinet?.label}
             </Badge>
@@ -437,7 +437,7 @@ export function SupremeOwnerDashboardPage() {
         <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
           <Button
             size="sm"
-            className="border border-emerald-500/35 bg-emerald-500/12 text-emerald-700 hover:bg-emerald-500/18"
+            className="border border-emerald-500/40 bg-emerald-950/35 text-emerald-100 hover:bg-emerald-950/50"
             onClick={() => navigate("/")}
           >
             <ArrowLeft className="size-4" />
@@ -469,7 +469,11 @@ export function SupremeOwnerDashboardPage() {
           <Button
             variant={partnerViewMode === "analytics" ? "default" : "outline"}
             size="sm"
-            className={partnerViewMode === "analytics" ? "bg-emerald-700 hover:bg-emerald-600" : "border-slate-300"}
+            className={
+              partnerViewMode === "analytics"
+                ? "bg-emerald-700 hover:bg-emerald-600"
+                : "border-white/20 bg-transparent text-[color:var(--app-text)]"
+            }
             onClick={() => setPartnerViewMode("analytics")}
           >
             Аналитика {selectedCabinet.label}
@@ -477,7 +481,11 @@ export function SupremeOwnerDashboardPage() {
           <Button
             variant={partnerViewMode === "network" ? "default" : "outline"}
             size="sm"
-            className={partnerViewMode === "network" ? "bg-emerald-700 hover:bg-emerald-600" : "border-slate-300"}
+            className={
+              partnerViewMode === "network"
+                ? "bg-emerald-700 hover:bg-emerald-600"
+                : "border-white/20 bg-transparent text-[color:var(--app-text)]"
+            }
             onClick={() => setPartnerViewMode("network")}
           >
             Сеть {selectedCabinet.label}
@@ -676,7 +684,7 @@ export function SupremeOwnerDashboardPage() {
             </div>
           ) : (
             <>
-              <div className="flex flex-col gap-3 rounded-lg border bg-card px-3 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:px-4">
+              <div className="flex flex-col gap-3 rounded-xl border border-[color:var(--green-border)] bg-[color:var(--green-card)]/80 px-3 py-3 shadow-sm sm:flex-row sm:flex-wrap sm:items-center sm:px-4">
                 <div className="min-w-0 flex-1">
                   <Input
                     value={searchQuery}

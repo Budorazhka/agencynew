@@ -32,8 +32,8 @@ export function WorkspaceDayEventsMenu({ dateIso, className }: Props) {
           'bg-[var(--workspace-row-bg)]/80 px-2 py-1.5 text-left text-[10px] font-semibold text-[color:var(--workspace-text)]',
           'shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)] transition-colors',
           'hover:border-[color:var(--hub-card-border-hover)] hover:bg-[var(--workspace-row-bg)]',
-          open && 'border-[rgba(230,195,100,0.45)] bg-[rgba(230,195,100,0.08)]',
-          'outline-none focus-visible:ring-2 focus-visible:ring-[rgba(230,195,100,0.35)]',
+          open && 'border-[color:var(--hub-card-border-hover)] bg-[var(--nav-item-bg-active)]',
+          'outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--gold)_35%,transparent)]',
         )}
       >
         <CalendarClock className="size-3.5 shrink-0 text-[color:var(--theme-accent-link-dim)]" strokeWidth={2} />
@@ -73,7 +73,7 @@ export function WorkspaceDayEventsMenu({ dateIso, className }: Props) {
           )}
           <Link
             to="/dashboard/calendar"
-            className="mt-1.5 block rounded-md px-2 py-1 text-center text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:bg-[rgba(230,195,100,0.08)] hover:text-[color:var(--theme-accent-link)]"
+            className="mt-1.5 block rounded-md px-2 py-1 text-center text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:bg-[var(--nav-item-bg-active)] hover:text-[color:var(--theme-accent-link)]"
           >
             Полный календарь
           </Link>

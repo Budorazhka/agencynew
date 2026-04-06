@@ -1,15 +1,15 @@
 import { cn } from '@/lib/utils'
 import type { SaleStatus, ConditionState } from './types'
 
-// ─── Sale Status ─────────────────────────────────────────────────────────────
-// Dark-compatible felt theme colors
+// ─── Статус продажи ─────────────────────────────────────────────────────────
+// Цвета для тёмной темы и стиля «сукно»
 
 const saleStatusMap: Record<SaleStatus, { label: string; className: string }> = {
   for_sale:   { label: 'В продаже',     className: 'text-emerald-400 bg-emerald-500/12 border-emerald-500/30' },
   booked:     { label: 'Забронировано', className: 'text-amber-400  bg-amber-500/12  border-amber-500/30' },
   sold:       { label: 'Продано',       className: 'text-orange-400 bg-orange-500/12 border-orange-500/30' },
   moderation: { label: 'На модерации',  className: 'text-sky-300 bg-sky-500/12 border-sky-500/30' },
-  draft:      { label: 'Черновик',      className: 'text-[rgba(230,195,100,0.5)] bg-[rgba(230,195,100,0.07)] border-[rgba(230,195,100,0.2)]' },
+  draft:      { label: 'Черновик',      className: 'text-[color:var(--hub-desc)] bg-[var(--hub-action-hover)] border-[color:var(--hub-card-border)]' },
   archive:    { label: 'Архив',         className: 'text-blue-400   bg-transparent border-0' },
 }
 
@@ -32,7 +32,7 @@ export function SaleStatusBadge({ status }: { status: SaleStatus }) {
   )
 }
 
-// ─── Condition State ──────────────────────────────────────────────────────────
+// ─── Состояние объекта ───────────────────────────────────────────────────────
 
 const conditionMap: Record<ConditionState, { label: string; icon: string; className: string }> = {
   needs_update:    {

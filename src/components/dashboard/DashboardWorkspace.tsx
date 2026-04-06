@@ -18,6 +18,10 @@ import {
   Zap,
 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
+import {
+  getVisibleDashboardRailItems,
+  isDashboardPathAllowedForRole,
+} from '@/config/dashboard-rail'
 import { useLeads } from '@/context/LeadsContext'
 import { cn } from '@/lib/utils'
 import { useNewsFeed } from '@/context/NewsFeedContext'
@@ -35,7 +39,7 @@ import { PRIORITY_LABELS, STATUS_LABELS, type Task } from '@/types/tasks'
 import { LEAD_STATUS_LABELS, LEAD_STATUS_COLORS, type Lead, type LeadSource } from '@/types/leads'
 import { buildDeskBootstrapSeen, useDeskSeenState } from '@/hooks/useDeskSeenState'
 
-/* ── constants ── */
+/* ── константы ── */
 
 const SOURCE_LABELS: Record<LeadSource, string> = {
   primary: 'Первичка',
@@ -59,7 +63,7 @@ const DAY_STATUS_LABEL = {
   at_risk: 'В зоне риска',
 } as const
 
-/* ── reusable primitives ── */
+/* ── переиспользуемые блоки ── */
 
 function HubWidgetShell({
   children,
@@ -68,7 +72,7 @@ function HubWidgetShell({
 }: {
   children: React.ReactNode
   className?: string
-  /** Thin top-border accent color */
+  /** Цвет тонкой верхней обводки (акцент). */
   accent?: string
 }) {
   return (
@@ -111,7 +115,7 @@ function WidgetHeader({
         >
           {icon}
         </div>
-        <h3 className="text-[12px] font-bold uppercase tracking-[0.1em] text-[color:var(--workspace-widget-title)]">
+        <h3 className="line-clamp-2 text-[12px] font-bold leading-snug tracking-tight text-[color:var(--workspace-widget-title)] sm:text-[13px]">
           {title}
         </h3>
       </div>
@@ -136,9 +140,9 @@ function TabBtn({
       type="button"
       onClick={onClick}
       className={cn(
-        'relative inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wider transition-colors',
+        'relative inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[12px] font-bold uppercase tracking-wide transition-colors',
         active
-          ? 'bg-[rgba(230,195,100,0.18)] text-[color:var(--workspace-text)]'
+          ? 'bg-[color-mix(in_srgb,var(--gold)_18%,transparent)] text-[color:var(--workspace-text)]'
           : 'text-[color:var(--workspace-text-muted)] hover:bg-[rgba(255,255,255,0.04)] hover:text-[color:var(--workspace-text)]',
       )}
     >
@@ -152,7 +156,7 @@ function TabBtn({
   )
 }
 
-/* ── helpers ── */
+/* ── вспомогательные функции ── */
 
 function notifIcon(type: 'alert' | 'success' | 'info' | 'auto') {
   const s = 'size-3.5 shrink-0'
@@ -193,7 +197,7 @@ function workspaceCalDateInitial() {
   return `${t.getFullYear()}-${p(t.getMonth() + 1)}-${p(t.getDate())}`
 }
 
-/* ── mini progress bar ── */
+/* ── мини-полоса прогресса ── */
 function MiniBar({ pct, color }: { pct: number; color: string }) {
   return (
     <div className="h-1 w-full overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">
@@ -203,7 +207,7 @@ function MiniBar({ pct, color }: { pct: number; color: string }) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   MAIN COMPONENT
+   ГЛАВНЫЙ КОМПОНЕНТ
    ════════════════════════════════════════════════════════════════ */
 
 export function DashboardWorkspace() {
@@ -211,12 +215,24 @@ export function DashboardWorkspace() {
   const { state } = useLeads()
   const { allArticles } = useNewsFeed()
 
+  const deskRole = currentUser?.role ?? 'manager'
+  const deskRailIds = useMemo(
+    () => new Set(getVisibleDashboardRailItems(deskRole).map((i) => i.id)),
+    [deskRole],
+  )
+  const deskShowTasks = isDashboardPathAllowedForRole('/dashboard/tasks', deskRole)
+  const deskShowMlmAnalytics = isDashboardPathAllowedForRole('/dashboard/partners/mlm', deskRole)
+  const deskShowLeads = deskRailIds.has('leads')
+  const deskShowCalendar = isDashboardPathAllowedForRole('/dashboard/calendar/personal', deskRole)
+  const deskShowInfo = isDashboardPathAllowedForRole('/dashboard/settings/info', deskRole)
+  const canOpenMyReport = isDashboardPathAllowedForRole('/dashboard/my-report', deskRole)
+
   const todayIso = useMemo(() => new Date().toISOString().split('T')[0], [])
   const [workspaceCalDate, setWorkspaceCalDate] = useState(() => workspaceCalDateInitial())
   const isManager = currentUser?.role === 'manager'
   const managerId = isManager ? currentUser?.id ?? null : null
 
-  /* ── data prep ── */
+  /* ── подготовка данных ── */
 
   const pool = useMemo(() => {
     return managerId ? state.leadPool.filter((l) => l.managerId === managerId) : state.leadPool
@@ -278,11 +294,16 @@ export function DashboardWorkspace() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markSeen])
 
-  /* ── UI state ── */
+  /* ── состояние интерфейса ── */
 
   const [mainTab, setMainTab] = useState<'tasks' | 'leads'>('tasks')
   const [taskMode, setTaskMode] = useState<'all' | 'today' | 'overdue'>('today')
   const [infoTab, setInfoTab] = useState<'notifs' | 'reminders' | 'news'>('notifs')
+
+  useEffect(() => {
+    if (!deskShowLeads && mainTab === 'leads') setMainTab('tasks')
+    if (!deskShowTasks && mainTab === 'tasks' && deskShowLeads) setMainTab('leads')
+  }, [deskShowLeads, deskShowTasks, mainTab])
 
   const openMainTab = (tab: 'tasks' | 'leads') => {
     setMainTab(tab)
@@ -310,7 +331,7 @@ export function DashboardWorkspace() {
     return da.localeCompare(db)
   })
 
-  /* ── badges ── */
+  /* ── бейджи ── */
   const leadTabIds = useMemo(() => newLeads.map((l) => l.id), [newLeads])
   const badgeLeads = mainTab === 'tasks' ? unread.leads(leadTabIds) : 0
   const badgeTasks = mainTab === 'leads' ? unread.tasks(attentionTaskIds) : 0
@@ -322,7 +343,7 @@ export function DashboardWorkspace() {
   const badgeReminders = infoTab !== 'reminders' ? unread.reminders(undoneReminderIds) : 0
   const badgeNews = infoTab !== 'news' ? unread.news(newsIdsOrdered) : 0
 
-  /* ── progress ── */
+  /* ── прогресс и показатели ── */
   const progress = HOME_PROGRESS_MOCK
   const streak = HOME_STREAK_MOCK
   const xpPct = streak.xpToday.goal > 0 ? Math.min(100, Math.round((streak.xpToday.current / streak.xpToday.goal) * 100)) : 0
@@ -337,44 +358,143 @@ export function DashboardWorkspace() {
   }, [progress.activityKpis])
   const focusGap = focusKpi ? Math.max(0, focusKpi.plan - focusKpi.current) : 0
 
-  /* ═══════════════════ RENDER ═══════════════════ */
+  const focusDeskHref =
+    focusGap > 0 && deskShowTasks
+      ? '/dashboard/tasks'
+      : canOpenMyReport
+        ? '/dashboard/my-report'
+        : null
+  const focusDeskLinkLabel =
+    focusGap > 0 && deskShowTasks ? 'Открыть задачи →' : canOpenMyReport ? 'К отчёту →' : null
+
+  /* ═══════════════════ ОТРИСОВКА ═══════════════════ */
 
   /*
-   * Layout: full-height left tasks, center calendar/plans, full-height right feed.
-   * Everything fits in one viewport — no page-level scroll.
+   * Сетка: слева на всю высоту задачи/лиды, по центру календарь и планы, справа на всю высоту лента.
+   * Всё помещается в один экран — без прокрутки всей страницы.
    *
    * ┌─────────────┬───────────────────┬──────────────┐
-   * │ Tasks/Leads │     Calendar      │     Feed     │
-   * │   (full)    ├───────────────────┤   (full)     │
-   * │             │ Plans/Efficiency  │              │
+   * │ Задачи/лиды │    Календарь      │    Лента     │
+   * │  (высота)   ├───────────────────┤   (высота)   │
+   * │             │ Планы / эффектив. │              │
    * └─────────────┴───────────────────┴──────────────┘
    */
 
   return (
-    <div className="grid h-full min-h-0 w-full min-w-0 grid-cols-1 gap-1.5 lg:grid-cols-[minmax(300px,1.25fr)_minmax(0,1.55fr)_minmax(300px,1.35fr)] lg:grid-rows-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:gap-1.5 lg:overflow-hidden">
+    <div className="grid h-full min-h-0 w-full min-w-0 grid-cols-1 gap-1.5 lg:grid-cols-[minmax(300px,1.25fr)_minmax(0,1.55fr)_minmax(300px,1.35fr)] lg:grid-rows-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-1.5 lg:overflow-hidden">
 
       {/* ╔══════════════════════════════════════════╗
-         ║  1. ЗАДАЧИ / НОВЫЕ ЛИДЫ  (top-left)     ║
+         ║  1. ЗАДАЧИ / НОВЫЕ ЛИДЫ  (сверху слева) ║
          ╚══════════════════════════════════════════╝ */}
-      <HubWidgetShell accent="rgba(230,195,100,0.6)" className="lg:row-span-2">
+      <HubWidgetShell accent="color-mix(in srgb, var(--gold) 60%, transparent)" className="lg:row-span-2">
         <WidgetHeader
           icon={<ListTodo className="size-3.5" strokeWidth={2} />}
-          title="Задачи / Лиды"
-          accentColor="#e6c364"
+          title={
+            deskShowTasks && deskShowLeads
+              ? 'Задачи / новые лиды'
+              : deskShowTasks
+                ? 'Задачи'
+                : deskShowLeads
+                  ? 'Новые лиды'
+                  : 'Рабочий стол'
+          }
           right={
-            <div className="flex gap-0.5 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] p-0.5">
-              <TabBtn active={mainTab === 'tasks'} badge={badgeTasks} onClick={() => openMainTab('tasks')}>
-                Задачи
-              </TabBtn>
-              <TabBtn active={mainTab === 'leads'} badge={badgeLeads} onClick={() => openMainTab('leads')}>
-                Лиды
-              </TabBtn>
-            </div>
+            deskShowTasks && deskShowLeads ? (
+              <div className="flex gap-0.5 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] p-0.5">
+                <TabBtn active={mainTab === 'tasks'} badge={badgeTasks} onClick={() => openMainTab('tasks')}>
+                  Задачи
+                </TabBtn>
+                <TabBtn active={mainTab === 'leads'} badge={badgeLeads} onClick={() => openMainTab('leads')}>
+                  Лиды
+                </TabBtn>
+              </div>
+            ) : deskShowTasks ? (
+              <Link
+                to="/dashboard/tasks"
+                className="text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+              >
+                Все задачи →
+              </Link>
+            ) : deskShowLeads ? (
+              <Link
+                to="/dashboard/leads/poker"
+                className="text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+              >
+                Все лиды →
+              </Link>
+            ) : null
           }
         />
 
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-2.5 py-1">
-          {mainTab === 'tasks' ? (
+          {!deskShowTasks && !deskShowLeads ? (
+            <div className="flex min-h-0 flex-1 flex-col justify-center gap-3 px-1 py-2 text-center">
+              <p className="text-[14px] font-semibold leading-snug text-[color:var(--workspace-text)]">
+                Контур по роли
+              </p>
+              <p className="text-[13px] leading-relaxed text-[color:var(--workspace-text-muted)]">
+                Задачи и лиды в этом виджете недоступны. Откройте разделы в левом меню.
+              </p>
+              <div className="flex flex-col gap-2 sm:mx-auto sm:max-w-[240px]">
+                {deskRailIds.has('secondary') && (
+                  <Link
+                    to="/dashboard/objects"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)]"
+                  >
+                    Вторичный рынок
+                  </Link>
+                )}
+                {deskRailIds.has('newbuild') && (
+                  <Link
+                    to="/dashboard/new-buildings"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)]"
+                  >
+                    Новостройки
+                  </Link>
+                )}
+                {deskRailIds.has('mls') && (
+                  <Link
+                    to="/dashboard/mls"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)]"
+                  >
+                    Партнёры (MLS)
+                  </Link>
+                )}
+                {deskShowMlmAnalytics && (
+                  <Link
+                    to="/dashboard/partners/mlm"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)]"
+                  >
+                    MLM-аналитика
+                  </Link>
+                )}
+                {deskRailIds.has('community') && (
+                  <Link
+                    to="/dashboard/community"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)]"
+                  >
+                    Сообщество
+                  </Link>
+                )}
+                {deskRailIds.has('team') && (
+                  <Link
+                    to="/dashboard/team"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)]"
+                  >
+                    Команда
+                  </Link>
+                )}
+                {deskShowInfo && (
+                  <Link
+                    to="/dashboard/settings/info"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)]"
+                  >
+                    Инфо
+                  </Link>
+                )}
+              </div>
+            </div>
+          ) : mainTab === 'tasks' && deskShowTasks ? (
             <>
               <div className="mb-0.5 flex items-center gap-0.5">
                 {([
@@ -389,7 +509,7 @@ export function DashboardWorkspace() {
                     className={cn(
                       'rounded px-1 py-px text-[11px] font-semibold uppercase tracking-wide transition-colors',
                       taskMode === m.id
-                        ? 'bg-[rgba(230,195,100,0.2)] text-[color:var(--workspace-text)]'
+                        ? 'bg-[color-mix(in_srgb,var(--gold)_20%,transparent)] text-[color:var(--workspace-text)]'
                         : 'text-[color:var(--workspace-text-muted)] hover:text-[color:var(--workspace-text)]',
                     )}
                   >
@@ -398,7 +518,7 @@ export function DashboardWorkspace() {
                 ))}
                 <Link
                   to="/dashboard/tasks"
-                  className="ml-auto flex items-center gap-0.5 text-[12px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                  className="ml-auto flex items-center gap-0.5 text-[12px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
                 >
                   <Plus className="size-3" strokeWidth={2.5} />
                   В задачи
@@ -459,13 +579,13 @@ export function DashboardWorkspace() {
                 </p>
               )}
             </>
-          ) : (
+          ) : deskShowLeads ? (
             <>
               <div className="mb-0.5 flex items-center justify-between">
-                <p className="text-[11px] text-[color:var(--workspace-text-muted)]">Очередь «Новый лид»</p>
+                <p className="text-[12px] text-[color:var(--workspace-text-muted)]">Очередь «Новый лид»</p>
                 <Link
-                  to="/dashboard/leads-hub"
-                  className="flex items-center gap-0.5 text-[12px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                  to="/dashboard/leads/poker"
+                  className="flex items-center gap-0.5 text-[12px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
                 >
                   <Plus className="size-3" strokeWidth={2.5} />
                   В лиды
@@ -517,12 +637,12 @@ export function DashboardWorkspace() {
                 </p>
               )}
             </>
-          )}
+          ) : null}
         </div>
       </HubWidgetShell>
 
       {/* ╔══════════════════════════════════════════╗
-         ║  2. КАЛЕНДАРЬ  (top-right, large)        ║
+         ║  2. КАЛЕНДАРЬ  (сверху справа, крупный)  ║
          ╚══════════════════════════════════════════╝ */}
       <HubWidgetShell accent="rgba(96,165,250,0.6)">
         <WidgetHeader
@@ -530,43 +650,53 @@ export function DashboardWorkspace() {
           title="Календарь"
           accentColor="#60a5fa"
           right={
-            <Link
-              to="/dashboard/calendar"
-              className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
-            >
-              Полный календарь →
-            </Link>
+            deskShowCalendar ? (
+              <Link
+                to="/dashboard/calendar"
+                className="text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+              >
+                Полный календарь →
+              </Link>
+            ) : null
           }
         />
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-1.5">
-          {/* calendar grid — fills entire widget */}
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/50 p-1.5">
-            <MiniCalendar
-              variant="workspace"
-              hideFooterLink
-              hideDayPanel
-              selectedDate={workspaceCalDate}
-              onSelectedDateChange={setWorkspaceCalDate}
-            />
-          </div>
-          {/* bottom bar: events button + legend */}
-          <div className="mt-1 flex shrink-0 items-center gap-2">
-            <WorkspaceDayEventsMenu className="min-w-0 flex-1" dateIso={workspaceCalDate} />
-            <div className="flex shrink-0 items-center gap-2.5 text-[11px] text-[color:var(--workspace-text-muted)]">
-              <span className="flex items-center gap-1">
-                <Eye className="size-3.5 text-blue-300" />
-                Показ
-              </span>
-              <span className="flex items-center gap-1">
-                <Phone className="size-3.5 text-violet-300" />
-                Звонок
-              </span>
-              <span className="flex items-center gap-1">
-                <Users className="size-3.5 text-[color:var(--workspace-cal-meeting-dot)]" />
-                Встреча
-              </span>
+          {deskShowCalendar ? (
+            <>
+              <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/50 p-1.5">
+                <MiniCalendar
+                  variant="workspace"
+                  hideFooterLink
+                  hideDayPanel
+                  selectedDate={workspaceCalDate}
+                  onSelectedDateChange={setWorkspaceCalDate}
+                />
+              </div>
+              <div className="mt-1 flex shrink-0 items-center gap-2">
+                <WorkspaceDayEventsMenu className="min-w-0 flex-1" dateIso={workspaceCalDate} />
+                <div className="flex shrink-0 items-center gap-2.5 text-[12px] text-[color:var(--workspace-text-muted)]">
+                  <span className="flex items-center gap-1">
+                    <Eye className="size-3.5 text-blue-300" />
+                    Показ
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Phone className="size-3.5 text-violet-300" />
+                    Звонок
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Users className="size-3.5 text-[color:var(--workspace-cal-meeting-dot)]" />
+                    Встреча
+                  </span>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/40 px-4 py-6 text-center">
+              <p className="text-[13px] leading-relaxed text-[color:var(--workspace-text-muted)]">
+                Полный календарь по этой роли недоступен. Мини-календарь на рабочем столе скрыт.
+              </p>
             </div>
-          </div>
+          )}
         </div>
       </HubWidgetShell>
 
@@ -576,7 +706,7 @@ export function DashboardWorkspace() {
       <HubWidgetShell accent="rgba(52,211,153,0.5)" className="lg:col-start-3 lg:row-span-2 lg:row-start-1">
         <WidgetHeader
           icon={<Bell className="size-3.5" strokeWidth={2} />}
-          title="Лента"
+          title="Уведомления · напоминания · новости"
           accentColor="#34d399"
           right={
             <div className="flex gap-0.5 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] p-0.5">
@@ -596,12 +726,14 @@ export function DashboardWorkspace() {
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-2.5 py-1">
           {infoTab === 'notifs' && (
             <>
-              <Link
-                to="/dashboard/info"
-                className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
-              >
-                Все уведомления →
-              </Link>
+              {deskShowInfo ? (
+                <Link
+                  to="/dashboard/settings/info"
+                  className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                >
+                  Все уведомления →
+                </Link>
+              ) : null}
               <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
                 {DASHBOARD_NOTIFICATIONS_PREVIEW.slice(0, NOTIFS_PREVIEW).map((n) => (
                   <li
@@ -629,12 +761,14 @@ export function DashboardWorkspace() {
 
           {infoTab === 'reminders' && (
             <>
-              <Link
-                to="/dashboard/info/reminders"
-                className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
-              >
-                Все напоминания →
-              </Link>
+              {deskShowInfo ? (
+                <Link
+                  to="/dashboard/settings/info/reminders"
+                  className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                >
+                  Все напоминания →
+                </Link>
+              ) : null}
               <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
                 {remindersPreview.map((r) => (
                   <li
@@ -662,12 +796,14 @@ export function DashboardWorkspace() {
 
           {infoTab === 'news' && (
             <>
-              <Link
-                to="/dashboard/info/news"
-                className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
-              >
-                Все новости →
-              </Link>
+              {deskShowInfo ? (
+                <Link
+                  to="/dashboard/settings/info/news"
+                  className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                >
+                  Все новости →
+                </Link>
+              ) : null}
               <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
                 {newsPreview.map((a) => (
                   <li
@@ -700,24 +836,26 @@ export function DashboardWorkspace() {
       </HubWidgetShell>
 
       {/* ╔══════════════════════════════════════════╗
-         ║  4. ПЛАНЫ + STREAK + GAMIFICATION        ║
+         ║  4. ПЛАНЫ + СТРИК + ГЕЙМИФИКАЦИЯ        ║
          ╚══════════════════════════════════════════╝ */}
       <HubWidgetShell accent="rgba(251,146,60,0.6)" className="lg:col-start-2 lg:row-start-2">
         <WidgetHeader
           icon={<Target className="size-3.5" strokeWidth={2} />}
-          title="Планы и эффективность"
+          title="Выполнение планов"
           accentColor="#fb923c"
           right={
-            <Link
-              to="/dashboard/my-report"
-              className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
-            >
-              Отчёт →
-            </Link>
+            canOpenMyReport ? (
+              <Link
+                to="/dashboard/my-report"
+                className="text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+              >
+                Отчёт →
+              </Link>
+            ) : null
           }
         />
 
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-hidden px-3 py-2">
+        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-x-hidden overflow-y-auto px-3 py-2 pb-2.5">
           <div className="grid shrink-0 grid-cols-1 gap-2 lg:grid-cols-2">
             <div className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5">
               <div className="mb-1.5 flex items-center justify-between text-[10px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
@@ -735,7 +873,7 @@ export function DashboardWorkspace() {
                 </span>
               </div>
               <div className="h-2.5 overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">
-                <div className="h-full rounded-full" style={{ width: `${Math.min(100, progress.dayPlanPercent)}%`, background: 'linear-gradient(90deg, #e6c364, #c9a84c)' }} />
+                <div className="h-full rounded-full" style={{ width: `${Math.min(100, progress.dayPlanPercent)}%`, background: 'linear-gradient(90deg, var(--gold), var(--gold-dark))' }} />
               </div>
             </div>
 
@@ -752,7 +890,7 @@ export function DashboardWorkspace() {
 
           <div className="grid shrink-0 grid-cols-1 gap-2 lg:grid-cols-3">
             {[
-              { label: 'Выручка', value: progress.revenue.currentLabel, sub: `/ ${progress.revenue.planLabel}`, pct: progress.revenue.percent, color: '#e6c364' },
+              { label: 'Выручка', value: progress.revenue.currentLabel, sub: `/ ${progress.revenue.planLabel}`, pct: progress.revenue.percent, color: 'var(--gold)' },
               { label: 'Воронка', value: `${progress.funnelProgress.percent}%`, sub: '', pct: progress.funnelProgress.percent, color: '#34d399' },
               { label: 'Лиды', value: `${progress.leadsToday.count}`, sub: `/ ${progress.leadsToday.plan}`, pct: progress.leadsToday.plan > 0 ? (progress.leadsToday.count / progress.leadsToday.plan) * 100 : 0, color: '#60a5fa' },
             ].map((m) => (
@@ -767,8 +905,8 @@ export function DashboardWorkspace() {
             ))}
           </div>
 
-          <div className="min-h-0 flex-1 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/65 px-3 py-2">
-            <div className="flex h-full min-h-0 flex-col gap-2">
+          <div className="shrink-0 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/65 px-3 py-2">
+            <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[11px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
                   Фокус дня
@@ -791,23 +929,25 @@ export function DashboardWorkspace() {
                 </p>
               )}
 
-              <div className="mt-auto flex items-center justify-between gap-2">
-                <p className="text-[10px] text-[color:var(--workspace-text-muted)]">
+              <div className="flex flex-col gap-1 border-t border-[color:var(--workspace-row-border)] pt-2 sm:flex-row sm:items-start sm:justify-between sm:gap-2">
+                <p className="min-w-0 text-[10px] leading-snug text-[color:var(--workspace-text-muted)]">
                   Следующий шаг: {focusGap > 0 ? `закрыть +${focusGap} по фокусу` : 'удержать текущий темп'}
                 </p>
-                <Link
-                  to={focusGap > 0 ? '/dashboard/tasks' : '/dashboard/my-report'}
-                  className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
-                >
-                  {focusGap > 0 ? 'Открыть задачи →' : 'К отчёту →'}
-                </Link>
+                {focusDeskHref && focusDeskLinkLabel ? (
+                  <Link
+                    to={focusDeskHref}
+                    className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                  >
+                    {focusDeskLinkLabel}
+                  </Link>
+                ) : null}
               </div>
             </div>
           </div>
 
-          <div className="h-[104px] shrink-0 rounded-lg border border-orange-400/25 bg-gradient-to-r from-[#f97316]/[0.12] via-[#f97316]/[0.06] to-transparent px-3 py-1.5">
-            <div className="flex h-full min-h-0 flex-col gap-1.5">
-              <div className="flex items-center gap-2">
+          <div className="shrink-0 rounded-lg border border-orange-400/25 bg-gradient-to-r from-[#f97316]/[0.12] via-[#f97316]/[0.06] to-transparent px-3 py-2.5">
+            <div className="flex flex-col gap-2.5">
+              <div className="flex items-start gap-2">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#fb923c] to-[#ea580c] shadow-md shadow-orange-900/30">
                   <Flame className="size-5 text-white" strokeWidth={2.2} fill="rgba(255,255,255,0.25)" />
                 </div>
@@ -842,9 +982,9 @@ export function DashboardWorkspace() {
                 </div>
               </div>
 
-              <div className="mt-auto">
-                <div className="mb-0.5 flex items-center justify-between text-[10px] font-bold uppercase text-orange-100/80">
-                  <span>Цель дня</span>
+              <div className="shrink-0">
+                <div className="mb-1 flex items-center justify-between gap-2 text-[10px] font-bold uppercase leading-normal text-orange-100/80">
+                  <span className="shrink-0">Цель дня</span>
                   <span className="text-[14px] leading-none tabular-nums">{streak.xpToday.current} / {streak.xpToday.goal}</span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-black/25">

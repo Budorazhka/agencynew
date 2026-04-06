@@ -89,7 +89,7 @@ const PLANS: Plan[] = [
 
 export function TariffPage() {
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/settings-hub' }}>
+    <DashboardShell>
       <div style={{ padding: '24px 28px 48px' }}>
         <div style={{ marginBottom: 28 }}>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 4 }}>Тарифные планы</div>

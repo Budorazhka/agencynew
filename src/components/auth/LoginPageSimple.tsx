@@ -5,10 +5,10 @@ import { useAuth, MOCK_USERS } from '@/context/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ROLE_LABEL, ROLE_COLOR } from '@/lib/permissions'
-import type { UserRole } from '@/types/auth'
+import { USER_ROLES, type UserRole } from '@/types/auth'
 import { cn } from '@/lib/utils'
 
-const ROLES: UserRole[] = ['owner', 'director', 'rop', 'marketer', 'manager']
+const ROLES: UserRole[] = USER_ROLES
 
 export function LoginPageSimple() {
   const { login, enterAs } = useAuth()

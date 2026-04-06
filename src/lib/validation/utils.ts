@@ -80,7 +80,7 @@ export const customValidators = {
     return undefined
   },
 
-  // URL с любым протоколом — проверяется через встроенный конструктор URL
+  // Ссылка с любым протоколом — проверка через встроенный в браузер разбор адреса
   url: (value: string) => {
     try {
       new URL(value)

@@ -7,7 +7,6 @@ export default function LearningPage() {
       moduleIcon={<GraduationCap size={32} color="#c9a84c" />}
       moduleName="Обучение"
       moduleDescription="База знаний по разделам: статьи, скрипты, презентации, PDF и курсы."
-      backRoute="/dashboard"
       sections={[
         {
           icon: <BookOpen size={20} color="#c9a84c" />,

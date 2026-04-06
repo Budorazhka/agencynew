@@ -17,7 +17,7 @@ export function MainScreenOptimized() {
   const { isFeltStyle } = useTheme()
 
   // Считаем статистику только когда меняется пул лидов.
-  // isFeltStyle специально не в зависимостях — это данные, не UI.
+  // Флаг темы «сукно» специально не в массиве зависимостей: это данные, не отрисовка.
   const stats = useMemo(() => {
     const leads = state.leadPool || []
     if (leads.length === 0) {

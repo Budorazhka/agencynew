@@ -32,13 +32,15 @@ export function usePermissionProps(
 /** Ярлык: минимальная роль для отображения в UI */
 export const ROLE_LABEL: Record<UserRole, string> = {
   owner: 'Собственник',
-  director: 'Директор',
+  director: 'Руководитель агентства',
   rop: 'РОП',
   marketer: 'Маркетолог',
-  manager: 'Менеджер',
-  lawyer: 'Юрист',
-  procurement_head: 'Рук. закупки',
-  partner: 'Партнёр',
+  manager: 'Менеджер / риелтор',
+  lawyer: 'Юрист / документы',
+  procurement_head: 'Спец. по закупке',
+  finance: 'Бухгалтер / финансы',
+  hr: 'HR / обучение',
+  partner: 'Партнёрский риелтор',
 }
 
 /** Цвет бейджа роли */
@@ -50,6 +52,8 @@ export const ROLE_COLOR: Record<UserRole, string> = {
   manager: 'text-slate-400 bg-slate-400/10 border-slate-400/30',
   lawyer: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/30',
   procurement_head: 'text-orange-400 bg-orange-400/10 border-orange-400/30',
+  finance: 'text-lime-400 bg-lime-400/10 border-lime-400/30',
+  hr: 'text-rose-400 bg-rose-400/10 border-rose-400/30',
   partner: 'text-pink-400 bg-pink-400/10 border-pink-400/30',
 }
 

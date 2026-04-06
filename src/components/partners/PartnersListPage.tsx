@@ -11,14 +11,14 @@ import { FMT_USD as FMT } from '@/lib/format-currency'
 
 const STATUS_COLORS: Record<PartnerStatus, string> = {
   active:  '#4ade80',
-  inactive:'rgba(255,255,255,0.3)',
+  inactive: '#94a3b8',
   pending: '#fb923c',
 }
 
 const TYPE_COLORS: Record<PartnerType, string> = {
   referral:     '#60a5fa',
   intermediary: '#a78bfa',
-  owner:        '#f2cf8d',
+  owner:        'var(--gold-light)',
 }
 
 type FilterType = PartnerType | 'all'
@@ -31,9 +31,14 @@ const TABS: { id: FilterType; label: string }[] = [
 ]
 
 const S = {
-  page: { padding: '28px 28px 48px', minHeight: '100vh', fontFamily: 'Inter, sans-serif' } as React.CSSProperties,
-  title: { fontSize: 22, fontWeight: 700, color: 'var(--gold)', marginBottom: 4 } as React.CSSProperties,
-  sub: { fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.06em', marginBottom: 24 } as React.CSSProperties,
+  page: {
+    padding: '28px 28px 48px',
+    minHeight: '100vh',
+    fontFamily: "'Montserrat', sans-serif",
+    background: 'var(--app-bg)',
+  } as React.CSSProperties,
+  title: { fontSize: 22, fontWeight: 700, color: 'var(--theme-accent-heading)', marginBottom: 4 } as React.CSSProperties,
+  sub: { fontSize: 12, color: 'var(--hub-desc)', letterSpacing: '0.06em', marginBottom: 24 } as React.CSSProperties,
 }
 
 export function PartnersListPage() {
@@ -55,7 +60,7 @@ export function PartnersListPage() {
   const totalLeads = PARTNERS_MOCK.reduce((s, p) => s + p.leadsCount, 0)
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/partners' }}>
+    <DashboardShell>
       <div style={S.page}>
         <div style={S.title}>Партнёры</div>
         <div style={S.sub}>Рефералы · Посредники · Собственники</div>
@@ -68,12 +73,12 @@ export function PartnersListPage() {
             { label: 'Комиссия выплачена', value: FMT.format(totalComm), color: '#4ade80' },
           ].map(k => (
             <div key={k.label} style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.07)',
+              background: 'var(--hub-card-bg)',
+              border: '1px solid var(--hub-card-border)',
               borderRadius: 12,
               padding: '16px 20px',
             }}>
-              <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', marginBottom: 4 }}>{k.label}</div>
+              <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--app-text-subtle)', marginBottom: 4 }}>{k.label}</div>
               <div style={{ fontSize: 20, fontWeight: 700, color: k.color }}>{k.value}</div>
             </div>
           ))}
@@ -83,30 +88,25 @@ export function PartnersListPage() {
         <div style={{ display: 'flex', gap: 12, marginBottom: 20, alignItems: 'center', flexWrap: 'wrap' }}>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 8,
-            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--shell-search-bg)', border: '1px solid var(--shell-search-border)',
             borderRadius: 8, padding: '0 12px', height: 36, flex: 1, maxWidth: 320,
           }}>
-            <Search size={13} color="rgba(255,255,255,0.35)" />
+            <Search size={13} color="var(--app-text-subtle)" />
             <input
-              style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', fontSize: 12, color: 'rgba(255,255,255,0.7)', fontFamily: 'inherit' }}
+              style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', fontSize: 12, color: 'var(--shell-search-fg)', fontFamily: 'inherit' }}
               placeholder="Поиск по имени, телефону..."
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
           </div>
-          <button style={{
-            display: 'flex', alignItems: 'center', gap: 5,
-            padding: '0 14px', height: 36, background: 'rgba(201,168,76,0.12)',
-            border: '1px solid rgba(201,168,76,0.3)', borderRadius: 8,
-            color: 'var(--gold)', fontSize: 11, fontWeight: 700, cursor: 'pointer', letterSpacing: '0.05em',
-          }}>
-            <Plus size={12} />
+          <button type="button" className="alphabase-section-primary">
+            <Plus size={12} strokeWidth={2.5} />
             Добавить партнёра
           </button>
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: 2, marginBottom: 20, borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: 0 }}>
+        <div style={{ display: 'flex', gap: 2, marginBottom: 20, borderBottom: '1px solid var(--divider-subtle)', paddingBottom: 0 }}>
           {TABS.map(t => (
             <button
               key={t.id}
@@ -115,7 +115,7 @@ export function PartnersListPage() {
                 padding: '8px 16px', fontSize: 11, fontWeight: tab === t.id ? 700 : 500,
                 letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer',
                 background: 'transparent', border: 'none',
-                color: tab === t.id ? 'var(--gold)' : 'rgba(255,255,255,0.4)',
+                color: tab === t.id ? 'var(--gold)' : 'var(--app-text-subtle)',
                 borderBottom: tab === t.id ? '2px solid var(--gold)' : '2px solid transparent',
                 marginBottom: -1,
               }}
@@ -133,7 +133,7 @@ export function PartnersListPage() {
         {/* List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {filtered.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: 'rgba(255,255,255,0.25)', fontSize: 13 }}>
+            <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--app-text-subtle)', fontSize: 13 }}>
               Нет партнёров по заданным фильтрам
             </div>
           )}
@@ -142,16 +142,16 @@ export function PartnersListPage() {
               key={partner.id}
               onClick={() => navigate(`/dashboard/partners/${partner.id}`)}
               style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.07)',
+                background: 'var(--hub-card-bg)',
+                border: '1px solid var(--hub-card-border)',
                 borderRadius: 12,
                 padding: '14px 18px',
                 display: 'flex', alignItems: 'center', gap: 16,
                 cursor: 'pointer',
                 transition: 'border-color 0.15s, background 0.15s',
               }}
-              onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.06)' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = 'var(--hub-card-bg-hover)' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = 'var(--hub-card-bg)' }}
             >
               {/* Avatar */}
               <div style={{
@@ -167,7 +167,7 @@ export function PartnersListPage() {
               {/* Info */}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-                  <span style={{ fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.9)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--app-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {partner.name}
                   </span>
                   <span style={{
@@ -185,28 +185,28 @@ export function PartnersListPage() {
                     {PARTNER_STATUS_LABELS[partner.status]}
                   </span>
                 </div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{partner.phone} · {partner.email}</div>
+                <div style={{ fontSize: 11, color: 'var(--app-text-muted)' }}>{partner.phone} · {partner.email}</div>
               </div>
 
               {/* Metrics */}
               <div style={{ display: 'flex', gap: 24, flexShrink: 0, alignItems: 'center' }}>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'center' }}>
-                    <Users size={11} color="rgba(255,255,255,0.35)" />
+                    <Users size={11} color="var(--app-text-subtle)" />
                     <span style={{ fontSize: 15, fontWeight: 700, color: '#60a5fa' }}>{partner.leadsCount}</span>
                   </div>
-                  <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>лидов</div>
+                  <div style={{ fontSize: 9, color: 'var(--app-text-subtle)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>лидов</div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'center' }}>
-                    <Wallet size={11} color="rgba(255,255,255,0.35)" />
-                    <span style={{ fontSize: 15, fontWeight: 700, color: partner.balance > 0 ? '#4ade80' : 'rgba(255,255,255,0.35)' }}>
+                    <Wallet size={11} color="var(--app-text-subtle)" />
+                    <span style={{ fontSize: 15, fontWeight: 700, color: partner.balance > 0 ? '#4ade80' : 'var(--app-text-subtle)' }}>
                       {FMT.format(partner.balance)}
                     </span>
                   </div>
-                  <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>баланс</div>
+                  <div style={{ fontSize: 9, color: 'var(--app-text-subtle)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>баланс</div>
                 </div>
-                <ChevronRight size={16} color="rgba(255,255,255,0.2)" />
+                <ChevronRight size={16} color="var(--app-text-subtle)" />
               </div>
             </div>
           ))}
@@ -220,7 +220,7 @@ export function PartnersListPage() {
             display: 'flex', alignItems: 'center', gap: 12,
           }}>
             <Wallet size={16} color="#4ade80" />
-            <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>
+            <span style={{ fontSize: 13, color: 'var(--app-text-muted)' }}>
               Общая задолженность по выплатам: <strong style={{ color: '#4ade80' }}>{FMT.format(totalBalance)}</strong>
             </span>
           </div>

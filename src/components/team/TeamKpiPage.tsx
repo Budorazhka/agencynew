@@ -14,13 +14,13 @@ const C = {
 }
 
 const ROLE_ACCENT: Record<string, string> = {
-  owner:    '#f2cf8d',
+  owner:    'var(--gold-light)',
   director: '#7ec8e3',
   rop:      '#fb923c',
   manager:  '#4ade80',
 }
 
-// Mock KPI per employee
+// Моковые KPI по сотрудникам
 const MOCK_KPI: Record<string, { leadsMonth: number; dealsMonth: number; revenue: number; plan: number; activeTasks: number }> = {
   'emp-owner':    { leadsMonth: 0,  dealsMonth: 0,  revenue: 0,          plan: 100, activeTasks: 3  },
   'emp-director': { leadsMonth: 2,  dealsMonth: 1,  revenue: 12_500_000, plan: 95,  activeTasks: 7  },
@@ -140,7 +140,7 @@ export function TeamKpiPage() {
     filter === 'all' ? e.role !== 'owner' : e.role === filter
   )
 
-  // Aggregate KPI for strip
+  // Сводка KPI для полоски показателей
   const managers = MOCK_EMPLOYEES.filter(e => e.role === 'manager')
   const totalRevenue = managers.reduce((s, e) => s + (MOCK_KPI[e.id]?.revenue || 0), 0)
   const avgPlan = Math.round(managers.reduce((s, e) => s + (MOCK_KPI[e.id]?.plan || 0), 0) / (managers.length || 1))
@@ -148,7 +148,7 @@ export function TeamKpiPage() {
   const overplan = managers.filter(e => (MOCK_KPI[e.id]?.plan || 0) >= 100).length
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/team' }}>
+    <DashboardShell>
       <div style={{ padding: '24px 28px 40px' }}>
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 4 }}>KPI команды</div>

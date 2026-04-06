@@ -4,7 +4,7 @@ import { LMS_COURSES } from '@/data/lms-mock'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 
 const S = {
-  root: { fontFamily: 'Inter, sans-serif', padding: '28px 28px 64px', maxWidth: 760 } as React.CSSProperties,
+  root: { fontFamily: "'Montserrat', sans-serif", padding: '28px 28px 64px', maxWidth: 760 } as React.CSSProperties,
   gold: 'var(--gold)',
   white: 'rgba(255,255,255,0.9)',
   dim:   'rgba(255,255,255,0.4)',
@@ -40,7 +40,7 @@ function MarkdownBody({ body }: { body: string }) {
           return <div key={i} style={{ fontWeight: 700, color: 'rgba(255,255,255,0.85)', marginTop: 12, marginBottom: 4 }}>{line.slice(2, -2)}</div>
         }
         if (line.trim() === '') return <div key={i} style={{ height: 8 }} />
-        // Inline bold
+        // Жирный текст внутри строки
         const parts = line.split(/\*\*(.*?)\*\*/)
         return (
           <div key={i} style={{ marginBottom: 4 }}>
@@ -99,7 +99,7 @@ export function LessonPage() {
   void searchParams.get('courseId')
   const navigate = useNavigate()
 
-  // Find lesson across all courses
+  // Ищем урок по всем курсам
   let lesson = null
   let course = null
   let lessonIdx = -1
@@ -115,7 +115,7 @@ export function LessonPage() {
 
   if (!lesson || !course) {
     return (
-      <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/learning' }}>
+      <DashboardShell>
         <div style={{ ...S.root, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ color: S.dim, fontSize: 14 }}>Урок не найден</span>
         </div>
@@ -127,16 +127,8 @@ export function LessonPage() {
   const nextLesson = lessonIdx < course.lessons.length - 1 ? course.lessons[lessonIdx + 1] : null
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/learning' }}>
+    <DashboardShell>
     <div style={S.root}>
-      {/* Back */}
-      <button
-        onClick={() => navigate(`/dashboard/lms/course/${course.id}`)}
-        style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: S.dim, fontSize: 12, marginBottom: 6 }}
-      >
-        <ArrowLeft size={14} />
-        {course.title}
-      </button>
       <div style={{ fontSize: 10, color: S.dim, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 20 }}>
         Урок {lessonIdx + 1} из {course.lessons.length}
       </div>

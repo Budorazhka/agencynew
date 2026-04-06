@@ -1,31 +1,33 @@
 import ModuleHub from '@/components/ModuleHub'
-import { GitBranch, Users, ShieldCheck, UserCog } from 'lucide-react'
+import { Users, GraduationCap, BarChart3 } from 'lucide-react'
 
+/**
+ * Раздел 6.7 стартового ТЗ ALPHABASE.sale: Команда (включая обучение и отчёт).
+ */
 export default function TeamPage() {
   return (
     <ModuleHub
       moduleIcon={<Users size={32} color="#c9a84c" />}
       moduleName="Команда"
-      moduleDescription="Оргструктура компании, управление сотрудниками, роли, права и доступы."
-      backRoute="/dashboard"
+      moduleDescription="Управленческий раздел: состав, обучение и показатели без лишней HR-сложности."
       sections={[
         {
-          icon: <GitBranch size={20} color="#c9a84c" />,
-          title: 'Оргструктура',
-          description: 'Дерево компании, филиалов, департаментов и команд.',
+          icon: <Users size={20} color="#c9a84c" />,
+          title: 'Команда',
+          description: 'Оргструктура, сотрудники и роли.',
           route: '/dashboard/team/org',
         },
         {
-          icon: <UserCog size={20} color="#c9a84c" />,
-          title: 'Управление командой',
-          description: 'Сотрудники, роли, структура и управление составом команды.',
-          route: '/dashboard/team/kpi',
+          icon: <GraduationCap size={20} color="#c9a84c" />,
+          title: 'Обучение и база знаний',
+          description: 'Курсы, материалы и регламенты для команды.',
+          route: '/dashboard/learning',
         },
         {
-          icon: <ShieldCheck size={20} color="#c9a84c" />,
-          title: 'Управление доступами',
-          description: 'Матрица ролей, прав и уровней доступа.',
-          route: '/dashboard/team/access',
+          icon: <BarChart3 size={20} color="#c9a84c" />,
+          title: 'Отчёт: по менеджеру / по команде / KPI / выполнению планов',
+          description: 'KPI, планы и активность команды.',
+          route: '/dashboard/team/kpi',
         },
       ]}
     />

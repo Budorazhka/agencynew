@@ -8,7 +8,6 @@ export default function TasksHubPage() {
       moduleIcon={<ListTodo size={32} color="#c9a84c" />}
       moduleName="Задачи"
       moduleDescription="Дашборд задач и управление задачами."
-      backRoute="/dashboard"
       sections={[
         {
           icon: <ClipboardList size={20} color="#c9a84c" />,

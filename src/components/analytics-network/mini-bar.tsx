@@ -25,11 +25,11 @@ export function MiniBar({
     return (
         <div className={cn("flex items-center gap-2", className)}>
             {showValue && (
-                <span className="min-w-0 text-sm font-semibold text-slate-900 text-right tabular-nums sm:min-w-[2rem]">
+                <span className="min-w-0 text-right text-[0.9375rem] font-semibold tabular-nums text-[color:var(--app-text)] sm:min-w-[2.25rem]">
                     {value.toLocaleString("ru-RU")}
                 </span>
             )}
-            <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-muted sm:min-w-[60px]">
+            <div className="network-mini-bar-track h-1.5 min-w-0 flex-1 overflow-hidden rounded-full sm:min-w-[60px]">
                 <div
                     className={cn("h-full rounded-full transition-all duration-300", color)}
                     style={{ width: `${percentage}%` }}

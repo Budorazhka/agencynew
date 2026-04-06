@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo, type CSSProperties } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { Clock, AlertTriangle, CheckCircle, XCircle, ArrowLeft, Building2, Layers, Minus, Plus } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
+import { Clock, AlertTriangle, CheckCircle, XCircle, Building2, Layers, Minus, Plus } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { Button } from '@/components/ui/button'
 import {
@@ -146,9 +146,9 @@ function BookingHoursField({
             key={h}
             type="button"
             onClick={() => onChange(String(h))}
-            className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
+            className={`rounded-[var(--section-cta-radius)] border px-3 py-1.5 text-xs font-semibold transition-colors ${
               safe === h
-                ? 'border-[#e6c364] bg-[#e6c364]/15 text-[#e6c364]'
+                ? 'border-[var(--gold)] bg-[var(--nav-item-bg-active)] text-[color:var(--theme-accent-heading)]'
                 : 'border-[var(--green-border)] bg-transparent text-[color:var(--app-text-muted)] hover:bg-[var(--dropdown-hover)]'
             }`}
           >
@@ -162,32 +162,15 @@ function BookingHoursField({
 
 const C = {
   gold: 'var(--gold)',
-  white: '#ffffff',
-  whiteMid: 'rgba(255,255,255,0.7)',
-  whiteLow: 'rgba(255,255,255,0.4)',
+  white: 'var(--app-text)',
+  whiteMid: 'var(--app-text-muted)',
+  whiteLow: 'var(--app-text-subtle)',
   border: 'var(--green-border)',
   card: 'var(--green-card)',
   green: '#4ade80',
   red: '#f87171',
   orange: '#fb923c',
   blue: '#60a5fa',
-}
-
-const backToCrmBtn: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 6,
-  height: 36,
-  padding: '0 14px',
-  background: 'rgba(201,168,76,0.1)',
-  border: '1px solid rgba(201,168,76,0.35)',
-  borderRadius: 10,
-  color: '#e6c364',
-  fontSize: 11,
-  fontWeight: 700,
-  letterSpacing: '0.06em',
-  cursor: 'pointer',
-  fontFamily: 'inherit',
 }
 
 function useCountdown(expiresAt: string) {
@@ -244,7 +227,6 @@ function apartmentMarket(b: Booking): BookingPropertyMarket {
 }
 
 export function BookingsPage() {
-  const navigate = useNavigate()
   const location = useLocation()
   const variant = bookingsVariantFromPath(location.pathname)
   const { currentUser } = useAuth()
@@ -470,7 +452,7 @@ export function BookingsPage() {
   }, [bookings, variant])
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/bookings' }}>
+    <DashboardShell>
       <div
         style={{
           flex: 1,
@@ -491,13 +473,6 @@ export function BookingsPage() {
             boxSizing: 'border-box',
           }}
         >
-          <div style={{ marginBottom: 20 }}>
-            <button type="button" onClick={() => navigate('/dashboard/bookings')} style={backToCrmBtn}>
-              <ArrowLeft size={20} strokeWidth={2} />
-              Назад
-            </button>
-          </div>
-
           {/* Header */}
           <div
             style={{
@@ -537,26 +512,8 @@ export function BookingsPage() {
               </div>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
-              <button
-                type="button"
-                onClick={openPrimaryModal}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  padding: '9px 16px',
-                  background: 'var(--gold-dark)',
-                  border: 'none',
-                  borderRadius: 7,
-                  color: '#fff',
-                  fontSize: 12,
-                  fontWeight: 700,
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase' as const,
-                  cursor: 'pointer',
-                }}
-              >
-                <Building2 size={20} strokeWidth={2} />
+              <button type="button" onClick={openPrimaryModal} className="alphabase-section-primary">
+                <Building2 size={18} strokeWidth={2.25} />
                 Новостройка
               </button>
               {(variant === 'buyer' || variant === 'all') && (
@@ -569,9 +526,9 @@ export function BookingsPage() {
                     gap: 8,
                     padding: '9px 16px',
                     background: 'transparent',
-                    border: '1px solid rgba(201,168,76,0.45)',
-                    borderRadius: 7,
-                    color: '#e6c364',
+                    border: '1px solid var(--hub-card-border-hover)',
+                    borderRadius: 'var(--section-cta-radius)',
+                    color: 'var(--theme-accent-heading)',
                     fontSize: 12,
                     fontWeight: 700,
                     letterSpacing: '0.08em',
@@ -579,7 +536,7 @@ export function BookingsPage() {
                     cursor: 'pointer',
                   }}
                 >
-                  <Layers size={20} strokeWidth={2} />
+                  <Layers size={18} strokeWidth={2.25} />
                   Вторичка
                 </button>
               )}
@@ -607,9 +564,9 @@ export function BookingsPage() {
                 }}
                 style={{
                   padding: '8px 14px',
-                  borderRadius: 8,
-                  border: `1px solid ${tab === t.key ? 'rgba(201,168,76,0.45)' : 'rgba(255,255,255,0.1)'}`,
-                  background: tab === t.key ? 'rgba(201,168,76,0.12)' : 'rgba(255,255,255,0.03)',
+                  borderRadius: 'var(--section-cta-radius)',
+                  border: `1px solid ${tab === t.key ? 'var(--hub-card-border-hover)' : 'var(--hub-card-border)'}`,
+                  background: tab === t.key ? 'var(--nav-item-bg-active)' : 'var(--hub-card-bg)',
                   color: tab === t.key ? C.gold : C.whiteLow,
                   fontSize: 12,
                   fontWeight: tab === t.key ? 700 : 500,
@@ -645,7 +602,7 @@ export function BookingsPage() {
                 padding: '12px 14px',
                 borderRadius: 10,
                 border: `1px solid ${C.border}`,
-                background: 'rgba(255,255,255,0.03)',
+                background: 'var(--hub-card-bg)',
               }}
             >
               <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', color: C.whiteLow, alignSelf: 'center', textTransform: 'uppercase' as const }}>
@@ -658,9 +615,9 @@ export function BookingsPage() {
                   onClick={() => setApartmentSubTab(m)}
                   style={{
                     padding: '8px 16px',
-                    borderRadius: 8,
-                    border: `1px solid ${apartmentSubTab === m ? 'rgba(201,168,76,0.5)' : 'rgba(255,255,255,0.12)'}`,
-                    background: apartmentSubTab === m ? 'rgba(201,168,76,0.15)' : 'transparent',
+                    borderRadius: 'var(--section-cta-radius)',
+                    border: `1px solid ${apartmentSubTab === m ? 'var(--hub-card-border-hover)' : 'var(--hub-card-border)'}`,
+                    background: apartmentSubTab === m ? 'var(--nav-item-bg-active)' : 'transparent',
                     color: apartmentSubTab === m ? C.gold : C.whiteMid,
                     fontSize: 12,
                     fontWeight: apartmentSubTab === m ? 700 : 500,
@@ -691,7 +648,7 @@ export function BookingsPage() {
                   color: C.whiteLow,
                   border: `1px dashed ${C.border}`,
                   borderRadius: 12,
-                  background: 'rgba(255,255,255,0.02)',
+                  background: 'var(--workspace-row-bg)',
                 }}
               >
                 Бронирований не найдено
@@ -732,9 +689,9 @@ export function BookingsPage() {
                       setPrimKind(k)
                       setPrimAptId('')
                     }}
-                    className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                    className={`rounded-[var(--section-cta-radius)] border px-3 py-1.5 text-xs font-semibold transition-colors ${
                       primKind === k
-                        ? 'border-[#e6c364] bg-[#e6c364]/15 text-[#e6c364]'
+                        ? 'border-[var(--gold)] bg-[var(--nav-item-bg-active)] text-[color:var(--theme-accent-heading)]'
                         : 'border-[var(--green-border)] bg-transparent text-[color:var(--app-text-muted)] hover:bg-[var(--dropdown-hover)]'
                     }`}
                   >
@@ -821,7 +778,7 @@ export function BookingsPage() {
             <Button type="button" variant="outline" onClick={() => setPrimaryOpen(false)} className="border-[var(--green-border)] bg-transparent text-[color:var(--app-text)]">
               Отмена
             </Button>
-            <Button type="button" onClick={submitPrimaryBooking} className="bg-[var(--gold-dark)] text-[#3d2e00] hover:brightness-110">
+            <Button type="button" onClick={submitPrimaryBooking} variant="sectionPrimary">
               Создать
             </Button>
           </DialogFooter>
@@ -885,7 +842,7 @@ export function BookingsPage() {
             <Button type="button" variant="outline" onClick={() => setSecondaryOpen(false)} className="border-[var(--green-border)] bg-transparent text-[color:var(--app-text)]">
               Отмена
             </Button>
-            <Button type="button" onClick={submitSecondaryBooking} className="bg-[var(--gold-dark)] text-[#3d2e00] hover:brightness-110">
+            <Button type="button" onClick={submitSecondaryBooking} variant="sectionPrimary">
               Создать
             </Button>
           </DialogFooter>
@@ -938,24 +895,24 @@ function BookingCard({ booking }: { booking: Booking }) {
               {BOOKING_STATUS_LABELS[booking.status]}
             </span>
           </div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: '#ffffff' }}>{booking.clientName}</div>
-          <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--app-text)' }}>{booking.clientName}</div>
+          <div style={{ fontSize: 13, color: 'var(--app-text-muted)', marginTop: 2 }}>
             {booking.propertyAddress} · {booking.propertyType}
           </div>
           {booking.developerName && (
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
+            <div style={{ fontSize: 11, color: 'var(--app-text-subtle)', marginTop: 2 }}>
               Застройщик: {booking.developerName}
             </div>
           )}
           {booking.type === 'apartment' && (
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.38)', marginTop: 4 }}>
+            <div style={{ fontSize: 11, color: 'var(--app-text-subtle)', marginTop: 4 }}>
               {market === 'primary'
                 ? 'Сценарий: шахматка ЖК, конкретный лот.'
                 : 'Сценарий: объект из списка агентства, связь с лидом.'}
             </div>
           )}
           {booking.sourceLeadId && (
-            <div style={{ fontSize: 11, color: 'rgba(230,195,100,0.55)', marginTop: 4 }}>
+            <div style={{ fontSize: 11, color: 'var(--theme-accent-link-dim)', marginTop: 4 }}>
               Лид: {booking.sourceLeadId}
             </div>
           )}
@@ -964,7 +921,7 @@ function BookingCard({ booking }: { booking: Booking }) {
         {/* Timer */}
         <div style={{ textAlign: 'right' as const }}>
           <CountdownTimer expiresAt={booking.expiresAt} status={booking.status} />
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', marginTop: 4 }}>
+          <div style={{ fontSize: 10, color: 'var(--app-text-subtle)', marginTop: 4 }}>
             Истекает: {new Date(booking.expiresAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
           </div>
         </div>
@@ -972,7 +929,7 @@ function BookingCard({ booking }: { booking: Booking }) {
 
       {/* Footer */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
+        <div style={{ fontSize: 11, color: 'var(--app-text-subtle)' }}>
           Агент: {booking.agentName} · Создана: {new Date(booking.bookedAt).toLocaleDateString('ru-RU')}
         </div>
         {isActive && (
@@ -981,7 +938,7 @@ function BookingCard({ booking }: { booking: Booking }) {
               padding: '5px 12px',
               background: 'rgba(74,222,128,0.1)',
               border: '1px solid rgba(74,222,128,0.3)',
-              borderRadius: 6,
+              borderRadius: 'var(--section-cta-radius)',
               color: '#4ade80',
               fontSize: 11,
               fontWeight: 600,
@@ -996,7 +953,7 @@ function BookingCard({ booking }: { booking: Booking }) {
               padding: '5px 12px',
               background: 'rgba(248,113,113,0.1)',
               border: '1px solid rgba(248,113,113,0.3)',
-              borderRadius: 6,
+              borderRadius: 'var(--section-cta-radius)',
               color: '#f87171',
               fontSize: 11,
               fontWeight: 600,
@@ -1012,7 +969,7 @@ function BookingCard({ booking }: { booking: Booking }) {
       </div>
 
       {booking.notes && (
-        <div style={{ marginTop: 10, fontSize: 12, color: 'rgba(255,255,255,0.4)', fontStyle: 'italic' as const }}>
+        <div style={{ marginTop: 10, fontSize: 12, color: 'var(--app-text-subtle)', fontStyle: 'italic' as const }}>
           {booking.notes}
         </div>
       )}

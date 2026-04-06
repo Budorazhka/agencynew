@@ -195,7 +195,7 @@ export function PersonalAnalyticsInsights({
             setDraftPlanTargets(merged);
             setDraftPlanInputs(mapPlanTargetsToInputs(merged));
         } catch {
-            // ignore localStorage parse issues
+            // ошибки разбора localStorage игнорируем
         }
     }, [allowPlanEditing, defaultPlanTargets]);
 
@@ -441,7 +441,7 @@ export function PersonalAnalyticsInsights({
                                     try {
                                         window.localStorage.setItem(PLAN_STORAGE_KEY, JSON.stringify(normalizedTargets));
                                     } catch {
-                                        // ignore localStorage write issues
+                                        // ошибки записи в localStorage игнорируем
                                     }
                                     setIsPlanDialogOpen(false);
                                 }}

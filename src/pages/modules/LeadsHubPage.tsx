@@ -1,43 +1,40 @@
 import ModuleHub from '@/components/ModuleHub'
-import { Trello, Inbox, User, CopyCheck, ClipboardList, Users } from 'lucide-react'
+import { Users, Radio, FileBarChart, LineChart, LayoutGrid } from 'lucide-react'
 
+/**
+ * Раздел 6.3 стартового ТЗ ALPHABASE.sale: Лиды.
+ * Вход из rail — сюда; канбан/покер — рабочая поверхность рядом с пунктами ТЗ.
+ */
 export default function LeadsHubPage() {
   return (
     <ModuleHub
       moduleIcon={<Users size={32} color="#c9a84c" />}
       moduleName="Лиды"
-      moduleDescription="Управление входящими обращениями: канбан, квалификация, дубли, перевод в сделку."
-      backRoute="/dashboard"
+      moduleDescription="Скорость, приоритет, распределение и контроль обработки входящих обращений."
       sections={[
         {
-          icon: <Trello size={20} color="#c9a84c" />,
-          title: 'Канбан лидов',
-          description: 'Новые, в работе, недозвон, квалифицирован, брак и другие статусы.',
-          route: '/dashboard/leads',
+          icon: <LayoutGrid size={20} color="#c9a84c" />,
+          title: 'Панель: распределение лидов',
+          description: 'Покерный стол: очередь, статусы и квалификация (маршрут ТЗ с режимом распределения).',
+          route: '/dashboard/leads/poker?distribution=1',
         },
         {
-          icon: <Inbox size={20} color="#c9a84c" />,
-          title: 'Очередь входящих',
-          description: 'Лиды из сайта, звонков, мессенджеров и API в порядке поступления.',
-          route: '/dashboard/leads',
+          icon: <Radio size={20} color="#c9a84c" />,
+          title: 'Источники лидов',
+          description: 'Каналы, UTM, качество и объём по источникам.',
+          route: '/dashboard/leads/sources',
         },
         {
-          icon: <User size={20} color="#c9a84c" />,
-          title: 'Карточка лида',
-          description: 'Контакты, источник, UTM, таймлайн касаний, ответственный.',
-          route: '/dashboard/leads',
+          icon: <FileBarChart size={20} color="#c9a84c" />,
+          title: 'Отчёт: общий отчёт по лидам',
+          description: 'Сводная воронка и конверсии по лидам.',
+          route: '/dashboard/leads/report/general',
         },
         {
-          icon: <CopyCheck size={20} color="#c9a84c" />,
-          title: 'Проверка дублей',
-          description: 'Поиск совпадений по телефону, email и ФИО.',
-          route: '/dashboard/leads',
-        },
-        {
-          icon: <ClipboardList size={20} color="#c9a84c" />,
-          title: 'Квалификация',
-          description: 'Анкета, комментарии, задачи, перевод в клиента или сделку.',
-          route: '/dashboard/leads',
+          icon: <LineChart size={20} color="#c9a84c" />,
+          title: 'Отчёт: маркетинговый отчёт по лидам',
+          description: 'Эффективность рекламных и маркетинговых каналов.',
+          route: '/dashboard/leads/report/marketing',
         },
       ]}
     />

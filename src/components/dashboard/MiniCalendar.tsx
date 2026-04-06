@@ -223,9 +223,9 @@ export function MiniCalendar({
                   ? 'h-full min-h-0 w-full min-w-0 overflow-hidden rounded-lg border p-1'
                   : cn('rounded-md p-0.5', cellMinH),
                 isSelected
-                  ? 'border-[rgba(230,195,100,0.45)] bg-[rgba(230,195,100,0.1)]'
+                  ? 'border-[color:var(--hub-card-border-hover)] bg-[var(--hub-tile-icon-bg)]'
                   : isToday
-                    ? 'border-[rgba(230,195,100,0.25)] bg-[var(--workspace-cal-cell-fill)]'
+                    ? 'border-[color:var(--hub-tile-icon-border)] bg-[var(--workspace-cal-cell-fill)]'
                     : 'border-transparent hover:bg-[var(--workspace-cal-cell-fill)]',
               )}
             >

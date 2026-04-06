@@ -17,7 +17,7 @@ export default function PartnersMlmAnalyticsPage() {
   }, [cityId, navigate])
 
   if (!cityId) {
-    return <Navigate to="/dashboard/partners" replace />
+    return <Navigate to="/dashboard/community" replace />
   }
 
   // Переходим эффектом; это просто "пустая" прокладка.

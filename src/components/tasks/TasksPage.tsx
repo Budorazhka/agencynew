@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect, useRef, type CSSProperties } from 'react'
-import { Plus, Zap, Clock, AlertTriangle, CheckCircle, Circle, MapPin, ListChecks, Paperclip, ArrowLeft } from 'lucide-react'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import { Plus, Zap, Clock, AlertTriangle, CheckCircle, Circle, MapPin, ListChecks, Paperclip } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { CreateTaskModal } from '@/components/tasks/CreateTaskModal'
@@ -20,23 +20,6 @@ const C = {
   green: '#4ade80',
   red: '#f87171',
   orange: '#fb923c',
-}
-
-const backToTasksHubBtn: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 6,
-  height: 36,
-  padding: '0 14px',
-  background: 'rgba(201,168,76,0.1)',
-  border: '1px solid rgba(201,168,76,0.35)',
-  borderRadius: 10,
-  color: '#e6c364',
-  fontSize: 11,
-  fontWeight: 700,
-  letterSpacing: '0.06em',
-  cursor: 'pointer',
-  fontFamily: 'inherit',
 }
 
 type Filter = 'my' | 'today' | 'overdue' | 'team' | 'auto' | 'all'
@@ -101,14 +84,8 @@ export function TasksPage() {
   ]
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/tasks' }}>
+    <DashboardShell>
       <div style={{ padding: '28px 28px 40px', maxWidth: 1000 }}>
-        <div style={{ marginBottom: 20 }}>
-          <button type="button" onClick={() => navigate('/dashboard/tasks')} style={backToTasksHubBtn}>
-            <ArrowLeft size={20} strokeWidth={2} />
-            Назад
-          </button>
-        </div>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
           <div>
@@ -269,7 +246,7 @@ function TaskRow({ task, onToggle }: { task: Task; onToggle: () => void }) {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 8, flexWrap: 'wrap' as const }}>
           {task.taskCategory === 'personal' && (
-            <span style={{ fontSize: 10, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4, color: '#e6c364' }}>
+            <span style={{ fontSize: 10, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4, color: 'var(--gold)' }}>
               <MapPin size={11} /> Личная
             </span>
           )}

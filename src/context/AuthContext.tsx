@@ -104,6 +104,28 @@ export const MOCK_USERS: (CurrentUser & { password: string })[] = [
     companyName: 'Estate Group',
     avatarUrl: undefined,
   },
+  {
+    id: 'u-finance',
+    name: 'Елена Балансова',
+    login: 'finance',
+    password: '1',
+    role: 'finance',
+    accountType: 'agency',
+    companyId: 'c1',
+    companyName: 'Estate Group',
+    avatarUrl: undefined,
+  },
+  {
+    id: 'u-hr',
+    name: 'Ксения Кадрова',
+    login: 'hr',
+    password: '1',
+    role: 'hr',
+    accountType: 'agency',
+    companyId: 'c1',
+    companyName: 'Estate Group',
+    avatarUrl: undefined,
+  },
 ]
 
 export type LoginResult = 'ok' | 'blocked' | 'invalid'
@@ -140,7 +162,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         window.localStorage.removeItem(AUTH_STORAGE_KEY)
       }
     } catch {
-      // Ignore storage failures and keep auth state in memory.
+      // Ошибки записи в хранилище игнорируем — состояние входа остаётся в памяти.
     }
   }, [currentUser])
 
@@ -177,7 +199,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let id = `demo-${accountType}-${role}`
     let name = `${ROLE_LABEL[role]} · ${ACCOUNT_TYPE_LABEL[accountType]}`
     
-    // Map demo agency manager strictly to our mock user for testing CRM history
+    // Демо-менеджер агентства жёстко привязан к мок-пользователю для истории в CRM
     if (accountType === 'agency' && role === 'manager') {
       id = 'lm-1'
       name = 'Анна Первичкина'

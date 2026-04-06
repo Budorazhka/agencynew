@@ -1,27 +1,8 @@
-import type { CSSProperties } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { DEALS_MOCK } from '@/data/deals-mock'
 import { formatUsdMillions, formatUsdThousands } from '@/lib/format-currency'
 import { STAGE_LABELS, type Deal } from '@/types/deals'
-
-const backToCrmBtn: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 6,
-  height: 36,
-  padding: '0 14px',
-  background: 'rgba(201,168,76,0.1)',
-  border: '1px solid rgba(201,168,76,0.35)',
-  borderRadius: 10,
-  color: '#e6c364',
-  fontSize: 11,
-  fontWeight: 700,
-  letterSpacing: '0.06em',
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-}
 
 const C = {
   gold: 'var(--gold)',
@@ -57,22 +38,8 @@ export function DealsReportPage() {
   const activeDeals = deals.filter(d => !successStages.has(d.stage))
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/deals' }}>
+    <DashboardShell>
       <div style={{ padding: '24px 28px 40px', maxWidth: 900 }}>
-        <div style={{ marginBottom: 20, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 }}>
-          <button type="button" onClick={() => navigate('/dashboard/crm')} style={backToCrmBtn}>
-            <ArrowLeft size={20} strokeWidth={2} />
-            Назад
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/dashboard/deals')}
-            style={{ background: 'none', border: 'none', color: C.whiteLow, fontSize: 12, cursor: 'pointer', textDecoration: 'underline' }}
-          >
-            К канбану сделок
-          </button>
-        </div>
-
         <div style={{ fontSize: 26, fontWeight: 700, color: C.white, marginBottom: 4 }}>Отчёт по сделкам</div>
         <div style={{ fontSize: 13, color: C.whiteLow, marginBottom: 28 }}>Сводная статистика и комиссии</div>
 

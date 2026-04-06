@@ -61,9 +61,7 @@ export default function NewsManagementSettingsPage() {
   }
 
   return (
-    <DashboardShell
-      topBack={{ label: 'Новости и рассылки', route: '/dashboard/settings/news-mailings' }}
-    >
+    <DashboardShell>
       <div style={{ padding: '24px 28px 48px', maxWidth: 720 }}>
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 4 }}>Управление новостями</div>
@@ -74,7 +72,7 @@ export default function NewsManagementSettingsPage() {
 
         <div style={{ marginBottom: 20 }}>
           <Link
-            to="/dashboard/info/news"
+            to="/dashboard/settings/info/news"
             style={{
               display: 'inline-flex',
               alignItems: 'center',

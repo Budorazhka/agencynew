@@ -93,9 +93,9 @@ const STEP_ICONS: Record<PropertyWizardStepId, ComponentType<{ className?: strin
 }
 
 const SELECT_CLASS =
-  'h-10 w-full rounded-[16px] border border-[rgba(230,195,100,0.16)] bg-[rgba(5,20,16,0.52)] px-3 text-[13px] text-[#d0e8df] shadow-none'
+  'h-10 w-full rounded-[16px] border border-[var(--hub-card-border)] bg-[color-mix(in srgb, var(--rail-bg) 92%, transparent)] px-3 text-[13px] text-[color:var(--workspace-text)] shadow-none'
 const FIELD_CLASS =
-  'h-10 rounded-[16px] border-[rgba(230,195,100,0.16)] bg-[rgba(5,20,16,0.52)] px-3 text-[13px] text-[#d0e8df]'
+  'h-10 rounded-[16px] border-[var(--hub-card-border)] bg-[color-mix(in srgb, var(--rail-bg) 92%, transparent)] px-3 text-[13px] text-[color:var(--workspace-text)]'
 
 interface MapHotspot {
   label: string
@@ -277,7 +277,7 @@ function WizardTextArea({
       value={value}
       onChange={(event) => onChange(event.target.value)}
       placeholder={placeholder}
-      className="min-h-[88px] w-full rounded-[16px] border border-[rgba(230,195,100,0.16)] bg-[rgba(5,20,16,0.52)] px-3 py-2.5 text-[13px] text-[#d0e8df] outline-none transition-colors placeholder:text-[rgba(230,195,100,0.35)] focus:border-[rgba(52,211,153,0.6)]"
+      className="min-h-[88px] w-full rounded-[16px] border border-[var(--hub-card-border)] bg-[color-mix(in srgb, var(--rail-bg) 92%, transparent)] px-3 py-2.5 text-[13px] text-[color:var(--workspace-text)] outline-none transition-colors placeholder:text-[var(--theme-accent-icon-dim)] focus:border-[rgba(52,211,153,0.6)]"
     />
   )
 }
@@ -296,11 +296,11 @@ function FieldShell({
   return (
     <label className="space-y-1">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-[12px] font-semibold text-[#d0e8df]">
+        <span className="text-[12px] font-semibold text-[color:var(--workspace-text)]">
           {label}
           {required && <span className="ml-1 text-emerald-400">*</span>}
         </span>
-        {hint && <span className="text-[10px] text-[rgba(230,195,100,0.45)]">{hint}</span>}
+        {hint && <span className="text-[10px] text-[color:var(--hub-stat-label)]">{hint}</span>}
       </div>
       {children}
     </label>
@@ -329,19 +329,19 @@ function ChoiceTile({
         'border text-left transition-all',
         active
           ? 'border-emerald-400/70 bg-[rgba(16,185,129,0.16)] shadow-[0_12px_32px_rgba(16,185,129,0.18)]'
-          : 'border-[rgba(230,195,100,0.16)] bg-[rgba(5,20,16,0.46)] hover:border-[rgba(230,195,100,0.32)] hover:bg-[rgba(7,28,22,0.56)]',
+          : 'border-[var(--hub-card-border)] bg-[color-mix(in_srgb,var(--rail-bg)_88%,transparent)] hover:border-[color:var(--hub-card-border-hover)] hover:bg-[color-mix(in_srgb,var(--green-deep)_90%,transparent)]',
       )}
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <div className={cn(compact ? 'text-[13px]' : 'text-[14px]', 'font-semibold leading-tight text-[#d0e8df]')}>{title}</div>
-          {description && !compact && <div className="mt-0.5 text-[12px] leading-snug text-[rgba(230,195,100,0.48)]">{description}</div>}
+          <div className={cn(compact ? 'text-[13px]' : 'text-[14px]', 'font-semibold leading-tight text-[color:var(--workspace-text)]')}>{title}</div>
+          {description && !compact && <div className="mt-0.5 text-[12px] leading-snug text-[color:var(--hub-desc)]">{description}</div>}
         </div>
         <div
           className={cn(
             compact ? 'size-4' : 'size-4.5',
             'mt-0.5 flex shrink-0 items-center justify-center rounded-full border',
-            active ? 'border-emerald-300 bg-emerald-400/20 text-emerald-300' : 'border-[rgba(230,195,100,0.18)] text-transparent',
+            active ? 'border-emerald-300 bg-emerald-400/20 text-emerald-300' : 'border-[var(--hub-card-border)] text-transparent',
           )}
         >
           <Check className={cn(compact ? 'size-2.5' : 'size-3')} />
@@ -373,7 +373,7 @@ function ChipGroup({
             'min-h-10 rounded-full border px-4 py-2 text-[13px] transition-colors',
             active
               ? 'border-emerald-400/70 bg-emerald-400/14 text-emerald-300'
-              : 'border-[rgba(230,195,100,0.14)] bg-[rgba(5,20,16,0.42)] text-[rgba(230,195,100,0.7)] hover:border-[rgba(230,195,100,0.28)] hover:text-[#d0e8df]',
+              : 'border-[var(--hub-card-border)] bg-[color-mix(in srgb, var(--rail-bg) 85%, transparent)] text-[var(--theme-accent-link-dim)] hover:border-[var(--hub-card-border-hover)] hover:text-[color:var(--workspace-text)]',
             )}
           >
             {option}
@@ -406,7 +406,7 @@ function SingleChipGroup({
             'min-h-10 rounded-full border px-4 py-2 text-[13px] transition-colors',
             active
               ? 'border-emerald-400/70 bg-emerald-400/14 text-emerald-300'
-              : 'border-[rgba(230,195,100,0.14)] bg-[rgba(5,20,16,0.42)] text-[rgba(230,195,100,0.7)] hover:border-[rgba(230,195,100,0.28)] hover:text-[#d0e8df]',
+              : 'border-[var(--hub-card-border)] bg-[color-mix(in srgb, var(--rail-bg) 85%, transparent)] text-[var(--theme-accent-link-dim)] hover:border-[var(--hub-card-border-hover)] hover:text-[color:var(--workspace-text)]',
             )}
           >
             {option}
@@ -442,7 +442,7 @@ function BooleanChoiceField({
               'flex-1 rounded-[18px] border px-4 py-2.5 text-[13px] font-medium transition-colors',
               active
                 ? 'border-emerald-400/70 bg-emerald-400/14 text-emerald-300'
-                : 'border-[rgba(230,195,100,0.14)] bg-[rgba(5,20,16,0.42)] text-[rgba(230,195,100,0.7)] hover:border-[rgba(230,195,100,0.28)] hover:text-[#d0e8df]',
+                : 'border-[var(--hub-card-border)] bg-[color-mix(in srgb, var(--rail-bg) 85%, transparent)] text-[var(--theme-accent-link-dim)] hover:border-[var(--hub-card-border-hover)] hover:text-[color:var(--workspace-text)]',
             )}
           >
             {label}
@@ -480,7 +480,7 @@ function BinaryFlagField({
               'flex-1 rounded-[18px] border px-4 py-2.5 text-[13px] font-medium transition-colors',
               active
                 ? 'border-emerald-400/70 bg-emerald-400/14 text-emerald-300'
-                : 'border-[rgba(230,195,100,0.14)] bg-[rgba(5,20,16,0.42)] text-[rgba(230,195,100,0.7)] hover:border-[rgba(230,195,100,0.28)] hover:text-[#d0e8df]',
+                : 'border-[var(--hub-card-border)] bg-[color-mix(in srgb, var(--rail-bg) 85%, transparent)] text-[var(--theme-accent-link-dim)] hover:border-[var(--hub-card-border-hover)] hover:text-[color:var(--workspace-text)]',
             )}
           >
             {label}
@@ -505,7 +505,7 @@ function FileField({
   onFiles: (files: FileList | null) => void
 }) {
   return (
-    <label className="block rounded-[20px] border border-dashed border-[rgba(230,195,100,0.18)] bg-[rgba(5,20,16,0.34)] p-4 transition-colors hover:border-[rgba(52,211,153,0.45)]">
+    <label className="block rounded-[20px] border border-dashed border-[var(--hub-card-border)] bg-[color-mix(in_srgb,var(--rail-bg)_80%,transparent)] p-4 transition-colors hover:border-[rgba(52,211,153,0.45)]">
       <input
         type="file"
         multiple={multiple}
@@ -513,12 +513,12 @@ function FileField({
         onChange={(event) => onFiles(event.target.files)}
       />
       <div className="flex items-start gap-3">
-        <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[14px] border border-[rgba(230,195,100,0.12)] bg-[rgba(230,195,100,0.06)] text-[rgba(230,195,100,0.72)]">
+        <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[14px] border border-[var(--hub-tile-icon-border)] bg-[var(--hub-tile-icon-bg)] text-[var(--theme-accent-link-dim)]">
           <Upload className="size-3.5" />
         </div>
         <div className="min-w-0">
-          <div className="text-[13px] font-semibold text-[#d0e8df]">{title}</div>
-          <div className="mt-0.5 text-[11px] leading-relaxed text-[rgba(230,195,100,0.45)]">{hint}</div>
+          <div className="text-[13px] font-semibold text-[color:var(--workspace-text)]">{title}</div>
+          <div className="mt-0.5 text-[11px] leading-relaxed text-[color:var(--hub-stat-label)]">{hint}</div>
           {fileNames.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {fileNames.map((fileName) => (
@@ -770,7 +770,7 @@ export function PropertyWizardDialog({
       <div className="space-y-4">
         <section className="space-y-2.5">
           <div>
-            <h3 className="text-[15px] font-semibold text-[#d0e8df]">1. Сегмент объекта</h3>
+            <h3 className="text-[15px] font-semibold text-[color:var(--workspace-text)]">1. Сегмент объекта</h3>
           </div>
           <div className="grid gap-3 md:grid-cols-2">
             {categoryOptions.map((option) => (
@@ -787,7 +787,7 @@ export function PropertyWizardDialog({
 
         <section className="space-y-2.5">
           <div>
-            <h3 className="text-[15px] font-semibold text-[#d0e8df]">2. Тип карточки</h3>
+            <h3 className="text-[15px] font-semibold text-[color:var(--workspace-text)]">2. Тип карточки</h3>
           </div>
           <div className="grid gap-3 md:grid-cols-2">
             {allowedTypes.map((option) => (
@@ -955,9 +955,9 @@ export function PropertyWizardDialog({
   function renderLocationStep() {
     return (
       <div className="space-y-4">
-        <section className="rounded-[20px] border border-[rgba(230,195,100,0.12)] bg-[rgba(230,195,100,0.035)] p-3.5">
+        <section className="rounded-[20px] border border-[var(--hub-tile-icon-border)] bg-[var(--hub-action-hover)] p-3.5">
           <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-            <div className="text-[15px] font-semibold text-[#d0e8df]">Адрес и геоточка</div>
+            <div className="text-[15px] font-semibold text-[color:var(--workspace-text)]">Адрес и геоточка</div>
 
             <Button
               type="button"
@@ -980,10 +980,10 @@ export function PropertyWizardDialog({
                 />
               </FieldShell>
 
-              <div className="rounded-[18px] border border-[rgba(230,195,100,0.12)] bg-[rgba(5,20,16,0.36)] px-3.5 py-3">
-                  <div className="text-[11px] uppercase tracking-[0.14em] text-[rgba(230,195,100,0.34)]">Координаты</div>
-                  <div className="mt-2 text-[13px] font-semibold text-[#d0e8df]">{mapCoordinatesLabel}</div>
-                  <div className="mt-1 text-[12px] text-[rgba(230,195,100,0.46)]">{mapLocationLabel}</div>
+              <div className="rounded-[18px] border border-[var(--hub-tile-icon-border)] bg-[color-mix(in_srgb,var(--rail-bg)_82%,transparent)] px-3.5 py-3">
+                  <div className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--theme-accent-icon-dim)]">Координаты</div>
+                  <div className="mt-2 text-[13px] font-semibold text-[color:var(--workspace-text)]">{mapCoordinatesLabel}</div>
+                  <div className="mt-1 text-[12px] text-[color:var(--hub-desc)]">{mapLocationLabel}</div>
               </div>
 
               <div className="flex flex-col gap-2 sm:flex-row">
@@ -1000,7 +1000,7 @@ export function PropertyWizardDialog({
                   type="button"
                   variant="outline"
                   onClick={() => applyMapSelection(50, 50, `${values.city}, центр`)}
-                  className="h-10 rounded-full border-[rgba(230,195,100,0.18)] bg-transparent px-4 text-[12px] text-[rgba(230,195,100,0.78)] hover:bg-[rgba(230,195,100,0.08)] hover:text-[#d0e8df]"
+                  className="h-10 rounded-full border-[var(--hub-card-border)] bg-transparent px-4 text-[12px] text-[var(--theme-accent-link-dim)] hover:bg-[var(--hub-action-hover)] hover:text-[color:var(--workspace-text)]"
                 >
                   <Crosshair className="size-4" />
                   Центр города
@@ -1008,26 +1008,26 @@ export function PropertyWizardDialog({
               </div>
             </div>
 
-            <div className="rounded-[18px] border border-[rgba(230,195,100,0.12)] bg-[linear-gradient(180deg,_rgba(10,31,24,0.78),_rgba(7,24,19,0.82))] p-3">
+            <div className="rounded-[18px] border border-[var(--hub-tile-icon-border)] bg-[linear-gradient(180deg,_rgba(10,31,24,0.78),_rgba(7,24,19,0.82))] p-3">
               <button
                 type="button"
                 onClick={() => setIsMapModalOpen(true)}
-                className="group relative flex aspect-square w-full flex-col items-center justify-center overflow-hidden rounded-[20px] border border-dashed border-[rgba(230,195,100,0.2)] bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.16),_transparent_42%),rgba(5,20,16,0.42)] px-4 text-center transition-colors hover:border-emerald-400/45 hover:bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.2),_transparent_42%),rgba(5,20,16,0.5)]"
+                className="group relative flex aspect-square w-full flex-col items-center justify-center overflow-hidden rounded-[20px] border border-dashed border-[color:var(--hub-card-border)] bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.16),_transparent_42%),linear-gradient(180deg,_color-mix(in_srgb,var(--rail-bg)_88%,transparent),_color-mix(in_srgb,var(--green-deep)_92%,transparent))] px-4 text-center transition-colors hover:border-emerald-400/45 hover:bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.2),_transparent_42%),color-mix(in_srgb,var(--rail-bg)_50%,transparent)]"
               >
-                <div className="absolute left-4 top-4 rounded-full border border-[rgba(230,195,100,0.12)] bg-[rgba(5,20,16,0.46)] px-3 py-1 text-[11px] text-[rgba(230,195,100,0.62)]">
+                <div className="absolute left-4 top-4 rounded-full border border-[var(--hub-tile-icon-border)] bg-[color-mix(in_srgb,var(--rail-bg)_88%,transparent)] px-3 py-1 text-[11px] text-[color:var(--hub-stat-label)]">
                   {values.country} / {values.city}
                 </div>
                 <div className="flex size-14 items-center justify-center rounded-[20px] border border-emerald-400/30 bg-emerald-400/12 text-emerald-300 transition-colors group-hover:bg-emerald-400/18">
                   <MapPinned className="size-6" />
                 </div>
-                <div className="mt-3 text-[16px] font-semibold tracking-[0.08em] text-[#d0e8df]">МЕСТО ПОД КАРТУ</div>
-                <div className="mt-2 text-[12px] text-[rgba(230,195,100,0.5)]">Нажмите, чтобы открыть карту и поставить точку</div>
+                <div className="mt-3 text-[16px] font-semibold tracking-[0.08em] text-[color:var(--workspace-text)]">МЕСТО ПОД КАРТУ</div>
+                <div className="mt-2 text-[12px] text-[color:var(--hub-desc)]">Нажмите, чтобы открыть карту и поставить точку</div>
               </button>
 
-              <div className="mt-4 rounded-[18px] border border-[rgba(230,195,100,0.1)] bg-[rgba(5,20,16,0.34)] p-3.5">
-                <div className="text-[11px] uppercase tracking-[0.14em] text-[rgba(230,195,100,0.34)]">Выбранная точка</div>
-                <div className="mt-2 text-[14px] font-semibold text-[#d0e8df]">{mapLocationLabel}</div>
-                <div className="mt-1 text-[12px] text-[rgba(230,195,100,0.46)]">{mapCoordinatesLabel}</div>
+              <div className="mt-4 rounded-[18px] border border-[color:var(--hub-tile-icon-border)] bg-[color-mix(in_srgb,var(--rail-bg)_80%,transparent)] p-3.5">
+                <div className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--theme-accent-icon-dim)]">Выбранная точка</div>
+                <div className="mt-2 text-[14px] font-semibold text-[color:var(--workspace-text)]">{mapLocationLabel}</div>
+                <div className="mt-1 text-[12px] text-[color:var(--hub-desc)]">{mapCoordinatesLabel}</div>
               </div>
             </div>
           </div>
@@ -1292,7 +1292,7 @@ export function PropertyWizardDialog({
               />
             </FieldShell>
             {values.photo && (
-              <div className="overflow-hidden rounded-[18px] border border-[rgba(230,195,100,0.14)] bg-[rgba(5,20,16,0.4)]">
+              <div className="overflow-hidden rounded-[18px] border border-[var(--hub-card-border)] bg-[color-mix(in srgb, var(--rail-bg) 82%, transparent)]">
                 <img src={values.photo} alt={values.title || 'Фото объекта'} className="aspect-[4/3] w-full object-cover" />
               </div>
             )}
@@ -1354,17 +1354,17 @@ export function PropertyWizardDialog({
                 </SelectContent>
               </Select>
 
-              <div className="text-[12px] text-[rgba(230,195,100,0.52)]">
+              <div className="text-[12px] text-[color:var(--hub-stat-label)]">
                 Наведите, чтобы увидеть, как комиссия влияет на интерес агентов.
               </div>
 
-              <div className="pointer-events-none max-h-0 overflow-hidden rounded-[18px] border border-[rgba(230,195,100,0.12)] bg-[rgba(255,255,255,0.04)] opacity-0 transition-all duration-200 group-hover/commission:pointer-events-auto group-hover/commission:max-h-[420px] group-hover/commission:p-4 group-hover/commission:opacity-100 group-focus-within/commission:pointer-events-auto group-focus-within/commission:max-h-[420px] group-focus-within/commission:p-4 group-focus-within/commission:opacity-100">
-                <div className="text-[12px] font-semibold text-[#d0e8df]">Рекомендации по выбору комиссии</div>
-                <div className="mt-3 space-y-2 text-[13px] leading-relaxed text-[rgba(230,195,100,0.76)]">
+              <div className="pointer-events-none max-h-0 overflow-hidden rounded-[18px] border border-[var(--hub-tile-icon-border)] bg-[rgba(255,255,255,0.04)] opacity-0 transition-all duration-200 group-hover/commission:pointer-events-auto group-hover/commission:max-h-[420px] group-hover/commission:p-4 group-hover/commission:opacity-100 group-focus-within/commission:pointer-events-auto group-focus-within/commission:max-h-[420px] group-focus-within/commission:p-4 group-focus-within/commission:opacity-100">
+                <div className="text-[12px] font-semibold text-[color:var(--workspace-text)]">Рекомендации по выбору комиссии</div>
+                <div className="mt-3 space-y-2 text-[13px] leading-relaxed text-[color:var(--app-text-muted)]">
                   {COMMISSION_OPTIONS.map((option) => (
                     <div key={option.value}>
-                      <span className="font-semibold text-[#d0e8df]">{option.label}</span>
-                      <span className="text-[rgba(230,195,100,0.66)]">. {option.description}</span>
+                      <span className="font-semibold text-[color:var(--workspace-text)]">{option.label}</span>
+                      <span className="text-[color:var(--hub-body)]">. {option.description}</span>
                     </div>
                   ))}
                 </div>
@@ -1468,31 +1468,31 @@ export function PropertyWizardDialog({
         showCloseButton={false}
         className="top-[50%] h-[calc(100vh-24px)] w-[calc(100vw-10px)] max-w-none border-none bg-transparent p-0 shadow-none sm:top-[50%] sm:h-[calc(100vh-28px)] sm:w-[calc(100vw-20px)] sm:max-w-none xl:w-[calc(100vw-32px)]"
       >
-        <div className="relative h-full overflow-hidden rounded-[28px] border border-[rgba(230,195,100,0.16)] bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.12),_transparent_42%),linear-gradient(180deg,_rgba(9,36,28,0.985),_rgba(6,20,16,0.98))] text-[#d0e8df] shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
+        <div className="relative h-full overflow-hidden rounded-[28px] border border-[var(--hub-card-border)] bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.12),_transparent_42%),linear-gradient(180deg,_rgba(9,36,28,0.985),_rgba(6,20,16,0.98))] text-[color:var(--workspace-text)] shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
           <div className="grid h-full lg:grid-cols-[212px_minmax(0,1fr)] xl:grid-cols-[212px_minmax(0,1fr)_272px]">
-            <aside className="flex min-h-0 flex-col border-b border-[rgba(230,195,100,0.1)] bg-[linear-gradient(180deg,_rgba(8,30,23,0.94),_rgba(7,24,19,0.9))] p-3 lg:border-r lg:border-b-0 xl:p-3.5">
+            <aside className="flex min-h-0 flex-col border-b border-[color:var(--hub-tile-icon-border)] bg-[linear-gradient(180deg,_rgba(8,30,23,0.94),_rgba(7,24,19,0.9))] p-3 lg:border-r lg:border-b-0 xl:p-3.5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-[17px] font-semibold leading-[1.05] text-[#d0e8df]">{pageTitle}</h2>
-                  <p className="mt-1 text-[12px] leading-snug text-[rgba(230,195,100,0.48)]">
+                  <h2 className="text-[17px] font-semibold leading-[1.05] text-[color:var(--workspace-text)]">{pageTitle}</h2>
+                  <p className="mt-1 text-[12px] leading-snug text-[color:var(--hub-desc)]">
                     Пошаговая сборка карточки.
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-full border border-[rgba(230,195,100,0.12)] bg-[rgba(230,195,100,0.05)] p-1.5 text-[rgba(230,195,100,0.72)] transition-colors hover:text-[#d0e8df]"
+                  className="rounded-full border border-[var(--hub-tile-icon-border)] bg-[var(--hub-action-hover)] p-1.5 text-[var(--theme-accent-link-dim)] transition-colors hover:text-[color:var(--workspace-text)]"
                 >
                   <X className="size-3" />
                 </button>
               </div>
 
               <div className="mt-2.5">
-                <div className="h-1 rounded-full bg-[rgba(230,195,100,0.08)]">
+                <div className="h-1 rounded-full bg-[var(--hub-action-hover)]">
                   <div className="h-full rounded-full bg-emerald-400 transition-all" style={{ width: `${progressPercent}%` }} />
                 </div>
-                <div className="mt-1 text-[13px] font-medium text-[#d0e8df]">{progressLabel}</div>
-                <div className="mt-0.5 text-[12px] leading-snug text-[rgba(230,195,100,0.52)]">
+                <div className="mt-1 text-[13px] font-medium text-[color:var(--workspace-text)]">{progressLabel}</div>
+                <div className="mt-0.5 text-[12px] leading-snug text-[color:var(--hub-stat-label)]">
                   {currentStepIssues.length > 0 ? `${currentStepIssues.length} поля требуют внимания.` : 'Текущий шаг заполнен.'}
                 </div>
               </div>
@@ -1511,7 +1511,7 @@ export function PropertyWizardDialog({
                         'flex w-full items-center gap-2 rounded-[14px] border px-2 py-1.5 text-left transition-all',
                         active
                           ? 'border-emerald-400/60 bg-emerald-400/12'
-                          : 'border-[rgba(230,195,100,0.1)] bg-[rgba(5,20,16,0.26)] hover:border-[rgba(230,195,100,0.24)]',
+                          : 'border-[color:var(--hub-tile-icon-border)] bg-[color-mix(in_srgb,var(--rail-bg)_72%,transparent)] hover:border-[color:var(--hub-card-border-hover)]',
                       )}
                     >
                         <div
@@ -1519,15 +1519,15 @@ export function PropertyWizardDialog({
                           'flex size-7 shrink-0 items-center justify-center rounded-full border text-[10px] font-semibold',
                           active
                             ? 'border-emerald-300/40 bg-emerald-400/10 text-emerald-300'
-                            : 'border-[rgba(230,195,100,0.12)] bg-[rgba(230,195,100,0.04)] text-[rgba(230,195,100,0.7)]',
+                            : 'border-[var(--hub-tile-icon-border)] bg-[var(--hub-action-hover)] text-[var(--theme-accent-link-dim)]',
                           )}
                         >
                          {completed ? <Check className="size-3" /> : index + 1}
                         </div>
                        <div className="min-w-0 flex-1">
                          <div className="flex min-w-0 items-center gap-1.5">
-                           <Icon className={cn('size-3.5 shrink-0', active ? 'text-emerald-300' : 'text-[rgba(230,195,100,0.58)]')} />
-                           <span className="truncate text-[13px] font-semibold leading-snug text-[#d0e8df]">{step.title}</span>
+                           <Icon className={cn('size-3.5 shrink-0', active ? 'text-emerald-300' : 'text-[color:var(--hub-stat-label)]')} />
+                           <span className="truncate text-[13px] font-semibold leading-snug text-[color:var(--workspace-text)]">{step.title}</span>
                          </div>
                        </div>
                      </button>
@@ -1537,12 +1537,12 @@ export function PropertyWizardDialog({
             </aside>
 
             <section className="flex min-h-0 flex-col">
-              <div className="border-b border-[rgba(230,195,100,0.1)] px-4 py-3 xl:px-5 xl:py-3.5">
+              <div className="border-b border-[color:var(--hub-tile-icon-border)] px-4 py-3 xl:px-5 xl:py-3.5">
                 <DialogHeader className="text-left">
                   <div className="inline-flex w-fit items-center rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-300">
                     {stepBadgeLabel}
                   </div>
-                  <DialogTitle className="min-w-0 break-words text-[22px] leading-tight text-[#d0e8df]">{currentStep.title}</DialogTitle>
+                  <DialogTitle className="min-w-0 break-words text-[22px] leading-tight text-[color:var(--workspace-text)]">{currentStep.title}</DialogTitle>
                 </DialogHeader>
               </div>
 
@@ -1552,14 +1552,14 @@ export function PropertyWizardDialog({
                 </div>
               </div>
 
-              <div className="border-t border-[rgba(230,195,100,0.1)] px-4 pb-4 pt-2.5 xl:px-5 xl:pb-4">
+              <div className="border-t border-[color:var(--hub-tile-icon-border)] px-4 pb-4 pt-2.5 xl:px-5 xl:pb-4">
                 <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
                   <div className="flex flex-col gap-2.5 sm:flex-row">
                     <Button
                       type="button"
                       variant="outline"
                       onClick={onClose}
-                      className="h-10 rounded-full border-[rgba(230,195,100,0.18)] bg-transparent px-4 text-[12px] text-[rgba(230,195,100,0.78)] hover:bg-[rgba(230,195,100,0.08)] hover:text-[#d0e8df]"
+                      className="h-10 rounded-full border-[var(--hub-card-border)] bg-transparent px-4 text-[12px] text-[var(--theme-accent-link-dim)] hover:bg-[var(--hub-action-hover)] hover:text-[color:var(--workspace-text)]"
                     >
                       Отмена
                     </Button>
@@ -1569,7 +1569,7 @@ export function PropertyWizardDialog({
                         type="button"
                         variant="outline"
                         onClick={handleSaveDraft}
-                          className="h-10 rounded-full border-[rgba(230,195,100,0.18)] bg-transparent px-4 text-[12px] text-[rgba(230,195,100,0.78)] hover:bg-[rgba(230,195,100,0.08)] hover:text-[#d0e8df]"
+                          className="h-10 rounded-full border-[var(--hub-card-border)] bg-transparent px-4 text-[12px] text-[var(--theme-accent-link-dim)] hover:bg-[var(--hub-action-hover)] hover:text-[color:var(--workspace-text)]"
                       >
                         <FileStack className="size-4" />
                         Сохранить черновик
@@ -1583,7 +1583,7 @@ export function PropertyWizardDialog({
                       variant="outline"
                       onClick={() => setActiveStepIndex((index) => Math.max(0, index - 1))}
                       disabled={activeStepIndex === 0}
-                      className="h-10 rounded-full border-[rgba(230,195,100,0.18)] bg-transparent px-4 text-[12px] text-[rgba(230,195,100,0.78)] hover:bg-[rgba(230,195,100,0.08)] hover:text-[#d0e8df]"
+                      className="h-10 rounded-full border-[var(--hub-card-border)] bg-transparent px-4 text-[12px] text-[var(--theme-accent-link-dim)] hover:bg-[var(--hub-action-hover)] hover:text-[color:var(--workspace-text)]"
                     >
                       <ChevronLeft className="size-4" />
                       Шаг назад
@@ -1611,29 +1611,29 @@ export function PropertyWizardDialog({
               </div>
             </section>
 
-            <aside className="hidden min-h-0 flex-col border-l border-[rgba(230,195,100,0.1)] bg-[linear-gradient(180deg,_rgba(10,31,24,0.9),_rgba(7,23,18,0.94))] p-4 xl:flex">
+            <aside className="hidden min-h-0 flex-col border-l border-[color:var(--hub-tile-icon-border)] bg-[linear-gradient(180deg,_rgba(10,31,24,0.9),_rgba(7,23,18,0.94))] p-4 xl:flex">
               <div>
-                <div className="text-[10px] uppercase tracking-[0.2em] text-[rgba(230,195,100,0.34)]">Preview</div>
-                <h3 className="mt-1.5 text-[18px] font-semibold leading-[1.05] text-[#d0e8df]">Черновик объявления</h3>
+                <div className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--theme-accent-icon-dim)]">Preview</div>
+                <h3 className="mt-1.5 text-[18px] font-semibold leading-[1.05] text-[color:var(--workspace-text)]">Черновик объявления</h3>
               </div>
 
               <div className="mt-3 flex-1 overflow-y-auto">
-                <div className="rounded-[20px] border border-[rgba(230,195,100,0.12)] bg-[rgba(230,195,100,0.04)] p-3.5">
-                  <div className="overflow-hidden rounded-[18px] border border-[rgba(230,195,100,0.12)] bg-[rgba(255,255,255,0.04)]">
+                <div className="rounded-[20px] border border-[var(--hub-tile-icon-border)] bg-[var(--hub-action-hover)] p-3.5">
+                  <div className="overflow-hidden rounded-[18px] border border-[var(--hub-tile-icon-border)] bg-[rgba(255,255,255,0.04)]">
                     {previewProperty.photo ? (
                       <img src={previewProperty.photo} alt={previewProperty.title} className="aspect-[4/3] w-full object-cover" />
                     ) : (
-                      <div className="flex aspect-[4/3] w-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.12),_transparent_58%),linear-gradient(180deg,_rgba(11,31,24,0.92),_rgba(8,25,19,0.92))] text-[rgba(230,195,100,0.36)]">
+                      <div className="flex aspect-[4/3] w-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.12),_transparent_58%),linear-gradient(180deg,_rgba(11,31,24,0.92),_rgba(8,25,19,0.92))] text-[color:var(--theme-accent-icon-dim)]">
                         <Upload className="size-6" />
                       </div>
                     )}
                   </div>
 
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    <span className="rounded-full border border-[rgba(230,195,100,0.12)] bg-[rgba(5,20,16,0.46)] px-2.5 py-1 text-[11px] text-[#d0e8df]">
+                    <span className="rounded-full border border-[var(--hub-tile-icon-border)] bg-[color-mix(in_srgb,var(--rail-bg)_88%,transparent)] px-2.5 py-1 text-[11px] text-[color:var(--workspace-text)]">
                       {PROPERTY_CATEGORY_OPTIONS.find((option) => option.value === values.category)?.label}
                     </span>
-                    <span className="rounded-full border border-[rgba(230,195,100,0.12)] bg-[rgba(5,20,16,0.46)] px-2.5 py-1 text-[11px] text-[#d0e8df]">
+                    <span className="rounded-full border border-[var(--hub-tile-icon-border)] bg-[color-mix(in_srgb,var(--rail-bg)_88%,transparent)] px-2.5 py-1 text-[11px] text-[color:var(--workspace-text)]">
                       {values.type}
                     </span>
                     <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-[11px] text-emerald-300">
@@ -1642,29 +1642,29 @@ export function PropertyWizardDialog({
                   </div>
 
                   <div className="mt-3 text-[22px] font-semibold leading-none text-emerald-300">{previewPriceLabel}</div>
-                  <div className="mt-1 text-[11px] leading-snug text-[rgba(230,195,100,0.48)]">{previewPricePerM2Label}</div>
+                  <div className="mt-1 text-[11px] leading-snug text-[color:var(--hub-desc)]">{previewPricePerM2Label}</div>
 
-                  <div className="mt-3 line-clamp-3 text-[16px] font-semibold leading-snug text-[#d0e8df]">
+                  <div className="mt-3 line-clamp-3 text-[16px] font-semibold leading-snug text-[color:var(--workspace-text)]">
                     {previewProperty.title}
                   </div>
 
-                  <div className="mt-2.5 space-y-1 text-[11px] text-[rgba(230,195,100,0.7)]">
+                  <div className="mt-2.5 space-y-1 text-[11px] text-[var(--theme-accent-link-dim)]">
                     {values.mapLocationLabel.trim() && <div className="line-clamp-1 text-emerald-300">{values.mapLocationLabel}</div>}
                     <div className="line-clamp-2">{previewProperty.street}</div>
                     <div className="line-clamp-1">{previewProperty.city}, {previewProperty.country}</div>
                   </div>
 
                   {values.description.trim() && (
-                    <div className="mt-2.5 line-clamp-3 text-[11px] leading-relaxed text-[rgba(230,195,100,0.46)]">
+                    <div className="mt-2.5 line-clamp-3 text-[11px] leading-relaxed text-[color:var(--hub-desc)]">
                       {values.description}
                     </div>
                   )}
 
-                  <div className="mt-3 grid grid-cols-3 gap-1.5 border-t border-[rgba(230,195,100,0.08)] pt-2.5">
+                  <div className="mt-3 grid grid-cols-3 gap-1.5 border-t border-[var(--hub-action-hover)] pt-2.5">
                     {previewFacts.map((item) => (
-                      <div key={item.label} className="min-w-0 rounded-[14px] border border-[rgba(230,195,100,0.08)] bg-[rgba(5,20,16,0.34)] p-2">
-                        <div className="truncate text-[10px] tracking-[0.08em] text-[rgba(230,195,100,0.34)]">{item.label}</div>
-                        <div className="mt-1 truncate text-[12px] font-semibold text-[#d0e8df]">{item.value}</div>
+                      <div key={item.label} className="min-w-0 rounded-[14px] border border-[var(--hub-action-hover)] bg-[color-mix(in_srgb,var(--rail-bg)_80%,transparent)] p-2">
+                        <div className="truncate text-[10px] tracking-[0.08em] text-[color:var(--theme-accent-icon-dim)]">{item.label}</div>
+                        <div className="mt-1 truncate text-[12px] font-semibold text-[color:var(--workspace-text)]">{item.value}</div>
                       </div>
                     ))}
                   </div>
@@ -1675,11 +1675,11 @@ export function PropertyWizardDialog({
 
           {isMapModalOpen && (
             <div className="absolute inset-0 z-50 flex items-center justify-center bg-[rgba(3,10,8,0.72)] p-4 backdrop-blur-sm">
-              <div className="flex h-full max-h-[760px] w-full max-w-[980px] flex-col overflow-hidden rounded-[30px] border border-[rgba(230,195,100,0.16)] bg-[linear-gradient(180deg,_rgba(9,34,27,0.98),_rgba(6,20,16,0.98))] shadow-[0_28px_80px_rgba(0,0,0,0.5)]">
-                <div className="flex items-start justify-between gap-4 border-b border-[rgba(230,195,100,0.1)] px-5 py-4">
+              <div className="flex h-full max-h-[760px] w-full max-w-[980px] flex-col overflow-hidden rounded-[30px] border border-[var(--hub-card-border)] bg-[linear-gradient(180deg,_rgba(9,34,27,0.98),_rgba(6,20,16,0.98))] shadow-[0_28px_80px_rgba(0,0,0,0.5)]">
+                <div className="flex items-start justify-between gap-4 border-b border-[color:var(--hub-tile-icon-border)] px-5 py-4">
                   <div>
-                    <div className="text-[18px] font-semibold text-[#d0e8df]">Карта локации</div>
-                    <div className="mt-1 text-[13px] text-[rgba(230,195,100,0.48)]">
+                    <div className="text-[18px] font-semibold text-[color:var(--workspace-text)]">Карта локации</div>
+                    <div className="mt-1 text-[13px] text-[color:var(--hub-desc)]">
                       Открой карту и поставь точку кликом.
                     </div>
                   </div>
@@ -1687,25 +1687,25 @@ export function PropertyWizardDialog({
                   <button
                     type="button"
                     onClick={() => setIsMapModalOpen(false)}
-                    className="rounded-full border border-[rgba(230,195,100,0.12)] bg-[rgba(230,195,100,0.05)] p-1.5 text-[rgba(230,195,100,0.72)] transition-colors hover:text-[#d0e8df]"
+                    className="rounded-full border border-[var(--hub-tile-icon-border)] bg-[var(--hub-action-hover)] p-1.5 text-[var(--theme-accent-link-dim)] transition-colors hover:text-[color:var(--workspace-text)]"
                   >
                     <X className="size-4" />
                   </button>
                 </div>
 
                 <div className="grid min-h-0 flex-1 gap-0 lg:grid-cols-[280px_minmax(0,1fr)]">
-                  <div className="border-b border-[rgba(230,195,100,0.1)] bg-[rgba(5,20,16,0.24)] p-5 lg:border-r lg:border-b-0">
-                    <div className="rounded-[20px] border border-[rgba(230,195,100,0.12)] bg-[rgba(5,20,16,0.36)] p-4">
-                      <div className="text-[11px] uppercase tracking-[0.14em] text-[rgba(230,195,100,0.34)]">Текущая точка</div>
-                      <div className="mt-2 text-[15px] font-semibold text-[#d0e8df]">{mapLocationLabel}</div>
-                      <div className="mt-1 text-[12px] text-[rgba(230,195,100,0.46)]">{mapCoordinatesLabel}</div>
+                  <div className="border-b border-[color:var(--hub-tile-icon-border)] bg-[color-mix(in_srgb,var(--rail-bg)_70%,transparent)] p-5 lg:border-r lg:border-b-0">
+                    <div className="rounded-[20px] border border-[var(--hub-tile-icon-border)] bg-[color-mix(in_srgb,var(--rail-bg)_82%,transparent)] p-4">
+                      <div className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--theme-accent-icon-dim)]">Текущая точка</div>
+                      <div className="mt-2 text-[15px] font-semibold text-[color:var(--workspace-text)]">{mapLocationLabel}</div>
+                      <div className="mt-1 text-[12px] text-[color:var(--hub-desc)]">{mapCoordinatesLabel}</div>
                     </div>
                     <div className="mt-4 grid gap-2">
                       <Button
                         type="button"
                         variant="outline"
                         onClick={() => applyMapSelection(50, 50, `${values.city}, центр`)}
-                        className="h-10 rounded-full border-[rgba(230,195,100,0.18)] bg-transparent px-4 text-[12px] text-[rgba(230,195,100,0.78)] hover:bg-[rgba(230,195,100,0.08)] hover:text-[#d0e8df]"
+                        className="h-10 rounded-full border-[var(--hub-card-border)] bg-transparent px-4 text-[12px] text-[var(--theme-accent-link-dim)] hover:bg-[var(--hub-action-hover)] hover:text-[color:var(--workspace-text)]"
                       >
                         <Crosshair className="size-4" />
                         Поставить в центр города
@@ -1733,23 +1733,23 @@ export function PropertyWizardDialog({
                           applyMapSelection(50, 50, `${values.city}, центр`)
                         }
                       }}
-                      className="relative h-full min-h-[360px] cursor-crosshair overflow-hidden rounded-[26px] border border-[rgba(230,195,100,0.12)] outline-none"
+                      className="relative h-full min-h-[360px] cursor-crosshair overflow-hidden rounded-[26px] border border-[var(--hub-tile-icon-border)] outline-none"
                       style={{
                         backgroundImage:
-                          'radial-gradient(circle at 24% 22%, rgba(16,185,129,0.22), transparent 26%), radial-gradient(circle at 73% 64%, rgba(230,195,100,0.14), transparent 24%), linear-gradient(180deg, rgba(8,28,22,0.96), rgba(6,20,16,0.96)), linear-gradient(rgba(230,195,100,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(230,195,100,0.05) 1px, transparent 1px)',
+                          'radial-gradient(circle at 24% 22%, rgba(16,185,129,0.22), transparent 26%), radial-gradient(circle at 73% 64%, var(--hub-card-border), transparent 24%), linear-gradient(180deg, rgba(8,28,22,0.96), rgba(6,20,16,0.96)), linear-gradient(color-mix(in srgb, var(--gold) 5%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--gold) 5%, transparent) 1px, transparent 1px)',
                         backgroundSize: 'auto, auto, auto, 32px 32px, 32px 32px',
                       }}
                     >
                       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,_transparent_0%,_rgba(255,255,255,0.02)_50%,_transparent_100%)]" />
-                      <div className="absolute left-4 top-4 rounded-full border border-[rgba(230,195,100,0.12)] bg-[rgba(5,20,16,0.46)] px-3 py-1 text-[11px] text-[rgba(230,195,100,0.62)]">
+                      <div className="absolute left-4 top-4 rounded-full border border-[var(--hub-tile-icon-border)] bg-[color-mix(in_srgb,var(--rail-bg)_88%,transparent)] px-3 py-1 text-[11px] text-[color:var(--hub-stat-label)]">
                         {values.country} / {values.city}
                       </div>
-                      <div className="absolute right-4 top-4 rounded-full border border-[rgba(230,195,100,0.12)] bg-[rgba(5,20,16,0.46)] px-3 py-1 text-[11px] text-[rgba(230,195,100,0.62)]">
+                      <div className="absolute right-4 top-4 rounded-full border border-[var(--hub-tile-icon-border)] bg-[color-mix(in_srgb,var(--rail-bg)_88%,transparent)] px-3 py-1 text-[11px] text-[color:var(--hub-stat-label)]">
                         Клик по карте ставит точку
                       </div>
                       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                        <div className="rounded-[24px] border border-dashed border-[rgba(230,195,100,0.22)] bg-[rgba(5,20,16,0.42)] px-8 py-5 text-center shadow-[0_20px_60px_rgba(0,0,0,0.2)]">
-                          <div className="text-[22px] font-semibold tracking-[0.08em] text-[#d0e8df]">МЕСТО ПОД КАРТУ</div>
+                        <div className="rounded-[24px] border border-dashed border-[color:var(--hub-card-border)] bg-[color-mix(in srgb, var(--rail-bg) 85%, transparent)] px-8 py-5 text-center shadow-[0_20px_60px_rgba(0,0,0,0.2)]">
+                          <div className="text-[22px] font-semibold tracking-[0.08em] text-[color:var(--workspace-text)]">МЕСТО ПОД КАРТУ</div>
                         </div>
                       </div>
                       {selectedMapPoint && (
@@ -1759,7 +1759,7 @@ export function PropertyWizardDialog({
                         >
                           <div className="relative flex flex-col items-center">
                             <MapPin className="size-8 fill-current drop-shadow-[0_6px_18px_rgba(16,185,129,0.35)]" />
-                            <div className="mt-1 rounded-full border border-emerald-400/30 bg-[rgba(5,20,16,0.8)] px-2.5 py-1 text-[11px] font-medium text-[#d0e8df]">
+                            <div className="mt-1 rounded-full border border-emerald-400/30 bg-[rgba(5,20,16,0.8)] px-2.5 py-1 text-[11px] font-medium text-[color:var(--workspace-text)]">
                               {mapLocationLabel}
                             </div>
                           </div>

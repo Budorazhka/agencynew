@@ -64,7 +64,7 @@ export function EisenhowerChips({
       ? {
           urgentActive: 'bg-rose-500/15 text-rose-300 border-rose-500/35',
           urgentInactive: 'bg-[var(--dropdown-hover)] text-[color:var(--app-text-muted)] border-[var(--green-border)]',
-          importantActive: 'bg-amber-500/12 text-[#e6c364] border-amber-500/35',
+          importantActive: 'bg-amber-500/12 text-[color:var(--theme-accent-heading)] border-amber-500/35',
           importantInactive: 'bg-[var(--dropdown-hover)] text-[color:var(--app-text-muted)] border-[var(--green-border)]',
           group: 'border-[var(--green-border)] bg-[var(--green-deep)]',
           borderInner: 'border-[var(--green-border)]',

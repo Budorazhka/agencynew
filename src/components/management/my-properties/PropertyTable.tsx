@@ -6,7 +6,7 @@ import { SaleStatusBadge, ConditionBadge } from './StatusBadge'
 import { PropertyCard } from './PropertyCard'
 import { getConditionState, formatPrice, formatDate } from './utils'
 
-// ─── Table: column header ─────────────────────────────────────────────────────
+// ─── Таблица: строка заголовков ───────────────────────────────────────────────
 
 function TableHeader({ isArchive, showCheckbox, allSelected, onToggleAll }: {
   isArchive: boolean
@@ -16,7 +16,7 @@ function TableHeader({ isArchive, showCheckbox, allSelected, onToggleAll }: {
 }) {
   return (
     <div className={cn(
-      'grid items-center gap-4 border-b border-emerald-900/40 bg-[#00110d]/80 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-emerald-100/55',
+      'grid items-center gap-4 border-b border-[var(--green-border)] bg-[var(--rail-bg)]/80 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[color:var(--app-text-subtle)]',
       showCheckbox
         ? 'grid-cols-[2rem_3.5rem_1fr_1fr_1fr_1fr_1fr_1fr_auto]'
         : 'grid-cols-[3.5rem_1fr_1fr_1fr_1fr_1fr_1fr_auto]',
@@ -27,7 +27,7 @@ function TableHeader({ isArchive, showCheckbox, allSelected, onToggleAll }: {
             type="checkbox"
             checked={allSelected}
             onChange={onToggleAll}
-            className="accent-[#e6c364] size-4 cursor-pointer"
+            className="accent-[var(--gold)] size-4 cursor-pointer"
           />
         </div>
       )}
@@ -43,7 +43,7 @@ function TableHeader({ isArchive, showCheckbox, allSelected, onToggleAll }: {
   )
 }
 
-// ─── Table: single row ────────────────────────────────────────────────────────
+// ─── Таблица: одна строка объекта ─────────────────────────────────────────────
 
 interface PropertyRowProps {
   property: Property
@@ -70,11 +70,11 @@ function PropertyRow({
   return (
     <div
       className={cn(
-        'group grid items-center gap-4 border-b border-emerald-900/25 px-4 py-3 transition-colors last:border-0 hover:bg-[#e6c364]/[0.04]',
+        'group grid items-center gap-4 border-b border-[var(--green-border)] px-4 py-3 transition-colors last:border-0 hover:bg-[var(--hub-action-hover)]',
         showCheckbox
           ? 'grid-cols-[2rem_3.5rem_1fr_1fr_1fr_1fr_1fr_1fr_auto]'
           : 'grid-cols-[3.5rem_1fr_1fr_1fr_1fr_1fr_1fr_auto]',
-        isSelected && 'bg-[#e6c364]/[0.08]',
+        isSelected && 'bg-[var(--nav-item-bg-active)]',
       )}
     >
       {/* Checkbox — всегда в колонке, видно при ховере или если выбран */}
@@ -85,75 +85,75 @@ function PropertyRow({
             checked={isSelected}
             onChange={onToggleSelect}
             className={cn(
-              'accent-[#e6c364] size-4 cursor-pointer transition-opacity',
+              'accent-[var(--gold)] size-4 cursor-pointer transition-opacity',
               isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
             )}
           />
         </div>
       )}
 
-      {/* Photo */}
-      <div className="size-14 shrink-0 overflow-hidden rounded-lg bg-[#00110d]">
+      {/* Фото */}
+      <div className="size-14 shrink-0 overflow-hidden rounded-lg bg-[var(--rail-bg)]">
         {property.photo
           ? <img src={property.photo} alt={property.title} className="size-full object-cover" />
-          : <div className="size-full bg-gradient-to-br from-[#e6c364]/10 to-[#031712]" />
+          : <div className="size-full bg-gradient-to-br from-[var(--gold)]/10 to-[var(--app-bg)]" />
         }
       </div>
 
-      {/* Title / type */}
+      {/* Название / тип */}
       <div className="min-w-0">
-        <p className="font-semibold text-sm leading-snug line-clamp-2 text-[#d0e8df]">{property.title}</p>
-        <span className="mt-0.5 text-xs font-medium text-[#e6c364]/90">{property.type}</span>
+        <p className="font-semibold text-sm leading-snug line-clamp-2 text-[color:var(--workspace-text)]">{property.title}</p>
+        <span className="mt-0.5 text-xs font-medium text-[color:var(--theme-accent-heading)]">{property.type}</span>
         {!readOnly && (
-          <p className="mt-0.5 text-[10px] text-[rgba(230,195,100,0.52)]">{property.agentName}</p>
+          <p className="mt-0.5 text-[10px] text-[color:var(--theme-accent-icon-dim)]">{property.agentName}</p>
         )}
       </div>
 
-      {/* Location */}
-      <div className="min-w-0 space-y-0.5 text-xs text-[rgba(230,195,100,0.62)]">
+      {/* Адрес */}
+      <div className="min-w-0 space-y-0.5 text-xs text-[color:var(--hub-stat-label)]">
         <p>{property.country}</p>
         <p>{property.city}</p>
         <p className="truncate">{property.street}</p>
       </div>
 
-      {/* Parameters */}
-      <div className="space-y-0.5 text-xs text-[rgba(230,195,100,0.58)]">
+      {/* Параметры */}
+      <div className="space-y-0.5 text-xs text-[color:var(--hub-stat-label)]">
         {hasFloorData && (
           <p>
             {property.floor > 0
-              ? <>Этаж: <span className="text-[#d0e8df] font-medium">{property.floor} из {property.totalFloors}</span></>
-              : <>Этажей: <span className="text-[#d0e8df] font-medium">{property.totalFloors}</span></>}
+              ? <>Этаж: <span className="text-[color:var(--workspace-text)] font-medium">{property.floor} из {property.totalFloors}</span></>
+              : <>Этажей: <span className="text-[color:var(--workspace-text)] font-medium">{property.totalFloors}</span></>}
           </p>
         )}
         {property.rooms > 0 && (
-          <p>Комнат: <span className="text-[#d0e8df] font-medium">{property.rooms}+1</span></p>
+          <p>Комнат: <span className="text-[color:var(--workspace-text)] font-medium">{property.rooms}+1</span></p>
         )}
-        <p>Площадь: <span className="text-[#d0e8df] font-medium">{property.area} м²</span></p>
+        <p>Площадь: <span className="text-[color:var(--workspace-text)] font-medium">{property.area} м²</span></p>
       </div>
 
-      {/* Price */}
+      {/* Цена */}
       <div className="min-w-0">
-        <p className="text-base font-bold text-[#d0e8df]">{priceLabel}</p>
-        <p className="text-xs text-[rgba(230,195,100,0.58)]">{pricePerM2Label}</p>
+        <p className="text-base font-bold text-[color:var(--workspace-text)]">{priceLabel}</p>
+        <p className="text-xs text-[color:var(--hub-stat-label)]">{pricePerM2Label}</p>
       </div>
 
-      {/* Listed date + sale status */}
+      {/* Дата размещения + статус продажи */}
       <div className="space-y-1.5">
-        <p className="text-xs text-[rgba(230,195,100,0.58)]">
-          Размещено: <span className="text-[rgba(230,195,100,0.88)]">{formatDate(property.listedAt)}</span>
+        <p className="text-xs text-[color:var(--hub-stat-label)]">
+          Размещено: <span className="text-[color:var(--theme-accent-link-dim)]">{formatDate(property.listedAt)}</span>
         </p>
         <SaleStatusBadge status={property.status} />
       </div>
 
-      {/* Date + condition */}
+      {/* Дата обновления + состояние карточки */}
       <div className="space-y-1.5">
-        <p className="text-xs text-[rgba(230,195,100,0.58)]">
-          Обновлено <span className="text-[rgba(230,195,100,0.88)]">{formatDate(property.updatedAt)}</span>
+        <p className="text-xs text-[color:var(--hub-stat-label)]">
+          Обновлено <span className="text-[color:var(--theme-accent-link-dim)]">{formatDate(property.updatedAt)}</span>
         </p>
         {!isArchive && <ConditionBadge state={condition} />}
       </div>
 
-      {/* Actions */}
+      {/* Действия */}
       {isArchive ? (
         <div className="flex flex-col gap-2">
           <button
@@ -172,7 +172,7 @@ function PropertyRow({
           </button>
         </div>
       ) : readOnly ? (
-        <div className="text-xs text-[rgba(230,195,100,0.48)] italic">Только просмотр</div>
+        <div className="text-xs text-[color:var(--theme-accent-icon-dim)] italic">Только просмотр</div>
       ) : (
         <div className="flex items-center gap-1">
           <ActionButton onClick={onEdit} icon={<Pencil className="size-3.5" />} label="Изменить" />
@@ -183,7 +183,7 @@ function PropertyRow({
   )
 }
 
-// ─── Compact row ──────────────────────────────────────────────────────────────
+// ─── Компактная строка ───────────────────────────────────────────────────────
 
 function CompactRow({
   property, isArchive, showCheckbox, isSelected, readOnly,
@@ -195,11 +195,11 @@ function CompactRow({
   return (
     <div
       className={cn(
-        'group grid items-center gap-3 border-b border-emerald-900/25 px-4 py-1.5 text-sm transition-colors last:border-0 hover:bg-[#e6c364]/[0.04]',
+        'group grid items-center gap-3 border-b border-[var(--green-border)] px-4 py-1.5 text-sm transition-colors last:border-0 hover:bg-[var(--hub-action-hover)]',
         showCheckbox
           ? 'grid-cols-[2rem_1fr_1fr_auto_auto_auto_auto]'
           : 'grid-cols-[1fr_1fr_auto_auto_auto_auto]',
-        isSelected && 'bg-[#e6c364]/[0.08]',
+        isSelected && 'bg-[var(--nav-item-bg-active)]',
       )}
     >
       {showCheckbox && (
@@ -208,22 +208,22 @@ function CompactRow({
           checked={isSelected}
           onChange={onToggleSelect}
           className={cn(
-            'accent-[#e6c364] size-4 cursor-pointer transition-opacity',
+            'accent-[var(--gold)] size-4 cursor-pointer transition-opacity',
             isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
           )}
         />
       )}
       <div className="min-w-0">
-        <p className="font-medium truncate text-[#d0e8df]">{property.title}</p>
-        <p className="text-xs text-[#e6c364]/90">{property.type}</p>
+        <p className="font-medium truncate text-[color:var(--workspace-text)]">{property.title}</p>
+        <p className="text-xs text-[color:var(--theme-accent-heading)]">{property.type}</p>
       </div>
-      <div className="text-xs text-[rgba(230,195,100,0.62)] truncate">{property.city}, {property.street}</div>
-      <p className="font-bold whitespace-nowrap text-[#d0e8df]">{priceLabel}</p>
+      <div className="text-xs text-[color:var(--hub-stat-label)] truncate">{property.city}, {property.street}</div>
+      <p className="font-bold whitespace-nowrap text-[color:var(--workspace-text)]">{priceLabel}</p>
       <SaleStatusBadge status={property.status} />
       {!isArchive && <ConditionBadge state={condition} />}
       {isArchive ? (
         <div className="flex gap-1">
-          <button onClick={onRestore} className="rounded p-1 text-[#e6c364] transition-colors hover:bg-[#e6c364]/10" title="Восстановить">
+          <button onClick={onRestore} className="rounded p-1 text-[color:var(--theme-accent-heading)] transition-colors hover:bg-[var(--nav-item-bg-active)]" title="Восстановить">
             <RotateCcw className="size-3.5" />
           </button>
           <button onClick={onDelete} className="rounded p-1 text-red-400/70 hover:bg-red-500/10 hover:text-red-300 transition-colors" title="Удалить">
@@ -232,7 +232,7 @@ function CompactRow({
         </div>
       ) : readOnly ? null : (
         <div className="flex gap-1">
-          <button onClick={onEdit} className="rounded p-1 text-[#e6c364] transition-colors hover:bg-[#e6c364]/10" title="Изменить">
+          <button onClick={onEdit} className="rounded p-1 text-[color:var(--theme-accent-heading)] transition-colors hover:bg-[var(--nav-item-bg-active)]" title="Изменить">
             <Pencil className="size-3.5" />
           </button>
           <button onClick={onDelete} className="rounded p-1 text-red-400/70 hover:bg-red-500/10 hover:text-red-300 transition-colors" title="Удалить">
@@ -244,12 +244,12 @@ function CompactRow({
   )
 }
 
-// ─── Small helpers ────────────────────────────────────────────────────────────
+// ─── Мелкие вспомогательные кнопки ───────────────────────────────────────────
 
 function ActionButton({ onClick, icon, label }: { onClick: () => void; icon: React.ReactNode; label: string }) {
   return (
     <button onClick={onClick}
-      className="flex items-center gap-1 rounded px-2 py-1 text-xs font-semibold text-[#e6c364] transition-colors hover:bg-[#e6c364]/10">
+      className="flex items-center gap-1 rounded px-2 py-1 text-xs font-semibold text-[color:var(--theme-accent-heading)] transition-colors hover:bg-[var(--nav-item-bg-active)]">
       {icon}{label}
     </button>
   )
@@ -261,14 +261,14 @@ function IconButton({ onClick, icon, danger, 'aria-label': ariaLabel }: {
   return (
     <button onClick={onClick} aria-label={ariaLabel}
       className={cn('rounded p-1.5 transition-colors',
-        danger ? 'text-red-400/70 hover:bg-red-500/10 hover:text-red-300' : 'text-emerald-100/55 hover:bg-[#e6c364]/10 hover:text-[#d0e8df]',
+        danger ? 'text-red-400/70 hover:bg-red-500/10 hover:text-red-300' : 'text-[color:var(--app-text-subtle)] hover:bg-[var(--nav-item-bg-active)] hover:text-[color:var(--workspace-text)]',
       )}>
       {icon}
     </button>
   )
 }
 
-// ─── Main export ──────────────────────────────────────────────────────────────
+// ─── Основной экспорт компонента ─────────────────────────────────────────────
 
 interface PropertyTableProps {
   properties: Property[]
@@ -290,7 +290,7 @@ export function PropertyTable({
 }: PropertyTableProps) {
   if (properties.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-center text-emerald-100/50">
+      <div className="flex flex-col items-center justify-center py-24 text-center text-[color:var(--app-text-subtle)]">
         <p className="text-2xl mb-2">🏠</p>
         <p className="font-medium">Объекты не найдены</p>
         <p className="text-sm mt-1">Попробуйте изменить фильтры или добавьте новый объект</p>
@@ -302,7 +302,7 @@ export function PropertyTable({
   const showCheckbox = !readOnly && !isArchive
   const allSelected = properties.length > 0 && properties.every((p) => selectedIds.has(p.id))
 
-  // ── Grid view ──
+  // ── вид сеткой ──
   if (viewMode === 'grid') {
     return (
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -319,10 +319,10 @@ export function PropertyTable({
     )
   }
 
-  // ── Compact view ──
+  // ── компактный вид ──
   if (viewMode === 'compact') {
     return (
-      <div className="overflow-hidden rounded-xl border border-[#e6c364]/15 bg-[#0a1f1a] shadow-[inset_0_0_0_1px_rgba(201,168,76,0.08)]">
+      <div className="overflow-hidden rounded-xl border border-[color:var(--hub-card-border)] bg-[var(--green-deep)] shadow-[inset_0_0_0_1px_rgba(201,168,76,0.08)]">
         {properties.map((p) => (
           <CompactRow
             key={p.id}
@@ -341,9 +341,9 @@ export function PropertyTable({
     )
   }
 
-  // ── Table view (default) ──
+  // ── табличный вид (по умолчанию) ──
   return (
-    <div className="overflow-hidden rounded-xl border border-[#e6c364]/15 bg-[#0a1f1a] shadow-[inset_0_0_0_1px_rgba(201,168,76,0.08)]">
+    <div className="overflow-hidden rounded-xl border border-[color:var(--hub-card-border)] bg-[var(--green-deep)] shadow-[inset_0_0_0_1px_rgba(201,168,76,0.08)]">
       <TableHeader
         isArchive={isArchive}
         showCheckbox={showCheckbox}

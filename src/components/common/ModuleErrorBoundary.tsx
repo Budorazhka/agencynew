@@ -15,7 +15,7 @@ interface ModuleErrorBoundaryState {
   errorInfo: ErrorInfo | null
 }
 
-// Error boundary для отдельных разделов приложения.
+// Обработчик сбоев для отдельных разделов приложения.
 // При ошибке внутри дочерних компонентов показывает fallback
 // вместо того чтобы упасть всё приложение.
 export class ModuleErrorBoundary extends Component<
@@ -158,9 +158,9 @@ interface ModuleErrorFallbackProps {
   variant?: 'compact' | 'full'
 }
 
-// Fallback-компонент для отображения вместо упавшего раздела.
-// variant='compact' — маленький блок с кнопкой, подходит для виджетов.
-// variant='full' — полноразмерный с текстом ошибки, подходит для страниц.
+// Запасной экран вместо упавшего раздела.
+// Режим compact — маленький блок с кнопкой, для виджетов.
+// Режим full — на весь экран с текстом ошибки, для страниц.
 export function ModuleErrorFallback({
   error,
   onReset,

@@ -3,7 +3,7 @@ import { Loader2 } from 'lucide-react'
 
 interface LoadingProps {
   size?: 'sm' | 'md' | 'lg'
-  // spinner — крутящийся кружок, dots — три точки, pulse — пульсирующий шар, skeleton — прямоугольник
+  // вариант spinner — кружок, dots — три точки, pulse — пульс, skeleton — прямоугольник-заглушка
   variant?: 'spinner' | 'dots' | 'pulse' | 'skeleton'
   className?: string
   children?: React.ReactNode

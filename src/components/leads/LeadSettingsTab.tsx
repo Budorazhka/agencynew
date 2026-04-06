@@ -16,8 +16,8 @@ const RULE_LABELS: Record<DistributionRuleType, string> = {
   manual: 'Только ручная раздача',
 }
 
-const PANEL = 'rounded-xl border border-[rgba(242,207,141,0.15)] bg-[rgba(0,0,0,0.15)] p-5 space-y-4'
-const LABEL = 'block text-xs font-medium uppercase tracking-wide text-[rgba(242,207,141,0.45)]'
+const PANEL = 'rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.15)] p-5 space-y-4'
+const LABEL = 'block text-xs font-medium uppercase tracking-wide text-[color:var(--hub-stat-label)]'
 
 export function LeadSettingsTab() {
   const { state, dispatch } = useLeads()
@@ -28,12 +28,12 @@ export function LeadSettingsTab() {
     return (
       <div className={PANEL}>
         <div className="flex items-start gap-4">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-[rgba(242,207,141,0.15)] bg-[rgba(242,207,141,0.07)] text-[rgba(242,207,141,0.5)]">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-[color:var(--hub-card-border)] bg-[var(--hub-action-hover)] text-[color:var(--hub-desc)]">
             <Info className="size-5" />
           </div>
           <div>
-            <h3 className="font-medium text-[#fcecc8]">Только для директора</h3>
-            <p className="mt-1 text-sm text-[rgba(242,207,141,0.5)]">
+            <h3 className="font-medium text-[color:var(--app-text)]">Только для директора</h3>
+            <p className="mt-1 text-sm text-[color:var(--hub-desc)]">
               Настройки раздачи доступны только директору. Вы можете просматривать облако и
               распределять лиды вручную, если вы назначены распределителем.
             </p>
@@ -50,7 +50,7 @@ export function LeadSettingsTab() {
       <div className={PANEL}>
         <div>
           <p className={LABEL}>Правило раздачи</p>
-          <p className="mt-1 text-sm text-[rgba(242,207,141,0.5)]">
+          <p className="mt-1 text-sm text-[color:var(--hub-desc)]">
             Единое правило для распределения лидов из облака по менеджерам.
           </p>
         </div>
@@ -65,7 +65,7 @@ export function LeadSettingsTab() {
               }
             }}
           >
-            <SelectTrigger className="w-full max-w-xs rounded-xl border border-[rgba(242,207,141,0.2)] bg-[rgba(0,0,0,0.25)] text-[#fcecc8] shadow-none focus:ring-1 focus:ring-[rgba(242,207,141,0.2)] focus:border-[rgba(242,207,141,0.45)]">
+            <SelectTrigger className="w-full max-w-xs rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.25)] text-[color:var(--app-text)] shadow-none focus:ring-1 focus:ring-[color:var(--hub-card-border)] focus:border-[color:var(--hub-card-border-hover)]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -83,7 +83,7 @@ export function LeadSettingsTab() {
       <div className={PANEL}>
         <div>
           <p className={LABEL}>Менеджер в рукопашном режиме</p>
-          <p className="mt-1 text-sm text-[rgba(242,207,141,0.5)]">
+          <p className="mt-1 text-sm text-[color:var(--hub-desc)]">
             {distributionRule.type === 'manual'
               ? 'Кто вручную распределяет лиды. При выборе распределителя действует только ручная раздача.'
               : 'При правиле «По кругу» или «По загрузке» распределитель не используется — лиды назначаются автоматически.'}
@@ -102,7 +102,7 @@ export function LeadSettingsTab() {
               }
             }}
           >
-            <SelectTrigger className="w-full max-w-xs rounded-xl border border-[rgba(242,207,141,0.2)] bg-[rgba(0,0,0,0.25)] text-[#fcecc8] shadow-none focus:ring-1 focus:ring-[rgba(242,207,141,0.2)] focus:border-[rgba(242,207,141,0.45)] disabled:opacity-40">
+            <SelectTrigger className="w-full max-w-xs rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.25)] text-[color:var(--app-text)] shadow-none focus:ring-1 focus:ring-[color:var(--hub-card-border)] focus:border-[color:var(--hub-card-border-hover)] disabled:opacity-40">
               <SelectValue placeholder="Не назначен" />
             </SelectTrigger>
             <SelectContent>

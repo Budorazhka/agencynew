@@ -1,39 +1,36 @@
-import { Outlet, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useTheme } from '@/hooks/useTheme'
 import { cn } from '@/lib/utils'
 import { SidebarRailProvider } from '@/context/SidebarRailContext'
 import { DashboardAppRail } from '@/components/layout/DashboardAppRail'
+import { DashboardTopHeader } from '@/components/layout/DashboardTopHeader'
+import { DashboardRouteGuard } from '@/components/layout/DashboardRouteGuard'
 
 export default function App() {
   const { isFeltStyle } = useTheme()
   const location = useLocation()
-  const isPokerFullscreen = location.pathname === '/dashboard/leads/poker'
-  if (isPokerFullscreen) {
-    return (
-      <div
-        className={cn(
-          'flex min-h-screen bg-[var(--app-bg)] text-[color:var(--app-text)]',
-          isFeltStyle ? 'app-theme-felt' : '',
-        )}
-      >
-        <main className="flex-1 overflow-hidden p-0">
-          <Outlet />
-        </main>
-      </div>
-    )
-  }
+  /** Покерный стол CRM заполняет колонку под шапкой без лишнего скролла оболочки. */
+  const isPokerRoute = location.pathname === '/dashboard/leads/poker'
 
   return (
     <SidebarRailProvider>
       <div
         className={cn(
-          'flex h-screen min-h-0 overflow-hidden bg-[var(--app-bg)] text-[color:var(--app-text)]',
+          'flex h-screen min-h-0 flex-row overflow-hidden bg-[var(--app-bg)] text-[color:var(--app-text)]',
           isFeltStyle ? 'app-theme-felt' : '',
         )}
       >
         <DashboardAppRail />
-        <main className="relative min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden flex flex-col bg-[var(--app-bg)] p-0 text-[color:var(--app-text)]">
-          <Outlet />
+        <main className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-[var(--app-bg)] p-0 text-[color:var(--app-text)]">
+          <DashboardTopHeader />
+          <div
+            className={cn(
+              'relative min-h-0 flex-1 overflow-x-hidden',
+              isPokerRoute ? 'flex min-h-0 flex-col overflow-hidden' : 'overflow-y-auto',
+            )}
+          >
+            <DashboardRouteGuard />
+          </div>
         </main>
       </div>
     </SidebarRailProvider>

@@ -25,7 +25,7 @@ export interface Mailing {
   sentAt?: string | null
   createdAt: string
   createdBy?: string
-  /** For "all_partners" + scope: which city/country was selected */
+  /** При audience «все партнёры» и выбранном scope: какой город/страна */
   scopeCityId?: string
   scopeCountryId?: string
 }

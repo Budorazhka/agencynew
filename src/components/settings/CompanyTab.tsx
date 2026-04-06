@@ -17,7 +17,7 @@ function FeltInput({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="block text-xs font-medium text-[rgba(242,207,141,0.55)] uppercase tracking-wide">
+      <label className="block text-xs font-medium text-[color:var(--hub-stat-label)] uppercase tracking-wide">
         {label}
       </label>
       <input
@@ -25,7 +25,7 @@ function FeltInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-xl border border-[rgba(242,207,141,0.2)] bg-[rgba(0,0,0,0.25)] px-4 py-2.5 text-sm text-[#fcecc8] placeholder:text-[rgba(242,207,141,0.3)] outline-none focus:border-[rgba(242,207,141,0.5)] focus:ring-1 focus:ring-[rgba(242,207,141,0.2)] transition-all"
+        className="w-full rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.25)] px-4 py-2.5 text-sm text-[color:var(--app-text)] placeholder:text-[color:var(--theme-accent-icon-dim)] outline-none focus:border-[color:var(--hub-card-border-hover)] focus:ring-1 focus:ring-[color:var(--hub-card-border)] transition-all"
       />
     </div>
   )
@@ -46,7 +46,7 @@ export function CompanyTab() {
 
   return (
     <div className="space-y-8 max-w-xl">
-      <p className="rounded-xl border border-[rgba(242,207,141,0.12)] bg-[rgba(242,207,141,0.04)] px-4 py-3 text-xs leading-relaxed text-[rgba(242,207,141,0.5)]">
+      <p className="rounded-xl border border-[color:var(--hub-tile-icon-border)] bg-[var(--hub-action-hover)] px-4 py-3 text-xs leading-relaxed text-[color:var(--hub-desc)]">
         Название и логотип для шапки CRM, главного экрана и клиентских материалов настраиваются в разделе{' '}
         <Link to="/dashboard/settings/branding" className="font-semibold text-[rgba(201,168,76,0.85)] underline-offset-2 hover:underline">
           Брендинг агентства

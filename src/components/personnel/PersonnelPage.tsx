@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { UserPlus, Phone, Mail, Calendar, X, Pencil, Trash2, Users, ShieldOff, ShieldCheck, ArrowLeft } from 'lucide-react'
+import { UserPlus, Phone, Mail, Calendar, X, Pencil, Trash2, Users, ShieldOff, ShieldCheck } from 'lucide-react'
 import { useAuth, MOCK_USERS } from '@/context/AuthContext'
 import {
   MOCK_EMPLOYEES,
@@ -14,16 +13,16 @@ import type { UserRole } from '@/types/auth'
 // ─── Цвета ролей (в тон дашборду: #031712, золото, изумруд) ───────────────────
 
 const ROLE_FELT: Record<EmployeeRole, { suit: string; accent: string; badge: string; text: string; glow: string }> = {
-  owner:    { suit: '♛', accent: '#e6c364', badge: 'rgba(201,168,76,0.12)', text: '#e6c364', glow: 'rgba(201,168,76,0.22)' },
+  owner:    { suit: '♛', accent: 'var(--gold)', badge: 'color-mix(in srgb, var(--gold) 12%, transparent)', text: 'var(--gold)', glow: 'color-mix(in srgb, var(--gold) 22%, transparent)' },
   director: { suit: '◆', accent: '#7dd3fc', badge: 'rgba(125,211,252,0.1)', text: '#bae6fd', glow: 'rgba(125,211,252,0.18)' },
   rop:      { suit: '♠', accent: '#fbbf24', badge: 'rgba(251,191,36,0.1)', text: '#fcd34d', glow: 'rgba(251,191,36,0.18)' },
   manager:  { suit: '♣', accent: '#6ee7b7', badge: 'rgba(110,231,183,0.1)', text: '#a7f3d0', glow: 'rgba(52,211,153,0.15)' },
 }
 
-const LINE = 'rgba(201,168,76,0.2)'
-const CARD_BORDER = 'rgba(201,168,76,0.28)'
-const TEXT_MAIN = '#d0e8df'
-const TEXT_MUTED = 'rgba(208,232,223,0.62)'
+const LINE = 'var(--hub-card-border)'
+const CARD_BORDER = 'var(--hub-card-border)'
+const TEXT_MAIN = 'var(--workspace-text)'
+const TEXT_MUTED = 'var(--workspace-text-muted)'
 
 // ─── Утилиты ──────────────────────────────────────────────────────────────────
 
@@ -53,6 +52,7 @@ function EmployeeCard({
 
   return (
     <button
+      type="button"
       onClick={onClick}
       style={{
         width: 148,
@@ -201,10 +201,10 @@ function EmployeeDrawer({
   const f = ROLE_FELT[employee.role]
   const initials = getInitials(employee.name)
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#0a1f1a', borderLeft: '1px solid var(--green-border)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: '1px solid rgba(16,74,42,0.5)' }}>
-        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(208,232,223,0.55)', margin: 0 }}>Сотрудник</p>
-        <button onClick={onClose} style={{ padding: 6, borderRadius: 8, color: 'rgba(208,232,223,0.45)', background: 'none', border: 'none', cursor: 'pointer' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--green-deep)', borderLeft: '1px solid var(--green-border)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: '1px solid var(--green-border)' }}>
+        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--workspace-text-dim)', margin: 0 }}>Сотрудник</p>
+        <button type="button" onClick={onClose} style={{ padding: 6, borderRadius: 8, color: 'var(--workspace-text-dim)', background: 'none', border: 'none', cursor: 'pointer' }}>
           <X size={16} />
         </button>
       </div>
@@ -238,7 +238,7 @@ function EmployeeDrawer({
           </div>
         </div>
 
-        <div style={{ borderRadius: 10, border: '1px solid rgba(201,168,76,0.2)', background: 'rgba(3,23,18,0.5)', padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ borderRadius: 10, border: '1px solid var(--hub-card-border)', background: 'var(--hub-card-bg)', padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
           {employee.phone && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <Phone size={13} style={{ color: f.accent, opacity: 0.6, flexShrink: 0 }} />
@@ -261,11 +261,11 @@ function EmployeeDrawer({
       </div>
 
       {canEdit && (
-        <div style={{ borderTop: '1px solid rgba(16,74,42,0.5)', padding: '12px 16px', display: 'flex', gap: 8 }}>
-          <button onClick={() => onEdit(employee)} style={{ flex: 1, height: 32, borderRadius: 8, border: `1px solid ${ROLE_FELT[employee.role].accent}40`, background: ROLE_FELT[employee.role].badge, color: ROLE_FELT[employee.role].text, fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+        <div style={{ borderTop: '1px solid var(--green-border)', padding: '12px 16px', display: 'flex', gap: 8 }}>
+          <button type="button" onClick={() => onEdit(employee)} style={{ flex: 1, height: 32, borderRadius: 'var(--section-cta-radius)', border: `1px solid ${ROLE_FELT[employee.role].accent}40`, background: ROLE_FELT[employee.role].badge, color: ROLE_FELT[employee.role].text, fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
             <Pencil size={12} /> Редактировать
           </button>
-          <button onClick={() => onDelete(employee.id)} style={{ height: 32, paddingInline: 12, borderRadius: 8, border: '1px solid rgba(252,129,129,0.3)', background: 'rgba(252,129,129,0.08)', color: '#fc8181', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button type="button" onClick={() => onDelete(employee.id)} style={{ height: 32, paddingInline: 12, borderRadius: 'var(--section-cta-radius)', border: '1px solid rgba(252,129,129,0.3)', background: 'rgba(252,129,129,0.08)', color: '#fc8181', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Trash2 size={12} />
           </button>
         </div>
@@ -278,8 +278,8 @@ function EmployeeDrawer({
 
 const EMPTY_FORM = { name: '', role: 'manager' as EmployeeRole, position: '', managerId: '', phone: '', email: '', hireDate: '' }
 
-const iStyle: React.CSSProperties = { height: 34, width: '100%', borderRadius: 8, border: '1px solid rgba(30,74,42,0.85)', background: '#0a1f1a', color: '#d0e8df', fontSize: 12, padding: '0 10px', outline: 'none' }
-const lStyle: React.CSSProperties = { display: 'block', fontSize: 10, fontWeight: 600, color: 'rgba(208,232,223,0.55)', marginBottom: 4 }
+const iStyle: React.CSSProperties = { height: 34, width: '100%', borderRadius: 8, border: '1px solid var(--green-border)', background: 'var(--green-deep)', color: 'var(--workspace-text)', fontSize: 12, padding: '0 10px', outline: 'none' }
+const lStyle: React.CSSProperties = { display: 'block', fontSize: 10, fontWeight: 600, color: 'var(--workspace-text-dim)', marginBottom: 4 }
 const sStyle: React.CSSProperties = { ...iStyle, appearance: 'none', WebkitAppearance: 'none', cursor: 'pointer' }
 
 function EmployeeForm({ initial, employees, onSave, onCancel }: {
@@ -303,15 +303,15 @@ function EmployeeForm({ initial, employees, onSave, onCancel }: {
           <label style={lStyle}>Роль</label>
           <select style={sStyle} value={form.role} onChange={(e) => set('role', e.target.value)}>
             {(Object.entries(ROLE_LABELS) as [EmployeeRole, string][]).map(([k, v]) => (
-              <option key={k} value={k} style={{ background: '#0a1f1a' }}>{v}</option>
+              <option key={k} value={k} style={{ background: 'var(--green-deep)' }}>{v}</option>
             ))}
           </select>
         </div>
         <div>
           <label style={lStyle}>Руководитель</label>
           <select style={sStyle} value={form.managerId} onChange={(e) => set('managerId', e.target.value)}>
-            <option value="" style={{ background: '#0a1f1a' }}>— нет —</option>
-            {employees.map((e) => <option key={e.id} value={e.id} style={{ background: '#0a1f1a' }}>{e.name}</option>)}
+            <option value="" style={{ background: 'var(--green-deep)' }}>— нет —</option>
+            {employees.map((e) => <option key={e.id} value={e.id} style={{ background: 'var(--green-deep)' }}>{e.name}</option>)}
           </select>
         </div>
       </div>
@@ -321,10 +321,10 @@ function EmployeeForm({ initial, employees, onSave, onCancel }: {
         <div><label style={lStyle}>Дата начала</label><input type="date" style={{ ...iStyle, colorScheme: 'dark' }} value={form.hireDate} onChange={(e) => set('hireDate', e.target.value)} /></div>
       </div>
       <div style={{ display: 'flex', gap: 8, paddingTop: 4 }}>
-        <button onClick={() => valid && onSave(form)} disabled={!valid} style={{ flex: 1, height: 32, borderRadius: 8, border: '1px solid rgba(201,168,76,0.45)', background: valid ? 'rgba(201,168,76,0.12)' : 'rgba(255,255,255,0.03)', color: valid ? '#e6c364' : 'rgba(208,232,223,0.25)', fontSize: 12, fontWeight: 700, cursor: valid ? 'pointer' : 'not-allowed' }}>
+        <button type="button" onClick={() => valid && onSave(form)} disabled={!valid} className={valid ? 'alphabase-section-primary flex-1' : ''} style={valid ? { flex: 1 } : { flex: 1, height: 32, borderRadius: 'var(--section-cta-radius)', border: '1px solid var(--hub-card-border)', background: 'var(--hub-card-bg)', color: 'var(--workspace-text-dim)', fontSize: 12, fontWeight: 700, cursor: 'not-allowed', opacity: 0.45 }}>
           Сохранить
         </button>
-        <button onClick={onCancel} style={{ height: 32, paddingInline: 16, borderRadius: 8, border: '1px solid rgba(30,74,42,0.8)', background: 'transparent', color: 'rgba(208,232,223,0.5)', fontSize: 12, cursor: 'pointer' }}>
+        <button type="button" onClick={onCancel} style={{ height: 32, paddingInline: 16, borderRadius: 'var(--section-cta-radius)', border: '1px solid var(--green-border)', background: 'transparent', color: 'var(--workspace-text-dim)', fontSize: 12, cursor: 'pointer' }}>
           Отмена
         </button>
       </div>
@@ -335,13 +335,15 @@ function EmployeeForm({ initial, employees, onSave, onCancel }: {
 // ─── Цвета ролей для управления командой ──────────────────────────────────────
 
 const MGMT_ROLE_STYLE: Record<UserRole, { accent: string; badge: string; text: string }> = {
-  owner:            { accent: '#f2cf8d', badge: 'rgba(242,207,141,0.15)', text: '#f2cf8d' },
+  owner:            { accent: 'var(--gold-light)', badge: 'color-mix(in srgb, var(--gold) 15%, transparent)', text: 'var(--gold-light)' },
   director:         { accent: '#7ec8e3', badge: 'rgba(126,200,227,0.15)', text: '#7ec8e3' },
   rop:              { accent: '#f4b96a', badge: 'rgba(244,185,106,0.15)', text: '#f4b96a' },
   marketer:         { accent: '#c084fc', badge: 'rgba(192,132,252,0.15)', text: '#c084fc' },
   manager:          { accent: '#6fcf97', badge: 'rgba(111,207,151,0.15)', text: '#6fcf97' },
   lawyer:           { accent: '#22d3ee', badge: 'rgba(34,211,238,0.15)', text: '#22d3ee' },
   procurement_head: { accent: '#fb923c', badge: 'rgba(251,146,60,0.15)', text: '#fb923c' },
+  finance:          { accent: '#bef264', badge: 'rgba(190,242,100,0.15)', text: '#bef264' },
+  hr:               { accent: '#fb7185', badge: 'rgba(251,113,133,0.15)', text: '#fb7185' },
   partner:          { accent: '#f472b6', badge: 'rgba(244,114,182,0.15)', text: '#f472b6' },
 }
 
@@ -461,9 +463,6 @@ function AccountManagementTab({ currentUserId }: { currentUserId: string }) {
 // ─── Главная страница ──────────────────────────────────────────────────────────
 
 export function PersonnelPage() {
-  const navigate = useNavigate()
-  const backRoute = '/dashboard/team'
-
   const { currentUser } = useAuth()
   const userRole = currentUser?.role ?? 'manager'
   const canEdit = userRole === 'owner' || userRole === 'director'
@@ -491,18 +490,18 @@ export function PersonnelPage() {
   const startEdit = (emp: Employee) => { setEditTarget(emp); setSelected(null); setShowForm(false) }
 
   return (
-    <div className="flex w-full min-w-0 flex-row items-stretch bg-[#031712] text-[#d0e8df]">
+    <div className="flex w-full min-w-0 flex-row items-stretch bg-[var(--app-bg)] text-[color:var(--workspace-text)]">
       {/* Один фон в потоке: не наслаиваем absolute-слои на .app-theme-felt (иначе «два экрана») */}
       <div className="relative flex min-h-full min-w-0 flex-1 flex-col">
         {/* Header — sticky: при прокрутке страницы шапка остаётся; прокрутка на <main> в App */}
         <div
-          className="border-b border-emerald-900/25 shadow-[0_1px_0_rgba(201,168,76,0.1)]"
+          className="border-b border-[var(--green-border)] shadow-[0_1px_0_rgba(201,168,76,0.1)]"
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '14px 24px',
-            background: 'rgba(3,23,18,0.88)',
+            background: 'var(--shell-elevated-bg)',
             backdropFilter: 'blur(12px)',
             flexShrink: 0,
             position: 'sticky',
@@ -511,35 +510,15 @@ export function PersonnelPage() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-            <button
-              type="button"
-              onClick={() => navigate(backRoute)}
-              className="shrink-0 rounded-[10px] border border-[#e6c364]/35 bg-[#e6c364]/10 text-[#e6c364] hover:bg-[#e6c364]/18"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                height: 34,
-                padding: '0 12px',
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: '0.06em',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
-            >
-              <ArrowLeft size={16} strokeWidth={2} />
-              Назад
-            </button>
             <div
-              className="flex items-center justify-center rounded-full border border-[#e6c364]/35 bg-[#0a1f1a] text-[#e6c364]"
+              className="flex items-center justify-center rounded-full border border-[var(--hub-card-border-hover)] bg-[var(--green-deep)] text-[color:var(--theme-accent-heading)]"
               style={{ width: 34, height: 34 }}
             >
               <Users size={16} />
             </div>
             <div>
-              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(208,232,223,0.5)', margin: 0 }}>КОМАНДА</p>
-              <p style={{ fontSize: 17, fontWeight: 700, color: '#d0e8df', margin: '2px 0 0', letterSpacing: '0.02em' }}>
+              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--workspace-text-dim)', margin: 0 }}>КОМАНДА</p>
+              <p style={{ fontSize: 17, fontWeight: 700, color: 'var(--workspace-text)', margin: '2px 0 0', letterSpacing: '0.02em' }}>
                 {activeTab === 'org' ? 'Оргструктура' : 'Управление командой'}
               </p>
             </div>
@@ -547,15 +526,16 @@ export function PersonnelPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {/* Табы — только для owner */}
             {isOwner && (
-              <div className="flex overflow-hidden rounded-lg border border-emerald-900/30">
+              <div className="flex overflow-hidden rounded-[var(--section-cta-radius)] border border-[var(--green-border)]">
                 {(['org', 'management'] as const).map((tab) => (
                   <button
                     key={tab}
+                    type="button"
                     onClick={() => setActiveTab(tab)}
                     style={{
                       height: 30, paddingInline: 14, fontSize: 11, fontWeight: 700, cursor: 'pointer', border: 'none',
-                      background: activeTab === tab ? 'rgba(201,168,76,0.14)' : 'transparent',
-                      color: activeTab === tab ? '#e6c364' : 'rgba(208,232,223,0.45)',
+                      background: activeTab === tab ? 'var(--nav-item-bg-active)' : 'transparent',
+                      color: activeTab === tab ? 'var(--theme-accent-heading)' : 'var(--workspace-text-dim)',
                       transition: 'all 0.15s',
                     }}
                   >
@@ -566,15 +546,14 @@ export function PersonnelPage() {
             )}
             {activeTab === 'org' && (
               <>
-                <span style={{ fontSize: 12, color: 'rgba(208,232,223,0.45)' }}>{employees.length} сотрудников</span>
+                <span style={{ fontSize: 12, color: 'var(--workspace-text-dim)' }}>{employees.length} сотрудников</span>
                 {canEdit && !showForm && !editTarget && (
                   <button
                     type="button"
                     onClick={() => setShowForm(true)}
-                    className="rounded-lg border border-[#e6c364]/45 bg-[#e6c364]/10 text-[#e6c364] hover:bg-[#e6c364]/18"
-                    style={{ height: 34, paddingInline: 14, display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
+                    className="alphabase-section-primary"
                   >
-                    <UserPlus size={14} /> Добавить
+                    <UserPlus size={14} strokeWidth={2.5} /> Добавить
                   </button>
                 )}
               </>
@@ -591,8 +570,8 @@ export function PersonnelPage() {
             <>
               {/* Form */}
               {(showForm || editTarget) && (
-                <div className="border-b border-emerald-900/25" style={{ padding: '16px 24px', background: 'rgba(10,31,26,0.92)', backdropFilter: 'blur(8px)', flexShrink: 0 }}>
-                  <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(208,232,223,0.5)', marginBottom: 12 }}>
+                <div className="border-b border-[var(--green-border)]" style={{ padding: '16px 24px', background: 'var(--hub-card-bg)', backdropFilter: 'blur(8px)', flexShrink: 0 }}>
+                  <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--workspace-text-dim)', marginBottom: 12 }}>
                     {editTarget ? 'Редактировать сотрудника' : 'Новый сотрудник'}
                   </p>
                   <EmployeeForm

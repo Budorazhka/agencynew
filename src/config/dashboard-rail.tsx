@@ -1,0 +1,214 @@
+import type { LucideIcon } from 'lucide-react'
+import {
+  LayoutDashboard,
+  UserCog,
+  CreditCard,
+  Landmark,
+  Building2,
+  Building,
+  Handshake,
+  Wallet,
+  MessagesSquare,
+} from 'lucide-react'
+import type { UserRole } from '@/types/auth'
+
+export type DashboardRailItem = {
+  id: string
+  label: string
+  to: string
+  icon: LucideIcon
+  end?: true
+  match?: (p: string) => boolean
+}
+
+/**
+ * Полный список пунктов левого rail (ALPHABASE).
+ * Видимость по ролям — {@link getVisibleDashboardRailItems} (матрица «Разделы» Excel).
+ */
+export const DASHBOARD_RAIL_ITEMS: DashboardRailItem[] = [
+  { id: 'desk', label: 'Рабочий стол', to: '/dashboard', icon: LayoutDashboard, end: true },
+  {
+    id: 'leads',
+    label: 'Лиды',
+    to: '/dashboard/leads-hub',
+    icon: UserCog,
+    match: (p) =>
+      p.startsWith('/dashboard/leads-hub') ||
+      (p.startsWith('/dashboard/leads') && !p.startsWith('/dashboard/leads/poker')),
+  },
+  {
+    id: 'crm',
+    label: 'CRM',
+    /** Хаб + клиенты, сделки, задачи, покер — контур п. 2 ТЗ (не отдельные пункты rail). */
+    to: '/dashboard/crm',
+    icon: CreditCard,
+    match: (p) =>
+      p.startsWith('/dashboard/crm') ||
+      p.startsWith('/dashboard/leads/poker') ||
+      p.startsWith('/dashboard/clients') ||
+      p.startsWith('/dashboard/deals') ||
+      p.startsWith('/dashboard/tasks'),
+  },
+  {
+    id: 'newbuild',
+    label: 'Новостройки',
+    to: '/dashboard/new-buildings',
+    icon: Landmark,
+    /** Хаб первички + брони (вход на брони с хаба «Новостройки»). */
+    match: (p) => p.startsWith('/dashboard/new-buildings') || p.startsWith('/dashboard/bookings'),
+  },
+  {
+    id: 'secondary',
+    label: 'Вторичный рынок',
+    to: '/dashboard/objects',
+    icon: Building2,
+    match: (p) => p.startsWith('/dashboard/objects'),
+  },
+  {
+    id: 'mls',
+    label: 'MLS',
+    to: '/dashboard/mls',
+    icon: Handshake,
+    /** Каталог партнёров — `/dashboard/partners/*` (кроме MLM), контур «Сообщество». */
+    match: (p) => p.startsWith('/dashboard/mls'),
+  },
+  {
+    id: 'team',
+    label: 'Команда',
+    to: '/dashboard/team',
+    icon: Building,
+    /** П. 6.7 ТЗ: обучение и LMS — внутри «Команды», отдельной кнопки rail в матрице нет. */
+    match: (p) =>
+      p.startsWith('/dashboard/team') ||
+      p.startsWith('/dashboard/learning') ||
+      p.startsWith('/dashboard/lms'),
+  },
+  { id: 'finance', label: 'Финансы', to: '/dashboard/finance', icon: Wallet, match: (p) => p.startsWith('/dashboard/finance') },
+  {
+    id: 'community',
+    label: 'Сообщество',
+    to: '/dashboard/community',
+    icon: MessagesSquare,
+    /** Хаб и все экраны под `/dashboard/partners/*` (в т.ч. MLM и каталог). */
+    match: (p) =>
+      p.startsWith('/dashboard/community') || p.startsWith('/dashboard/partners'),
+  },
+]
+
+/**
+ * Партнёрский риелтор — матрица «Разделы» Excel (строка «Партнёрский риелтор»):
+ * рабочий стол, вторичка, новостройки, MLS, сообщество (MLM — с хаба «Сообщество»), CRM (О).
+ * Остальные разделы у партнёра «—».
+ */
+const PARTNER_RAIL_IDS = new Set(['desk', 'crm', 'secondary', 'newbuild', 'mls', 'community'])
+
+/**
+ * Скрыть пункты rail для роли (id из {@link DASHBOARD_RAIL_ITEMS}).
+ * Пусто = видит весь список (кроме partner — там только allow-list).
+ */
+const HIDE_RAIL_IDS_FOR_ROLE: Partial<Record<UserRole, string[]>> = {
+  /** Команда —, Финансы — */
+  marketer: ['team', 'finance'],
+  /** Лиды —, Команда —, Финансы —, Сообщество — */
+  lawyer: ['leads', 'team', 'finance', 'community'],
+  /** Операционные разделы —; Команда П; Обучение П; Сообщество О (в т.ч. MLM-аналитика с хаба). */
+  hr: ['leads', 'crm', 'newbuild', 'secondary', 'mls', 'finance'],
+  /** Лиды —, Команда —, Сообщество —; Обучение — в панелях */
+  finance: ['leads', 'team', 'community'],
+  /** Команда — */
+  procurement_head: ['team'],
+}
+
+/** Доступ к разделу MLS (видимость пункта rail = тот же флаг, что и у guard по `mls`). */
+export function roleHasMlsSectionAccess(role: UserRole): boolean {
+  if (role === 'partner') return true
+  const hide = HIDE_RAIL_IDS_FOR_ROLE[role] ?? []
+  return !hide.includes('mls')
+}
+
+export function getVisibleDashboardRailItems(role: UserRole): DashboardRailItem[] {
+  if (role === 'partner') {
+    return DASHBOARD_RAIL_ITEMS.filter((item) => PARTNER_RAIL_IDS.has(item.id))
+  }
+  const hide = new Set(HIDE_RAIL_IDS_FOR_ROLE[role] ?? [])
+  return DASHBOARD_RAIL_ITEMS.filter((item) => !hide.has(item.id))
+}
+
+export function isDashboardRailItemActive(pathname: string, item: DashboardRailItem): boolean {
+  if (item.end) {
+    return (
+      pathname === '/dashboard' ||
+      pathname === '/dashboard/' ||
+      pathname.startsWith('/dashboard/calendar')
+    )
+  }
+  if (item.match) {
+    return item.match(pathname)
+  }
+  return pathname.startsWith(item.to)
+}
+
+/**
+ * Какой «раздел rail» соответствует URL. `null` — путь вне карты (настройки, старые модули, дашборды) — не блокируем по rail.
+ */
+export function getDashboardSectionIdForPath(pathname: string): string | null {
+  if (pathname === '/dashboard' || pathname === '/dashboard/') return 'desk'
+  /** Личный отчёт — часть контура рабочего стола (видимость как у «Рабочий стол»). */
+  if (pathname === '/dashboard/my-report' || pathname.startsWith('/dashboard/my-report/')) return 'desk'
+  /** Календарь — полный экран с виджета рабочего стола; тот же контур доступа, что «Рабочий стол». */
+  if (pathname.startsWith('/dashboard/calendar')) return 'desk'
+  /** Обучение / LMS — тот же раздел матрицы, что «Команда» (в rail одна кнопка). */
+  if (pathname.startsWith('/dashboard/learning') || pathname.startsWith('/dashboard/lms')) {
+    return 'team'
+  }
+  for (const item of DASHBOARD_RAIL_ITEMS) {
+    if (item.id === 'desk') continue
+    if (item.match?.(pathname)) return item.id
+  }
+  return null
+}
+
+export function isDashboardPathBlockedForRole(pathname: string, role: UserRole): boolean {
+  const section = getDashboardSectionIdForPath(pathname)
+  if (section === null) return false
+  const allowed = new Set(getVisibleDashboardRailItems(role).map((i) => i.id))
+  if (allowed.has(section)) return false
+  return true
+}
+
+/**
+ * Раздел «Инфо» перенесён под `/dashboard/settings/info/*` — доступен всем ролям с доступом к дашборду,
+ * не путать со служебным хабом настроек (owner / director / РОП).
+ */
+export function isDashboardInfoCenterPath(pathname: string): boolean {
+  return pathname === '/dashboard/settings/info' || pathname.startsWith('/dashboard/settings/info/')
+}
+
+/** Хаб и вложенные страницы настроек (матрица «Настройки»: доступ только owner / director / РОП). */
+export function isDashboardSettingsPath(pathname: string): boolean {
+  if (isDashboardInfoCenterPath(pathname)) return false
+  if (pathname === '/dashboard/settings-hub' || pathname.startsWith('/dashboard/settings-hub/')) return true
+  if (pathname === '/dashboard/settings' || pathname.startsWith('/dashboard/settings/')) return true
+  return false
+}
+
+/** Служебный маршрут после запрета по роли — всегда разрешён авторизованным пользователям. */
+export function isDashboardAccessDeniedPath(pathname: string): boolean {
+  return pathname === '/dashboard/access-denied'
+}
+
+/** П / ПР / О в строке «Настройки» Excel; у остальных ролей «—». */
+export function roleCanAccessSettingsHub(role: UserRole): boolean {
+  return role === 'owner' || role === 'director' || role === 'rop'
+}
+
+export function isDashboardRouteForbiddenForRole(pathname: string, role: UserRole): boolean {
+  if (isDashboardAccessDeniedPath(pathname)) return false
+  if (isDashboardSettingsPath(pathname) && !roleCanAccessSettingsHub(role)) return true
+  return isDashboardPathBlockedForRole(pathname, role)
+}
+
+/** Удобная обёртка для UI (кнопки, ссылки): тот же контракт, что у `DashboardRouteGuard`. */
+export function isDashboardPathAllowedForRole(pathname: string, role: UserRole): boolean {
+  return !isDashboardRouteForbiddenForRole(pathname, role)
+}

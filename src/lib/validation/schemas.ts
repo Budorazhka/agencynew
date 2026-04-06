@@ -194,7 +194,7 @@ export const campaignSchema = z.object({
   path: ['endDate']
 })
 
-// TypeScript типы данных форм, выведенные из схем
+// Типы данных форм (выводятся из схем)
 export type LoginFormData = z.infer<typeof loginSchema>
 export type AgencyRegistrationFormData = z.infer<typeof agencyRegistrationSchema>
 export type LeadFormData = z.infer<typeof leadSchema>

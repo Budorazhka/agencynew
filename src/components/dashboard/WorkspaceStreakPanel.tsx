@@ -165,7 +165,7 @@ export function WorkspaceStreakPanel({ streak, gamificationHint, className, comp
         <TooltipTrigger asChild>
           <div
             className={cn(
-              'min-h-0 cursor-default rounded-lg border border-[rgba(230,195,100,0.25)] bg-[rgba(0,0,0,0.12)] outline-none focus-visible:ring-2 focus-visible:ring-[#fbbf24]/40',
+              'min-h-0 cursor-default rounded-lg border border-[color:var(--hub-tile-icon-border)] bg-[rgba(0,0,0,0.12)] outline-none focus-visible:ring-2 focus-visible:ring-[#fbbf24]/40',
               compact ? 'px-1 py-0.5' : 'px-1.5 py-1.5',
             )}
             tabIndex={0}

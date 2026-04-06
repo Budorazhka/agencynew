@@ -21,7 +21,7 @@ function readPreferenceFromStorage(): ThemePreference {
     const raw = localStorage.getItem(THEME_PREFERENCE_STORAGE_KEY)
     if (raw === 'auto' || raw === 'standard' || raw === 'light') return raw
   } catch {
-    // ignore
+    // ошибки чтения игнорируем
   }
   return 'auto'
 }
@@ -30,7 +30,7 @@ function writePreferenceToStorage(pref: ThemePreference) {
   try {
     localStorage.setItem(THEME_PREFERENCE_STORAGE_KEY, pref)
   } catch {
-    // ignore
+    // ошибки записи игнорируем
   }
 }
 

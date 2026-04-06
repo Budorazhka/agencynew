@@ -225,7 +225,7 @@ function createHierarchy(cityPartners: CityPartner[] = []): OwnerHierarchyBuildR
       unresolvedPartners = nextUnresolved
     }
 
-    // Attach any broken references directly to owner to keep tree visible and avoid data loss.
+    // Сломанные ссылки вешаем на владельца, чтобы дерево оставалось видимым и ничего не терялось.
     unresolvedPartners.forEach((cityPartner) => {
       const analyticsPersonId = resolveCityPartnerAnalyticsId(
         cityPartner.name,

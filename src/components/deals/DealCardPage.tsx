@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, CheckSquare, Square, AlertTriangle, User, Building2, Bookmark, Contact } from 'lucide-react'
+import { CheckSquare, Square, AlertTriangle, User, Building2, Bookmark, Contact } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { LeadHistoryTimeline } from '@/components/leads/LeadHistoryTimeline'
 import { Button } from '@/components/ui/button'
@@ -40,26 +40,6 @@ const C = {
   border: 'var(--green-border)',
   card: 'var(--green-card)',
   green: '#4ade80',
-}
-
-/** Как кнопка «Назад» на хабе CRM (ModuleHub) */
-const S = {
-  backToCrm: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 6,
-    height: 36,
-    padding: '0 14px',
-    background: 'rgba(201,168,76,0.1)',
-    border: '1px solid rgba(201,168,76,0.35)',
-    borderRadius: 10,
-    color: '#e6c364',
-    fontSize: 11,
-    fontWeight: 700,
-    letterSpacing: '0.06em',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-  } as CSSProperties,
 }
 
 type Tab = 'checklist' | 'participants' | 'finances' | 'history'
@@ -119,14 +99,8 @@ export function DealCardPage() {
 
   if (!deal) {
     return (
-      <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/deals/kanban' }}>
-        <div style={{ padding: 40, color: C.whiteLow }}>
-          <button type="button" onClick={() => navigate('/dashboard/crm')} style={{ ...S.backToCrm, marginBottom: 16 }}>
-            <ArrowLeft size={20} strokeWidth={2} />
-            Назад
-          </button>
-          <div>Сделка не найдена.</div>
-        </div>
+      <DashboardShell>
+        <div style={{ padding: 40, color: C.whiteLow }}>Сделка не найдена.</div>
       </DashboardShell>
     )
   }
@@ -156,7 +130,7 @@ export function DealCardPage() {
   const linkedLead = linkedLeadId ? getLeadWithHistory(linkedLeadId) : null
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/deals/kanban' }}>
+    <DashboardShell>
       <div
         style={{
           padding: '24px 28px 40px',
@@ -165,14 +139,6 @@ export function DealCardPage() {
           margin: '0 auto',
         }}
       >
-        {/* Назад — в хаб CRM (как на экране CRM) */}
-        <div style={{ marginBottom: 20 }}>
-          <button type="button" onClick={() => navigate('/dashboard/crm')} style={S.backToCrm}>
-            <ArrowLeft size={20} strokeWidth={2} />
-            Назад
-          </button>
-        </div>
-
         {/* Header */}
         <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24, marginBottom: 16 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>

@@ -38,7 +38,7 @@ function CheckboxGroup<T extends string>({
 }) {
   return (
     <div className="space-y-2">
-      <p className="text-xs font-semibold uppercase tracking-wide text-emerald-100/50">{label}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--app-text-subtle)]">{label}</p>
       <div className="flex flex-wrap gap-2">
         {items.map((item) => {
           const active = selected.includes(item.value)
@@ -50,8 +50,8 @@ function CheckboxGroup<T extends string>({
               className={cn(
                 'rounded-full border px-3 py-1 text-xs font-medium transition-colors',
                 active
-                  ? 'border-[#e6c364]/60 bg-[#e6c364]/15 text-[#e6c364]'
-                  : 'border-emerald-800/50 bg-[#00110d] text-[#d0e8df] hover:border-[#e6c364]/35',
+                  ? 'border-[color:var(--hub-card-border-hover)] bg-[var(--nav-item-bg-active)] text-[color:var(--theme-accent-heading)]'
+                  : 'border-[var(--green-border)] bg-[var(--rail-bg)] text-[color:var(--workspace-text)] hover:border-[color:var(--hub-card-border-hover)]',
               )}
             >
               {item.label}
@@ -80,7 +80,7 @@ function RangeInputs({
 }) {
   return (
     <div className="space-y-2">
-      <p className="text-xs font-semibold uppercase tracking-wide text-emerald-100/50">
+      <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--app-text-subtle)]">
         {label}, {unit}
       </p>
       <div className="flex items-center gap-2">
@@ -89,15 +89,15 @@ function RangeInputs({
           placeholder="От"
           value={minValue}
           onChange={(e) => onMinChange(e.target.value)}
-          className="w-full rounded-lg border border-emerald-800/50 bg-[#00110d] px-3 py-1.5 text-sm text-[#d0e8df] outline-none transition-all placeholder:text-emerald-100/35 focus:border-[#e6c364]/50 focus:ring-1 focus:ring-[#e6c364]/20"
+          className="w-full rounded-lg border border-[var(--green-border)] bg-[var(--rail-bg)] px-3 py-1.5 text-sm text-[color:var(--workspace-text)] outline-none transition-all placeholder:text-[color:var(--app-text-subtle)] focus:border-[color:var(--hub-card-border-hover)] focus:ring-1 focus:ring-[color:var(--hub-card-border)]"
         />
-        <span className="shrink-0 text-emerald-100/45">—</span>
+        <span className="shrink-0 text-[color:var(--app-text-subtle)]">—</span>
         <input
           type="number"
           placeholder="До"
           value={maxValue}
           onChange={(e) => onMaxChange(e.target.value)}
-          className="w-full rounded-lg border border-emerald-800/50 bg-[#00110d] px-3 py-1.5 text-sm text-[#d0e8df] outline-none transition-all placeholder:text-emerald-100/35 focus:border-[#e6c364]/50 focus:ring-1 focus:ring-[#e6c364]/20"
+          className="w-full rounded-lg border border-[var(--green-border)] bg-[var(--rail-bg)] px-3 py-1.5 text-sm text-[color:var(--workspace-text)] outline-none transition-all placeholder:text-[color:var(--app-text-subtle)] focus:border-[color:var(--hub-card-border-hover)] focus:ring-1 focus:ring-[color:var(--hub-card-border)]"
         />
       </div>
     </div>
@@ -105,7 +105,7 @@ function RangeInputs({
 }
 
 export function FilterPanel({ open, onClose, filters, onApply }: FilterPanelProps) {
-  // Local state — applied only on "Применить"
+  // Локальное состояние — применяется только по кнопке «Применить»
   const [local, setLocal] = useState<FiltersState>(filters)
 
   function handleOpenChange(isOpen: boolean) {
@@ -121,7 +121,7 @@ export function FilterPanel({ open, onClose, filters, onApply }: FilterPanelProp
     setLocal(EMPTY_FILTERS)
   }
 
-  // Sync local when dialog opens
+  // При открытии окна подтягиваем значения в локальное состояние
   function handleOpenAutoFocus() {
     setLocal(filters)
   }
@@ -129,11 +129,11 @@ export function FilterPanel({ open, onClose, filters, onApply }: FilterPanelProp
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="max-w-lg border-emerald-900/40 bg-[#0a1f1a] text-[#d0e8df] shadow-xl"
+        className="max-w-lg border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--workspace-text)] shadow-xl"
         onOpenAutoFocus={handleOpenAutoFocus}
       >
         <DialogHeader>
-          <DialogTitle className="text-white">Фильтры</DialogTitle>
+          <DialogTitle className="text-[color:var(--app-text)]">Фильтры</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-5 py-1">
@@ -177,19 +177,15 @@ export function FilterPanel({ open, onClose, filters, onApply }: FilterPanelProp
           />
         </div>
 
-        <div className="flex items-center justify-between gap-3 border-t border-emerald-900/40 pt-4">
+        <div className="flex items-center justify-between gap-3 border-t border-[var(--green-border)] pt-4">
           <button
             type="button"
             onClick={handleReset}
-            className="rounded-full border border-emerald-800/50 px-5 py-2 text-sm font-medium text-emerald-100/60 transition-colors hover:border-[#e6c364]/40 hover:text-[#d0e8df]"
+            className="rounded-full border border-[var(--green-border)] px-5 py-2 text-sm font-medium text-[color:var(--app-text-subtle)] transition-colors hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--workspace-text)]"
           >
             Сбросить
           </button>
-          <button
-            type="button"
-            onClick={handleApply}
-            className="rounded-sm bg-[#e6c364] px-6 py-2 text-sm font-semibold text-[#3d2e00] transition-all hover:brightness-110"
-          >
+          <button type="button" onClick={handleApply} className="alphabase-section-primary !normal-case px-6 py-2">
             Применить
           </button>
         </div>

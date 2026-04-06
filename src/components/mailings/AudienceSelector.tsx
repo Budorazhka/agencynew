@@ -203,7 +203,7 @@ export function AudienceSelector({
                 <button
                   type="button"
                   onClick={selectAllFiltered}
-                  className="text-sm text-[#e6c364] hover:underline"
+                  className="text-sm text-[color:var(--theme-accent-heading)] hover:underline"
                 >
                   Выбрать всех в списке
                 </button>

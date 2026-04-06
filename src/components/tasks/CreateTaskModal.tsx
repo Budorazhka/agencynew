@@ -42,7 +42,7 @@ const COLOR_PRESETS: (string | null)[] = [
   '#4ade80',
   '#fbbf24',
   '#f87171',
-  '#e6c364',
+  'var(--gold)',
   null,
 ]
 
@@ -244,7 +244,7 @@ export function CreateTaskModal({
       <DialogContent className="max-h-[92vh] overflow-y-auto border-[var(--green-border)] bg-[var(--green-card)] text-[color:var(--app-text)] sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-[#f5f5f5]">
-            <ListTodo className="h-5 w-5 text-[#e6c364]" />
+            <ListTodo className="h-5 w-5 text-[color:var(--theme-accent-heading)]" />
             Новая задача
           </DialogTitle>
           <DialogDescription className="text-[color:var(--app-text-muted)]">
@@ -284,7 +284,7 @@ export function CreateTaskModal({
             />
             {selectedLead && (
               <div className="flex flex-wrap items-center gap-2 rounded-lg border border-white/10 bg-[var(--green-deep)] px-2 py-1.5 text-xs">
-                <span className="text-[#e6c364]">
+                <span className="text-[color:var(--theme-accent-heading)]">
                   {selectedLead.name ?? 'Без имени'} · {selectedLead.id}
                 </span>
                 <button
@@ -369,7 +369,7 @@ export function CreateTaskModal({
                 className={cn(
                   'inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold transition-colors',
                   category === 'personal'
-                    ? 'border-[#e6c364]/45 bg-[#e6c364]/12 text-[#e6c364]'
+                    ? 'border-[color:var(--gold)]/45 bg-[var(--gold)]/12 text-[color:var(--theme-accent-heading)]'
                     : 'border-white/10 bg-transparent text-[color:var(--app-text)]/60 hover:bg-white/5',
                 )}
               >
@@ -390,7 +390,7 @@ export function CreateTaskModal({
                   onClick={() => setColorHex(c)}
                   className={cn(
                     'flex h-9 w-9 items-center justify-center rounded-full border-2 transition-colors',
-                    colorHex === c ? 'border-[#e6c364]' : 'border-white/15',
+                    colorHex === c ? 'border-[color:var(--gold)]' : 'border-white/15',
                   )}
                   style={c ? { backgroundColor: c } : undefined}
                 >
@@ -413,7 +413,7 @@ export function CreateTaskModal({
                     className={cn(
                       'rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition-colors',
                       on
-                        ? 'border-[#e6c364]/50 bg-[#e6c364]/15 text-[#e6c364]'
+                        ? 'border-[color:var(--gold)]/50 bg-[var(--gold)]/15 text-[color:var(--theme-accent-heading)]'
                         : 'border-white/10 bg-[var(--green-deep)] text-[color:var(--app-text)]/65 hover:bg-white/5',
                     )}
                   >
@@ -474,7 +474,7 @@ export function CreateTaskModal({
           <div className="space-y-2">
             <button
               type="button"
-              className="text-xs font-semibold text-[#e6c364] hover:underline"
+              className="text-xs font-semibold text-[color:var(--theme-accent-heading)] hover:underline"
               onClick={addSubtaskLine}
             >
               + Добавить подзадачу

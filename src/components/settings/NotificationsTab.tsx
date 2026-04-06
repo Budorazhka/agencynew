@@ -74,15 +74,15 @@ export function NotificationsTab() {
     <div className="space-y-8 max-w-xl">
       {/* Events */}
       <div className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-wide text-[rgba(242,207,141,0.55)] mb-4">
+        <p className="text-xs font-medium uppercase tracking-wide text-[color:var(--hub-stat-label)] mb-4">
           События
         </p>
-        <div className="divide-y divide-[rgba(242,207,141,0.08)] rounded-xl border border-[rgba(242,207,141,0.12)] bg-[rgba(0,0,0,0.15)] overflow-hidden">
+        <div className="divide-y divide-[color:var(--hub-card-border)] rounded-xl border border-[color:var(--hub-tile-icon-border)] bg-[rgba(0,0,0,0.15)] overflow-hidden">
           {visible.map((item) => (
             <div key={item.id} className="flex items-center gap-4 px-5 py-4">
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-[#fcecc8]">{item.label}</p>
-                <p className="mt-0.5 text-xs text-[rgba(242,207,141,0.45)]">{item.description}</p>
+                <p className="text-sm font-medium text-[color:var(--app-text)]">{item.label}</p>
+                <p className="mt-0.5 text-xs text-[color:var(--hub-stat-label)]">{item.description}</p>
               </div>
               <Switch
                 checked={enabled[item.id] ?? false}
@@ -95,7 +95,7 @@ export function NotificationsTab() {
 
       {/* Channels */}
       <div className="space-y-3">
-        <p className="text-xs font-medium uppercase tracking-wide text-[rgba(242,207,141,0.55)]">
+        <p className="text-xs font-medium uppercase tracking-wide text-[color:var(--hub-stat-label)]">
           Канал уведомлений
         </p>
         <div className="flex flex-wrap gap-2">
@@ -108,8 +108,8 @@ export function NotificationsTab() {
                 className={cn(
                   'flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all',
                   active
-                    ? 'border-[rgba(242,207,141,0.5)] bg-[rgba(242,207,141,0.1)] text-[#fcecc8]'
-                    : 'border-[rgba(242,207,141,0.15)] text-[rgba(242,207,141,0.4)] hover:border-[rgba(242,207,141,0.3)] hover:text-[rgba(242,207,141,0.7)]',
+                    ? 'border-[color:var(--hub-card-border-hover)] bg-[var(--hub-tile-icon-bg)] text-[color:var(--app-text)]'
+                    : 'border-[color:var(--hub-card-border)] text-[color:var(--workspace-text-muted)] hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--theme-accent-link-dim)]',
                 )}
               >
                 <span>{c.icon}</span>
@@ -121,7 +121,7 @@ export function NotificationsTab() {
             )
           })}
         </div>
-        <p className="text-xs text-[rgba(242,207,141,0.3)]">
+        <p className="text-xs text-[color:var(--theme-accent-icon-dim)]">
           Можно выбрать несколько каналов одновременно
         </p>
       </div>

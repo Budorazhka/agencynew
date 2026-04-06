@@ -8,7 +8,6 @@ export default function BookingsHubPage() {
       moduleIcon={<KeyRound size={32} color="#c9a84c" />}
       moduleName="Брони / Регистрации"
       moduleDescription="Бронирование клиента и квартиры."
-      backRoute="/dashboard"
       sections={[
         {
           icon: <UserRoundPlus size={20} color="#c9a84c" />,

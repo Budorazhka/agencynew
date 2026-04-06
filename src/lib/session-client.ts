@@ -6,7 +6,7 @@ export function persistSessionClient(client: Client): void {
   try {
     sessionStorage.setItem(KEY(client.id), JSON.stringify(client))
   } catch {
-    // ignore quota / private mode
+    // нет места или приватный режим — просто не сохраняем
   }
 }
 

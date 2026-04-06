@@ -55,30 +55,30 @@ export function SecurityTab() {
   return (
     <div className="space-y-6 max-w-xl">
       {/* Last login */}
-      <div className="rounded-xl border border-[rgba(242,207,141,0.2)] bg-[rgba(0,0,0,0.3)] p-5">
-        <p className="text-xs font-semibold uppercase tracking-wide text-[rgba(242,207,141,0.6)] mb-4">
+      <div className="rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.3)] p-5">
+        <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--hub-badge-soon-fg)] mb-4">
           Последний вход
         </p>
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <p className="text-[rgba(242,207,141,0.55)] text-xs mb-1">Дата</p>
-            <p className="text-[#fcecc8] text-sm font-semibold">14 марта 2026, 09:41</p>
+            <p className="text-[color:var(--hub-stat-label)] text-xs mb-1">Дата</p>
+            <p className="text-[color:var(--app-text)] text-sm font-semibold">14 марта 2026, 09:41</p>
           </div>
           <div>
-            <p className="text-[rgba(242,207,141,0.55)] text-xs mb-1">Устройство</p>
-            <p className="text-[#fcecc8] text-sm font-semibold">Chrome · Win 11</p>
+            <p className="text-[color:var(--hub-stat-label)] text-xs mb-1">Устройство</p>
+            <p className="text-[color:var(--app-text)] text-sm font-semibold">Chrome · Win 11</p>
           </div>
           <div>
-            <p className="text-[rgba(242,207,141,0.55)] text-xs mb-1">IP-адрес</p>
-            <p className="text-[#fcecc8] text-sm font-semibold">95.141.32.17</p>
+            <p className="text-[color:var(--hub-stat-label)] text-xs mb-1">IP-адрес</p>
+            <p className="text-[color:var(--app-text)] text-sm font-semibold">95.141.32.17</p>
           </div>
         </div>
       </div>
 
       {/* Active sessions */}
-      <div className="rounded-xl border border-[rgba(242,207,141,0.2)] bg-[rgba(0,0,0,0.3)] overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[rgba(242,207,141,0.12)]">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[rgba(242,207,141,0.6)]">
+      <div className="rounded-xl border border-[color:var(--hub-card-border)] bg-[rgba(0,0,0,0.3)] overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[color:var(--hub-tile-icon-border)]">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--hub-badge-soon-fg)]">
             Активные сессии
           </p>
           {sessions.length > 1 && (
@@ -91,10 +91,10 @@ export function SecurityTab() {
           )}
         </div>
 
-        <div className="divide-y divide-[rgba(242,207,141,0.1)]">
+        <div className="divide-y divide-[color:var(--hub-tile-icon-border)]">
           {sessions.map((s) => (
-            <div key={s.id} className="flex items-center gap-4 px-5 py-4 hover:bg-[rgba(242,207,141,0.03)] transition-colors">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-[rgba(242,207,141,0.2)] bg-[rgba(242,207,141,0.1)] text-[rgba(242,207,141,0.8)]">
+            <div key={s.id} className="flex items-center gap-4 px-5 py-4 hover:bg-[var(--hub-action-hover)] transition-colors">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-[color:var(--hub-card-border)] bg-[var(--hub-tile-icon-bg)] text-[color:var(--app-text-muted)]">
                 {s.deviceType === 'mobile'
                   ? <Smartphone className="size-4" />
                   : <Monitor className="size-4" />
@@ -102,14 +102,14 @@ export function SecurityTab() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold text-[#fcecc8]">{s.device}</p>
+                  <p className="text-sm font-semibold text-[color:var(--app-text)]">{s.device}</p>
                   {s.current && (
                     <span className="rounded-full border border-emerald-500/40 bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-400 uppercase tracking-wide">
                       Текущая
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-[rgba(242,207,141,0.55)] mt-0.5">
+                <p className="text-xs text-[color:var(--hub-stat-label)] mt-0.5">
                   {s.location} · {s.ip} · {s.lastActive}
                 </p>
               </div>

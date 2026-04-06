@@ -19,10 +19,10 @@ const STATUS_LABELS: Record<SaleStatus, string> = {
 const STATUS_COLORS: Record<SaleStatus, string> = {
   for_sale:   '#4ade80',
   booked:     '#fb923c',
-  sold:       'rgba(255,255,255,0.3)',
+  sold:       '#94a3b8',
   moderation: '#60a5fa',
   draft:      '#a78bfa',
-  archive:    'rgba(255,255,255,0.2)',
+  archive:    '#64748b',
 }
 
 const TYPE_ICON: Record<string, React.ReactNode> = {
@@ -91,13 +91,13 @@ export function ObjectsListPage() {
   const totalVal     = pool.filter(p => p.status === 'for_sale').reduce((s, p) => s + p.price, 0)
 
   return (
-    <DashboardShell hideSidebar topBack={{ label: 'Назад', route: '/dashboard/objects' }}>
-      <div style={{ padding: '28px 28px 64px', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
+    <DashboardShell hideSidebar>
+      <div style={{ padding: '28px 28px 64px', minHeight: '100vh', fontFamily: "'Montserrat', sans-serif", background: 'var(--app-bg)' }}>
         {/* Header */}
-        <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--gold)', marginBottom: 16 }}>Каталог объектов</div>
+        <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--theme-accent-heading)', marginBottom: 16 }}>Каталог объектов</div>
 
         {/* Сегмент рынка: отдельные вкладки, по умолчанию — первичка */}
-        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: 22, paddingBottom: 2 }}>
+        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', borderBottom: '1px solid var(--divider-subtle)', marginBottom: 22, paddingBottom: 2 }}>
           {MARKET_TABS.map(t => {
             const cnt = mockProperties.filter(p => p.category === t.id).length
             const active = marketTab === t.id
@@ -115,7 +115,7 @@ export function ObjectsListPage() {
                   cursor: 'pointer',
                   background: 'transparent',
                   border: 'none',
-                  color: active ? 'var(--gold)' : 'rgba(255,255,255,0.45)',
+                  color: active ? 'var(--gold)' : 'var(--app-text-subtle)',
                   borderBottom: active ? '2px solid var(--gold)' : '2px solid transparent',
                   marginBottom: -2,
                   fontFamily: 'inherit',
@@ -134,11 +134,11 @@ export function ObjectsListPage() {
           {[
             { label: 'В продаже', value: forSaleCount, color: '#4ade80' },
             { label: 'Забронированы', value: bookedCount, color: '#fb923c' },
-            { label: 'Продано (всего)', value: soldCount, color: 'rgba(255,255,255,0.4)' },
+            { label: 'Продано (всего)', value: soldCount, color: 'var(--app-text-subtle)' },
             { label: 'Сумма базы', value: FMT_USD.format(totalVal), color: 'var(--gold)' },
           ].map(k => (
-            <div key={k.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '14px 18px' }}>
-              <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.35)', marginBottom: 4 }}>{k.label}</div>
+            <div key={k.label} style={{ background: 'var(--hub-card-bg)', border: '1px solid var(--hub-card-border)', borderRadius: 12, padding: '14px 18px' }}>
+              <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--app-text-subtle)', marginBottom: 4 }}>{k.label}</div>
               <div style={{ fontSize: 20, fontWeight: 700, color: k.color }}>{k.value}</div>
             </div>
           ))}
@@ -147,21 +147,21 @@ export function ObjectsListPage() {
         {/* Toolbar */}
         <div style={{ display: 'flex', gap: 10, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
           {/* Search */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, padding: '0 12px', height: 36, flex: 1, maxWidth: 320 }}>
-            <Search size={13} color="rgba(255,255,255,0.35)" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--shell-search-bg)', border: '1px solid var(--shell-search-border)', borderRadius: 8, padding: '0 12px', height: 36, flex: 1, maxWidth: 320 }}>
+            <Search size={13} color="var(--app-text-subtle)" />
             <input
-              style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', fontSize: 12, color: 'rgba(255,255,255,0.7)', fontFamily: 'inherit' }}
+              style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', fontSize: 12, color: 'var(--shell-search-fg)', fontFamily: 'inherit' }}
               placeholder="Поиск по названию, городу..."
               value={search} onChange={e => setSearch(e.target.value)}
             />
-            {search && <button onClick={() => setSearch('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.3)' }}><X size={12} /></button>}
+            {search && <button type="button" onClick={() => setSearch('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--app-text-subtle)' }}><X size={12} /></button>}
           </div>
 
           {/* Type filter */}
           <select
             value={typeFilter}
             onChange={e => setTypeFilter(e.target.value as TypeFilter)}
-            style={{ height: 36, padding: '0 12px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, color: 'rgba(255,255,255,0.7)', fontSize: 12, fontFamily: 'inherit', cursor: 'pointer' }}
+            style={{ height: 36, padding: '0 12px', background: 'var(--shell-search-bg)', border: '1px solid var(--shell-search-border)', borderRadius: 8, color: 'var(--shell-search-fg)', fontSize: 12, fontFamily: 'inherit', cursor: 'pointer' }}
           >
             <option value="all">Все типы</option>
             {allTypes.map(t => <option key={t} value={t}>{t}</option>)}
@@ -169,8 +169,9 @@ export function ObjectsListPage() {
 
           {/* Filters toggle */}
           <button
+            type="button"
             onClick={() => setShowFilters(v => !v)}
-            style={{ display: 'flex', alignItems: 'center', gap: 5, height: 36, padding: '0 14px', background: showFilters ? 'rgba(201,168,76,0.12)' : 'rgba(255,255,255,0.04)', border: `1px solid ${showFilters ? 'rgba(201,168,76,0.3)' : 'rgba(255,255,255,0.08)'}`, borderRadius: 8, color: showFilters ? 'var(--gold)' : 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 5, height: 36, padding: '0 14px', background: showFilters ? 'var(--nav-item-bg-active)' : 'var(--shell-search-bg)', border: `1px solid ${showFilters ? 'var(--hub-card-border-hover)' : 'var(--shell-search-border)'}`, borderRadius: 8, color: showFilters ? 'var(--gold)' : 'var(--app-text-muted)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
           >
             <SlidersHorizontal size={13} />
             Фильтры
@@ -179,23 +180,24 @@ export function ObjectsListPage() {
 
         {/* Extended filters */}
         {showFilters && (
-          <div style={{ display: 'flex', gap: 10, marginBottom: 16, padding: '14px 16px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 10, marginBottom: 16, padding: '14px 16px', background: 'var(--hub-card-bg)', border: '1px solid var(--hub-card-border)', borderRadius: 10, flexWrap: 'wrap', alignItems: 'center' }}>
             {[
               { label: 'Цена от ($)', val: priceMin, set: setPriceMin },
               { label: 'Цена до ($)', val: priceMax, set: setPriceMax },
               { label: 'Площадь от (м²)', val: areaMin, set: setAreaMin },
             ].map(f => (
               <div key={f.label} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <span style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.35)' }}>{f.label}</span>
+                <span style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--app-text-subtle)' }}>{f.label}</span>
                 <input
                   type="number" value={f.val} onChange={e => f.set(e.target.value)}
-                  style={{ width: 120, height: 30, padding: '0 10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, color: 'rgba(255,255,255,0.8)', fontSize: 12, fontFamily: 'inherit', outline: 'none' }}
+                  style={{ width: 120, height: 30, padding: '0 10px', background: 'var(--shell-search-bg)', border: '1px solid var(--shell-search-border)', borderRadius: 6, color: 'var(--shell-search-fg)', fontSize: 12, fontFamily: 'inherit', outline: 'none' }}
                 />
               </div>
             ))}
             <button
+              type="button"
               onClick={() => { setPriceMin(''); setPriceMax(''); setAreaMin('') }}
-              style={{ height: 30, padding: '0 12px', background: 'none', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 6, color: 'rgba(255,255,255,0.4)', fontSize: 11, cursor: 'pointer', marginTop: 'auto' }}
+              style={{ height: 30, padding: '0 12px', background: 'none', border: '1px solid var(--shell-search-border)', borderRadius: 'var(--section-cta-radius)', color: 'var(--app-text-muted)', fontSize: 11, cursor: 'pointer', marginTop: 'auto' }}
             >
               Сбросить
             </button>
@@ -203,15 +205,15 @@ export function ObjectsListPage() {
         )}
 
         {/* Status tabs (внутри выбранного сегмента) */}
-        <div style={{ display: 'flex', gap: 2, borderBottom: '1px solid rgba(255,255,255,0.07)', marginBottom: 20 }}>
+        <div style={{ display: 'flex', gap: 2, borderBottom: '1px solid var(--divider-subtle)', marginBottom: 20 }}>
           {STATUS_TABS.map(t => {
             const cnt = t.id === 'all' ? pool.length : pool.filter(p => p.status === t.id).length
             return (
-              <button key={t.id} onClick={() => setStatusTab(t.id)} style={{
+              <button key={t.id} type="button" onClick={() => setStatusTab(t.id)} style={{
                 padding: '8px 14px', fontSize: 11, fontWeight: statusTab === t.id ? 700 : 500,
                 letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer',
                 background: 'transparent', border: 'none',
-                color: statusTab === t.id ? 'var(--gold)' : 'rgba(255,255,255,0.4)',
+                color: statusTab === t.id ? 'var(--gold)' : 'var(--app-text-subtle)',
                 borderBottom: statusTab === t.id ? '2px solid var(--gold)' : '2px solid transparent',
                 marginBottom: -1,
               }}>
@@ -223,13 +225,13 @@ export function ObjectsListPage() {
         </div>
 
         {/* Results count */}
-        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginBottom: 14 }}>
+        <div style={{ fontSize: 11, color: 'var(--app-text-subtle)', marginBottom: 14 }}>
           Показано: {filtered.length} объектов
         </div>
 
         {/* Grid */}
         {filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '64px 0', color: 'rgba(255,255,255,0.2)', fontSize: 14 }}>
+          <div style={{ textAlign: 'center', padding: '64px 0', color: 'var(--app-text-subtle)', fontSize: 14 }}>
             Нет объектов по заданным фильтрам
           </div>
         ) : (
@@ -239,25 +241,25 @@ export function ObjectsListPage() {
                 key={prop.id}
                 onClick={() => navigate(`/dashboard/objects/${prop.id}`)}
                 style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.07)',
+                  background: 'var(--hub-card-bg)',
+                  border: '1px solid var(--hub-card-border)',
                   borderRadius: 14, overflow: 'hidden',
                   cursor: 'pointer', transition: 'border-color 0.15s, transform 0.15s',
                 }}
                 onMouseEnter={e => {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(201,168,76,0.3)'
+                  (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--hub-card-border-hover)'
                   ;(e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'
                 }}
                 onMouseLeave={e => {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.07)'
+                  (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--hub-card-border)'
                   ;(e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'
                 }}
               >
                 {/* Photo placeholder */}
-                <div style={{ height: 140, background: 'rgba(255,255,255,0.03)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', position: 'relative' }}>
+                <div style={{ height: 140, background: 'var(--workspace-row-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: `1px solid var(--workspace-row-border)`, position: 'relative' }}>
                   {prop.photo
                     ? <img src={prop.photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    : <Building2 size={36} color="rgba(255,255,255,0.08)" />
+                    : <Building2 size={36} color="var(--app-text-subtle)" />
                   }
                   {/* Status badge */}
                   <span style={{
@@ -274,11 +276,11 @@ export function ObjectsListPage() {
                 {/* Info */}
                 <div style={{ padding: '14px 16px' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, marginBottom: 6 }}>
-                    <span style={{ color: 'rgba(255,255,255,0.3)', flexShrink: 0, marginTop: 1 }}>{TYPE_ICON[prop.type] ?? <Building2 size={14} />}</span>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.9)', lineHeight: 1.4 }}>{prop.title}</span>
+                    <span style={{ color: 'var(--app-text-subtle)', flexShrink: 0, marginTop: 1 }}>{TYPE_ICON[prop.type] ?? <Building2 size={14} />}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--app-text)', lineHeight: 1.4 }}>{prop.title}</span>
                   </div>
 
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 12 }}>
+                  <div style={{ fontSize: 11, color: 'var(--app-text-muted)', marginBottom: 12 }}>
                     {prop.city} · {prop.street}
                   </div>
 
@@ -290,7 +292,7 @@ export function ObjectsListPage() {
                       prop.area > 0 && `${FMT_M2.format(prop.area)} м²`,
                       prop.floor > 0 && `${prop.floor}/${prop.totalFloors} эт`,
                     ].filter(Boolean).map((s, i) => (
-                      <span key={i} style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', background: 'rgba(255,255,255,0.05)', padding: '2px 7px', borderRadius: 4 }}>
+                      <span key={i} style={{ fontSize: 11, color: 'var(--app-text-muted)', background: 'var(--shell-search-bg)', padding: '2px 7px', borderRadius: 4 }}>
                         {s}
                       </span>
                     ))}
@@ -300,9 +302,9 @@ export function ObjectsListPage() {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div>
                       <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--gold)' }}>{FMT_USD.format(prop.price)}</div>
-                      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>{FMT_M2.format(prop.pricePerM2)} $/м²</div>
+                      <div style={{ fontSize: 10, color: 'var(--app-text-subtle)' }}>{FMT_M2.format(prop.pricePerM2)} $/м²</div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--app-text-subtle)' }}>
                       <span>{prop.agentName}</span>
                       <ChevronRight size={13} />
                     </div>

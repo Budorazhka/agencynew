@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowLeft, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useRolePermissions } from '@/hooks/useRolePermissions'
 import { useAuth } from '@/context/AuthContext'
@@ -32,7 +32,7 @@ export function MyPropertiesPage() {
   const { isManager, isMarketer } = useRolePermissions()
   const { currentUser } = useAuth()
 
-  // ── UI state ───────────────────────────────────────────────────────────────
+  // ── состояние интерфейса ───────────────────────────────────────────────────
   const [activeTab, setActiveTab]   = useState<TabValue>('primary')
   const [search, setSearch]         = useState('')
   const [viewMode, setViewMode]     = useState<ViewMode>('table')
@@ -52,13 +52,13 @@ export function MyPropertiesPage() {
     mode: 'create',
   })
 
-  // Scope: менеджер начинает с "мои", РОП+ сразу "все"
+  // Область: менеджер начинает с «мои», РОП+ сразу «все»
   const [scope, setScope] = useState<Scope>(isManager ? 'my' : 'all')
   const readOnly  = isMarketer || (isManager && scope === 'all')
   const isBulkMode = selectedIds.size > 0 && !readOnly
   const isArchive  = activeTab === 'archive'
 
-  // ── Data ───────────────────────────────────────────────────────────────────
+  // ── данные ─────────────────────────────────────────────────────────────────
   const [properties, setProperties] = useState(() => {
     try {
       const raw = window.localStorage.getItem(PROPERTIES_STORAGE_KEY)
@@ -74,7 +74,7 @@ export function MyPropertiesPage() {
     try {
       window.localStorage.setItem(PROPERTIES_STORAGE_KEY, JSON.stringify(properties))
     } catch {
-      // Ignore storage errors and keep working with in-memory state.
+      // Ошибки хранилища игнорируем — работаем с данными в памяти.
     }
   }, [properties])
 
@@ -127,7 +127,7 @@ export function MyPropertiesPage() {
   const filtered = useMemo(() => {
     let list = scopedProperties
 
-    // Tab / category
+    // Вкладка / категория
     if (isArchive) {
       list = list.filter((p) => p.status === 'archive')
     } else {
@@ -142,7 +142,7 @@ export function MyPropertiesPage() {
       list = list.filter((p) => p.category === catMap[activeTab] && p.status !== 'archive')
     }
 
-    // Alert quick-filter (переопределяет обычные фильтры для быстрого доступа)
+    // Быстрый фильтр по алертам (перекрывает обычные фильтры)
     if (alertFilter) {
       if (alertFilter === 'up_to_date')      list = list.filter((p) => getConditionState(p.updatedAt) === 'up_to_date')
       if (alertFilter === 'needs_attention') list = list.filter((p) => getConditionState(p.updatedAt) === 'needs_attention')
@@ -150,7 +150,7 @@ export function MyPropertiesPage() {
       if (alertFilter === 'draft')           list = list.filter((p) => p.status === 'draft')
     }
 
-    // Search
+    // Поиск
     if (search.trim()) {
       const q = search.toLowerCase()
       list = list.filter(
@@ -158,10 +158,10 @@ export function MyPropertiesPage() {
       )
     }
 
-    // Agent filter (только РОП+ в scope=all)
+    // Фильтр по агенту (только РОП+ при scope=all)
     if (agentFilter) list = list.filter((p) => p.agentId === agentFilter)
 
-    // Advanced filters
+    // Расширенные фильтры
     if (filters.types.length)      list = list.filter((p) => filters.types.includes(p.type))
     if (filters.statuses.length)   list = list.filter((p) => filters.statuses.includes(p.status))
     if (filters.conditions.length) list = list.filter((p) => filters.conditions.includes(getConditionState(p.updatedAt)))
@@ -194,7 +194,7 @@ export function MyPropertiesPage() {
     return n
   }, [filters])
 
-  // ── Handlers ───────────────────────────────────────────────────────────────
+  // ── обработчики ───────────────────────────────────────────────────────────
 
   function toggleSelect(id: string) {
     if (readOnly) return
@@ -300,7 +300,7 @@ export function MyPropertiesPage() {
     name: currentUser?.name ?? 'Менеджер',
   }
 
-  // ── Render ─────────────────────────────────────────────────────────────────
+  // ── отрисовка ───────────────────────────────────────────────────────────────
 
   const pageTitle = scope === 'my' ? 'МОИ ОБЪЕКТЫ' : 'ВСЕ ОБЪЕКТЫ'
 
@@ -310,30 +310,17 @@ export function MyPropertiesPage() {
       <div className="mp-page-inner space-y-4 p-6 lg:p-8">
 
         {/* ── Header ── */}
-        <div className="flex items-center gap-4 border-b border-emerald-900/30 pb-4">
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-1.5 text-sm font-medium text-emerald-100/50 transition-colors hover:text-[#e6c364]"
-          >
-            <ArrowLeft className="size-4" />
-            Вернуться
-          </button>
-
-          <div className="flex flex-1 items-center gap-2.5">
-            <h1 className="text-lg font-bold tracking-tight text-white">{pageTitle}</h1>
-            <span className="rounded-full border border-[#e6c364]/25 bg-[#e6c364]/10 px-2.5 py-0.5 text-xs font-semibold text-[#e6c364]/90">
+        <div className="flex items-center gap-4 border-b border-[var(--green-border)] pb-4">
+          <div className="flex min-w-0 flex-1 items-center gap-2.5">
+            <h1 className="text-lg font-bold tracking-tight text-[color:var(--app-text)]">{pageTitle}</h1>
+            <span className="rounded-full border border-[var(--hub-card-border-hover)] bg-[var(--nav-item-bg-active)] px-2.5 py-0.5 text-xs font-semibold text-[color:var(--theme-accent-heading)]">
               {totalCount} объектов
             </span>
           </div>
 
           {!readOnly && (
-            <button
-              type="button"
-              onClick={openCreateWizard}
-              className="flex items-center gap-2 rounded-sm bg-[#e6c364] px-5 py-2 text-sm font-semibold text-[#3d2e00] shadow-[0_1px_0_rgba(255,255,255,0.12)_inset] transition-all hover:brightness-110 active:scale-[0.98]"
-            >
-              <Plus className="size-4" />
+            <button type="button" onClick={openCreateWizard} className="alphabase-section-primary !normal-case">
+              <Plus className="size-4 stroke-[2.5]" />
               Добавить объект
             </button>
           )}
@@ -347,15 +334,15 @@ export function MyPropertiesPage() {
         {/* ── Фильтр по менеджерам (РОП+ в scope=all) ── */}
         {scope === 'all' && !isManager && agentStats.length > 0 && (
           <Select value={agentFilter ?? 'all'} onValueChange={(v) => setAgentFilter(v === 'all' ? null : v)}>
-            <SelectTrigger className="h-9 w-64 rounded-xl border border-emerald-800/50 bg-[#0a1f1a] text-sm text-[#d0e8df] shadow-none focus:border-[#e6c364]/40 focus:ring-1 focus:ring-[#e6c364]/20 [&>span]:text-[#d0e8df]">
+            <SelectTrigger className="h-9 w-64 rounded-xl border border-[var(--green-border)] bg-[var(--green-deep)] text-sm text-[color:var(--workspace-text)] shadow-none focus:border-[var(--hub-card-border-hover)] focus:ring-1 focus:ring-[var(--hub-card-border)] [&>span]:text-[color:var(--workspace-text)]">
               <SelectValue placeholder="Все менеджеры" />
             </SelectTrigger>
-            <SelectContent className="border-emerald-900/40 bg-[#0a1f1a] text-[#d0e8df] backdrop-blur-sm">
-              <SelectItem value="all" className="focus:bg-[#e6c364]/10 focus:text-[#d0e8df]">
+            <SelectContent className="border-[var(--green-border)] bg-[var(--green-deep)] text-[color:var(--workspace-text)] backdrop-blur-sm">
+              <SelectItem value="all" className="focus:bg-[var(--nav-item-bg-active)] focus:text-[color:var(--workspace-text)]">
                 Все менеджеры
               </SelectItem>
               {agentStats.map((a) => (
-                <SelectItem key={a.agentId} value={a.agentId} className="focus:bg-[#e6c364]/10 focus:text-[#d0e8df]">
+                <SelectItem key={a.agentId} value={a.agentId} className="focus:bg-[var(--nav-item-bg-active)] focus:text-[color:var(--workspace-text)]">
                   <span className="flex items-center gap-2">
                     {a.agentName}
                     {a.overdue > 0 && (

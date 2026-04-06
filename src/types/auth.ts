@@ -1,7 +1,22 @@
 /**
  * Типы авторизации и ролевой модели платформы.
  * Иерархия: Собственник → Директор → РОП → Менеджер
- * Расширено по ТЗ: +lawyer, +procurement_head, +partner
+ * Расширено по ТЗ: +lawyer, +procurement_head, +partner, +finance, +hr
+ *
+ * Контракт для бэкенда: в JWT/API поле `role` — строка, совпадающая с литералом UserRole (нижний регистр, snake_case).
+ * Соответствие матрице ALPHABASE (роли и доступы):
+ * | role (API)       | Колонка в матрице                          |
+ * |------------------|--------------------------------------------|
+ * | owner            | Собственник агентства                      |
+ * | director         | Руководитель агентства                     |
+ * | rop              | РОП                                        |
+ * | marketer         | Маркетолог                                 |
+ * | manager          | Менеджер по продажам / риелтор             |
+ * | procurement_head | Специалист по закупке объектов             |
+ * | lawyer           | Специалист по документам / юрист           |
+ * | finance          | Финансовый сотрудник / бухгалтер           |
+ * | hr               | HR / специалист по обучению                |
+ * | partner          | Партнёрский риелтор                        |
  */
 
 /** Роль пользователя в системе */
@@ -13,7 +28,23 @@ export type UserRole =
   | 'manager'
   | 'lawyer'
   | 'procurement_head'
+  | 'finance'
+  | 'hr'
   | 'partner'
+
+/** Все роли в порядке для селекторов (логин, демо) */
+export const USER_ROLES: UserRole[] = [
+  'owner',
+  'director',
+  'rop',
+  'marketer',
+  'manager',
+  'procurement_head',
+  'lawyer',
+  'finance',
+  'hr',
+  'partner',
+]
 
 /**
  * Уровень доступа к данным (Data Scope по ТЗ RBAC+ABAC).
@@ -158,6 +189,21 @@ export const ROLE_PERMISSIONS: Record<UserRole, PermissionAction[]> = {
   partner: [
     'view_all_stages',
     'view_commissions',
+  ],
+  /** Финансы, отчёты, просмотр сделок/документов — уточняется по матрице; стартовый набор для UI */
+  finance: [
+    'view_all_stages',
+    'see_finance',
+    'see_analytics',
+    'view_commissions',
+    'export_data',
+    'view_lead_analytics',
+  ],
+  /** Команда и обучение, без операционных продажных контуров */
+  hr: [
+    'manage_team',
+    'view_all_stages',
+    'see_analytics',
   ],
 }
 

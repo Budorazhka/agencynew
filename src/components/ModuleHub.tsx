@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 
 export interface HubSection {
   icon: React.ReactNode
@@ -23,11 +23,6 @@ interface Props {
   moduleName: string
   moduleDescription: string
   sections: HubSection[]
-  /** Куда вести «Назад» (обычно главный дашборд `/dashboard`) */
-  backRoute?: string
-  backLabel?: string
-  /** Если задан — вызывается вместо `navigate(backRoute)` (например `() => navigate(-1)`) */
-  onBack?: () => void
   /** Внутренний маршрут или внешняя ссылка (например обычная CRM baza.sale) */
   actionButton?: { label: string; route?: string; externalUrl?: string }
   stats?: HubStat[]
@@ -38,9 +33,6 @@ export default function ModuleHub({
   moduleName,
   moduleDescription,
   sections,
-  backRoute,
-  backLabel = 'Назад',
-  onBack,
   actionButton,
   stats,
 }: Props) {
@@ -67,40 +59,22 @@ export default function ModuleHub({
       flexDirection: 'column',
       background: 'var(--app-bg)',
       padding: '32px 40px',
-      fontFamily: 'Inter, sans-serif',
+      fontFamily: "'Montserrat', sans-serif",
       overflowY: 'auto',
     }}>
 
-      {(backRoute || onBack) && (
-        <div style={{ marginBottom: 20, flexShrink: 0 }}>
-          <button
-            type="button"
-            onClick={() => (onBack ? onBack() : backRoute && navigate(backRoute))}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              height: 36,
-              padding: '0 14px',
-              background: 'rgba(201,168,76,0.1)',
-              border: '1px solid rgba(201,168,76,0.35)',
-              borderRadius: 10,
-              color: 'var(--theme-accent-heading)',
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: '0.06em',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
-          >
-            <ArrowLeft size={20} strokeWidth={2} />
-            {backLabel}
-          </button>
-        </div>
-      )}
-
-      {/* ── Header ─────────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexShrink: 0 }}>
+      {/* ── Header (нижняя граница — сплошная, без градиента «обрывка») ─── */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexShrink: 0,
+          paddingBottom: 24,
+          marginBottom: 24,
+          borderBottom: '1px solid var(--hub-card-border)',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
           <div style={{
             width: 68, height: 68, flexShrink: 0,
@@ -108,7 +82,6 @@ export default function ModuleHub({
             border: '1px solid var(--hub-card-border-hover)',
             borderRadius: 12,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 0 20px rgba(230,195,100,0.08)',
           }}>
             {moduleIcon}
           </div>
@@ -137,8 +110,8 @@ export default function ModuleHub({
               display: 'flex', alignItems: 'center', gap: 8,
               padding: '10px 22px',
               background: 'transparent',
-              border: '1px solid rgba(230,195,100,0.4)',
-              borderRadius: 6,
+              border: '1px solid color-mix(in srgb, var(--gold) 40%, transparent)',
+              borderRadius: 'var(--section-cta-radius)',
               color: 'var(--theme-accent-heading)',
               fontSize: 12, fontWeight: 600,
               letterSpacing: '0.06em',
@@ -153,14 +126,6 @@ export default function ModuleHub({
           </button>
         )}
       </div>
-
-      {/* ── Divider ────────────────────────────────────────────────────── */}
-      <div style={{
-        flexShrink: 0,
-        height: 1,
-        background: 'var(--hub-header-line)',
-        marginBottom: 24,
-      }} />
 
       {/* ── Sections grid — flex:1 fills remaining space ─────────────── */}
       <div style={{
@@ -211,7 +176,7 @@ export default function ModuleHub({
                 <span style={{
                   position: 'absolute', top: 14, right: 14,
                   fontSize: 8, fontWeight: 700, padding: '3px 8px', borderRadius: 3,
-                  background: 'rgba(230,195,100,0.15)', color: 'var(--hub-badge-soon-fg)',
+                  background: 'color-mix(in srgb, var(--gold) 15%, transparent)', color: 'var(--hub-badge-soon-fg)',
                   letterSpacing: '0.1em', textTransform: 'uppercase',
                 }}>СКОРО</span>
               )}

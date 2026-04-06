@@ -54,7 +54,7 @@ export function NewsPage() {
   const regular = articles.filter(a => !a.pinned)
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/info' }}>
+    <DashboardShell>
       <div style={{ padding: '24px 28px 48px', maxWidth: 820 }}>
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 4 }}>Новости и обновления</div>

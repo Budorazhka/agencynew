@@ -28,8 +28,8 @@ export function MyReportPage() {
   const name = currentUser?.name ?? 'Сотрудник'
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard' }}>
-      <div style={{ padding: '16px 28px 48px', maxWidth: 900, margin: '0 auto', fontFamily: 'Inter, sans-serif' }}>
+    <DashboardShell>
+      <div style={{ padding: '16px 28px 48px', maxWidth: 900, margin: '0 auto', fontFamily: "'Montserrat', sans-serif" }}>
         <h1 style={{ fontSize: 26, fontWeight: 800, color: 'var(--theme-accent-heading)', marginBottom: 4 }}>
           Мой отчёт
         </h1>
@@ -40,9 +40,9 @@ export function MyReportPage() {
         {/* ── Summary cards ── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
           {[
-            { label: 'План дня', value: `${p.dayPlanPercent}%`, sub: DAY_STATUS_LABEL[p.dayPlanStatus], color: DAY_STATUS_COLOR[p.dayPlanStatus], pct: p.dayPlanPercent, barColor: '#e6c364' },
+            { label: 'План дня', value: `${p.dayPlanPercent}%`, sub: DAY_STATUS_LABEL[p.dayPlanStatus], color: DAY_STATUS_COLOR[p.dayPlanStatus], pct: p.dayPlanPercent, barColor: 'var(--gold)' },
             { label: 'План недели', value: `${p.weekPlanPercent}%`, sub: '', color: '', pct: p.weekPlanPercent, barColor: '#60a5fa' },
-            { label: 'Выручка', value: p.revenue.currentLabel, sub: `/ ${p.revenue.planLabel}`, color: '', pct: p.revenue.percent, barColor: '#e6c364' },
+            { label: 'Выручка', value: p.revenue.currentLabel, sub: `/ ${p.revenue.planLabel}`, color: '', pct: p.revenue.percent, barColor: 'var(--gold)' },
             { label: 'Воронка', value: `${p.funnelProgress.percent}%`, sub: p.funnelProgress.subtitle, color: '', pct: p.funnelProgress.percent, barColor: '#34d399' },
           ].map((c) => (
             <div
@@ -78,7 +78,7 @@ export function MyReportPage() {
                     <span>{k.label}</span>
                     <span style={{ fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{k.current}/{k.plan}</span>
                   </div>
-                  <Bar pct={pct} color={pct >= 100 ? '#4ade80' : '#e6c364'} h="h-2.5" />
+                  <Bar pct={pct} color={pct >= 100 ? '#4ade80' : 'var(--gold)'} h="h-2.5" />
                 </div>
               )
             })}
@@ -104,7 +104,7 @@ export function MyReportPage() {
                 <tr key={d.day} style={{ borderBottom: '1px solid var(--hub-card-border)' }}>
                   <td style={{ padding: '8px 0', fontWeight: 600, color: 'var(--app-text)' }}>{d.day}</td>
                   <td style={{ textAlign: 'center', padding: '8px' }}>
-                    <span style={{ fontWeight: 700, color: d.dayPct >= 80 ? '#4ade80' : d.dayPct >= 60 ? '#e6c364' : '#ef4444' }}>{d.dayPct}%</span>
+                    <span style={{ fontWeight: 700, color: d.dayPct >= 80 ? '#4ade80' : d.dayPct >= 60 ? 'var(--gold)' : '#ef4444' }}>{d.dayPct}%</span>
                   </td>
                   <td style={{ textAlign: 'center', padding: '8px', color: 'var(--app-text)' }}>{d.kpis.leads}</td>
                   <td style={{ textAlign: 'center', padding: '8px', color: 'var(--app-text)' }}>{d.kpis.calls}</td>

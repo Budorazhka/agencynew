@@ -66,18 +66,16 @@ function getStageCumulativeCount(board: FunnelBoard, stageName: string): number 
     let count = 0;
     let found = false;
 
-    // Iterate through columns to find stages
-    // We assume a flow from left to right (rejection -> in_progress -> success/active)
-    // Actually, usually "rejection" is a separate sink. "success" is a sink.
-    // "in_progress" is the main flow.
-    // For calculation "From X to Y", we usually want:
-    // Count(X) + Count(After X) ... 
-    // But in Kanban snapshot it's hard. 
-    // Standard approach: Cumulative Flow.
-    // We sum up all items in the stage X and all stages that are "after" X.
+    // Обходим колонки, чтобы найти стадии.
+    // Считаем поток слева направо (отказ → в работе → успех/активные).
+    // Обычно «отказ» — отдельный сток, «успех» — тоже сток.
+    // «В работе» — основной поток.
+    // Для расчёта «от X до Y» обычно нужно: Count(X) + всё после X…
+    // В снимке канбана это условно; берём подход накопительного потока (cumulative flow):
+    // суммируем элементы в стадии X и во всех стадиях «правее» по потоку.
 
-    // Order of columns for flow: in_progress -> (active?) -> success.
-    // Rejection is excluded from flow typically, or handled separately.
+    // Порядок колонок потока: в работе → (активные?) → успех.
+    // Отказ из потока обычно исключаем или обрабатываем отдельно.
 
     const flowColumnIds = ["in_progress", "active", "success"];
 
@@ -126,7 +124,7 @@ function ConversionsDropdown({ board, variant }: { board: FunnelBoard; variant?:
                     size="sm"
                     className={cn(
                         "ml-auto gap-2",
-                        isLeads && "border-[rgba(229,196,136,0.5)] bg-[rgba(68,43,18,0.6)] text-[#fcecc8] hover:bg-[rgba(88,57,25,0.7)]"
+                        isLeads && "border-[rgba(229,196,136,0.5)] bg-[rgba(68,43,18,0.6)] text-[color:var(--app-text)] hover:bg-[rgba(88,57,25,0.7)]"
                     )}
                 >
                     <Percent className="h-4 w-4" />
@@ -142,10 +140,10 @@ function ConversionsDropdown({ board, variant }: { board: FunnelBoard; variant?:
                     return (
                         <DropdownMenuItem
                             key={idx}
-                            className={cn("flex justify-between gap-2", isLeads && "focus:bg-[rgba(68,43,18,0.7)] focus:text-[#fcecc8]")}
+                            className={cn("flex justify-between gap-2", isLeads && "focus:bg-[rgba(68,43,18,0.7)] focus:text-[color:var(--app-text)]")}
                         >
                             <span className={cn("truncate", isLeads ? "text-[#e8dcc4]" : "text-muted-foreground")}>{item.label}</span>
-                            <span className={cn("font-medium", isLeads && "text-[#fcecc8]")}>{val}%</span>
+                            <span className={cn("font-medium", isLeads && "text-[color:var(--app-text)]")}>{val}%</span>
                         </DropdownMenuItem>
                     );
                 })}
@@ -164,7 +162,7 @@ export function FunnelKanban({ funnels, variant = "default" }: FunnelKanbanProps
         return (
             <Card className={cn(isLeads && leadsCardClass)}>
                 <CardHeader>
-                    <CardTitle className={cn(isLeads && "text-[#fcecc8]")}>Воронки</CardTitle>
+                    <CardTitle className={cn(isLeads && "text-[color:var(--app-text)]")}>Воронки</CardTitle>
                     <CardDescription className={cn(isLeads && "text-[#e8dcc4]")}>Нет данных для отображения.</CardDescription>
                 </CardHeader>
             </Card>
@@ -176,7 +174,7 @@ export function FunnelKanban({ funnels, variant = "default" }: FunnelKanbanProps
             <Tabs defaultValue={funnels[0].id}>
                 <CardHeader className="gap-3">
                     <div className="space-y-1 text-center">
-                        <CardTitle className={cn("text-base font-medium sm:text-lg", isLeads && "text-[#fcecc8]")}>
+                        <CardTitle className={cn("text-base font-medium sm:text-lg", isLeads && "text-[color:var(--app-text)]")}>
                             Воронки в канбане
                         </CardTitle>
                         <CardDescription className={cn(isLeads && "text-[#e8dcc4]")}>
@@ -196,7 +194,7 @@ export function FunnelKanban({ funnels, variant = "default" }: FunnelKanbanProps
                                 className={cn(
                                     "text-center text-sm font-medium whitespace-normal leading-tight sm:text-base sm:whitespace-nowrap",
                                     isLeads &&
-                                        "text-[#e8dcc4] data-[state=active]:bg-[rgba(236,194,112,0.25)] data-[state=active]:text-[#fcecc8] data-[state=active]:border data-[state=active]:border-[rgba(229,196,136,0.5)]"
+                                        "text-[#e8dcc4] data-[state=active]:bg-[rgba(236,194,112,0.25)] data-[state=active]:text-[color:var(--app-text)] data-[state=active]:border data-[state=active]:border-[rgba(229,196,136,0.5)]"
                                 )}
                             >
                                 {board.shortName}
@@ -210,26 +208,26 @@ export function FunnelKanban({ funnels, variant = "default" }: FunnelKanbanProps
                             <div className="flex flex-wrap items-center gap-2">
                                 <Badge
                                     variant="secondary"
-                                    className={cn(isLeads && "border-[rgba(229,196,136,0.3)] bg-[rgba(68,43,18,0.5)] text-[#e8dcc4]")}
+                                    className={cn(isLeads && "border-[rgba(229,196,136,0.3)] bg-[color-mix(in_srgb,var(--gold-dark)_45%,transparent)] text-[#e8dcc4]")}
                                 >
                                     Всего: {board.totalCount.toLocaleString("ru-RU")}
                                 </Badge>
                                 <Badge
                                     variant="secondary"
-                                    className={cn(isLeads && "border-[rgba(229,196,136,0.3)] bg-[rgba(68,43,18,0.5)] text-[#e8dcc4]")}
+                                    className={cn(isLeads && "border-[rgba(229,196,136,0.3)] bg-[color-mix(in_srgb,var(--gold-dark)_45%,transparent)] text-[#e8dcc4]")}
                                 >
                                     В работе: {board.activeCount.toLocaleString("ru-RU")}
                                 </Badge>
                                 <Badge
                                     variant="secondary"
-                                    className={cn(isLeads && "border-[rgba(229,196,136,0.3)] bg-[rgba(68,43,18,0.5)] text-[#e8dcc4]")}
+                                    className={cn(isLeads && "border-[rgba(229,196,136,0.3)] bg-[color-mix(in_srgb,var(--gold-dark)_45%,transparent)] text-[#e8dcc4]")}
                                 >
                                     Отказ: {board.rejectionCount.toLocaleString("ru-RU")}
                                 </Badge>
                                 {board.closedCount > 0 && (
                                     <Badge
                                         variant="secondary"
-                                        className={cn(isLeads && "border-[rgba(229,196,136,0.3)] bg-[rgba(68,43,18,0.5)] text-[#e8dcc4]")}
+                                        className={cn(isLeads && "border-[rgba(229,196,136,0.3)] bg-[color-mix(in_srgb,var(--gold-dark)_45%,transparent)] text-[#e8dcc4]")}
                                     >
                                         Закрыто: {board.closedCount.toLocaleString("ru-RU")}
                                     </Badge>
@@ -279,7 +277,7 @@ function FunnelColumnCard({
         >
             <div className="flex min-w-0 items-center justify-between gap-2">
                 <p className={cn("min-w-0 break-words text-sm font-medium", isLeads && "text-[#e8dcc4]")}>{column.name}</p>
-                <Badge className={cn("shadow-none", tone.pill, isLeads && "border-[rgba(229,196,136,0.3)] bg-[rgba(68,43,18,0.5)] text-[#e8dcc4]")}>
+                <Badge className={cn("shadow-none", tone.pill, isLeads && "border-[rgba(229,196,136,0.3)] bg-[color-mix(in_srgb,var(--gold-dark)_45%,transparent)] text-[#e8dcc4]")}>
                     {column.count.toLocaleString("ru-RU")}
                 </Badge>
             </div>
@@ -302,7 +300,7 @@ function FunnelColumnCard({
                                     </p>
                                     <p className={cn("break-words text-sm leading-tight", isLeads && "text-[#f7ecd4]")}>{stage.name}</p>
                                 </div>
-                                <span className={cn("text-sm font-medium tabular-nums", isLeads && "text-[#fcecc8]")}>
+                                <span className={cn("text-sm font-medium tabular-nums", isLeads && "text-[color:var(--app-text)]")}>
                                     {stage.count.toLocaleString("ru-RU")}
                                 </span>
                             </div>

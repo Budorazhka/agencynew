@@ -7,8 +7,6 @@ export default function SettingsNewsMailingsHubPage() {
       moduleIcon={<Megaphone size={32} color="#c9a84c" />}
       moduleName="Новости и рассылки"
       moduleDescription="Публикация корпоративных новостей и массовых оповещений в CRM и личный кабинет."
-      backRoute="/dashboard/settings-hub"
-      backLabel="К настройкам"
       sections={[
         {
           icon: <Newspaper size={20} color="#c9a84c" />,

@@ -392,7 +392,7 @@ export interface NetworkAnalyticsData {
   trendsPercent: NetworkTrends
 }
 
-// Helper: фейковая предыдущая агрегация для динамики (рост/падение)
+// Вспомогательная функция: фейковая предыдущая агрегация для динамики (рост/падение)
 function simulatePreviousPeriod(current: NetworkTotals, seed: string): NetworkTotals {
   const rng = createRng(hashString(`prev-${seed}`))
 

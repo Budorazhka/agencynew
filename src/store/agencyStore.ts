@@ -1,4 +1,4 @@
-// Simple agency branding store via localStorage
+// Простое хранилище бренда агентства в localStorage
 export interface AgencyBranding {
   name: string
   logoDataUrl: string | null

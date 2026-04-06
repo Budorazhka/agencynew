@@ -96,7 +96,7 @@ export function NotificationsSettingsPage() {
   const groups = groupBy(events, e => e.group)
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/settings-hub' }}>
+    <DashboardShell>
       <div style={{ padding: '24px 28px 48px' }}>
         <div style={{ marginBottom: 24 }}>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 4 }}>Настройки уведомлений</div>

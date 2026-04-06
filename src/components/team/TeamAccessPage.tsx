@@ -22,13 +22,15 @@ type AccessPerson = {
 }
 
 const ROLE_ACCENT: Record<UserRole, string> = {
-  owner:            '#f2cf8d',
+  owner:            'var(--gold-light)',
   director:         '#7ec8e3',
   rop:              '#fb923c',
   manager:          '#4ade80',
   marketer:         '#f472b6',
   lawyer:           '#22d3ee',
   procurement_head: '#a78bfa',
+  finance:          '#bef264',
+  hr:               '#fb7185',
   partner:          '#94a3b8',
 }
 
@@ -132,16 +134,6 @@ const ACCESS_ROWS: AccessRow[] = [
     },
   },
   {
-    group: 'Аналитика',
-    resource: 'BI / Дашборды',
-    description: 'Агрегированные показатели',
-    map: {
-      view: 'see_analytics',
-      finance: 'see_finance',
-      analytics: ['see_analytics', 'view_network_analytics', 'view_lead_analytics'],
-    },
-  },
-  {
     group: 'Админ',
     resource: 'Система',
     description: 'Рассылки, блокировки, подмены',
@@ -221,7 +213,7 @@ export function TeamAccessPage() {
   }
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard/team' }}>
+    <DashboardShell>
       <div style={{ padding: '24px 28px 40px' }}>
         <div style={{ marginBottom: 20, fontSize: 20, fontWeight: 700, color: C.white }}>Матрица доступов сотрудников</div>
 

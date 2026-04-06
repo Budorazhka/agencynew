@@ -17,7 +17,7 @@ import {
 import { cn } from '@/lib/utils'
 import type { LMSItem, ContentType, TargetRole } from '@/data/lms-mock'
 
-// ─── Props ────────────────────────────────────────────────────────────────────
+// ─── Параметры компонента ─────────────────────────────────────────────────────
 
 interface LMSAdminDialogProps {
   open: boolean
@@ -27,7 +27,7 @@ interface LMSAdminDialogProps {
   onSave: (item: LMSItem) => void
 }
 
-// ─── Form state ───────────────────────────────────────────────────────────────
+// ─── Состояние формы ──────────────────────────────────────────────────────────
 
 type AdminContentType = Exclude<ContentType, 'quiz'>
 
@@ -39,16 +39,16 @@ interface FormState {
   tags: string
   readTime: string
   coverUrl: string
-  // article
+  // статья
   articleBody: string
-  // video
+  // видео
   videoUrl: string
   videoDescription: string
-  // script
+  // скрипт
   scriptLines: Array<{ speaker: 'manager' | 'client'; text: string }>
-  // presentation
+  // презентация
   slides: Array<{ title: string; body: string }>
-  // pdf
+  // PDF-файл
   pdfUrl: string
   pdfDescription: string
 }
@@ -134,7 +134,7 @@ function formToItem(form: FormState, existingId?: string): LMSItem {
   }
 }
 
-// ─── Validation ───────────────────────────────────────────────────────────────
+// ─── Проверка полей ───────────────────────────────────────────────────────────
 
 function validate(form: FormState): string | null {
   if (!form.title.trim()) return 'Укажите название материала'
@@ -147,17 +147,17 @@ function validate(form: FormState): string | null {
   return null
 }
 
-// ─── Style tokens ─────────────────────────────────────────────────────────────
+// ─── Общие классы полей ───────────────────────────────────────────────────────
 
 const FIELD =
-  'w-full rounded-2xl border border-[rgba(242,207,141,0.16)] bg-[rgba(5,20,16,0.52)] px-3 py-2.5 text-[13px] text-[#fcecc8] placeholder:text-[rgba(242,207,141,0.3)] outline-none focus:border-[rgba(52,211,153,0.55)] transition-colors'
+  'w-full rounded-2xl border border-[color:var(--hub-card-border)] bg-[color-mix(in_srgb,var(--rail-bg)_92%,transparent)] px-3 py-2.5 text-[13px] text-[color:var(--app-text)] placeholder:text-[color:var(--shell-search-ph)] outline-none focus:border-[rgba(52,211,153,0.55)] transition-colors'
 
-// ─── Small sub-components ─────────────────────────────────────────────────────
+// ─── Мелкие вложенные компоненты ───────────────────────────────────────────────
 
 function FieldShell({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-[rgba(242,207,141,0.55)]">{label}</p>
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--hub-stat-label)]">{label}</p>
       {children}
     </div>
   )
@@ -166,14 +166,14 @@ function FieldShell({ label, children }: { label: string; children: React.ReactN
 function SectionDivider({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-3 pt-1">
-      <div className="h-px flex-1 bg-[rgba(242,207,141,0.1)]" />
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-[rgba(242,207,141,0.35)]">{label}</span>
-      <div className="h-px flex-1 bg-[rgba(242,207,141,0.1)]" />
+      <div className="h-px flex-1 bg-[var(--hub-tile-icon-bg)]" />
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--theme-accent-icon-dim)]">{label}</span>
+      <div className="h-px flex-1 bg-[var(--hub-tile-icon-bg)]" />
     </div>
   )
 }
 
-// ─── Content type config ──────────────────────────────────────────────────────
+// ─── Список типов контента ────────────────────────────────────────────────────
 
 const CONTENT_TYPES: Array<{ id: AdminContentType; label: string; icon: React.ReactNode }> = [
   { id: 'article',      label: 'Статья',        icon: <BookOpen className="size-4" /> },
@@ -183,7 +183,7 @@ const CONTENT_TYPES: Array<{ id: AdminContentType; label: string; icon: React.Re
   { id: 'pdf',          label: 'PDF',             icon: <FileText className="size-4" /> },
 ]
 
-// ─── Script line editor ───────────────────────────────────────────────────────
+// ─── Редактор реплик скрипта ──────────────────────────────────────────────────
 
 function ScriptEditor({
   lines,
@@ -222,7 +222,7 @@ function ScriptEditor({
               'mt-1 flex size-8 shrink-0 items-center justify-center rounded-full border text-[11px] font-bold transition-colors',
               line.speaker === 'manager'
                 ? 'border-blue-500/40 bg-blue-500/15 text-blue-300 hover:bg-blue-500/25'
-                : 'border-[rgba(242,207,141,0.2)] bg-[rgba(242,207,141,0.07)] text-[rgba(242,207,141,0.7)] hover:bg-[rgba(242,207,141,0.12)]',
+                : 'border-[color:var(--hub-card-border)] bg-[var(--hub-action-hover)] text-[color:var(--theme-accent-link-dim)] hover:bg-[var(--nav-item-bg-active)]',
             )}
             title={line.speaker === 'manager' ? 'Менеджер (нажмите для смены)' : 'Клиент (нажмите для смены)'}
           >
@@ -236,16 +236,16 @@ function ScriptEditor({
           />
           <div className="mt-1 flex flex-col gap-0.5">
             <button type="button" onClick={() => moveLine(i, -1)} disabled={i === 0}
-              className="rounded p-1 text-[rgba(242,207,141,0.3)] hover:text-[rgba(242,207,141,0.7)] disabled:opacity-20">
+              className="rounded p-1 text-[color:var(--theme-accent-icon-dim)] hover:text-[color:var(--theme-accent-link-dim)] disabled:opacity-20">
               <ArrowUp className="size-3" />
             </button>
             <button type="button" onClick={() => moveLine(i, 1)} disabled={i === lines.length - 1}
-              className="rounded p-1 text-[rgba(242,207,141,0.3)] hover:text-[rgba(242,207,141,0.7)] disabled:opacity-20">
+              className="rounded p-1 text-[color:var(--theme-accent-icon-dim)] hover:text-[color:var(--theme-accent-link-dim)] disabled:opacity-20">
               <ArrowDown className="size-3" />
             </button>
           </div>
           <button type="button" onClick={() => removeLine(i)} disabled={lines.length === 1}
-            className="mt-1 rounded-full p-1.5 text-[rgba(242,207,141,0.3)] hover:text-red-400 hover:bg-red-900/20 disabled:opacity-20 transition-colors">
+            className="mt-1 rounded-full p-1.5 text-[color:var(--theme-accent-icon-dim)] hover:text-red-400 hover:bg-red-900/20 disabled:opacity-20 transition-colors">
             <Trash2 className="size-3.5" />
           </button>
         </div>
@@ -253,7 +253,7 @@ function ScriptEditor({
       <button
         type="button"
         onClick={addLine}
-        className="flex items-center gap-1.5 rounded-full border border-dashed border-[rgba(242,207,141,0.2)] px-3 py-1.5 text-xs text-[rgba(242,207,141,0.5)] hover:border-[rgba(242,207,141,0.4)] hover:text-[rgba(242,207,141,0.8)] transition-colors"
+        className="flex items-center gap-1.5 rounded-full border border-dashed border-[color:var(--hub-card-border)] px-3 py-1.5 text-xs text-[color:var(--hub-desc)] hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--app-text-muted)] transition-colors"
       >
         <Plus className="size-3" /> Добавить реплику
       </button>
@@ -261,7 +261,7 @@ function ScriptEditor({
   )
 }
 
-// ─── Slides editor ────────────────────────────────────────────────────────────
+// ─── Редактор слайдов ─────────────────────────────────────────────────────────
 
 function SlidesEditor({
   slides,
@@ -285,9 +285,9 @@ function SlidesEditor({
   return (
     <div className="space-y-3">
       {slides.map((slide, i) => (
-        <div key={i} className="rounded-2xl border border-[rgba(242,207,141,0.14)] bg-[rgba(5,20,16,0.35)] p-3 space-y-2">
+        <div key={i} className="rounded-2xl border border-[color:var(--hub-card-border)] bg-[color-mix(in_srgb,var(--rail-bg)_78%,transparent)] p-3 space-y-2">
           <div className="flex items-center gap-2">
-            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[rgba(242,207,141,0.1)] text-[11px] font-bold text-[rgba(242,207,141,0.6)]">{i + 1}</span>
+            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[var(--hub-tile-icon-bg)] text-[11px] font-bold text-[color:var(--hub-badge-soon-fg)]">{i + 1}</span>
             <input
               value={slide.title}
               onChange={e => updateSlide(i, { title: e.target.value })}
@@ -295,15 +295,15 @@ function SlidesEditor({
               className={cn(FIELD, 'flex-1')}
             />
             <button type="button" onClick={() => moveSlide(i, -1)} disabled={i === 0}
-              className="rounded p-1 text-[rgba(242,207,141,0.3)] hover:text-[rgba(242,207,141,0.7)] disabled:opacity-20">
+              className="rounded p-1 text-[color:var(--theme-accent-icon-dim)] hover:text-[color:var(--theme-accent-link-dim)] disabled:opacity-20">
               <ArrowUp className="size-3.5" />
             </button>
             <button type="button" onClick={() => moveSlide(i, 1)} disabled={i === slides.length - 1}
-              className="rounded p-1 text-[rgba(242,207,141,0.3)] hover:text-[rgba(242,207,141,0.7)] disabled:opacity-20">
+              className="rounded p-1 text-[color:var(--theme-accent-icon-dim)] hover:text-[color:var(--theme-accent-link-dim)] disabled:opacity-20">
               <ArrowDown className="size-3.5" />
             </button>
             <button type="button" onClick={() => removeSlide(i)} disabled={slides.length === 1}
-              className="rounded-full p-1.5 text-[rgba(242,207,141,0.3)] hover:text-red-400 hover:bg-red-900/20 disabled:opacity-20 transition-colors">
+              className="rounded-full p-1.5 text-[color:var(--theme-accent-icon-dim)] hover:text-red-400 hover:bg-red-900/20 disabled:opacity-20 transition-colors">
               <Trash2 className="size-3.5" />
             </button>
           </div>
@@ -319,7 +319,7 @@ function SlidesEditor({
       <button
         type="button"
         onClick={addSlide}
-        className="flex items-center gap-1.5 rounded-full border border-dashed border-[rgba(242,207,141,0.2)] px-3 py-1.5 text-xs text-[rgba(242,207,141,0.5)] hover:border-[rgba(242,207,141,0.4)] hover:text-[rgba(242,207,141,0.8)] transition-colors"
+        className="flex items-center gap-1.5 rounded-full border border-dashed border-[color:var(--hub-card-border)] px-3 py-1.5 text-xs text-[color:var(--hub-desc)] hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--app-text-muted)] transition-colors"
       >
         <Plus className="size-3" /> Добавить слайд
       </button>
@@ -327,7 +327,7 @@ function SlidesEditor({
   )
 }
 
-// ─── Main dialog ──────────────────────────────────────────────────────────────
+// ─── Основное диалоговое окно ─────────────────────────────────────────────────
 
 export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDialogProps) {
   const [form, setForm] = useState<FormState>(emptyForm)
@@ -356,22 +356,22 @@ export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDi
         className="top-[50%] h-[calc(100vh-24px)] w-[calc(100vw-16px)] max-w-2xl translate-y-[-50%] overflow-hidden rounded-[24px] border-0 bg-transparent p-0 shadow-none"
       >
         {/* Dark background wrapper */}
-        <div className="flex h-full flex-col overflow-hidden rounded-[24px] border border-[rgba(242,207,141,0.16)] bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.09),transparent_40%),linear-gradient(180deg,rgba(9,36,28,0.99),rgba(6,20,16,0.98))]">
+        <div className="flex h-full flex-col overflow-hidden rounded-[24px] border border-[color:var(--hub-card-border)] bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.09),transparent_40%),linear-gradient(180deg,rgba(9,36,28,0.99),rgba(6,20,16,0.98))]">
 
           {/* Sticky header */}
-          <div className="flex shrink-0 items-center justify-between border-b border-[rgba(242,207,141,0.1)] px-5 py-4">
+          <div className="flex shrink-0 items-center justify-between border-b border-[color:var(--hub-tile-icon-border)] px-5 py-4">
             <div className="space-y-0.5">
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-[rgba(242,207,141,0.45)]">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-[color:var(--hub-stat-label)]">
                 База знаний
               </p>
-              <h2 className="text-lg font-semibold text-[#fcecc8]">
+              <h2 className="text-lg font-semibold text-[color:var(--app-text)]">
                 {mode === 'create' ? 'Новый материал' : 'Редактировать материал'}
               </h2>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="flex size-8 items-center justify-center rounded-full border border-[rgba(242,207,141,0.12)] text-[rgba(242,207,141,0.5)] hover:border-[rgba(242,207,141,0.3)] hover:text-[#fcecc8] transition-colors"
+              className="flex size-8 items-center justify-center rounded-full border border-[color:var(--hub-tile-icon-border)] text-[color:var(--hub-desc)] hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--app-text)] transition-colors"
             >
               <X className="size-4" />
             </button>
@@ -382,7 +382,7 @@ export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDi
 
             {/* Content type selector */}
             <div className="space-y-2">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-[rgba(242,207,141,0.55)]">Тип материала</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--hub-stat-label)]">Тип материала</p>
               <div className="flex flex-wrap gap-2">
                 {CONTENT_TYPES.map(ct => {
                   const active = form.type === ct.id
@@ -395,7 +395,7 @@ export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDi
                         'flex items-center gap-2 rounded-2xl border px-3.5 py-2 text-[13px] font-medium transition-all',
                         active
                           ? 'border-emerald-400/60 bg-emerald-400/12 text-emerald-300'
-                          : 'border-[rgba(242,207,141,0.14)] bg-[rgba(5,20,16,0.4)] text-[rgba(242,207,141,0.6)] hover:border-[rgba(242,207,141,0.3)] hover:text-[rgba(242,207,141,0.9)]',
+                          : 'border-[color:var(--hub-card-border)] bg-[color-mix(in_srgb,var(--rail-bg)_82%,transparent)] text-[color:var(--hub-badge-soon-fg)] hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--theme-accent-heading)]',
                       )}
                     >
                       {ct.icon}
@@ -434,7 +434,7 @@ export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDi
             <div className="grid grid-cols-2 gap-3">
               <FieldShell label="Для кого">
                 <Select value={form.targetRole} onValueChange={v => set('targetRole', v as TargetRole)}>
-                  <SelectTrigger className="h-10 rounded-2xl border-[rgba(242,207,141,0.16)] bg-[rgba(5,20,16,0.52)] text-[13px] text-[#fcecc8] shadow-none focus:ring-0">
+                  <SelectTrigger className="h-10 rounded-2xl border-[color:var(--hub-card-border)] bg-[color-mix(in_srgb,var(--rail-bg)_92%,transparent)] text-[13px] text-[color:var(--app-text)] shadow-none focus:ring-0">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -467,7 +467,7 @@ export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDi
 
             {/* Cover image upload */}
             <FieldShell label="Обложка">
-              <label className="group relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-[rgba(242,207,141,0.22)] bg-[rgba(5,20,16,0.4)] px-4 py-5 transition-colors hover:border-[rgba(242,207,141,0.45)] hover:bg-[rgba(242,207,141,0.05)]">
+              <label className="group relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-[color:var(--hub-card-border)] bg-[color-mix(in_srgb,var(--rail-bg)_82%,transparent)] px-4 py-5 transition-colors hover:border-[color:var(--hub-card-border-hover)] hover:bg-[var(--hub-action-hover)]">
                 <input
                   type="file"
                   accept="image/*"
@@ -486,13 +486,13 @@ export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDi
                   </div>
                 ) : (
                   <>
-                    <div className="flex size-10 items-center justify-center rounded-full bg-[rgba(242,207,141,0.08)]">
-                      <svg className="size-5 text-[rgba(242,207,141,0.45)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <div className="flex size-10 items-center justify-center rounded-full bg-[var(--nav-item-bg-active)]">
+                      <svg className="size-5 text-[color:var(--hub-stat-label)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                       </svg>
                     </div>
-                    <p className="text-[12px] text-[rgba(242,207,141,0.45)]">Нажмите, чтобы загрузить картинку</p>
-                    <p className="text-[11px] text-[rgba(242,207,141,0.25)]">PNG, JPG, WEBP</p>
+                    <p className="text-[12px] text-[color:var(--hub-stat-label)]">Нажмите, чтобы загрузить картинку</p>
+                    <p className="text-[11px] text-[color:var(--theme-accent-icon-dim)]">PNG, JPG, WEBP</p>
                   </>
                 )}
               </label>
@@ -500,7 +500,7 @@ export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDi
                 <button
                   type="button"
                   onClick={() => set('coverUrl', '')}
-                  className="mt-1.5 text-[11px] text-[rgba(242,207,141,0.35)] hover:text-red-400 transition-colors"
+                  className="mt-1.5 text-[11px] text-[color:var(--theme-accent-icon-dim)] hover:text-red-400 transition-colors"
                 >
                   Удалить обложку
                 </button>
@@ -535,7 +535,7 @@ export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDi
                   />
                 </FieldShell>
                 {form.videoUrl && (
-                  <div className="relative aspect-video overflow-hidden rounded-xl border border-[rgba(242,207,141,0.12)] bg-black">
+                  <div className="relative aspect-video overflow-hidden rounded-xl border border-[color:var(--hub-tile-icon-border)] bg-black">
                     <iframe src={form.videoUrl} title="preview" className="absolute inset-0 h-full w-full" allowFullScreen />
                   </div>
                 )}
@@ -559,7 +559,7 @@ export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDi
                     'group relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed px-4 py-5 transition-colors',
                     !form.pdfUrl && error
                       ? 'border-red-500/50 bg-red-900/10'
-                      : 'border-[rgba(242,207,141,0.22)] bg-[rgba(5,20,16,0.4)] hover:border-[rgba(242,207,141,0.45)] hover:bg-[rgba(242,207,141,0.05)]',
+                      : 'border-[color:var(--hub-card-border)] bg-[color-mix(in_srgb,var(--rail-bg)_82%,transparent)] hover:border-[color:var(--hub-card-border-hover)] hover:bg-[var(--hub-action-hover)]',
                   )}>
                     <input
                       type="file"
@@ -579,17 +579,17 @@ export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDi
                           <FileText className="size-5 text-red-300" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium text-[#fcecc8]">{form.pdfDescription || 'PDF загружен'}</p>
-                          <p className="text-[11px] text-[rgba(242,207,141,0.4)]">Нажмите, чтобы заменить</p>
+                          <p className="truncate text-sm font-medium text-[color:var(--app-text)]">{form.pdfDescription || 'PDF загружен'}</p>
+                          <p className="text-[11px] text-[color:var(--workspace-text-muted)]">Нажмите, чтобы заменить</p>
                         </div>
                       </div>
                     ) : (
                       <>
-                        <div className="flex size-10 items-center justify-center rounded-full bg-[rgba(242,207,141,0.08)]">
-                          <FileText className="size-5 text-[rgba(242,207,141,0.45)]" />
+                        <div className="flex size-10 items-center justify-center rounded-full bg-[var(--nav-item-bg-active)]">
+                          <FileText className="size-5 text-[color:var(--hub-stat-label)]" />
                         </div>
-                        <p className="text-[12px] text-[rgba(242,207,141,0.45)]">Нажмите, чтобы загрузить PDF</p>
-                        <p className="text-[11px] text-[rgba(242,207,141,0.25)]">PDF до 50 МБ</p>
+                        <p className="text-[12px] text-[color:var(--hub-stat-label)]">Нажмите, чтобы загрузить PDF</p>
+                        <p className="text-[11px] text-[color:var(--theme-accent-icon-dim)]">PDF до 50 МБ</p>
                       </>
                     )}
                   </label>
@@ -597,14 +597,14 @@ export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDi
                     <button
                       type="button"
                       onClick={() => set('pdfUrl', '')}
-                      className="mt-1 text-[11px] text-[rgba(242,207,141,0.35)] hover:text-red-400 transition-colors"
+                      className="mt-1 text-[11px] text-[color:var(--theme-accent-icon-dim)] hover:text-red-400 transition-colors"
                     >
                       Удалить файл
                     </button>
                   )}
                 </FieldShell>
                 {form.pdfUrl && (
-                  <div className="overflow-hidden rounded-xl border border-[rgba(242,207,141,0.12)]" style={{ height: 300 }}>
+                  <div className="overflow-hidden rounded-xl border border-[color:var(--hub-tile-icon-border)]" style={{ height: 300 }}>
                     <iframe src={form.pdfUrl} title="PDF preview" className="h-full w-full bg-white" />
                   </div>
                 )}
@@ -623,9 +623,9 @@ export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDi
             {/* Script */}
             {form.type === 'script' && (
               <div className="space-y-3">
-                <div className="flex items-center gap-3 text-[11px] text-[rgba(242,207,141,0.4)]">
+                <div className="flex items-center gap-3 text-[11px] text-[color:var(--workspace-text-muted)]">
                   <span className="flex items-center gap-1.5"><span className="inline-flex size-5 items-center justify-center rounded-full bg-blue-500/15 text-[10px] font-bold text-blue-300">М</span>Менеджер</span>
-                  <span className="flex items-center gap-1.5"><span className="inline-flex size-5 items-center justify-center rounded-full bg-[rgba(242,207,141,0.08)] text-[10px] font-bold text-[rgba(242,207,141,0.6)]">К</span>Клиент</span>
+                  <span className="flex items-center gap-1.5"><span className="inline-flex size-5 items-center justify-center rounded-full bg-[var(--nav-item-bg-active)] text-[10px] font-bold text-[color:var(--hub-badge-soon-fg)]">К</span>Клиент</span>
                   <span className="ml-auto">Нажмите М/К для смены роли</span>
                 </div>
                 <ScriptEditor lines={form.scriptLines} onChange={v => set('scriptLines', v)} />
@@ -635,7 +635,7 @@ export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDi
             {/* Presentation */}
             {form.type === 'presentation' && (
               <div className="space-y-2">
-                <p className="text-[11px] text-[rgba(242,207,141,0.4)]">
+                <p className="text-[11px] text-[color:var(--workspace-text-muted)]">
                   {form.slides.length} {form.slides.length === 1 ? 'слайд' : form.slides.length < 5 ? 'слайда' : 'слайдов'}
                 </p>
                 <SlidesEditor slides={form.slides} onChange={v => set('slides', v)} />
@@ -654,19 +654,15 @@ export function LMSAdminDialog({ open, mode, item, onClose, onSave }: LMSAdminDi
           </div>
 
           {/* Sticky footer */}
-          <div className="flex shrink-0 items-center justify-end gap-2 border-t border-[rgba(242,207,141,0.1)] px-5 py-4">
+          <div className="flex shrink-0 items-center justify-end gap-2 border-t border-[color:var(--hub-tile-icon-border)] px-5 py-4">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full border border-[rgba(242,207,141,0.2)] px-5 py-2 text-[13px] font-medium text-[rgba(242,207,141,0.65)] hover:border-[rgba(242,207,141,0.4)] hover:text-[#fcecc8] transition-colors"
+              className="rounded-full border border-[color:var(--hub-card-border)] px-5 py-2 text-[13px] font-medium text-[color:var(--hub-body)] hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--app-text)] transition-colors"
             >
               Отмена
             </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              className="rounded-full bg-emerald-500 px-5 py-2 text-[13px] font-semibold text-white hover:bg-emerald-400 transition-colors"
-            >
+            <button type="button" onClick={handleSave} className="alphabase-section-primary !normal-case px-5 py-2 text-[13px]">
               {mode === 'create' ? 'Добавить' : 'Сохранить'}
             </button>
           </div>

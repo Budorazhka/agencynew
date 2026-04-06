@@ -4,7 +4,7 @@ import { BarChart3, ChevronDown } from 'lucide-react'
 import { LEAD_STAGES, LEAD_STAGE_COLUMN } from '@/data/leads-mock'
 import type { LeadStage } from '@/types/leads'
 
-const PRIMARY = '#e6c364'
+const PRIMARY = 'var(--theme-accent-heading)'
 
 /** Этапы рабочей воронки (как в покерном столе / канбане), плюс успех — как конечные точки конверсии */
 const FUNNEL_STAGES = LEAD_STAGES.filter(
@@ -98,9 +98,9 @@ export function ConversionFunnelCard({ tileMinHeight }: ConversionFunnelCardProp
     height: 48,
     padding: '0 14px',
     borderRadius: 10,
-    border: '1px solid rgba(255,255,255,0.12)',
-    background: '#0a1f12',
-    color: '#e8f2ec',
+    border: '1px solid var(--green-border)',
+    background: 'var(--green-deep)',
+    color: 'var(--app-text)',
     fontSize: 15,
     fontWeight: 600,
     outline: 'none',
@@ -114,9 +114,9 @@ export function ConversionFunnelCard({ tileMinHeight }: ConversionFunnelCardProp
     textAlign: 'left' as const,
     padding: '14px 16px',
     borderRadius: 10,
-    border: active ? `2px solid ${PRIMARY}` : '1px solid rgba(255,255,255,0.1)',
-    background: active ? 'rgba(230,195,100,0.12)' : 'rgba(0,0,0,0.25)',
-    color: '#fff',
+    border: active ? `2px solid ${PRIMARY}` : '1px solid var(--hub-card-border)',
+    background: active ? 'var(--nav-item-bg-active)' : 'var(--green-deep)',
+    color: 'var(--app-text)',
     fontSize: 15,
     fontWeight: active ? 700 : 600,
     cursor: 'pointer',
@@ -154,7 +154,7 @@ export function ConversionFunnelCard({ tileMinHeight }: ConversionFunnelCardProp
                 maxHeight: 'min(85vh, 560px)',
                 overflowY: 'auto',
                 padding: 22,
-                background: '#040d0a',
+                background: 'var(--app-bg)',
                 border: `2px solid ${PRIMARY}`,
                 borderRadius: 14,
                 boxShadow: '0 24px 64px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05)',
@@ -162,14 +162,14 @@ export function ConversionFunnelCard({ tileMinHeight }: ConversionFunnelCardProp
               }}
               onClick={e => e.stopPropagation()}
             >
-            <h3 style={{ margin: '0 0 8px', fontSize: 17, fontWeight: 700, color: '#fff' }}>
+            <h3 style={{ margin: '0 0 8px', fontSize: 17, fontWeight: 700, color: 'var(--app-text)' }}>
               Конверсия по этапам воронки
             </h3>
-            <p style={{ margin: '0 0 18px', fontSize: 14, color: 'rgba(220, 230, 224, 0.88)', lineHeight: 1.55 }}>
-              Считаем долю лидов, которые дошли до выбранного <strong style={{ color: '#fff' }}>конечного</strong> этапа,
-              среди тех, кто в отчётном периоде был на <strong style={{ color: '#fff' }}>стартовом</strong> этапе или прошёл его
+            <p style={{ margin: '0 0 18px', fontSize: 14, color: 'var(--app-text-muted)', lineHeight: 1.55 }}>
+              Считаем долю лидов, которые дошли до выбранного <strong style={{ color: 'var(--app-text)' }}>конечного</strong> этапа,
+              среди тех, кто в отчётном периоде был на <strong style={{ color: 'var(--app-text)' }}>стартовом</strong> этапе или прошёл его
               (этапы как в канбане лидов: «Новый лид» → … → «Заключен договор», далее золотой фонд и сопутствующие статусы).
-              Период: <strong style={{ color: '#fff' }}>{monthLabelRu()}</strong>.
+              Период: <strong style={{ color: 'var(--app-text)' }}>{monthLabelRu()}</strong>.
             </p>
 
             <div style={{ fontSize: 12, fontWeight: 700, color: PRIMARY, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
@@ -189,7 +189,7 @@ export function ConversionFunnelCard({ tileMinHeight }: ConversionFunnelCardProp
                     }}
                   >
                     {labelPair(p.from, p.to)}
-                    <span style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'rgba(220,230,224,0.65)', marginTop: 4 }}>
+                    <span style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'var(--app-text-muted)', marginTop: 4 }}>
                       {p.value}% · {p.delta} к прошлому месяцу
                     </span>
                   </button>
@@ -202,7 +202,7 @@ export function ConversionFunnelCard({ tileMinHeight }: ConversionFunnelCardProp
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <span style={{ fontSize: 14, fontWeight: 600, color: 'rgba(220,230,224,0.9)' }}>С этапа</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--app-text-muted)' }}>С этапа</span>
                 <select
                   value={fromId}
                   style={selectStyle}
@@ -214,7 +214,7 @@ export function ConversionFunnelCard({ tileMinHeight }: ConversionFunnelCardProp
                 </select>
               </label>
               <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <span style={{ fontSize: 14, fontWeight: 600, color: 'rgba(220,230,224,0.9)' }}>До этапа</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--app-text-muted)' }}>До этапа</span>
                 <select
                   value={toOptions.some(s => s.id === toId) ? toId : (toOptions[0]?.id ?? '')}
                   style={selectStyle}
@@ -227,8 +227,8 @@ export function ConversionFunnelCard({ tileMinHeight }: ConversionFunnelCardProp
               </label>
             </div>
 
-            <p style={{ margin: '18px 0 0', fontSize: 14, color: 'rgba(220, 230, 224, 0.82)', lineHeight: 1.55 }}>
-              <strong style={{ color: '#fff' }}>Как читать:</strong> из лидов, прошедших «{fromStage?.name ?? '—'}», {value === '—' ? 'метрика для этой пары пока не заведена в моке' : `${value}% дошли до «${stageById(toId)?.name ?? '—'}»`} за выбранный месяц (мок для демо).
+            <p style={{ margin: '18px 0 0', fontSize: 14, color: 'var(--app-text-muted)', lineHeight: 1.55 }}>
+              <strong style={{ color: 'var(--app-text)' }}>Как читать:</strong> из лидов, прошедших «{fromStage?.name ?? '—'}», {value === '—' ? 'метрика для этой пары пока не заведена в моке' : `${value}% дошли до «${stageById(toId)?.name ?? '—'}»`} за выбранный месяц (мок для демо).
             </p>
 
             <button
@@ -240,8 +240,8 @@ export function ConversionFunnelCard({ tileMinHeight }: ConversionFunnelCardProp
                 height: 48,
                 borderRadius: 10,
                 border: 'none',
-                background: 'rgba(230,195,100,0.2)',
-                color: PRIMARY,
+                background: 'var(--nav-item-bg-active)',
+                color: 'var(--theme-accent-heading)',
                 fontSize: 15,
                 fontWeight: 700,
                 cursor: 'pointer',
@@ -290,11 +290,11 @@ export function ConversionFunnelCard({ tileMinHeight }: ConversionFunnelCardProp
             position: 'relative',
             overflow: 'hidden',
             borderRadius: 12,
-            border: panelOpen ? `1px solid rgba(230,195,100,0.45)` : '1px solid rgba(255,255,255,0.05)',
-            background: 'rgba(15, 35, 30, 0.8)',
+            border: panelOpen ? '1px solid var(--hub-card-border-hover)' : '1px solid var(--hub-card-border)',
+            background: 'var(--hub-card-bg)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
-            boxShadow: 'inset 0 1px 0 rgba(201,168,76,0.18)',
+            boxShadow: 'inset 0 0 0 1px var(--hub-card-border)',
             ...(stretch
               ? { flex: 1, minHeight: tileMinHeight, display: 'flex', flexDirection: 'column' }
               : {}),
@@ -312,14 +312,14 @@ export function ConversionFunnelCard({ tileMinHeight }: ConversionFunnelCardProp
               <span style={{ fontSize: 9, fontWeight: 700, color: PRIMARY, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
                 Конверсия базы
               </span>
-              <BarChart3 size={18} color={PRIMARY} />
+              <BarChart3 size={18} color="var(--gold)" />
             </div>
-            <h4 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>
+            <h4 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--app-text)', lineHeight: 1.2 }}>
               {value === '—' ? '—' : `${value}%`}
             </h4>
             <div style={{ marginTop: 6, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: 'rgba(220,230,224,0.85)', lineHeight: 1.35 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--app-text-muted)', lineHeight: 1.35 }}>
                   {pairLabel}
                 </div>
                 {delta ? (
@@ -327,13 +327,13 @@ export function ConversionFunnelCard({ tileMinHeight }: ConversionFunnelCardProp
                     {delta} к прошлому месяцу
                   </div>
                 ) : null}
-                <div style={{ marginTop: 6, fontSize: 10, color: 'rgba(194,200,196,0.5)', lineHeight: 1.3 }}>
+                <div style={{ marginTop: 6, fontSize: 10, color: 'var(--app-text-subtle)', lineHeight: 1.3 }}>
                   Нажмите, чтобы сменить этапы
                 </div>
               </div>
               <ChevronDown
                 size={20}
-                color={PRIMARY}
+                color="var(--gold)"
                 style={{
                   flexShrink: 0,
                   marginTop: 2,

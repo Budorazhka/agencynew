@@ -16,7 +16,7 @@ export function DashboardPlaceholder({ title, description }: DashboardPlaceholde
         <h1
           className={cn(
             'text-2xl font-bold tracking-tight',
-            useFeltStyle ? 'text-[#fcecc8]' : 'text-slate-900',
+            useFeltStyle ? 'text-[color:var(--app-text)]' : 'text-slate-900',
           )}
         >
           {title}
@@ -36,7 +36,7 @@ export function DashboardPlaceholder({ title, description }: DashboardPlaceholde
         className={cn(
           'rounded-xl border py-12 text-center',
           useFeltStyle
-            ? 'border-[rgba(242,207,141,0.3)] bg-[rgba(18,45,36,0.5)] text-[#e8dcc4]/90'
+            ? 'border-[color:var(--hub-card-border-hover)] bg-[rgba(18,45,36,0.5)] text-[#e8dcc4]/90'
             : 'border-slate-200 bg-slate-50/80 text-slate-500',
         )}
       >

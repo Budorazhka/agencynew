@@ -27,8 +27,8 @@ export function ObjectCardPage() {
   const property = mockProperties.find(p => p.id === propertyId)
   if (!property) {
     return (
-      <DashboardShell hideSidebar topBack={{ label: 'Назад', route: '/dashboard/objects/list' }}>
-        <div style={{ padding: 40, textAlign: 'center', color: 'rgba(255,255,255,0.3)', fontFamily: 'Inter, sans-serif' }}>
+      <DashboardShell hideSidebar>
+        <div style={{ padding: 40, textAlign: 'center', color: 'rgba(255,255,255,0.3)', fontFamily: "'Montserrat', sans-serif" }}>
           Объект не найден
         </div>
       </DashboardShell>
@@ -38,8 +38,8 @@ export function ObjectCardPage() {
   const d = property.details
 
   return (
-    <DashboardShell hideSidebar topBack={{ label: 'Назад', route: '/dashboard/objects/list' }}>
-      <div style={{ padding: '28px 28px 64px', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
+    <DashboardShell hideSidebar>
+      <div style={{ padding: '28px 28px 64px', minHeight: '100vh', fontFamily: "'Montserrat', sans-serif" }}>
 
         {/* Hero */}
         <div style={{ display: 'flex', gap: 24, marginBottom: 28, flexWrap: 'wrap' }}>

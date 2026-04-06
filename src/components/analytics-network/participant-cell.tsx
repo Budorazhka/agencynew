@@ -13,7 +13,7 @@ interface ParticipantCellProps {
 export function ParticipantCell({ partner }: ParticipantCellProps) {
     const totalMinutesToday = partner.platformMinutesToday + partner.crmMinutesToday;
     const markerMeta = getMarkerMeta(partner.activityMarker);
-    const onlineDotClassName = partner.isOnline ? "bg-emerald-500" : "bg-slate-400";
+    const onlineDotClassName = partner.isOnline ? "bg-emerald-400" : "bg-white/35";
 
     return (
         <div className="flex items-center gap-3">
@@ -21,26 +21,30 @@ export function ParticipantCell({ partner }: ParticipantCellProps) {
                 <img
                     src={partner.avatarUrl}
                     alt={partner.name}
-                    className="h-10 w-10 rounded-full object-cover"
+                    className="h-10 w-10 rounded-full object-cover ring-1 ring-white/15"
                     width={40}
                     height={40}
                 />
             </div>
             <div className="min-w-0 flex-1">
                 <div className="flex items-center">
-                    <p className="font-semibold text-sm text-slate-900 truncate">{partner.name}</p>
+                    <p className="truncate text-[0.9375rem] font-semibold leading-snug text-[color:var(--app-text)]">
+                        {partner.name}
+                    </p>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs">
+                <div className="flex items-center gap-1.5 text-[0.8125rem] leading-snug">
                     {partner.isOnline ? (
-                        <span className="font-medium uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
+                        <span className="font-semibold uppercase tracking-wide text-emerald-700">
                             Онлайн
                         </span>
                     ) : (
-                        <span className="text-muted-foreground">был онлайн {formatLastSeen(partner.lastSeenMinutesAgo)}</span>
+                        <span className="text-[color:var(--app-text-muted)]">
+                            был онлайн {formatLastSeen(partner.lastSeenMinutesAgo)}
+                        </span>
                     )}
-                    <span className={cn("h-2 w-2 rounded-full", onlineDotClassName)} aria-hidden />
+                    <span className={cn("h-2 w-2 shrink-0 rounded-full", onlineDotClassName)} aria-hidden />
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="mt-0.5 text-[0.8125rem] leading-snug text-[color:var(--app-text-muted)]">
                     {partner.activityMarker === "red" ? (
                         <span className={markerMeta.textClassName}>Не был сегодня</span>
                     ) : (
@@ -65,18 +69,18 @@ function formatLastSeen(minutes: number | null): string {
 function getMarkerMeta(marker: ActivityMarker): { textClassName: string } {
     if (marker === "green") {
         return {
-            textClassName: "text-emerald-600 dark:text-emerald-400",
+            textClassName: "font-medium text-emerald-700",
         };
     }
 
     if (marker === "yellow") {
         return {
-            textClassName: "text-amber-600 dark:text-amber-400",
+            textClassName: "font-medium text-amber-800",
         };
     }
 
     return {
-        textClassName: "text-rose-600 dark:text-rose-400",
+        textClassName: "font-medium text-rose-700",
     };
 }
 

@@ -87,15 +87,14 @@ export function CalendarPage() {
   const MONTH_NAMES = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
   const DAY_NAMES = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
 
-  function cellBackground(isSelected: boolean, isToday: boolean, isWeekend: boolean) {
-    if (isSelected) return 'rgba(201,168,76,0.16)'
-    if (isToday) return 'rgba(201,168,76,0.08)'
-    if (isWeekend) return 'rgba(255,255,255,0.03)'
-    return 'rgba(255,255,255,0.02)'
+  function cellBackground(isSelected: boolean, isToday: boolean, _isWeekend: boolean) {
+    if (isSelected) return 'var(--nav-item-bg-active)'
+    if (isToday) return 'var(--workspace-cal-chip-bg)'
+    return 'var(--workspace-cal-cell-fill)'
   }
 
   return (
-    <DashboardShell topBack={{ label: 'Назад', route: '/dashboard' }}>
+    <DashboardShell>
       <div
         style={{
           height: VIEWPORT_H,
@@ -107,6 +106,7 @@ export function CalendarPage() {
           flexDirection: 'column',
           overflow: 'hidden',
           minHeight: 0,
+          background: 'var(--app-bg)',
         }}
       >
         {/* Две колонки: сетка + выбранный день — на одну высоту экрана */}
@@ -141,7 +141,7 @@ export function CalendarPage() {
                 marginBottom: 10,
               }}
             >
-              <div style={{ fontSize: 20, fontWeight: 800, color: '#f0fdf4', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--app-text)', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
                 {MONTH_NAMES[month]} <span style={{ color: 'var(--gold)' }}>{year}</span>
               </div>
               <div style={{ display: 'flex', gap: 6 }}>
@@ -150,10 +150,10 @@ export function CalendarPage() {
                   onClick={prevMonth}
                   style={{
                     padding: '6px 10px',
-                    background: 'rgba(15,35,30,0.85)',
-                    border: '1px solid rgba(255,255,255,0.12)',
+                    background: 'var(--workspace-cal-nav-bg)',
+                    border: '1px solid var(--green-border)',
                     borderRadius: 8,
-                    color: 'rgba(240,253,244,0.85)',
+                    color: 'var(--app-text-muted)',
                     cursor: 'pointer',
                   }}
                 >
@@ -180,10 +180,10 @@ export function CalendarPage() {
                   onClick={nextMonth}
                   style={{
                     padding: '6px 10px',
-                    background: 'rgba(15,35,30,0.85)',
-                    border: '1px solid rgba(255,255,255,0.12)',
+                    background: 'var(--workspace-cal-nav-bg)',
+                    border: '1px solid var(--green-border)',
                     borderRadius: 8,
-                    color: 'rgba(240,253,244,0.85)',
+                    color: 'var(--app-text-muted)',
                     cursor: 'pointer',
                   }}
                 >
@@ -209,7 +209,7 @@ export function CalendarPage() {
                     fontWeight: 700,
                     letterSpacing: '0.06em',
                     textTransform: 'uppercase' as const,
-                    color: 'rgba(208,232,223,0.5)',
+                    color: 'var(--app-text-subtle)',
                     textAlign: 'center' as const,
                     padding: '4px 2px',
                   }}
@@ -232,7 +232,7 @@ export function CalendarPage() {
             >
               {monthCells.map((date, i) => {
                 if (!date) {
-                  return <div key={`e-${i}`} style={{ minHeight: 0, borderRadius: 8, background: 'rgba(0,0,0,0.12)' }} />
+                  return <div key={`e-${i}`} style={{ minHeight: 0, borderRadius: 8, background: 'var(--green-deep)' }} />
                 }
                 const dayEvents = eventsForDate(date)
                 const isToday = date === fmt(today)
@@ -261,7 +261,7 @@ export function CalendarPage() {
                       borderRadius: 8,
                       cursor: 'pointer',
                       background: cellBackground(isSelected, isToday, isWeekend),
-                      border: `1px solid ${isSelected ? 'rgba(201,168,76,0.5)' : isToday ? 'rgba(201,168,76,0.35)' : 'rgba(255,255,255,0.07)'}`,
+                      border: `1px solid ${isSelected ? 'var(--workspace-cal-chip-border)' : isToday ? 'var(--hub-card-border-hover)' : 'var(--green-border)'}`,
                       transition: 'background 0.12s, border-color 0.12s',
                       display: 'flex',
                       flexDirection: 'column',
@@ -270,7 +270,7 @@ export function CalendarPage() {
                     }}
                     onMouseEnter={e => {
                       const el = e.currentTarget
-                      if (!isSelected) el.style.background = 'rgba(201,168,76,0.07)'
+                      if (!isSelected) el.style.background = 'var(--hub-action-hover)'
                     }}
                     onMouseLeave={e => {
                       const el = e.currentTarget
@@ -289,9 +289,9 @@ export function CalendarPage() {
                         borderRadius: 999,
                         fontSize: 11,
                         fontWeight: isToday ? 800 : 600,
-                        color: isToday ? '#1a1400' : 'rgba(240,253,244,0.92)',
-                        background: isToday ? 'var(--gold)' : 'transparent',
-                        border: isToday ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                        color: isToday ? 'var(--workspace-cal-today-fg)' : 'var(--app-text)',
+                        background: isToday ? 'var(--workspace-cal-today-bg)' : 'transparent',
+                        border: isToday ? 'none' : '1px solid var(--hub-card-border)',
                         flexShrink: 0,
                       }}
                     >
@@ -309,7 +309,7 @@ export function CalendarPage() {
                             borderRadius: 4,
                             borderLeft: `2px solid ${EVENT_TYPE_COLORS[ev.type]}`,
                             background: EVENT_CHIP_BG[ev.type],
-                            color: 'rgba(240,253,244,0.95)',
+                            color: 'var(--app-text)',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap' as const,
@@ -348,8 +348,8 @@ export function CalendarPage() {
                 minHeight: 0,
                 display: 'flex',
                 flexDirection: 'column',
-                background: 'rgba(15,35,30,0.95)',
-                border: '1px solid rgba(230,195,100,0.22)',
+                background: 'var(--hub-card-bg)',
+                border: '1px solid var(--hub-card-border)',
                 borderRadius: 12,
                 overflow: 'hidden',
               }}
@@ -357,7 +357,7 @@ export function CalendarPage() {
               <div
                 style={{
                   padding: '12px 14px',
-                  borderBottom: '1px solid rgba(255,255,255,0.08)',
+                  borderBottom: '1px solid var(--divider-subtle)',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'flex-start',
@@ -378,7 +378,7 @@ export function CalendarPage() {
                   >
                     Выбранный день
                   </div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: '#f0fdf4', lineHeight: 1.25 }}>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--app-text)', lineHeight: 1.25 }}>
                     {new Date(selectedDate + 'T12:00:00').toLocaleDateString('ru-RU', {
                       weekday: 'long',
                       day: 'numeric',
@@ -416,7 +416,7 @@ export function CalendarPage() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     padding: 20,
-                    color: 'rgba(208,232,223,0.45)',
+                    color: 'var(--app-text-subtle)',
                     fontSize: 13,
                     textAlign: 'center',
                   }}
@@ -439,8 +439,8 @@ export function CalendarPage() {
                         padding: '10px 14px',
                         borderLeft: `3px solid ${EVENT_TYPE_COLORS[ev.type]}`,
                         marginBottom: 2,
-                        borderBottom: '1px solid rgba(255,255,255,0.04)',
-                        background: 'rgba(0,17,13,0.2)',
+                        borderBottom: '1px solid var(--divider-subtle)',
+                        background: 'var(--workspace-row-bg)',
                       }}
                     >
                       <div
@@ -477,11 +477,11 @@ export function CalendarPage() {
                           <Clock size={12} /> {ev.time}
                         </span>
                       </div>
-                      <div style={{ fontSize: 13, color: '#f0fdf4', fontWeight: 600, marginBottom: 6, lineHeight: 1.35 }}>
+                      <div style={{ fontSize: 13, color: 'var(--app-text)', fontWeight: 600, marginBottom: 6, lineHeight: 1.35 }}>
                         {ev.title}
                       </div>
                       {ev.client && (
-                        <div style={{ fontSize: 12, color: 'rgba(208,232,223,0.7)', display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <div style={{ fontSize: 12, color: 'var(--app-text-muted)', display: 'flex', alignItems: 'center', gap: 5 }}>
                           <User size={12} /> {ev.client}
                         </div>
                       )}
@@ -489,7 +489,7 @@ export function CalendarPage() {
                         <div
                           style={{
                             fontSize: 12,
-                            color: 'rgba(208,232,223,0.7)',
+                            color: 'var(--app-text-muted)',
                             display: 'flex',
                             alignItems: 'center',
                             gap: 5,

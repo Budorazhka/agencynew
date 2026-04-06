@@ -28,14 +28,15 @@ const SEGMENTS: { key: ClientSegment | 'all'; label: string }[] = [
   { key: 'archived', label: 'Архив' },
 ]
 
-const PRIMARY = '#e6c364'
-const ON_PRIMARY = '#3d2e00'
-const BG_PAGE = '#031712'
-const CARD = '#112d1c'
-const BORDER = '#1e4a2a'
-const SURFACE_LOW = '#0a1f12'
-const SURFACE_HIGH = '#192e28'
-const MUTED_ICON_BOX = '#243933'
+/** Токены ALPHABASE / хабы — светлая и тёмная тема (`index.css`). */
+const PRIMARY = 'var(--theme-accent-heading)'
+const ON_PRIMARY = 'var(--hub-tile-icon-hover-fg)'
+const BG_PAGE = 'var(--app-bg)'
+const CARD = 'var(--green-card)'
+const BORDER = 'var(--green-border)'
+const SURFACE_LOW = 'var(--green-deep)'
+const SURFACE_HIGH = 'var(--green-card-hover)'
+const MUTED_ICON_BOX = 'var(--header-avatar-bg)'
 
 const PAGE_SIZE = 8
 
@@ -64,9 +65,9 @@ function SegmentBadge({ segment }: { segment: ClientSegment }) {
     },
     golden: {
       bg: 'rgba(230, 195, 100, 0.1)',
-      text: PRIMARY,
+      text: 'var(--gold-light)',
       border: 'rgba(230, 195, 100, 0.2)',
-      dot: PRIMARY,
+      dot: 'var(--gold)',
     },
     deferred: {
       bg: 'rgba(249, 115, 22, 0.1)',
@@ -143,10 +144,7 @@ export function ClientsListPage() {
   const totalFmt = clients.length.toLocaleString('ru-RU')
 
   return (
-    <DashboardShell
-      hideSidebar
-      topBack={{ label: 'Назад', route: '/dashboard/crm' }}
-    >
+    <DashboardShell hideSidebar>
       <div
         style={{
           flex: 1,
@@ -166,33 +164,14 @@ export function ClientsListPage() {
         {/* Page header */}
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 12, flexShrink: 0 }}>
           <div>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', margin: 0, lineHeight: 1.2 }}>
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--app-text)', letterSpacing: '-0.02em', margin: 0, lineHeight: 1.2 }}>
               Клиенты
             </h1>
-            <p style={{ fontSize: 12, color: 'rgba(194, 200, 196, 0.55)', margin: '4px 0 0' }}>
+            <p style={{ fontSize: 12, color: 'var(--hub-desc)', margin: '4px 0 0' }}>
               Единая база физлиц и юрлиц · {totalFmt} записей
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setCreateOpen(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '9px 18px',
-              background: '#a07828',
-              border: 'none',
-              borderRadius: 8,
-              color: '#fff',
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              cursor: 'pointer',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
-            }}
-          >
+          <button type="button" className="alphabase-section-primary" onClick={() => setCreateOpen(true)}>
             Новый клиент
           </button>
         </div>
@@ -234,9 +213,9 @@ export function ClientsListPage() {
                 style={{
                   padding: '7px 14px',
                   borderRadius: 8,
-                  border: active ? `1px solid rgba(230,195,100,0.4)` : '1px solid rgba(255,255,255,0.1)',
-                  background: active ? 'rgba(230,195,100,0.1)' : 'transparent',
-                  color: active ? PRIMARY : 'rgba(194, 200, 196, 0.75)',
+                  border: active ? '1px solid var(--hub-card-border-hover)' : '1px solid var(--green-border)',
+                  background: active ? 'var(--nav-item-bg-active)' : 'transparent',
+                  color: active ? PRIMARY : 'var(--hub-body)',
                   fontSize: 12,
                   fontWeight: active ? 600 : 500,
                   cursor: 'pointer',
@@ -260,7 +239,7 @@ export function ClientsListPage() {
             background: CARD,
             padding: 12,
             borderRadius: 12,
-            border: `1px solid rgba(30, 74, 42, 0.4)`,
+            border: '1px solid var(--green-border)',
             display: 'flex',
             gap: 12,
             alignItems: 'center',
@@ -272,7 +251,7 @@ export function ClientsListPage() {
           <div style={{ flex: 1, position: 'relative', minWidth: 0 }}>
             <Search
               size={20}
-              color={`${PRIMARY}b3`}
+              color="var(--theme-accent-icon-dim)"
               style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
             />
             <input
@@ -286,7 +265,7 @@ export function ClientsListPage() {
                 background: SURFACE_LOW,
                 border: 'none',
                 borderRadius: 10,
-                color: '#d0e8df',
+                color: 'var(--app-text)',
                 fontSize: 13,
                 outline: 'none',
                 boxSizing: 'border-box',
@@ -304,7 +283,7 @@ export function ClientsListPage() {
                 background: SURFACE_LOW,
                 border: 'none',
                 borderRadius: 10,
-                color: 'rgba(208, 232, 223, 0.9)',
+                color: 'var(--app-text-muted)',
                 fontSize: 13,
                 cursor: 'pointer',
                 appearance: 'none',
@@ -323,7 +302,7 @@ export function ClientsListPage() {
                 top: '50%',
                 transform: 'translateY(-50%)',
                 pointerEvents: 'none',
-                color: `${PRIMARY}99`,
+                color: 'var(--theme-accent-icon-dim)',
                 fontSize: 18,
               }}
             >
@@ -339,7 +318,7 @@ export function ClientsListPage() {
               background: SURFACE_HIGH,
               border: 'none',
               borderRadius: 10,
-              color: '#d0e8df',
+              color: 'var(--app-text)',
               fontSize: 13,
               fontWeight: 500,
               cursor: 'pointer',
@@ -350,7 +329,7 @@ export function ClientsListPage() {
               fontFamily: 'inherit',
             }}
           >
-            <Filter size={20} color={PRIMARY} style={{ opacity: 0.85 }} />
+            <Filter size={20} color="var(--gold)" style={{ opacity: 0.85 }} />
             Фильтры
           </button>
         </div>
@@ -362,10 +341,10 @@ export function ClientsListPage() {
               padding: '8px 12px',
               flexShrink: 0,
               borderRadius: 10,
-              background: 'rgba(15, 35, 30, 0.65)',
-              border: '1px solid rgba(255,255,255,0.06)',
+              background: 'var(--hub-card-bg)',
+              border: '1px solid var(--hub-card-border)',
               fontSize: 12,
-              color: 'rgba(194, 200, 196, 0.55)',
+              color: 'var(--hub-body)',
             }}
           >
             Расширенные фильтры появятся здесь в следующей итерации.
@@ -395,7 +374,7 @@ export function ClientsListPage() {
                   zIndex: 2,
                 }}
               >
-                <tr style={{ background: 'rgba(17, 45, 28, 0.98)', borderBottom: '1px solid rgba(30, 74, 42, 0.35)', boxShadow: '0 1px 0 rgba(0,0,0,0.2)' }}>
+                <tr style={{ background: 'var(--green-card-hover)', borderBottom: '1px solid var(--green-border)', boxShadow: '0 1px 0 var(--divider-subtle)' }}>
                 {[
                   { w: '40%', label: 'КЛИЕНТ' },
                   { w: 'auto', label: 'ТЕЛЕФОН' },
@@ -411,7 +390,7 @@ export function ClientsListPage() {
                       fontWeight: 700,
                       letterSpacing: '0.12em',
                       textTransform: 'uppercase' as const,
-                      color: 'rgba(255,255,255,0.4)',
+                      color: 'var(--app-text-subtle)',
                       width: typeof col.w === 'number' ? col.w : col.w,
                       textAlign: (col.center ? 'center' : 'left') as 'center' | 'left',
                     }}
@@ -424,7 +403,7 @@ export function ClientsListPage() {
             <tbody>
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={5} style={{ padding: '48px 24px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                  <td colSpan={5} style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--app-text-subtle)' }}>
                     Клиенты не найдены
                   </td>
                 </tr>
@@ -448,12 +427,12 @@ export function ClientsListPage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                background: 'rgba(0, 17, 13, 0.45)',
-                borderTop: '1px solid rgba(30, 74, 42, 0.2)',
+                background: 'var(--workspace-row-bg)',
+                borderTop: '1px solid var(--green-border)',
                 flexShrink: 0,
               }}
             >
-              <p style={{ margin: 0, fontSize: 11, color: 'rgba(194, 200, 196, 0.4)' }}>
+              <p style={{ margin: 0, fontSize: 11, color: 'var(--workspace-text-dim)' }}>
                 Показано {startIdx}–{endIdx} из {filtered.length.toLocaleString('ru-RU')} записей
               </p>
               <Pagination page={safePage} totalPages={totalPages} onChange={setPage} />
@@ -482,7 +461,7 @@ export function ClientsListPage() {
             <BentoCard
               tileMinHeight={BENTO_TILE_MIN_PX}
               kicker="Средний чек"
-              icon={<Banknote size={18} color={PRIMARY} />}
+              icon={<Banknote size={18} color="var(--gold)" />}
               value="$285K"
             />
           </div>
@@ -490,10 +469,10 @@ export function ClientsListPage() {
             <BentoCard
               tileMinHeight={BENTO_TILE_MIN_PX}
               kicker="Популярный сектор"
-              icon={<Building size={18} color={PRIMARY} />}
+              icon={<Building size={18} color="var(--gold)" />}
               value="Бизнес-класс"
-              sub={<span style={{ fontSize: 12, color: 'rgba(194,200,196,0.52)', marginTop: 4, display: 'block' }}>68% новых заявок за неделю</span>}
-              decorative={<LineChart size={72} color={PRIMARY} style={{ opacity: 0.1 }} />}
+              sub={<span style={{ fontSize: 12, color: 'var(--workspace-text-muted)', marginTop: 4, display: 'block' }}>68% новых заявок за неделю</span>}
+              decorative={<LineChart size={72} color="var(--gold)" style={{ opacity: 0.1 }} />}
               hoverContent={<BatumiSegmentsHoverDetail />}
             />
           </div>
@@ -529,7 +508,7 @@ function Pagination({
         onClick={() => onChange(page - 1)}
         style={pgBtn(page <= 1)}
       >
-        <ChevronLeft size={18} color="rgba(194,200,196,0.35)" />
+        <ChevronLeft size={18} color="var(--app-text-subtle)" />
       </button>
       {pages.map(p => (
         <button
@@ -540,9 +519,9 @@ function Pagination({
             width: 32,
             height: 32,
             borderRadius: 8,
-            border: p === page ? `1px solid rgba(230,195,100,0.25)` : '1px solid rgba(255,255,255,0.05)',
-            background: p === page ? 'rgba(230,195,100,0.2)' : 'transparent',
-            color: p === page ? PRIMARY : 'rgba(194, 200, 196, 0.85)',
+            border: p === page ? '1px solid var(--hub-card-border-hover)' : '1px solid var(--hub-card-border)',
+            background: p === page ? 'var(--nav-item-bg-active)' : 'transparent',
+            color: p === page ? PRIMARY : 'var(--hub-body)',
             fontSize: 11,
             fontWeight: p === page ? 700 : 500,
             cursor: 'pointer',
@@ -558,7 +537,7 @@ function Pagination({
         onClick={() => onChange(page + 1)}
         style={pgBtn(page >= totalPages)}
       >
-        <ChevronRight size={18} color="rgba(194,200,196,0.5)" />
+        <ChevronRight size={18} color="var(--app-text-muted)" />
       </button>
     </div>
   )
@@ -569,7 +548,7 @@ function pgBtn(disabled: boolean): CSSProperties {
     width: 32,
     height: 32,
     borderRadius: 8,
-    border: '1px solid rgba(255,255,255,0.05)',
+    border: '1px solid var(--hub-card-border)',
     background: 'transparent',
     display: 'flex',
     alignItems: 'center',
@@ -611,20 +590,20 @@ function BatumiSegmentsHoverDetail() {
               gap: '6px 16px',
               alignItems: 'baseline',
               padding: '10px 0',
-              borderBottom: '1px solid rgba(255,255,255,0.1)',
+              borderBottom: '1px solid var(--divider-subtle)',
             }}
           >
             <div>
-              <div style={{ fontSize: 15, fontWeight: 600, color: '#fff' }}>{r.seg}</div>
+              <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--app-text)' }}>{r.seg}</div>
               {r.note && (
-                <div style={{ fontSize: 13, color: 'rgba(220, 230, 224, 0.78)', marginTop: 4, lineHeight: 1.4 }}>{r.note}</div>
+                <div style={{ fontSize: 13, color: 'var(--hub-body)', marginTop: 4, lineHeight: 1.4 }}>{r.note}</div>
               )}
             </div>
             <div style={{ fontSize: 15, fontWeight: 700, color: PRIMARY, whiteSpace: 'nowrap', textAlign: 'right' }}>{r.range}</div>
           </div>
         ))}
       </div>
-      <p style={{ margin: '16px 0 0', fontSize: 12, color: 'rgba(220, 230, 224, 0.68)', lineHeight: 1.45 }}>
+      <p style={{ margin: '16px 0 0', fontSize: 12, color: 'var(--app-text-muted)', lineHeight: 1.45 }}>
         Ориентиры по обзорам рынка новостроек Батуми, 2025–2026. Не оферта — для аналитики в CRM.
       </p>
     </div>
@@ -690,12 +669,12 @@ function BentoCard({
               maxHeight: 'min(75vh, 520px)',
               overflowY: 'auto' as const,
               padding: '20px 22px',
-              background: '#050f0c',
-              border: '2px solid rgba(230, 195, 100, 0.5)',
+              background: 'var(--app-bg)',
+              border: '2px solid var(--hub-card-border-hover)',
               borderRadius: 12,
               boxShadow: '0 20px 56px rgba(0,0,0,0.85), 0 0 0 1px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06)',
               zIndex: 42,
-              color: '#e8f2ec',
+              color: 'var(--app-text)',
               boxSizing: 'border-box' as const,
             }}
           >
@@ -708,11 +687,11 @@ function BentoCard({
           position: 'relative',
           overflow: 'hidden',
           borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.05)',
-          background: 'rgba(15, 35, 30, 0.8)',
+          border: '1px solid var(--hub-card-border)',
+          background: 'var(--hub-card-bg)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          boxShadow: 'inset 0 1px 0 rgba(201,168,76,0.18)',
+          boxShadow: 'inset 0 0 0 1px var(--hub-card-border)',
           ...(tileMinHeight != null
             ? {
                 flex: 1,
@@ -737,7 +716,7 @@ function BentoCard({
             </span>
             {icon}
           </div>
-          <h4 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>{value}</h4>
+          <h4 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: 'var(--app-text)', lineHeight: 1.2 }}>{value}</h4>
           {sub != null && sub !== false ? <div style={{ marginTop: 6 }}>{sub}</div> : null}
         </div>
         {decorative && (
@@ -778,8 +757,8 @@ function ClientTableRow({
       style={{
         cursor: 'pointer',
         transition: 'background 0.15s',
-        background: hover ? 'rgba(255,255,255,0.02)' : 'transparent',
-        borderBottom: isLast ? 'none' : '1px solid rgba(30, 74, 42, 0.2)',
+        background: hover ? 'var(--dropdown-hover)' : 'transparent',
+        borderBottom: isLast ? 'none' : '1px solid var(--green-border)',
       }}
     >
       <td style={{ padding: '12px 16px', verticalAlign: 'middle' as const }}>
@@ -793,8 +772,8 @@ function ClientTableRow({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: muted ? MUTED_ICON_BOX : PRIMARY,
-              border: muted ? '1px solid rgba(66, 72, 70, 0.35)' : 'none',
+              background: muted ? MUTED_ICON_BOX : 'var(--gold)',
+              border: muted ? '1px solid var(--divider-subtle)' : 'none',
             }}
           >
             {client.type === 'company' ? (
@@ -808,7 +787,7 @@ function ClientTableRow({
               style={{
                 fontSize: 13,
                 fontWeight: 600,
-                color: hover ? PRIMARY : '#fff',
+                color: hover ? PRIMARY : 'var(--app-text)',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap' as const,
@@ -821,7 +800,7 @@ function ClientTableRow({
               <div
                 style={{
                   fontSize: 11,
-                  color: 'rgba(194, 200, 196, 0.55)',
+                  color: 'var(--hub-body)',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap' as const,
@@ -835,8 +814,8 @@ function ClientTableRow({
         </div>
       </td>
       <td style={{ padding: '12px 16px', verticalAlign: 'middle' as const }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#d0e8df' }}>
-          <Phone size={16} color={`${PRIMARY}80`} style={{ flexShrink: 0 }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--app-text-muted)' }}>
+          <Phone size={16} color="var(--theme-accent-icon-dim)" style={{ flexShrink: 0 }} />
           {client.phone}
         </div>
       </td>
@@ -849,7 +828,7 @@ function ClientTableRow({
             background: SURFACE_HIGH,
             fontSize: 11,
             fontWeight: 500,
-            color: 'rgba(194, 200, 196, 0.85)',
+            color: 'var(--hub-body)',
           }}
         >
           {client.source}
@@ -868,14 +847,14 @@ function ClientTableRow({
             style={{
               fontSize: 13,
               fontWeight: 700,
-              color: client.dealsCount > 0 ? PRIMARY : 'rgba(194, 200, 196, 0.35)',
+              color: client.dealsCount > 0 ? PRIMARY : 'var(--app-text-subtle)',
             }}
           >
             {client.dealsCount}
           </span>
           <ChevronRight
             size={16}
-            color={client.dealsCount > 0 ? `${PRIMARY}80` : 'rgba(194,200,196,0.2)'}
+            color={client.dealsCount > 0 ? 'var(--theme-accent-icon-dim)' : 'var(--app-text-subtle)'}
             style={{ transform: chevHover ? 'translateX(3px)' : 'none', transition: 'transform 0.2s' }}
           />
         </div>

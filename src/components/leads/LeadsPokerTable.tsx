@@ -105,11 +105,11 @@ function StageColumn({
   return (
     <div className="flex flex-col items-center gap-0.5 flex-shrink-0" style={{ width: 102 }}>
       {/* Eye */}
-      <button onClick={() => setVisible((v) => !v)} className="text-[rgba(242,207,141,0.35)] hover:text-[rgba(242,207,141,0.8)] transition-colors mb-0.5">
+      <button onClick={() => setVisible((v) => !v)} className="text-[color:var(--theme-accent-icon-dim)] hover:text-[color:var(--app-text-muted)] transition-colors mb-0.5">
         {visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
       </button>
       {/* Name */}
-      <p className="text-[9px] font-bold uppercase tracking-wide text-[rgba(242,207,141,0.7)] text-center leading-tight min-h-[28px] flex items-end justify-center w-full px-1">
+      <p className="text-[9px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] text-center leading-tight min-h-[28px] flex items-end justify-center w-full px-1">
         {stageName}
       </p>
       {/* Arrows + card */}
@@ -117,16 +117,16 @@ function StageColumn({
         <button
           onClick={() => setIdx((i) => Math.max(0, i - 1))}
           disabled={clampedIdx === 0}
-          className="text-[rgba(242,207,141,0.35)] hover:text-[rgba(242,207,141,0.85)] disabled:opacity-20 transition-colors"
+          className="text-[color:var(--theme-accent-icon-dim)] hover:text-[color:var(--app-text-muted)] disabled:opacity-20 transition-colors"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
         </button>
         <div
           ref={setNodeRef}
-          className={cn('rounded-[6px] transition-all', isOver && 'ring-2 ring-[rgba(242,207,141,0.6)]')}
+          className={cn('rounded-[6px] transition-all', isOver && 'ring-2 ring-[color-mix(in_srgb,var(--gold)_60%,transparent)]')}
         >
           {visible && current ? (
-            <div className={cn('rounded-[5px]', selectedId === current.id && 'ring-2 ring-[rgba(242,207,141,1)]')}>
+            <div className={cn('rounded-[5px]', selectedId === current.id && 'ring-2 ring-[var(--gold)]')}>
               <PlayingCard lead={current} onClick={() => onSelect(current)} />
             </div>
           ) : (
@@ -138,13 +138,13 @@ function StageColumn({
         <button
           onClick={() => setIdx((i) => Math.min(leads.length - 1, i + 1))}
           disabled={clampedIdx >= leads.length - 1}
-          className="text-[rgba(242,207,141,0.35)] hover:text-[rgba(242,207,141,0.85)] disabled:opacity-20 transition-colors"
+          className="text-[color:var(--theme-accent-icon-dim)] hover:text-[color:var(--app-text-muted)] disabled:opacity-20 transition-colors"
         >
           <ChevronRight className="w-3.5 h-3.5" />
         </button>
       </div>
       {/* Count */}
-      <p className="text-[9px] text-[rgba(242,207,141,0.3)] mt-0.5">
+      <p className="text-[9px] text-[color:var(--theme-accent-icon-dim)] mt-0.5">
         {leads.length > 0 ? `${clampedIdx + 1}/${leads.length}` : '0'}
       </p>
     </div>
@@ -166,7 +166,7 @@ function CenterOval({ lead, managerName, onHistory }: {
         className="absolute inset-0 rounded-[50%]"
         style={{
           background: 'radial-gradient(ellipse, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.22) 100%)',
-          border: '1.5px solid rgba(242,207,141,0.18)',
+          border: '1.5px solid color-mix(in srgb, var(--gold) 18%, transparent)',
           boxShadow: 'inset 0 0 50px rgba(0,0,0,0.35)',
         }}
       />
@@ -174,19 +174,19 @@ function CenterOval({ lead, managerName, onHistory }: {
         {lead ? (
           <>
             <div className="flex items-center justify-center gap-3 mb-1">
-              <p className="text-[9px] font-bold uppercase tracking-widest text-[rgba(242,207,141,0.45)]">Расклад</p>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-[color:var(--hub-stat-label)]">Расклад</p>
               <button
                 onClick={onHistory}
-                className="flex items-center gap-1 rounded-full border border-[rgba(242,207,141,0.25)] px-2 py-0.5
-                  text-[9px] text-[rgba(242,207,141,0.55)] hover:text-[rgba(242,207,141,0.9)] hover:border-[rgba(242,207,141,0.5)] transition-colors"
+                className="flex items-center gap-1 rounded-full border border-[color:var(--hub-tile-icon-border)] px-2 py-0.5
+                  text-[9px] text-[color:var(--hub-stat-label)] hover:text-[color:var(--theme-accent-heading)] hover:border-[color:var(--hub-card-border-hover)] transition-colors"
               >
                 <History className="w-2 h-2" />
                 История
               </button>
             </div>
-            <p className="text-[9px] text-[rgba(242,207,141,0.25)] mb-0.5">От: {fmt(lead.createdAt)}</p>
+            <p className="text-[9px] text-[color:var(--theme-accent-icon-dim)] mb-0.5">От: {fmt(lead.createdAt)}</p>
             <p className="text-xl font-bold text-[rgba(255,244,215,0.95)] leading-tight">{lead.name ?? 'Без имени'}</p>
-            <p className="text-[10px] text-[rgba(242,207,141,0.5)] mb-2">{stageName}</p>
+            <p className="text-[10px] text-[color:var(--hub-desc)] mb-2">{stageName}</p>
             <div className="flex items-center justify-center gap-5 mb-2">
               {[
                 { label: 'Задача', icon: <CheckSquare className="w-2.5 h-2.5" />, value: 'Нет', bad: false },
@@ -194,27 +194,27 @@ function CenterOval({ lead, managerName, onHistory }: {
                 { label: 'Просрочка', icon: <Clock className="w-2.5 h-2.5" />, value: lead.taskOverdue ? 'Да' : 'Нет', bad: !!lead.taskOverdue },
               ].map(({ label, icon, value, bad }) => (
                 <div key={label} className="text-center">
-                  <div className={cn('flex justify-center mb-0.5', bad ? 'text-rose-400' : 'text-[rgba(242,207,141,0.4)]')}>{icon}</div>
-                  <p className="text-[8px] uppercase tracking-wide text-[rgba(242,207,141,0.3)]">{label}</p>
-                  <p className={cn('text-[10px] font-bold', bad ? 'text-rose-400' : 'text-[rgba(242,207,141,0.55)]')}>{value}</p>
+                  <div className={cn('flex justify-center mb-0.5', bad ? 'text-rose-400' : 'text-[color:var(--workspace-text-muted)]')}>{icon}</div>
+                  <p className="text-[8px] uppercase tracking-wide text-[color:var(--theme-accent-icon-dim)]">{label}</p>
+                  <p className={cn('text-[10px] font-bold', bad ? 'text-rose-400' : 'text-[color:var(--hub-stat-label)]')}>{value}</p>
                 </div>
               ))}
             </div>
             <div className="flex items-center justify-center gap-6">
               <div>
-                <p className="text-[8px] uppercase tracking-wide text-[rgba(242,207,141,0.3)]">Прогресс</p>
+                <p className="text-[8px] uppercase tracking-wide text-[color:var(--theme-accent-icon-dim)]">Прогресс</p>
                 <p className="text-[10px] font-semibold text-[rgba(255,244,215,0.6)]">{fmt(lead.createdAt)}</p>
               </div>
               {lead.commissionUsd != null && (
                 <div>
-                  <p className="text-[8px] uppercase tracking-wide text-[rgba(242,207,141,0.3)]">Комиссия</p>
+                  <p className="text-[8px] uppercase tracking-wide text-[color:var(--theme-accent-icon-dim)]">Комиссия</p>
                   <p className="text-[12px] font-bold text-emerald-400">${lead.commissionUsd.toLocaleString('en-US')}</p>
                 </div>
               )}
             </div>
           </>
         ) : (
-          <p className="text-[rgba(242,207,141,0.2)] text-sm">Выберите карточку</p>
+          <p className="text-[color:var(--hub-card-border)] text-sm">Выберите карточку</p>
         )}
       </div>
     </div>
@@ -281,23 +281,23 @@ export function LeadsPokerTable() {
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div
-        className="relative rounded-xl overflow-hidden border border-[rgba(242,207,141,0.18)]"
+        className="relative rounded-xl overflow-hidden border border-[color:var(--hub-card-border)]"
         style={{
           background: 'radial-gradient(ellipse at 50% 30%, rgba(18,58,44,0.98) 0%, rgba(10,38,28,0.99) 60%, rgba(6,24,18,1) 100%)',
         }}
       >
         {/* Gold rail */}
-        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[rgba(242,207,141,0.5)] to-transparent pointer-events-none" />
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[color-mix(in_srgb,var(--gold)_50%,transparent)] to-transparent pointer-events-none" />
 
         {/* Filter bar */}
-        <div className="flex items-center gap-3 px-4 py-2 border-b border-[rgba(242,207,141,0.1)] flex-wrap">
-          <span className="text-[9px] font-bold uppercase tracking-widest text-[rgba(242,207,141,0.45)]">Менеджер</span>
+        <div className="flex items-center gap-3 px-4 py-2 border-b border-[color:var(--hub-tile-icon-border)] flex-wrap">
+          <span className="text-[9px] font-bold uppercase tracking-widest text-[color:var(--hub-stat-label)]">Менеджер</span>
           <select
             value={filterManager}
             onChange={(e) => setFilterManager(e.target.value)}
-            className="bg-[rgba(0,0,0,0.3)] border border-[rgba(242,207,141,0.2)] rounded text-[11px]
-              text-[rgba(255,244,215,0.8)] px-2 py-0.5 outline-none cursor-pointer
-              hover:border-[rgba(242,207,141,0.45)] transition-colors"
+            className="bg-[rgba(0,0,0,0.3)] border border-[color:var(--hub-card-border)] rounded text-[11px]
+              text-[color:var(--app-text-muted)] px-2 py-0.5 outline-none cursor-pointer
+              hover:border-[color:var(--hub-card-border-hover)] transition-colors"
           >
             <option value="all">Вся сеть</option>
             {leadManagers.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
@@ -307,9 +307,9 @@ export function LeadsPokerTable() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Поиск по имени"
-            className="bg-[rgba(0,0,0,0.25)] border border-[rgba(242,207,141,0.15)] rounded text-[11px]
-              text-[rgba(255,244,215,0.8)] placeholder:text-[rgba(242,207,141,0.2)]
-              px-3 py-0.5 outline-none w-40 focus:border-[rgba(242,207,141,0.4)] transition-colors"
+            className="bg-[rgba(0,0,0,0.25)] border border-[color:var(--hub-card-border)] rounded text-[11px]
+              text-[color:var(--app-text-muted)] placeholder:text-[color:var(--hub-card-border)]
+              px-3 py-0.5 outline-none w-40 focus:border-[color:var(--hub-card-border-hover)] transition-colors"
           />
         </div>
 
@@ -371,12 +371,12 @@ export function LeadsPokerTable() {
 
           {/* Manager bar */}
           <div className="flex justify-center">
-            <div className="flex items-center gap-2 rounded-full bg-[rgba(0,0,0,0.4)] border border-[rgba(242,207,141,0.13)] px-4 py-1.5">
-              <div className="w-6 h-6 rounded-full bg-[rgba(242,207,141,0.18)] border border-[rgba(242,207,141,0.3)] flex items-center justify-center text-[9px] font-bold text-[rgba(242,207,141,0.85)]">
+            <div className="flex items-center gap-2 rounded-full bg-[rgba(0,0,0,0.4)] border border-[color:var(--hub-tile-icon-border)] px-4 py-1.5">
+              <div className="w-6 h-6 rounded-full bg-[color-mix(in_srgb,var(--gold)_18%,transparent)] border border-[color:var(--hub-card-border-hover)] flex items-center justify-center text-[9px] font-bold text-[color:var(--app-text-muted)]">
                 {avatarText}
               </div>
               <p className="text-[11px] font-semibold text-[rgba(255,244,215,0.65)]">
-                <span className="text-[rgba(242,207,141,0.4)] uppercase tracking-wide text-[8px] mr-1">Менеджер:</span>
+                <span className="text-[color:var(--workspace-text-muted)] uppercase tracking-wide text-[8px] mr-1">Менеджер:</span>
                 {displayedManager}
               </p>
             </div>
