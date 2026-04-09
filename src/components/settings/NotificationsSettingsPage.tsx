@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Bell, Mail, MessageSquare, Smartphone } from 'lucide-react'
+import { Fragment, useMemo, useState } from 'react'
+import { Bell, Filter, Mail, MessageSquare, Smartphone } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 
 const C = {
@@ -77,9 +77,29 @@ function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
   )
 }
 
+const GROUP_OPTIONS = ['Лиды', 'Сделки', 'Задачи', 'Брони', 'Система']
+
 export function NotificationsSettingsPage() {
   const [events, setEvents] = useState<EventRow[]>(INITIAL_EVENTS)
   const [saved, setSaved] = useState(false)
+  const [groupFilter, setGroupFilter] = useState<string>('all')
+  const [query, setQuery] = useState('')
+
+  const filteredEvents = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    return events.filter((e) => {
+      if (groupFilter !== 'all' && e.group !== groupFilter) return false
+      if (q && !e.label.toLowerCase().includes(q)) return false
+      return true
+    })
+  }, [events, groupFilter, query])
+
+  const kpi = useMemo(() => {
+    const withPush = filteredEvents.filter((e) => e.channels.push).length
+    const withSms = filteredEvents.filter((e) => e.channels.sms).length
+    const anyChannel = filteredEvents.filter((e) => Object.values(e.channels).some(Boolean)).length
+    return { total: filteredEvents.length, withPush, withSms, anyChannel }
+  }, [filteredEvents])
 
   function toggle(eventKey: string, channel: Channel) {
     setEvents(prev => prev.map(e =>
@@ -93,7 +113,7 @@ export function NotificationsSettingsPage() {
     setEvents(prev => prev.map(e => ({ ...e, channels: { ...e.channels, [channel]: value } })))
   }
 
-  const groups = groupBy(events, e => e.group)
+  const groups = groupBy(filteredEvents, (e) => e.group)
 
   return (
     <DashboardShell>
@@ -101,6 +121,53 @@ export function NotificationsSettingsPage() {
         <div style={{ marginBottom: 24 }}>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 4 }}>Настройки уведомлений</div>
           <div style={{ fontSize: 12, color: C.whiteLow }}>Управляйте каналами доставки для каждого типа события</div>
+        </div>
+
+        <div className="mx-auto mb-5 max-w-6xl space-y-3">
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+            <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+              <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Событий в списке</p>
+              <p className="text-xl font-bold text-[color:var(--workspace-text)]">{kpi.total}</p>
+            </div>
+            <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+              <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">С push</p>
+              <p className="text-xl font-bold text-blue-300">{kpi.withPush}</p>
+            </div>
+            <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+              <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">С SMS</p>
+              <p className="text-xl font-bold text-amber-300">{kpi.withSms}</p>
+            </div>
+            <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+              <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Хотя бы 1 канал</p>
+              <p className="text-xl font-bold text-emerald-300">{kpi.anyChannel}</p>
+            </div>
+          </div>
+          <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+            <div className="mb-2 flex items-center gap-2">
+              <Filter className="size-4 text-[color:var(--gold)]" />
+              <span className="text-sm font-semibold text-[color:var(--theme-accent-heading)]">Фильтр таблицы</span>
+            </div>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <select
+                value={groupFilter}
+                onChange={(e) => setGroupFilter(e.target.value)}
+                className="rounded-md border border-[var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-2 text-sm text-[color:var(--workspace-text)] sm:max-w-xs"
+              >
+                <option value="all">Все группы</option>
+                {GROUP_OPTIONS.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </select>
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Поиск по названию события…"
+                className="min-w-0 flex-1 rounded-md border border-[var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-2 text-sm text-[color:var(--workspace-text)] placeholder:text-[color:var(--app-text-subtle)]"
+              />
+            </div>
+          </div>
         </div>
 
         <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, overflow: 'auto' }}>
@@ -128,8 +195,8 @@ export function NotificationsSettingsPage() {
             </thead>
             <tbody>
               {Object.entries(groups).map(([group, rows]) => (
-                <>
-                  <tr key={`group-${group}`}>
+                <Fragment key={group}>
+                  <tr>
                     <td colSpan={5} style={{
                       padding: '10px 18px 6px', fontSize: 10, fontWeight: 700,
                       letterSpacing: '0.12em', textTransform: 'uppercase',
@@ -151,7 +218,7 @@ export function NotificationsSettingsPage() {
                       ))}
                     </tr>
                   ))}
-                </>
+                </Fragment>
               ))}
             </tbody>
           </table>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ExternalLink, Pin, Search } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { useNewsFeed } from '@/context/NewsFeedContext'
@@ -39,26 +39,65 @@ export function NewsPage() {
   const [filter, setFilter] = useState<CategoryFilter>('all')
   const [search, setSearch] = useState('')
   const [expanded, setExpanded] = useState<string | null>(null)
+  const [sort, setSort] = useState<'new' | 'old'>('new')
 
-  const articles = allArticles.filter(a => {
-    const matchCat = filter === 'all' || a.category === filter
-    const q = search.trim().toLowerCase()
-    const matchQ =
-      !q ||
-      a.title.toLowerCase().includes(q) ||
-      a.body.toLowerCase().includes(q)
-    return matchCat && matchQ
-  })
+  const articles = useMemo(
+    () =>
+      allArticles.filter((a) => {
+        const matchCat = filter === 'all' || a.category === filter
+        const q = search.trim().toLowerCase()
+        const matchQ = !q || a.title.toLowerCase().includes(q) || a.body.toLowerCase().includes(q)
+        return matchCat && matchQ
+      }),
+    [allArticles, filter, search],
+  )
 
-  const pinned = articles.filter(a => a.pinned)
-  const regular = articles.filter(a => !a.pinned)
+  const sortedArticles = useMemo(() => {
+    const list = [...articles]
+    list.sort((x, y) =>
+      sort === 'new' ? y.publishedAt.localeCompare(x.publishedAt) : x.publishedAt.localeCompare(y.publishedAt),
+    )
+    return list
+  }, [articles, sort])
+
+  const pinned = sortedArticles.filter((a) => a.pinned)
+  const regular = sortedArticles.filter((a) => !a.pinned)
+
+  const kpi = useMemo(
+    () => ({
+      total: articles.length,
+      pinned: articles.filter((a) => a.pinned).length,
+      withLink: articles.filter((a) => !!a.linkUrl).length,
+      cats: new Set(articles.map((a) => a.category)).size,
+    }),
+    [articles],
+  )
 
   return (
     <DashboardShell>
-      <div style={{ padding: '24px 28px 48px', maxWidth: 820 }}>
+      <div style={{ padding: '24px 28px 48px', maxWidth: 900 }}>
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 4 }}>Новости и обновления</div>
           <div style={{ fontSize: 12, color: C.whiteLow }}>Корпоративные новости, изменения рынка и регламентов</div>
+        </div>
+
+        <div className="mb-4 grid grid-cols-2 gap-2 md:grid-cols-4">
+          <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+            <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">В выдаче</p>
+            <p className="text-xl font-bold text-[color:var(--workspace-text)]">{kpi.total}</p>
+          </div>
+          <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+            <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Закреплено</p>
+            <p className="text-xl font-bold text-[color:var(--gold)]">{kpi.pinned}</p>
+          </div>
+          <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+            <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">С внешней ссылкой</p>
+            <p className="text-xl font-bold text-blue-300">{kpi.withLink}</p>
+          </div>
+          <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+            <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Категорий</p>
+            <p className="text-xl font-bold text-emerald-300">{kpi.cats}</p>
+          </div>
         </div>
 
         {/* Search + filter */}
@@ -68,11 +107,19 @@ export function NewsPage() {
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Поиск по заголовку..."
+              placeholder="Поиск по заголовку и тексту..."
               style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', fontSize: 12, color: C.whiteMid, fontFamily: 'inherit' }}
             />
           </div>
-          <div style={{ display: 'flex', gap: 2 }}>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as 'new' | 'old')}
+            className="h-[34px] rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] px-2 text-xs text-[color:var(--workspace-text)]"
+          >
+            <option value="new">Сначала новые</option>
+            <option value="old">Сначала старые</option>
+          </select>
+          <div style={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
             {FILTER_TABS.map(t => (
               <button key={t.key} onClick={() => setFilter(t.key)} style={{
                 padding: '6px 12px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 11, fontWeight: filter === t.key ? 700 : 400,

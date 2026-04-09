@@ -136,7 +136,7 @@ export function SelectionCardPage() {
                   padding: '8px 14px', borderRadius: 8,
                   background: copied ? 'rgba(34,197,94,0.12)' : 'var(--hub-tile-icon-bg)',
                   border: `1px solid ${copied ? 'rgba(34,197,94,0.35)' : 'var(--hub-card-border)'}`,
-                  color: copied ? '#22c55e' : 'var(--app-text-muted)',
+                  color: copied ? 'var(--corporate-green)' : 'var(--app-text-muted)',
                   fontSize: 11, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
                 }}
               >
@@ -151,7 +151,7 @@ export function SelectionCardPage() {
                 padding: '8px 16px', borderRadius: 8,
                 background: sendSuccess ? 'rgba(34,197,94,0.15)' : 'var(--nav-item-bg-active)',
                 border: `1px solid ${sendSuccess ? 'rgba(34,197,94,0.4)' : 'var(--hub-card-border-hover)'}`,
-                color: sendSuccess ? '#22c55e' : 'var(--theme-accent-heading)',
+                color: sendSuccess ? 'var(--corporate-green)' : 'var(--theme-accent-heading)',
                 fontSize: 11, fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s',
                 letterSpacing: '0.04em',
               }}
@@ -207,7 +207,7 @@ export function SelectionCardPage() {
                 </div>
                 <div style={{ width: 1, background: 'var(--divider-subtle)' }} />
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: likedCount > 0 ? '#22c55e' : 'var(--app-text)' }}>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: likedCount > 0 ? 'var(--corporate-green)' : 'var(--app-text)' }}>
                     {likedCount}
                   </div>
                   <div style={{ fontSize: 10, color: 'var(--app-text-subtle)', letterSpacing: '0.06em' }}>понравилось</div>
@@ -402,7 +402,7 @@ export function SelectionCardPage() {
                 style={{
                   padding: '10px 16px', borderRadius: 8, width: '100%',
                   background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)',
-                  color: '#22c55e', fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                  color: 'var(--corporate-green)', fontSize: 12, fontWeight: 700, cursor: 'pointer',
                   letterSpacing: '0.04em',
                 }}
               >
@@ -463,7 +463,7 @@ function PropertyRow({ prop }: { prop: SelectionProperty }) {
 
       {/* Reaction */}
       <div style={{ flexShrink: 0, width: 20 }}>
-        {isLiked && <ThumbsUp size={14} color="#22c55e" />}
+        {isLiked && <ThumbsUp size={14} className="text-[color:var(--corporate-green)]" strokeWidth={2} />}
         {isHidden && <EyeOff size={14} color="var(--app-text-subtle)" />}
       </div>
 

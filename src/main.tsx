@@ -10,7 +10,6 @@ import { MockProvider } from '@/providers/MockProvider'
 import { LoadingProvider } from '@/providers/LoadingProvider'
 import App from './App'
 import HomePage from '@/pages/HomePage'
-import { SectionStubPage } from '@/pages/SectionStubPage'
 import { DashboardAccessDeniedPage } from '@/pages/DashboardAccessDeniedPage'
 import { OverviewGuard } from '@/components/dashboard/OverviewGuard'
 import { MyReportPage } from '@/components/dashboard/MyReportPage'
@@ -43,8 +42,8 @@ import { CalendarPage as CalendarPageFull } from '@/components/calendar/Calendar
 import { PartnersListPage } from '@/components/partners/PartnersListPage'
 import { PartnerCardPage } from '@/components/partners/PartnerCardPage'
 import { TeamOrgPage } from '@/components/team/TeamOrgPage'
-import { TeamKpiPage } from '@/components/team/TeamKpiPage'
 import { TeamAccessPage } from '@/components/team/TeamAccessPage'
+import BranchesPage from '@/components/team/BranchesPage'
 import { NotificationsSettingsPage } from '@/components/settings/NotificationsSettingsPage'
 import { ThemeSettingsPage } from '@/components/settings/ThemeSettingsPage'
 import { TariffPage } from '@/components/settings/TariffPage'
@@ -81,6 +80,34 @@ import SettingsHubPage from '@/pages/modules/SettingsHubPage'
 import SettingsNewsMailingsHubPage from '@/pages/modules/SettingsNewsMailingsHubPage'
 import NewsManagementSettingsPage from '@/pages/modules/NewsManagementSettingsPage'
 import MailingsManagementSettingsPage from '@/pages/modules/MailingsManagementSettingsPage'
+import RegistrationsPage from '@/components/newbuild/RegistrationsPage'
+import NewBuildingsCatalogPage from '@/components/newbuild/NewBuildingsCatalogPage'
+import NewBuildingsObjectsCommissionsPage from '@/components/newbuild/NewBuildingsObjectsCommissionsPage'
+import NewBuildingsPartnersPage from '@/components/newbuild/NewBuildingsPartnersPage'
+import PrimaryPartnersReportPage from '@/components/newbuild/PrimaryPartnersReportPage'
+import NewBuildingsBookingsRegistrationsPage from '@/pages/modules/NewBuildingsBookingsRegistrationsPage'
+import ManagerReportPage from '@/components/reports/ManagerReportPage'
+import TeamReportPage from '@/components/reports/TeamReportPage'
+import AgencyStatusesPage from '@/components/settings/AgencyStatusesPage'
+import FinancePanelPage from '@/components/finance/FinancePanelPage'
+import FinanceReportPage from '@/components/finance/FinanceReportPage'
+import CommunityPanelPage from '@/components/community/CommunityPanelPage'
+import CommunityPartnersReportPage from '@/components/community/CommunityPartnersReportPage'
+import MlsSecondaryPage from '@/components/mls/MlsSecondaryPage'
+import MlsVerificationSecondaryPage from '@/components/mls/MlsVerificationSecondaryPage'
+import MlsRentPage from '@/components/mls/MlsRentPage'
+import MlsVerificationRentPage from '@/components/mls/MlsVerificationRentPage'
+import MlsSummaryReportPage from '@/components/mls/MlsSummaryReportPage'
+import MlsPartnersSecondaryReportPage from '@/components/mls/MlsPartnersSecondaryReportPage'
+import MlsPartnersRentReportPage from '@/components/mls/MlsPartnersRentReportPage'
+import DocumentsPage from '@/components/crm/DocumentsPage'
+import ObjectsReportPage from '@/components/objects/ObjectsReportPage'
+import AutomationTriggersPage from '@/components/settings/AutomationTriggersPage'
+import AiAutomationsPage from '@/components/settings/AiAutomationsPage'
+import SystemSettingsPage from '@/components/settings/SystemSettingsPage'
+import LeadSourcesPage from '@/components/leads/LeadSourcesPage'
+import LeadsGeneralReportPage from '@/components/leads/LeadsGeneralReportPage'
+import LeadsMarketingReportPage from '@/components/leads/LeadsMarketingReportPage'
 import '@fontsource/montserrat/400.css'
 import '@fontsource/montserrat/500.css'
 import '@fontsource/montserrat/600.css'
@@ -169,48 +196,24 @@ createRoot(document.getElementById('root')!).render(
                             <Route index element={<NewBuildingsHubPage />} />
                             <Route
                               path="objects"
-                              element={(
-                                <SectionStubPage
-                                  title="Объекты и комиссии"
-                                  subtitle="Списки объектов первички, комиссионные сетки и привязка к сделкам. Раздел в разработке до подключения API."
-                                />
-                              )}
+                              element={<NewBuildingsObjectsCommissionsPage />}
                             />
                             <Route
                               path="bookings-registrations"
-                              element={(
-                                <SectionStubPage
-                                  title="Брони и регистрации"
-                                  subtitle="Сводная панель по бронированиям и регистрациям. Операционный модуль — раздел «Брони» в этом же контуре."
-                                />
-                              )}
+                              element={<NewBuildingsBookingsRegistrationsPage />}
                             />
+                            <Route path="registration" element={<RegistrationsPage />} />
                             <Route
                               path="catalog"
-                              element={(
-                                <SectionStubPage
-                                  title="Каталог ЖК"
-                                  subtitle="Жилые комплексы, юниты и статусы лотов. Отдельно от вторички; данные появятся после интеграции API."
-                                />
-                              )}
+                              element={<NewBuildingsCatalogPage />}
                             />
                             <Route
                               path="partners"
-                              element={(
-                                <SectionStubPage
-                                  title="Партнёры первичного рынка"
-                                  subtitle="Застройщики, контакты и условия сотрудничества. Наполнение после интеграции CRM и партнёрского контура."
-                                />
-                              )}
+                              element={<NewBuildingsPartnersPage />}
                             />
                             <Route
                               path="report-partners"
-                              element={(
-                                <SectionStubPage
-                                  title="Отчёт: работа партнёров по первичке"
-                                  subtitle="Выгрузки и дашборды по партнёрам и застройщикам первичного рынка. Подключение к API на следующих этапах."
-                                />
-                              )}
+                              element={<PrimaryPartnersReportPage />}
                             />
                             <Route path="selections" element={<SelectionsHubPage market="newbuild" />} />
                             <Route path="selections/list" element={<SelectionsListPage />} />
@@ -221,33 +224,18 @@ createRoot(document.getElementById('root')!).render(
                             <Route index element={<FinanceHubPage />} />
                             <Route
                               path="panel"
-                              element={(
-                                <SectionStubPage
-                                  title="Финансы"
-                                  subtitle="Панель управления: табличный учёт операций — п. 6.8 ТЗ; данные подключатся к API."
-                                />
-                              )}
+                              element={<FinancePanelPage />}
                             />
                             <Route
                               path="report"
-                              element={(
-                                <SectionStubPage
-                                  title="Отчёт по финансам"
-                                  subtitle="Сводки и выгрузки по финансовому контуру — п. 6.8 ТЗ."
-                                />
-                              )}
+                              element={<FinanceReportPage />}
                             />
                           </Route>
                           <Route path="community" element={<Outlet />}>
                             <Route index element={<CommunityHubPage />} />
                             <Route
                               path="panel"
-                              element={(
-                                <SectionStubPage
-                                  title="Сообщество"
-                                  subtitle="Панель управления: лента и коммуникации партнёров — п. 6.9 ТЗ."
-                                />
-                              )}
+                              element={<CommunityPanelPage />}
                             />
                             <Route
                               path="partners"
@@ -255,22 +243,12 @@ createRoot(document.getElementById('root')!).render(
                             />
                             <Route
                               path="report"
-                              element={(
-                                <SectionStubPage
-                                  title="Отчёт: о формировании сообщества партнёров"
-                                  subtitle="Метрики роста и вовлечённости сети — п. 6.9 ТЗ."
-                                />
-                              )}
+                              element={<CommunityPartnersReportPage />}
                             />
                           </Route>
                           <Route
                             path="crm/documents"
-                            element={(
-                              <SectionStubPage
-                                title="Документы"
-                                subtitle="Реестр и хранилище документов CRM — п. 6.2 ТЗ; интеграция с карточками сделок и клиентов на следующих этапах."
-                              />
-                            )}
+                            element={<DocumentsPage />}
                           />
                           <Route path="crm" element={<CRMPage />} />
                           <Route path="dashboards" element={<DashboardsPage />} />
@@ -296,66 +274,31 @@ createRoot(document.getElementById('root')!).render(
                             <Route index element={<MlsHubPage />} />
                             <Route
                               path="secondary"
-                              element={(
-                                <SectionStubPage
-                                  title="MLS вторичного рынка"
-                                  subtitle="Панель партнёрской сети по вторичке — п. 6.6 ТЗ; данные MLS."
-                                />
-                              )}
+                              element={<MlsSecondaryPage />}
                             />
                             <Route
                               path="verification-secondary"
-                              element={(
-                                <SectionStubPage
-                                  title="Верификация партнёров MLS вторичного рынка"
-                                  subtitle="Проверка партнёров вторички — п. 6.6 ТЗ."
-                                />
-                              )}
+                              element={<MlsVerificationSecondaryPage />}
                             />
                             <Route
                               path="rent"
-                              element={(
-                                <SectionStubPage
-                                  title="MLS аренды"
-                                  subtitle="Контур аренды в партнёрской сети — п. 6.6 ТЗ."
-                                />
-                              )}
+                              element={<MlsRentPage />}
                             />
                             <Route
                               path="verification-rent"
-                              element={(
-                                <SectionStubPage
-                                  title="Верификация партнёров MLS аренды"
-                                  subtitle="Допуск партнёров к аренде — п. 6.6 ТЗ."
-                                />
-                              )}
+                              element={<MlsVerificationRentPage />}
                             />
                             <Route
                               path="reports/summary"
-                              element={(
-                                <SectionStubPage
-                                  title="Отчёт: по MLS"
-                                  subtitle="Сводные показатели сети — п. 6.6 ТЗ."
-                                />
-                              )}
+                              element={<MlsSummaryReportPage />}
                             />
                             <Route
                               path="reports/partners-secondary"
-                              element={(
-                                <SectionStubPage
-                                  title="Отчёт: о работе MLS-партнёров по вторичному рынку"
-                                  subtitle="Активность партнёров вторички — п. 6.6 ТЗ."
-                                />
-                              )}
+                              element={<MlsPartnersSecondaryReportPage />}
                             />
                             <Route
                               path="reports/partners-rent"
-                              element={(
-                                <SectionStubPage
-                                  title="Отчёт: о работе MLS-партнёров по аренде"
-                                  subtitle="Показатели арендного контура MLS — п. 6.6 ТЗ."
-                                />
-                              )}
+                              element={<MlsPartnersRentReportPage />}
                             />
                           </Route>
                           <Route path="partners" element={<Navigate to="/dashboard/partners/list" replace />} />
@@ -374,12 +317,7 @@ createRoot(document.getElementById('root')!).render(
                           <Route path="objects/list" element={<ObjectsListPage />} />
                           <Route
                             path="objects/report"
-                            element={(
-                              <SectionStubPage
-                                title="Отчёт: по объектам"
-                                subtitle="Аналитика по объектам вторичного рынка — п. 6.5 ТЗ."
-                              />
-                            )}
+                            element={<ObjectsReportPage />}
                           />
                           <Route path="objects/:propertyId" element={<ObjectCardPage />} />
                           <Route path="bookings" element={<BookingsHubPage />} />
@@ -388,8 +326,11 @@ createRoot(document.getElementById('root')!).render(
                           <Route path="calendar" element={<CalendarPage />} />
                           <Route path="team" element={<TeamPage />} />
                           <Route path="team/org" element={<TeamOrgPage />} />
-                          <Route path="team/kpi" element={<TeamKpiPage />} />
+                          <Route path="team/branches" element={<BranchesPage />} />
+                          <Route path="team/kpi" element={<TeamReportPage />} />
                           <Route path="team/access" element={<TeamAccessPage />} />
+                          <Route path="reports/manager" element={<ManagerReportPage />} />
+                          <Route path="reports/team" element={<TeamReportPage />} />
                           <Route path="learning" element={<LearningPage />} />
                           <Route path="lms/browse" element={<LMSPage />} />
                           <Route path="lms/add" element={<LMSPage />} />
@@ -406,31 +347,19 @@ createRoot(document.getElementById('root')!).render(
                           <Route path="settings/pipeline" element={<Navigate to="/dashboard/settings-hub" replace />} />
                           <Route
                             path="settings/automation"
-                            element={(
-                              <SectionStubPage
-                                title="Автозадачи и триггеры"
-                                subtitle="Правила постановки задач по этапам и событиям — п. 6.10 ТЗ; редактор сценариев подключится к API."
-                              />
-                            )}
+                            element={<AutomationTriggersPage />}
                           />
                           <Route
                             path="settings/ai-automation"
-                            element={(
-                              <SectionStubPage
-                                title="AI-автоматизации"
-                                subtitle="Панель из матрицы ALPHABASE (xlsx): сценарии ИИ и автоматизация процессов; интеграция с моделями и политиками доступа — на этапе API."
-                              />
-                            )}
+                            element={<AiAutomationsPage />}
+                          />
+                          <Route
+                            path="settings/agency-statuses"
+                            element={<AgencyStatusesPage />}
                           />
                           <Route
                             path="settings/system"
-                            element={(
-                              <SectionStubPage
-                                title="Настройки системы"
-                                subtitle="Профиль агентства, интеграции и системные параметры — п. 6.10 ТЗ."
-                                footerLink={{ to: '/dashboard/settings', label: 'Расширенные настройки (брендинг, компания…)' }}
-                              />
-                            )}
+                            element={<SystemSettingsPage />}
                           />
                           <Route path="settings/notifications" element={<NotificationsSettingsPage />} />
                           <Route path="settings/theme" element={<ThemeSettingsPage />} />
@@ -444,30 +373,15 @@ createRoot(document.getElementById('root')!).render(
                           <Route path="my-report" element={<MyReportPage />} />
                           <Route
                             path="leads/sources"
-                            element={(
-                              <SectionStubPage
-                                title="Источники лидов"
-                                subtitle="Каналы, UTM и объёмы по источникам — п. 6.3 ТЗ; отчёты и фильтры подключатся к API."
-                              />
-                            )}
+                            element={<LeadSourcesPage />}
                           />
                           <Route
                             path="leads/report/general"
-                            element={(
-                              <SectionStubPage
-                                title="Отчёт: общий отчёт по лидам"
-                                subtitle="Сводная воронка и конверсии — п. 6.3 ТЗ."
-                              />
-                            )}
+                            element={<LeadsGeneralReportPage />}
                           />
                           <Route
                             path="leads/report/marketing"
-                            element={(
-                              <SectionStubPage
-                                title="Отчёт: маркетинговый отчёт по лидам"
-                                subtitle="Эффективность маркетинговых каналов — п. 6.3 ТЗ."
-                              />
-                            )}
+                            element={<LeadsMarketingReportPage />}
                           />
                           <Route path="leads" element={<LeadsErrorBoundary><RuntimeErrorBoundary><LeadsAdminPage /></RuntimeErrorBoundary></LeadsErrorBoundary>} />
                           <Route path="leads/poker" element={<LeadsErrorBoundary><RuntimeErrorBoundary><LeadsPokerPage /></RuntimeErrorBoundary></LeadsErrorBoundary>} />

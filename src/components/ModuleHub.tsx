@@ -22,7 +22,7 @@ export interface HubStat {
 interface Props {
   moduleIcon: React.ReactNode
   moduleName: string
-  moduleDescription: string
+  moduleDescription?: string
   sections: HubSection[]
   /** Внутренний маршрут или внешняя ссылка (например обычная CRM baza.sale) */
   actionButton?: { label: string; route?: string; externalUrl?: string }
@@ -32,7 +32,6 @@ interface Props {
 export default function ModuleHub({
   moduleIcon,
   moduleName,
-  moduleDescription,
   sections,
   actionButton,
   stats,
@@ -83,9 +82,6 @@ export default function ModuleHub({
             <h1 style={{ margin: 0, fontSize: 30, fontWeight: 900, color: 'var(--theme-accent-heading)', letterSpacing: '0.04em', textTransform: 'uppercase', lineHeight: 1.1 }}>
               {moduleName}
             </h1>
-            <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--hub-desc)', maxWidth: 540, lineHeight: 1.5 }}>
-              {moduleDescription}
-            </p>
           </div>
         </div>
 

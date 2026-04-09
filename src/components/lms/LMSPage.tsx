@@ -16,6 +16,7 @@ import {
   Trash2,
   Plus,
   ExternalLink,
+  AlertTriangle,
 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useRolePermissions } from '@/hooks/useRolePermissions'
@@ -45,12 +46,35 @@ const TABS: Array<{ id: Tab; label: string; icon: React.ReactNode }> = [
   { id: 'courses', label: 'Курсы', icon: <GraduationCap className="size-3.5" /> },
 ]
 
+const TAB_TO_ITEM_TYPE: Record<Tab, LMSItem['type'] | null> = {
+  articles: 'article',
+  scripts: 'script',
+  presentations: 'presentation',
+  pdfs: 'pdf',
+  courses: null,
+}
+
 const ROLE_LABELS: Record<TargetRole, string> = {
   all: 'Все',
   manager: 'Менеджер',
   rop: 'РОП',
   director: 'Директор',
 }
+
+/** Для сортировки: нет времени — в конец при «короткие», в начало при «длинные» обрабатываем как 0/∞ отдельно */
+function readMinutesForSort(rt?: string): number {
+  if (!rt) return 9999
+  const m = rt.match(/(\d+)/)
+  return m ? parseInt(m[1], 10) : 9999
+}
+
+function readMinutesIfAny(rt?: string): number | null {
+  if (!rt) return null
+  const m = rt.match(/(\d+)/)
+  return m ? parseInt(m[1], 10) : null
+}
+
+type SortKey = 'title' | 'time-asc' | 'time-desc'
 
 // ─── Карточка материала ────────────────────────────────────────────────────────
 
@@ -387,11 +411,34 @@ function CoursesTab() {
   const { currentUser } = useAuth()
   const userRole = (currentUser?.role ?? 'manager') as TargetRole
 
-  const visibleCourses = LMS_COURSES.filter(c =>
-    c.targetRoles.includes('all') || c.targetRoles.includes(userRole)
+  const visibleCourses = useMemo(
+    () => LMS_COURSES.filter((c) => c.targetRoles.includes('all') || c.targetRoles.includes(userRole)),
+    [userRole],
   )
 
+  const courseKpi = useMemo(() => {
+    const lessons = visibleCourses.reduce((s, c) => s + c.lessons.length, 0)
+    const heavy = visibleCourses.filter((c) => c.lessons.length >= 5).length
+    return { courses: visibleCourses.length, lessons, heavy }
+  }, [visibleCourses])
+
   return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+        <div className="rounded-lg border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+          <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Доступно курсов</p>
+          <p className="text-xl font-bold text-[color:var(--gold)]">{courseKpi.courses}</p>
+        </div>
+        <div className="rounded-lg border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+          <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Уроков всего</p>
+          <p className="text-xl font-bold text-emerald-300">{courseKpi.lessons}</p>
+        </div>
+        <div className="rounded-lg border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3 md:col-span-1 col-span-2">
+          <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Курсов 5+ уроков</p>
+          <p className="text-xl font-bold text-sky-300">{courseKpi.heavy}</p>
+        </div>
+      </div>
+
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {visibleCourses.map((course) => (
         <div
@@ -413,6 +460,7 @@ function CoursesTab() {
         </div>
       ))}
     </div>
+    </div>
   )
 }
 
@@ -430,6 +478,7 @@ export function LMSPage() {
 
   const [items, setItems] = useState<LMSItem[]>(LMS_ITEMS)
   const [search, setSearch] = useState('')
+  const [sort, setSort] = useState<SortKey>('title')
   const [openItem, setOpenItem] = useState<LMSItem | null>(null)
 
   // Состояние админ-диалога
@@ -486,24 +535,50 @@ export function LMSPage() {
     return <ItemDetail item={openItem} onBack={() => setOpenItem(null)} />
   }
 
-  const typeMap: Record<Tab, LMSItem['type'] | null> = {
-    articles: 'article',
-    scripts: 'script',
-    presentations: 'presentation',
-    pdfs: 'pdf',
-    courses: null,
-  }
+  const filtered = useMemo(() => {
+    if (activeTab === 'courses') return []
+    const q = search.trim().toLowerCase()
+    return items.filter((item) => {
+      if (item.type !== TAB_TO_ITEM_TYPE[activeTab]) return false
+      if (userRole === 'manager' && item.targetRole !== 'all' && item.targetRole !== 'manager') return false
+      if (userRole === 'rop' && item.targetRole !== 'all' && item.targetRole !== 'rop' && item.targetRole !== 'manager') return false
+      if (!q) return true
+      return (
+        item.title.toLowerCase().includes(q) ||
+        item.description.toLowerCase().includes(q) ||
+        (item.tags?.some((t) => t.toLowerCase().includes(q)) ?? false)
+      )
+    })
+  }, [items, activeTab, userRole, search])
 
-  const filtered = activeTab === 'courses' ? [] : items.filter((item) => {
-    if (item.type !== typeMap[activeTab]) return false
-    if (userRole === 'manager' && item.targetRole !== 'all' && item.targetRole !== 'manager') return false
-    if (userRole === 'rop' && item.targetRole !== 'all' && item.targetRole !== 'rop' && item.targetRole !== 'manager') return false
-    if (search) {
-      const q = search.toLowerCase()
-      return item.title.toLowerCase().includes(q) || item.description.toLowerCase().includes(q)
-    }
-    return true
-  })
+  const displayItems = useMemo(() => {
+    const list = [...filtered]
+    if (sort === 'title') list.sort((a, b) => a.title.localeCompare(b.title, 'ru'))
+    else if (sort === 'time-asc') list.sort((a, b) => readMinutesForSort(a.readTime) - readMinutesForSort(b.readTime))
+    else list.sort((a, b) => readMinutesForSort(b.readTime) - readMinutesForSort(a.readTime))
+    return list
+  }, [filtered, sort])
+
+  const lmsKpi = useMemo(
+    () => ({
+      count: filtered.length,
+      withTags: filtered.filter((i) => (i.tags?.length ?? 0) > 0).length,
+      withTime: filtered.filter((i) => !!i.readTime).length,
+      narrowRole: filtered.filter((i) => i.targetRole !== 'all').length,
+    }),
+    [filtered],
+  )
+
+  const attentionItems = useMemo(
+    () =>
+      filtered
+        .filter((i) => {
+          const mins = readMinutesIfAny(i.readTime)
+          return !i.tags?.length || (mins !== null && mins >= 8)
+        })
+        .slice(0, 6),
+    [filtered],
+  )
 
   return (
     <>
@@ -526,6 +601,7 @@ export function LMSPage() {
                     type="button"
                     onClick={() => {
                       setSearch('')
+                      setSort('title')
                       if (tab.id === 'scripts') {
                         setSearchParams({}, { replace: true })
                       } else {
@@ -559,19 +635,83 @@ export function LMSPage() {
               <CoursesTab />
             ) : (
               <>
-                {/* Search */}
-                <div className="relative max-w-xs">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[color:var(--theme-accent-icon-dim)]" />
-                  <input
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Поиск..."
-                    className="w-full rounded-full border border-[var(--shell-search-border)] bg-[var(--shell-search-bg)] pl-9 pr-4 py-2 text-sm text-[var(--shell-search-fg)] placeholder:text-[color:var(--shell-search-ph)] outline-none focus:border-[color:var(--hub-card-border-hover)]"
-                  />
+                <p className="text-xs text-[color:var(--app-text-muted)]">
+                  KPI и подсказки ниже считаются по текущей вкладке и строке поиска.
+                </p>
+
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                  <div className="rounded-lg border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+                    <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">В выдаче</p>
+                    <p className="text-xl font-bold text-[color:var(--gold)]">{lmsKpi.count}</p>
+                  </div>
+                  <div className="rounded-lg border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+                    <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">С тегами</p>
+                    <p className="text-xl font-bold text-emerald-300">{lmsKpi.withTags}</p>
+                  </div>
+                  <div className="rounded-lg border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+                    <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Со временем</p>
+                    <p className="text-xl font-bold text-sky-300">{lmsKpi.withTime}</p>
+                  </div>
+                  <div className="rounded-lg border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+                    <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Под роль</p>
+                    <p className="text-xl font-bold text-violet-300">{lmsKpi.narrowRole}</p>
+                  </div>
                 </div>
 
-                {/* Grid */}
-                {filtered.length === 0 ? (
+                <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                  <div className="relative max-w-md flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[color:var(--theme-accent-icon-dim)]" />
+                    <input
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Поиск по названию, описанию, тегам..."
+                      className="w-full rounded-full border border-[var(--shell-search-border)] bg-[var(--shell-search-bg)] pl-9 pr-4 py-2 text-sm text-[var(--shell-search-fg)] placeholder:text-[color:var(--shell-search-ph)] outline-none focus:border-[color:var(--hub-card-border-hover)]"
+                    />
+                  </div>
+                  <select
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value as SortKey)}
+                    className="h-9 min-w-[200px] rounded-full border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] px-3 text-xs text-[color:var(--workspace-text)]"
+                  >
+                    <option value="title">По названию</option>
+                    <option value="time-asc">Сначала короткие</option>
+                    <option value="time-desc">Сначала длинные</option>
+                  </select>
+                </div>
+
+                {attentionItems.length > 0 && (
+                  <div className="rounded-xl border border-amber-500/35 bg-amber-500/[0.07] p-4">
+                    <div className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-amber-200">
+                      <AlertTriangle className="size-3.5 shrink-0" />
+                      На заметку
+                    </div>
+                    <ul className="m-0 list-none space-y-1.5 p-0">
+                      {attentionItems.map((item) => {
+                        const mins = readMinutesIfAny(item.readTime)
+                        return (
+                        <li key={item.id}>
+                          <button
+                            type="button"
+                            onClick={() => setOpenItem(item)}
+                            className="flex w-full flex-wrap items-center justify-between gap-2 rounded-lg border border-[color:var(--hub-card-border)] bg-[var(--hub-card-bg)] px-3 py-2 text-left text-xs transition-colors hover:bg-[var(--hub-action-hover)]"
+                          >
+                            <span className="font-semibold text-[color:var(--app-text)]">{item.title}</span>
+                            <span className="text-[10px] text-[color:var(--app-text-subtle)]">
+                              {[
+                                !item.tags?.length ? 'нет тегов' : null,
+                                mins !== null && mins >= 8 ? `долго читать (~${mins} мин)` : null,
+                              ]
+                                .filter(Boolean)
+                                .join(' · ')}
+                            </span>
+                          </button>
+                        </li>
+                      )})}
+                    </ul>
+                  </div>
+                )}
+
+                {displayItems.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-20 text-[color:var(--theme-accent-icon-dim)]">
                     <Search className="size-10 mb-4 opacity-40" />
                     <p className="font-medium">Ничего не найдено</p>
@@ -579,7 +719,7 @@ export function LMSPage() {
                   </div>
                 ) : (
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {filtered.map((item) => (
+                    {displayItems.map((item) => (
                       <ItemCard
                         key={item.id}
                         item={item}
@@ -592,7 +732,8 @@ export function LMSPage() {
                 )}
 
                 <p className="text-center text-xs text-[color:var(--theme-accent-icon-dim)]">
-                  {filtered.length} {filtered.length === 1 ? 'материал' : filtered.length < 5 ? 'материала' : 'материалов'}
+                  {displayItems.length}{' '}
+                  {displayItems.length === 1 ? 'материал' : displayItems.length < 5 ? 'материала' : 'материалов'}
                 </p>
               </>
             )}

@@ -10,6 +10,7 @@ import {
   AlarmClock,
   Sparkles,
   Newspaper,
+  MapPinned,
 } from 'lucide-react'
 
 /**
@@ -52,6 +53,12 @@ export default function SettingsHubPage() {
           title: 'Уведомления',
           description: 'Каналы и шаблоны уведомлений.',
           route: '/dashboard/settings/notifications',
+        },
+        {
+          icon: <MapPinned size={20} color="#c9a84c" />,
+          title: 'Статусы агентства',
+          description: 'Региональная статусная модель: назначение и снятие статусов.',
+          route: '/dashboard/settings/agency-statuses',
         },
         {
           icon: <Server size={20} color="#c9a84c" />,

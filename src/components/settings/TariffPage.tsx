@@ -1,4 +1,5 @@
-import { Check, X, Zap, Crown, Building2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { AlertTriangle, Check, FileText, X, Zap, Crown, Building2 } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 
 const C = {
@@ -87,13 +88,120 @@ const PLANS: Plan[] = [
   },
 ]
 
+const INVOICE_ROWS = [
+  { id: 'inv-3', date: '2026-03-22', amount: '$7,900', plan: 'Профи', status: 'Оплачен' },
+  { id: 'inv-2', date: '2026-02-22', amount: '$7,900', plan: 'Профи', status: 'Оплачен' },
+  { id: 'inv-1', date: '2026-01-22', amount: '$7,900', plan: 'Профи', status: 'Оплачен' },
+]
+
 export function TariffPage() {
+  const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
+
+  const usageAlerts = useMemo(
+    () => [
+      { label: 'Пользователи', pct: 10 / 25, warn: 0.8 },
+      { label: 'Сделки/мес', pct: 12 / 100, warn: 0.85 },
+      { label: 'Объекты', pct: 47 / 500, warn: 0.9 },
+    ],
+    [],
+  )
+
   return (
     <DashboardShell>
       <div style={{ padding: '24px 28px 48px' }}>
         <div style={{ marginBottom: 28 }}>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 4 }}>Тарифные планы</div>
           <div style={{ fontSize: 12, color: C.whiteLow }}>Текущий тариф: <span style={{ color: C.gold, fontWeight: 700 }}>Профи</span> · Следующее списание: 22 апреля 2026</div>
+        </div>
+
+        <div className="mx-auto mb-6 max-w-6xl space-y-4">
+          <section className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+            <p className="mb-2 text-sm font-semibold text-[color:var(--theme-accent-heading)]">Биллинг (UI)</p>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setBilling('monthly')}
+                className={
+                  billing === 'monthly'
+                    ? 'rounded-md border border-[color:var(--gold)]/50 bg-[color:var(--gold)]/10 px-3 py-2 text-xs font-semibold text-[color:var(--gold)]'
+                    : 'rounded-md border border-[var(--hub-card-border)] bg-[var(--workspace-row-bg)] px-3 py-2 text-xs text-[color:var(--workspace-text-muted)]'
+                }
+              >
+                Помесячно
+              </button>
+              <button
+                type="button"
+                onClick={() => setBilling('annual')}
+                className={
+                  billing === 'annual'
+                    ? 'rounded-md border border-[color:var(--gold)]/50 bg-[color:var(--gold)]/10 px-3 py-2 text-xs font-semibold text-[color:var(--gold)]'
+                    : 'rounded-md border border-[var(--hub-card-border)] bg-[var(--workspace-row-bg)] px-3 py-2 text-xs text-[color:var(--workspace-text-muted)]'
+                }
+              >
+                Годовой (−15%)
+              </button>
+            </div>
+            <p className="mt-2 text-xs text-[color:var(--app-text-muted)]">
+              Отображение цен на карточках планов ниже — демо; переключатель влияет только на подпись в сводке.
+            </p>
+          </section>
+
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+            <section className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+              <div className="mb-2 flex items-center gap-2">
+                <FileText className="size-4 text-[color:var(--gold)]" />
+                <h2 className="text-sm font-semibold text-[color:var(--theme-accent-heading)]">Последние счета</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-sm">
+                  <thead>
+                    <tr className="border-b border-[color:var(--workspace-row-border)] text-left text-[11px] uppercase text-[color:var(--app-text-subtle)]">
+                      <th className="px-2 py-2">Дата</th>
+                      <th className="px-2 py-2">Сумма</th>
+                      <th className="px-2 py-2">План</th>
+                      <th className="px-2 py-2">Статус</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {INVOICE_ROWS.map((inv) => (
+                      <tr key={inv.id} className="border-b border-[color:var(--workspace-row-border)]">
+                        <td className="px-2 py-2 text-[color:var(--workspace-text)]">{inv.date}</td>
+                        <td className="px-2 py-2 text-emerald-300">{inv.amount}</td>
+                        <td className="px-2 py-2 text-[color:var(--workspace-text-muted)]">{inv.plan}</td>
+                        <td className="px-2 py-2 text-[color:var(--workspace-text)]">{inv.status}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="mt-2 text-xs text-[color:var(--app-text-muted)]">Период оплаты: {billing === 'monthly' ? 'ежемесячно' : 'ежегодно (предпросмотр)'}</p>
+            </section>
+
+            <section className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+              <div className="mb-2 flex items-center gap-2">
+                <AlertTriangle className="size-4 text-amber-400" />
+                <h2 className="text-sm font-semibold text-[color:var(--theme-accent-heading)]">Лимиты</h2>
+              </div>
+              <ul className="space-y-2">
+                {usageAlerts.map((u) => (
+                  <li key={u.label} className="text-sm text-[color:var(--workspace-text)]">
+                    <div className="flex justify-between gap-2">
+                      <span>{u.label}</span>
+                      <span className={u.pct >= u.warn ? 'text-amber-300' : 'text-[color:var(--app-text-subtle)]'}>
+                        {Math.round(u.pct * 100)}% от лимита
+                      </span>
+                    </div>
+                    <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-[color:var(--workspace-row-border)]">
+                      <div
+                        className="h-full rounded-full bg-[color:var(--gold)]"
+                        style={{ width: `${Math.min(100, Math.round(u.pct * 100))}%` }}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </div>
         </div>
 
         {/* Current usage */}

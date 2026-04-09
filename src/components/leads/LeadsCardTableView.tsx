@@ -229,6 +229,42 @@ export function LeadsCardTableView({
     )
   }, [variant, focusLeadIdFromUrl, leadPool, setSearchParams, onSelectedManagerIdChange])
 
+  /** Диплинк с рабочего стола: «распределение лидов» → фильтр «Без менеджера» в покере */
+  const distributionFromUrl = searchParams.get("distribution")
+  useEffect(() => {
+    if (variant !== "page" || distributionFromUrl !== "1") return
+    // Показываем весь пул, но включаем именно чекбокс-фильтр «Без менеджера».
+    if (!isManager) onSelectedManagerIdChange("_all")
+    setFilterNoManager(true)
+    setFilterNoTask(false)
+    setFilterOverdue(false)
+    setSearchParams(
+      (prev) => {
+        const p = new URLSearchParams(prev)
+        p.delete("distribution")
+        return p
+      },
+      { replace: true },
+    )
+  }, [variant, distributionFromUrl, isManager, setSearchParams, onSelectedManagerIdChange])
+
+  /** Диплинк: «лиды с нарушением» / SLA — включает фильтр просрочки по задаче в покере */
+  const violationsFromUrl = searchParams.get("violations")
+  useEffect(() => {
+    if (variant !== "page" || violationsFromUrl !== "1") return
+    setFilterNoTask(false)
+    setFilterNoManager(false)
+    setFilterOverdue(true)
+    setSearchParams(
+      (prev) => {
+        const p = new URLSearchParams(prev)
+        p.delete("violations")
+        return p
+      },
+      { replace: true },
+    )
+  }, [variant, violationsFromUrl, setSearchParams])
+
   const managerNameById = useMemo(() => {
     const map: Record<string, string> = {}
     leadManagers.forEach((manager) => {
@@ -451,7 +487,7 @@ export function LeadsCardTableView({
               onCheckedChange={(v) => setFilterOverdue(v === true)}
               className="text-sm focus:bg-[rgba(77,53,24,0.45)] focus:text-[#f7e8c6]"
             >
-              Просрочка по задаче
+              Лиды с нарушением (просрочка задачи)
             </DropdownMenuCheckboxItem>
             {(filterNoTask || filterNoManager || filterOverdue) && (
               <>

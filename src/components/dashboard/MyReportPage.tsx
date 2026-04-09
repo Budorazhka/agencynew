@@ -29,7 +29,7 @@ export function MyReportPage() {
 
   return (
     <DashboardShell>
-      <div style={{ padding: '16px 28px 48px', maxWidth: 900, margin: '0 auto', fontFamily: "'Montserrat', sans-serif" }}>
+      <div style={{ padding: '16px 28px 48px', width: '100%', maxWidth: 'none', fontFamily: "'Montserrat', sans-serif" }}>
         <h1 style={{ fontSize: 26, fontWeight: 800, color: 'var(--theme-accent-heading)', marginBottom: 4 }}>
           Мой отчёт
         </h1>

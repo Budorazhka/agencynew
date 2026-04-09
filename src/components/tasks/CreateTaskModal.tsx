@@ -69,6 +69,13 @@ function eisenhowerToPriority(urgent: boolean, important: boolean): TaskPriority
   return 'low'
 }
 
+function eisenhowerLabel(urgent: boolean, important: boolean): string {
+  if (urgent && important) return 'Срочно и важно'
+  if (urgent) return 'Срочно, не важно'
+  if (important) return 'Важно, не срочно'
+  return 'Не срочно и не важно'
+}
+
 function todayIsoDate(): string {
   return new Date().toISOString().split('T')[0]
 }
@@ -345,6 +352,12 @@ export function CreateTaskModal({
               onChangeUrgent={setUrgent}
               onChangeImportant={setImportant}
             />
+            <p className="text-[11px] text-[color:var(--app-text-muted)]">
+              Квадрант Эйзенхауэра:{' '}
+              <span className="font-semibold text-[color:var(--theme-accent-heading)]">
+                {eisenhowerLabel(urgent, important)}
+              </span>
+            </p>
           </div>
 
           <div className="space-y-2">

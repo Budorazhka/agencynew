@@ -1,5 +1,6 @@
+import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, AlertTriangle } from 'lucide-react'
 import { MailingsEditor } from '@/components/mailings/MailingsEditor'
 import { useDashboard } from '@/context/DashboardContext'
 import { getCityById, getCountryByCityId } from '@/data/mock'
@@ -30,6 +31,36 @@ export function CityMailingsPage() {
     dispatch({ type: 'CANCEL_SCHEDULED_MAILING', mailingId })
   }
 
+  const cityMailings = useMemo(
+    () => state.mailings.filter((m) => m.scopeCityId === city.id),
+    [state.mailings, city.id],
+  )
+
+  const mailingKpi = useMemo(() => {
+    const now = Date.now()
+    let sent = 0
+    let scheduled = 0
+    let overdue = 0
+    let dualChannel = 0
+    for (const m of cityMailings) {
+      if (m.sentAt) {
+        sent += 1
+        if (m.channels.includes('crm') && m.channels.includes('cabinet')) dualChannel += 1
+      } else if (m.scheduledAt) {
+        scheduled += 1
+        if (new Date(m.scheduledAt).getTime() < now) overdue += 1
+      }
+    }
+    return { total: cityMailings.length, sent, scheduled, overdue, dualChannel }
+  }, [cityMailings])
+
+  const overdueMailings = useMemo(() => {
+    const now = Date.now()
+    return cityMailings.filter(
+      (m) => m.scheduledAt && !m.sentAt && new Date(m.scheduledAt).getTime() < now,
+    )
+  }, [cityMailings])
+
   return (
     <div className="space-y-6 text-[color:var(--app-text)]">
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -53,12 +84,63 @@ export function CityMailingsPage() {
         </div>
       </div>
 
+      <p className="text-xs text-[color:var(--app-text-muted)]">
+        Сводка и история ниже — только рассылки с привязкой к этому городу (scopeCityId).
+      </p>
+
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
+        <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+          <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Всего</p>
+          <p className="text-xl font-bold text-[color:var(--gold)]">{mailingKpi.total}</p>
+        </div>
+        <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+          <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Отправлено</p>
+          <p className="text-xl font-bold text-emerald-300">{mailingKpi.sent}</p>
+        </div>
+        <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+          <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">В плане</p>
+          <p className="text-xl font-bold text-sky-300">{mailingKpi.scheduled}</p>
+        </div>
+        <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+          <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Просрочено</p>
+          <p className="text-xl font-bold text-orange-300">{mailingKpi.overdue}</p>
+        </div>
+        <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3 md:col-span-1 col-span-2">
+          <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">CRM + ЛК</p>
+          <p className="text-xl font-bold text-violet-300">{mailingKpi.dualChannel}</p>
+        </div>
+      </div>
+
+      {overdueMailings.length > 0 && (
+        <div className="rounded-xl border border-orange-500/35 bg-orange-500/[0.07] p-4">
+          <div className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-orange-200">
+            <AlertTriangle className="size-3.5 shrink-0" />
+            Запланировано, но время уже прошло
+          </div>
+          <ul className="m-0 list-none space-y-1.5 p-0">
+            {overdueMailings.map((m: Mailing) => (
+              <li
+                key={m.id}
+                className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] px-3 py-2 text-xs text-[color:var(--app-text-muted)]"
+              >
+                <span className="font-semibold text-[color:var(--app-text)]">{m.title}</span>
+                {m.scheduledAt && (
+                  <span className="ml-2 text-[10px]">
+                    план: {new Date(m.scheduledAt).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' })}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <MailingsEditor
         city={city}
         country={country}
         cities={state.cities}
         allPartners={allPartners}
-        mailings={state.mailings}
+        mailings={cityMailings}
         onAddMailing={handleAddMailing}
         onCancelScheduled={handleCancelScheduledMailing}
       />

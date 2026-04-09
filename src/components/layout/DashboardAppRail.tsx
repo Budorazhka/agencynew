@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Settings, LogOut, PanelLeftClose, PanelLeft } from 'lucide-react'
 import { useAgencyBranding } from '@/hooks/useAgencyBranding'
 import { useAuth } from '@/context/AuthContext'
-import { ROLE_LABEL } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
 import { useSidebarRail } from '@/context/SidebarRailContext'
 import { useTheme } from '@/hooks/useTheme'
@@ -31,20 +30,6 @@ export function DashboardAppRail() {
     [currentUser?.role],
   )
   const canSettingsHub = roleCanAccessSettingsHub(currentUser?.role ?? 'manager')
-
-  const userName = currentUser?.name ?? 'Пользователь'
-  const shortName =
-    userName
-      .split(' ')
-      .slice(0, 2)
-      .map((p) => p[0])
-      .join('')
-      .slice(0, 2)
-      .toUpperCase() || 'П'
-  const roleLabel = currentUser ? (ROLE_LABEL[currentUser.role] ?? currentUser.role) : 'Senior Associate'
-  const displayLast = userName.split(' ')[1]?.[0]
-    ? `${userName.split(' ')[0]} ${userName.split(' ')[1]![0]}.`
-    : userName
 
   const productTitle = branding.name || 'Sovereign Analyst'
   const productSub = 'ALPHABASE.sale'
@@ -177,51 +162,24 @@ export function DashboardAppRail() {
           </button>
         )}
 
-        {!railCollapsed ? (
-          <div className={cn('mt-2 flex items-center gap-2.5 rounded-lg px-1 py-2', isLight ? 'bg-slate-100/80' : 'bg-emerald-950/30')}>
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-full border border-[color:var(--rail-footer-avatar-border)] bg-[var(--rail-surface)] text-xs font-bold text-[color:var(--rail-footer-avatar-text)]">
-              {shortName}
-            </div>
-            <div className="min-w-0 flex-1 overflow-hidden">
-              <p className="truncate text-[13px] font-semibold text-[color:var(--app-text)]">{displayLast}</p>
-              <p className="truncate text-xs leading-tight text-[color:var(--app-text-muted)]">{roleLabel}</p>
-            </div>
-            <button
-              type="button"
-              title="Выйти"
-              onClick={() => {
-                logout()
-                navigate('/')
-              }}
-              className={cn(
-                'shrink-0 rounded-md p-1.5 hover:text-[color:var(--theme-accent-link)]',
-                isLight ? 'text-slate-500' : 'text-emerald-100/45',
-              )}
-            >
-              <LogOut className="size-5" />
-            </button>
-          </div>
-        ) : (
-          <div className="mt-2 flex flex-col items-center gap-2 py-1">
-            <div
-              className="flex size-9 items-center justify-center rounded-full border border-[color:var(--rail-footer-avatar-border)] bg-[var(--rail-surface)] text-xs font-bold text-[color:var(--rail-footer-avatar-text)]"
-              title={`${displayLast} · ${roleLabel}`}
-            >
-              {shortName}
-            </div>
-            <button
-              type="button"
-              title="Выйти"
-              onClick={() => {
-                logout()
-                navigate('/')
-              }}
-              className={cn('rounded-md p-1 hover:text-[color:var(--theme-accent-link)]', isLight ? 'text-slate-500' : 'text-emerald-100/45')}
-            >
-              <LogOut className="size-5" />
-            </button>
-          </div>
-        )}
+        <div className={cn('mt-2', railCollapsed ? 'flex justify-center' : '')}>
+          <button
+            type="button"
+            title="Выйти"
+            onClick={() => {
+              logout()
+              navigate('/')
+            }}
+            className={cn(
+              'flex items-center rounded-md transition-colors hover:text-[color:var(--theme-accent-link)]',
+              isLight ? 'text-slate-500 hover:bg-slate-100' : 'text-emerald-100/45 hover:bg-emerald-900/25',
+              railCollapsed ? 'justify-center p-1.5' : 'w-full gap-2 px-2 py-2 text-[13px] font-semibold',
+            )}
+          >
+            <LogOut className="size-5" />
+            {!railCollapsed && 'Выйти'}
+          </button>
+        </div>
       </div>
     </aside>
   )

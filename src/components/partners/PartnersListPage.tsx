@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus, Users, ChevronRight, Wallet } from 'lucide-react'
+import { Search, Plus, Users, ChevronRight, Wallet, AlertTriangle } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { PARTNERS_MOCK } from '@/data/partners-mock'
 import {
@@ -30,6 +30,18 @@ const TABS: { id: FilterType; label: string }[] = [
   { id: 'owner',        label: 'Собственники' },
 ]
 
+type StatusFilter = PartnerStatus | 'all'
+type SortKey = 'name' | 'leads-desc' | 'balance-desc' | 'newest'
+
+const STATUS_OPTIONS: { id: StatusFilter; label: string }[] = [
+  { id: 'all',       label: 'Любой статус' },
+  { id: 'active',    label: 'Активные' },
+  { id: 'pending',   label: 'На модерации' },
+  { id: 'inactive',  label: 'Неактивные' },
+]
+
+const BALANCE_ATTENTION_USD = 80_000
+
 const S = {
   page: {
     padding: '28px 28px 48px',
@@ -45,19 +57,54 @@ export function PartnersListPage() {
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const [tab, setTab] = useState<FilterType>('all')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [sort, setSort] = useState<SortKey>('name')
 
   const filtered = useMemo(() => {
-    return PARTNERS_MOCK.filter(p => {
+    const q = search.trim().toLowerCase()
+    const list = PARTNERS_MOCK.filter((p) => {
       const matchType = tab === 'all' || p.type === tab
-      const q = search.toLowerCase()
-      const matchSearch = !q || p.name.toLowerCase().includes(q) || p.phone.includes(q) || p.email.toLowerCase().includes(q)
-      return matchType && matchSearch
+      const matchStatus = statusFilter === 'all' || p.status === statusFilter
+      const matchSearch =
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        p.phone.replace(/\s/g, '').includes(q.replace(/\s/g, '')) ||
+        p.email.toLowerCase().includes(q)
+      return matchType && matchStatus && matchSearch
     })
-  }, [search, tab])
+    const next = [...list]
+    next.sort((a, b) => {
+      if (sort === 'name') return a.name.localeCompare(b.name, 'ru')
+      if (sort === 'leads-desc') return b.leadsCount - a.leadsCount
+      if (sort === 'balance-desc') return b.balance - a.balance
+      return b.registeredAt.localeCompare(a.registeredAt)
+    })
+    return next
+  }, [search, tab, statusFilter, sort])
 
-  const totalComm = PARTNERS_MOCK.reduce((s, p) => s + p.commissionTotal, 0)
-  const totalBalance = PARTNERS_MOCK.reduce((s, p) => s + p.balance, 0)
-  const totalLeads = PARTNERS_MOCK.reduce((s, p) => s + p.leadsCount, 0)
+  const kpi = useMemo(
+    () => ({
+      count: filtered.length,
+      active: filtered.filter((p) => p.status === 'active').length,
+      leads: filtered.reduce((s, p) => s + p.leadsCount, 0),
+      commission: filtered.reduce((s, p) => s + p.commissionTotal, 0),
+      balance: filtered.reduce((s, p) => s + p.balance, 0),
+    }),
+    [filtered],
+  )
+
+  const attention = useMemo(
+    () =>
+      filtered.filter(
+        (p) =>
+          p.status === 'pending' ||
+          (p.status === 'active' && p.leadsCount === 0) ||
+          p.balance >= BALANCE_ATTENTION_USD,
+      ),
+    [filtered],
+  )
+
+  const totalInDb = PARTNERS_MOCK.length
 
   return (
     <DashboardShell>
@@ -65,23 +112,28 @@ export function PartnersListPage() {
         <div style={S.title}>Партнёры</div>
         <div style={S.sub}>Рефералы · Посредники · Собственники</div>
 
-        {/* KPI */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 24 }}>
-          {[
-            { label: 'Всего партнёров', value: String(PARTNERS_MOCK.length), color: 'var(--gold)' },
-            { label: 'Переданных лидов', value: String(totalLeads), color: '#60a5fa' },
-            { label: 'Комиссия выплачена', value: FMT.format(totalComm), color: '#4ade80' },
-          ].map(k => (
-            <div key={k.label} style={{
-              background: 'var(--hub-card-bg)',
-              border: '1px solid var(--hub-card-border)',
-              borderRadius: 12,
-              padding: '16px 20px',
-            }}>
-              <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--app-text-subtle)', marginBottom: 4 }}>{k.label}</div>
-              <div style={{ fontSize: 20, fontWeight: 700, color: k.color }}>{k.value}</div>
-            </div>
-          ))}
+        <p className="mb-4 text-[11px] text-[color:var(--app-text-subtle)]">
+          В базе <span className="font-semibold text-[color:var(--workspace-text)]">{totalInDb}</span> записей · KPI ниже считаются по текущей выдаче
+        </p>
+
+        <div className="mb-6 grid grid-cols-2 gap-2 md:grid-cols-4">
+          <div className="rounded-xl border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-4">
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--app-text-subtle)]">В выдаче</div>
+            <div className="mt-1 text-xl font-bold text-[color:var(--gold)]">{kpi.count}</div>
+            <div className="mt-0.5 text-[10px] text-[color:var(--app-text-subtle)]">активных: {kpi.active}</div>
+          </div>
+          <div className="rounded-xl border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-4">
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--app-text-subtle)]">Лидов передано</div>
+            <div className="mt-1 text-xl font-bold text-blue-300">{kpi.leads}</div>
+          </div>
+          <div className="rounded-xl border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-4">
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--app-text-subtle)]">Комиссия всего</div>
+            <div className="mt-1 text-xl font-bold text-emerald-300">{FMT.format(kpi.commission)}</div>
+          </div>
+          <div className="rounded-xl border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-4">
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--app-text-subtle)]">Баланс к выплате</div>
+            <div className="mt-1 text-xl font-bold text-amber-200">{FMT.format(kpi.balance)}</div>
+          </div>
         </div>
 
         {/* Toolbar */}
@@ -94,11 +146,32 @@ export function PartnersListPage() {
             <Search size={13} color="var(--app-text-subtle)" />
             <input
               style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', fontSize: 12, color: 'var(--shell-search-fg)', fontFamily: 'inherit' }}
-              placeholder="Поиск по имени, телефону..."
+              placeholder="Имя, телефон, email..."
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
           </div>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+            className="h-9 min-w-[150px] rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] px-2 text-xs text-[color:var(--workspace-text)]"
+          >
+            {STATUS_OPTIONS.map((o) => (
+              <option key={o.id} value={o.id}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortKey)}
+            className="h-9 min-w-[170px] rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] px-2 text-xs text-[color:var(--workspace-text)]"
+          >
+            <option value="name">По имени</option>
+            <option value="leads-desc">По лидам ↓</option>
+            <option value="balance-desc">По балансу ↓</option>
+            <option value="newest">Сначала новые</option>
+          </select>
           <button type="button" className="alphabase-section-primary">
             <Plus size={12} strokeWidth={2.5} />
             Добавить партнёра
@@ -129,6 +202,38 @@ export function PartnersListPage() {
             </button>
           ))}
         </div>
+
+        {attention.length > 0 && (
+          <div
+            className="mb-5 rounded-xl border border-amber-500/35 bg-amber-500/[0.06] p-4"
+            style={{ borderStyle: 'solid' }}
+          >
+            <div className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-amber-200">
+              <AlertTriangle className="size-3.5 shrink-0" />
+              Требуют внимания
+            </div>
+            <ul className="m-0 list-none space-y-2 p-0">
+              {attention.map((p) => {
+                const reasons: string[] = []
+                if (p.status === 'pending') reasons.push('на модерации')
+                if (p.status === 'active' && p.leadsCount === 0) reasons.push('нет лидов при активном статусе')
+                if (p.balance >= BALANCE_ATTENTION_USD) reasons.push(`высокий баланс ${FMT.format(p.balance)}`)
+                return (
+                  <li key={p.id}>
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/dashboard/partners/${p.id}`)}
+                      className="flex w-full flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] px-3 py-2 text-left text-xs transition-colors hover:bg-[var(--hub-card-bg-hover)]"
+                    >
+                      <span className="font-semibold text-[color:var(--app-text)]">{p.name}</span>
+                      <span className="text-[10px] text-[color:var(--app-text-subtle)]">{reasons.join(' · ')}</span>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        )}
 
         {/* List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -212,8 +317,7 @@ export function PartnersListPage() {
           ))}
         </div>
 
-        {/* Balance summary */}
-        {totalBalance > 0 && (
+        {kpi.balance > 0 && (
           <div style={{
             marginTop: 24, padding: '14px 20px', borderRadius: 12,
             background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.2)',
@@ -221,7 +325,7 @@ export function PartnersListPage() {
           }}>
             <Wallet size={16} color="#4ade80" />
             <span style={{ fontSize: 13, color: 'var(--app-text-muted)' }}>
-              Общая задолженность по выплатам: <strong style={{ color: '#4ade80' }}>{FMT.format(totalBalance)}</strong>
+              Баланс к выплате в выдаче: <strong style={{ color: '#4ade80' }}>{FMT.format(kpi.balance)}</strong>
             </span>
           </div>
         )}

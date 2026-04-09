@@ -56,10 +56,10 @@ export const STATUS_LABELS: Record<TaskStatus, string> = {
 }
 
 export const PRIORITY_LABELS: Record<TaskPriority, string> = {
-  low:      'Низкий',
-  medium:   'Средний',
-  high:     'Высокий',
-  critical: 'Критичный',
+  low:      'Не срочно',
+  medium:   'Важно',
+  high:     'Срочно',
+  critical: 'Срочно и важно',
 }
 
 export const PRIORITY_COLORS: Record<TaskPriority, string> = {

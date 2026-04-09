@@ -1,5 +1,5 @@
 import ModuleHub from '@/components/ModuleHub'
-import { Users, Radio, FileBarChart, LineChart, LayoutGrid } from 'lucide-react'
+import { Users, Radio, FileBarChart, LineChart, LayoutGrid, AlertCircle } from 'lucide-react'
 
 /**
  * Раздел 6.3 стартового ТЗ ALPHABASE.sale: Лиды.
@@ -17,6 +17,12 @@ export default function LeadsHubPage() {
           title: 'Панель: распределение лидов',
           description: 'Покерный стол: очередь, статусы и квалификация (маршрут ТЗ с режимом распределения).',
           route: '/dashboard/leads/poker?distribution=1',
+        },
+        {
+          icon: <AlertCircle size={20} color="#f87171" />,
+          title: 'Лиды с нарушением',
+          description: 'Покерный стол с фильтром: просроченные задачи по лидам (SLA).',
+          route: '/dashboard/leads/poker?violations=1',
         },
         {
           icon: <Radio size={20} color="#c9a84c" />,

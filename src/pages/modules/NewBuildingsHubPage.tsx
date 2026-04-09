@@ -3,6 +3,7 @@ import {
   Building2,
   CalendarCheck,
   ClipboardList,
+  FileCheck2,
   FolderOpen,
   Landmark,
   PieChart,
@@ -33,6 +34,12 @@ export default function NewBuildingsHubPage() {
           title: 'Брони',
           description: 'Регистрация клиента, бронь квартиры и история операций.',
           route: '/dashboard/bookings',
+        },
+        {
+          icon: <FileCheck2 size={20} color="#c9a84c" />,
+          title: 'Регистрация',
+          description: 'Реестр регистраций покупателей в проектах девелопера.',
+          route: '/dashboard/new-buildings/registration',
         },
         {
           icon: <ClipboardList size={20} color="#c9a84c" />,

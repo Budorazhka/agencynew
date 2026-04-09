@@ -10,8 +10,8 @@ html {
 }
 
 :root {
-  /* Корпоративный зелёный (витрина Marketplace, акценты) — насыщенный, как в палитре дизайна */
-  --corporate-green: #22c55e;
+  /* Корпоративный зелёный маркетплейса (шапка витрины / кнопка Marketplace в дашборде) */
+  --corporate-green: #178b00;
   --gold: #c9a84c;
   --gold-light: #e2c97e;
   --gold-dark: #a07828;
@@ -109,6 +109,24 @@ html {
 
   /* Главные CTA в разделах — радиус «как у платёжной карты» */
   --section-cta-radius: 1.125rem;
+}
+
+/* Форсируем тёмный нативный вид form-контролов, чтобы убрать системный серо-синий фон Windows. */
+:root:not([data-theme='light']) select {
+  color-scheme: dark;
+  color: var(--workspace-text);
+  border-color: var(--hub-card-border);
+  background-color: color-mix(in srgb, var(--rail-bg) 82%, transparent);
+}
+
+:root:not([data-theme='light']) select option,
+:root:not([data-theme='light']) select optgroup {
+  color: var(--workspace-text);
+  background-color: #0f231e;
+}
+
+:root:not([data-theme='light']) input[type='checkbox'] {
+  color-scheme: dark;
 }
 
 /*
@@ -306,7 +324,7 @@ body {
 }
 
 :root[data-theme='light'] {
-  --corporate-green: #16a34a;
+  --corporate-green: #178b00;
   /* Фон чуть ниже белого — карточки и текст читаются лучше */
   --app-bg: #e2e8f0;
   --app-text: #0f172a;

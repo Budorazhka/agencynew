@@ -14,7 +14,7 @@ export const SELECTION_STATUS_COLORS: Record<SelectionStatus, string> = {
   draft: '#6b7280',
   sent: '#3b82f6',
   viewed: '#f59e0b',
-  deal_created: '#22c55e',
+  deal_created: '#178b00',
   archived: '#4b5563',
 }
 

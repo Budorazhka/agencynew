@@ -287,7 +287,7 @@ export function SelectionsListPage() {
                   )}
                   {likedCount > 0 && (
                     <div style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: 15, fontWeight: 700, color: '#22c55e' }}>+{likedCount}</div>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--corporate-green)' }}>+{likedCount}</div>
                       <div style={{ fontSize: 9, color: 'var(--app-text-subtle)', letterSpacing: '0.06em' }}>лайков</div>
                     </div>
                   )}

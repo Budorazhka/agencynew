@@ -1,6 +1,6 @@
 import ModuleHub from '@/components/ModuleHub'
 import { useAuth } from '@/context/AuthContext'
-import { LayoutGrid, Sparkles, FolderOpen, Briefcase, BarChart3, Users, CheckSquare } from 'lucide-react'
+import { LayoutGrid, Sparkles, FolderOpen, Briefcase, BarChart3, Users, CheckSquare, UserRound, AlertCircle } from 'lucide-react'
 
 /**
  * Раздел 6.2 стартового ТЗ ALPHABASE.sale: CRM — панели и отчёты.
@@ -16,6 +16,12 @@ export default function CRMPage() {
       title: 'Покерный стол лидов',
       description: 'Этапы воронки, задачи и контроль обработки лидов (как в ТЗ).',
       route: '/dashboard/leads/poker',
+    },
+    {
+      icon: <AlertCircle size={20} color="#f87171" />,
+      title: 'Лиды с нарушением',
+      description: 'Покерный стол с включённым фильтром: просроченные задачи по лидам (SLA).',
+      route: '/dashboard/leads/poker?violations=1',
     },
     {
       icon: <Users size={20} color="#c9a84c" />,
@@ -54,10 +60,16 @@ export default function CRMPage() {
       route: '/dashboard/deals/report',
     },
     {
+      icon: <UserRound size={20} color="#c9a84c" />,
+      title: 'Отчёт: по менеджеру',
+      description: 'Личный отчет сотрудника: KPI, активность, планы и динамика.',
+      route: '/dashboard/reports/manager',
+    },
+    {
       icon: <BarChart3 size={20} color="#c9a84c" />,
-      title: 'Отчёт: по менеджеру / по команде / KPI / выполнению планов',
-      description: 'Показатели сотрудников, команды и выполнение планов.',
-      route: '/dashboard/team/kpi',
+      title: 'Отчёт: по команде',
+      description: 'Сводные показатели команды, сравнение и выполнение планов.',
+      route: '/dashboard/reports/team',
     },
   ]
 

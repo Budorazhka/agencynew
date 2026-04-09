@@ -29,12 +29,15 @@ import { cn } from '@/lib/utils'
 import { useNewsFeed } from '@/context/NewsFeedContext'
 import { TASKS_MOCK } from '@/data/tasks-mock'
 import { REMINDERS_MOCK } from '@/data/info-mock'
+import { DEALS_MOCK } from '@/data/deals-mock'
 import {
   DASHBOARD_NOTIFICATIONS_PREVIEW,
   HOME_PROGRESS_MOCK,
   HOME_STREAK_MOCK,
 } from '@/data/home-workspace-mock'
 import { INITIAL_LEAD_MANAGERS } from '@/data/leads-mock'
+import { mockProperties } from '@/components/management/my-properties/mock-data'
+import { getConditionState } from '@/components/management/my-properties/utils'
 import { MiniCalendar } from '@/components/dashboard/MiniCalendar'
 import {
   formatWorkspaceDayShort,
@@ -58,10 +61,24 @@ const DESK_PREVIEW = 6
 const TASKS_PREVIEW = 12
 const LEADS_PREVIEW = 12
 const NOTIFS_PREVIEW = 8
-const FEED_ITEM_HEIGHT_CLASS = 'h-[76px]'
-const FEED_TITLE_CLASS = 'line-clamp-1 text-[13px] font-medium leading-snug text-[color:var(--workspace-text)]'
-const FEED_BODY_CLASS = 'line-clamp-1 text-[12px] leading-snug text-[color:var(--workspace-text)]'
-const FEED_META_CLASS = 'text-[11px] text-[color:var(--workspace-text-muted)]'
+const FEED_ITEM_HEIGHT_CLASS = 'min-h-[118px]'
+const FEED_TITLE_CLASS =
+  'line-clamp-2 text-[15px] font-semibold leading-snug text-[color:var(--workspace-text)] sm:text-[16px]'
+const FEED_BODY_CLASS =
+  'line-clamp-2 text-[14px] leading-snug text-[color:var(--workspace-text-muted)] sm:text-[15px]'
+const FEED_META_CLASS = 'text-[13px] text-[color:var(--workspace-text-muted)]'
+
+/** Покер: предвыбор «Не назначен» — LeadsCardTableView `distribution` */
+const LEADS_DISTRIBUTION_HREF = '/dashboard/leads/poker?distribution=1'
+/** Обзор CRM / контроль лидов (LeadsAdminPage) */
+const LEADS_CRM_OVERVIEW_HREF = '/dashboard/leads'
+/** Рабочий стол воронки */
+const LEADS_POKER_HREF = '/dashboard/leads/poker'
+/** Покер с фильтром «лиды с нарушением» — LeadsCardTableView `violations` */
+const LEADS_SLA_VIOLATIONS_HREF = '/dashboard/leads/poker?violations=1'
+
+const DESK_HEADER_LINK_CLASS =
+  'text-[13px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[14px]'
 
 const DAY_STATUS_LABEL = {
   done: 'Выполнено',
@@ -103,17 +120,32 @@ function WidgetHeader({
   title,
   right,
   accentColor,
+  layout = 'comfort',
+  titleClassName,
 }: {
   icon: React.ReactNode
   title?: string | null
   right?: React.ReactNode
   accentColor?: string
+  /** comfort — полноразмерные шапки рабочего стола */
+  layout?: 'compact' | 'comfort'
+  /** Переопределение размера/стиля заголовка (например короче блок рядом с календарём) */
+  titleClassName?: string
 }) {
+  const spacious = layout === 'comfort'
   return (
-    <div className="flex shrink-0 items-center justify-between gap-2 border-b border-[color:var(--workspace-row-border)] px-3 py-1.5">
-      <div className="flex min-w-0 items-center gap-1.5">
+    <div
+      className={cn(
+        'flex shrink-0 items-center justify-between gap-2 border-b border-[color:var(--workspace-row-border)]',
+        spacious ? 'px-4 py-3.5 sm:px-5 sm:py-4' : 'px-3 py-1.5',
+      )}
+    >
+      <div className={cn('flex min-w-0 items-center', spacious ? 'gap-4' : 'gap-1.5')}>
         <div
-          className="flex size-6 shrink-0 items-center justify-center rounded-md"
+          className={cn(
+            'flex shrink-0 items-center justify-center rounded-lg',
+            spacious ? 'size-11 sm:size-12' : 'size-6 rounded-md',
+          )}
           style={{
             background: accentColor ? `${accentColor}18` : 'var(--workspace-widget-icon-bg)',
             color: accentColor ?? 'var(--workspace-widget-icon-fg)',
@@ -122,7 +154,13 @@ function WidgetHeader({
           {icon}
         </div>
         {title ? (
-          <h3 className="line-clamp-2 text-[12px] font-bold leading-snug tracking-tight text-[color:var(--workspace-widget-title)] sm:text-[13px]">
+          <h3
+            className={cn(
+              'line-clamp-2 font-bold leading-snug tracking-tight text-[color:var(--workspace-widget-title)]',
+              spacious ? 'text-base font-bold sm:text-lg' : 'text-[12px] sm:text-[13px]',
+              titleClassName,
+            )}
+          >
             {title}
           </h3>
         ) : null}
@@ -153,8 +191,8 @@ function TabBtn({
       className={cn(
         'relative inline-flex items-center gap-0.5 transition-colors',
         main
-          ? 'rounded-lg px-2.5 py-1 text-[13px] font-extrabold tracking-tight sm:text-[14px]'
-          : 'rounded-md px-1.5 py-0.5 text-[12px] font-bold uppercase tracking-wide',
+          ? 'rounded-lg px-2.5 py-1.5 text-[13px] font-bold tracking-tight sm:px-3 sm:text-[14px]'
+          : 'rounded-md px-2.5 py-1 text-[13px] font-bold uppercase tracking-wide sm:text-[14px]',
         active
           ? main
             ? 'bg-[color-mix(in_srgb,var(--gold)_24%,transparent)] text-[color:var(--workspace-text)]'
@@ -166,7 +204,7 @@ function TabBtn({
     >
       {children}
       {badge != null && badge > 0 && (
-        <span className="flex size-4 items-center justify-center rounded-full bg-[#e11d48] text-[9px] font-bold leading-none text-white">
+        <span className="flex size-5 items-center justify-center rounded-full bg-[#e11d48] text-[10px] font-bold leading-none text-white">
           {badge > 9 ? '9+' : badge}
         </span>
       )}
@@ -190,7 +228,7 @@ function InfoTabBtn({
       type="button"
       onClick={onClick}
       className={cn(
-        'relative flex min-w-0 flex-1 items-center justify-center gap-1 rounded-md border px-1 py-1.5 text-[11px] font-bold transition-colors sm:px-1.5 sm:text-[12px]',
+        'relative flex min-w-0 flex-1 items-center justify-center gap-1 rounded-md border px-2.5 py-2.5 text-[13px] font-bold transition-colors sm:px-3 sm:py-3 sm:text-[14px]',
         active
           ? 'border-[color:var(--workspace-row-border)] bg-[color-mix(in_srgb,var(--gold)_14%,transparent)] text-[color:var(--workspace-text)] shadow-[inset_0_-2px_0_0_var(--gold)]'
           : 'border-transparent text-[color:var(--workspace-text-muted)] hover:border-[color:var(--workspace-row-border)] hover:bg-[rgba(255,255,255,0.04)] hover:text-[color:var(--workspace-text)]',
@@ -198,7 +236,7 @@ function InfoTabBtn({
     >
       <span className="min-w-0 truncate">{children}</span>
       {badge != null && badge > 0 && (
-        <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-[#e11d48] text-[9px] font-bold leading-none text-white">
+        <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#e11d48] text-[10px] font-bold leading-none text-white">
           {badge > 9 ? '9+' : badge}
         </span>
       )}
@@ -250,9 +288,92 @@ function workspaceCalDateInitial() {
 /* ── мини-полоса прогресса ── */
 function MiniBar({ pct, color }: { pct: number; color: string }) {
   return (
-    <div className="h-1 w-full overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">
+    <div className="h-2 w-full overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">
       <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, pct)}%`, background: color }} />
     </div>
+  )
+}
+
+const SIGNAL_PREVIEW = 6
+
+const SIGNAL_ROW_CLASS =
+  'line-clamp-2 rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3.5 py-3 text-[14px] leading-snug text-[color:var(--workspace-text)] transition-colors hover:border-[color:color-mix(in_srgb,var(--gold)_40%,transparent)] hover:bg-[rgba(255,255,255,0.05)] sm:px-4 sm:py-3.5 sm:text-[15px]'
+
+function SignalWidget({
+  title,
+  accent,
+  items,
+  emptyText,
+  linkTo,
+  rowNavigateTo,
+  className,
+}: {
+  title: string
+  accent: string
+  items: string[]
+  emptyText: string
+  linkTo: string
+  /** Клик по строке списка (и по пустому состоянию) ведёт сюда */
+  rowNavigateTo?: string
+  className?: string
+}) {
+  return (
+    <HubWidgetShell
+      accent={accent}
+      className={cn('flex min-h-[260px] flex-col rounded-xl', className)}
+    >
+      <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[color:var(--workspace-row-border)] px-4 py-4 sm:px-5">
+        <div className="flex min-w-0 items-center gap-3">
+          <div
+            className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-[color:var(--workspace-row-border)] bg-[rgba(255,255,255,0.06)] sm:size-14"
+            style={{ boxShadow: `inset 0 0 0 1px ${accent}` }}
+          >
+            <AlertTriangle className="size-[22px] shrink-0 text-[color:var(--workspace-widget-title)] sm:size-6" strokeWidth={2} />
+          </div>
+          <h3 className="line-clamp-2 text-base font-bold leading-tight tracking-tight text-[color:var(--workspace-widget-title)] sm:text-lg">
+            {title}
+          </h3>
+        </div>
+        <Link
+          to={linkTo}
+          className="shrink-0 text-[12px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[13px]"
+        >
+          Открыть →
+        </Link>
+      </div>
+      <div className="flex min-h-[200px] flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5 sm:py-5">
+        {items.length === 0 ? (
+          rowNavigateTo ? (
+            <Link
+              to={rowNavigateTo}
+              className="flex flex-1 items-center rounded-lg border border-dashed border-[color:var(--workspace-row-border)] px-3 py-3 text-[14px] leading-relaxed text-[color:var(--workspace-text-muted)] transition-colors hover:border-[color:color-mix(in_srgb,var(--gold)_35%,transparent)] hover:text-[color:var(--workspace-text)] sm:text-[15px]"
+            >
+              {emptyText}
+            </Link>
+          ) : (
+            <p className="flex flex-1 items-center text-[14px] leading-relaxed text-[color:var(--workspace-text-muted)] sm:text-[15px]">
+              {emptyText}
+            </p>
+          )
+        ) : (
+          <ul className="flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto">
+            {items.slice(0, SIGNAL_PREVIEW).map((item, i) =>
+              rowNavigateTo ? (
+                <li key={`${i}-${item}`}>
+                  <Link to={rowNavigateTo} className={cn(SIGNAL_ROW_CLASS, 'block')}>
+                    {item}
+                  </Link>
+                </li>
+              ) : (
+                <li key={`${i}-${item}`} className={SIGNAL_ROW_CLASS}>
+                  {item}
+                </li>
+              ),
+            )}
+          </ul>
+        )}
+      </div>
+    </HubWidgetShell>
   )
 }
 
@@ -298,7 +419,12 @@ export function DashboardWorkspace() {
   }, [pool])
 
   const mineTask = useCallback(
-    (t: Task) => t.status !== 'done' && (!currentUser?.id || t.assignedToId === currentUser.id),
+    (t: Task) => {
+      if (t.status === 'done') return false
+      const isPersonal = t.taskCategory === 'personal' || t.entityType === 'none'
+      if (isPersonal) return true
+      return !currentUser?.id || t.assignedToId === currentUser.id
+    },
     [currentUser?.id],
   )
 
@@ -464,31 +590,44 @@ export function DashboardWorkspace() {
   const focusDeskLinkLabel =
     focusGap > 0 && deskShowTasks ? 'Открыть задачи →' : canOpenMyReport ? 'К отчёту →' : null
 
+  const controlDeals = useMemo(
+    () => DEALS_MOCK.filter((d) => d.stage === 'showing' || d.stage === 'deposit'),
+    [],
+  )
+  const unassignedLeads = useMemo(() => pool.filter((l) => !l.managerId), [pool])
+  const slaBreachLeads = useMemo(() => pool.filter((l) => l.taskOverdue), [pool])
+  const staleObjects = useMemo(
+    () =>
+      mockProperties.filter(
+        (p) => p.status !== 'archive' && p.status !== 'sold' && getConditionState(p.updatedAt) === 'needs_update',
+      ),
+    [],
+  )
+  const riskyDeals = useMemo(
+    () =>
+      DEALS_MOCK.filter((d) => d.checklist.some((c) => c.required && !c.done) && d.stage === 'deal'),
+    [],
+  )
+
   /* ═══════════════════ ОТРИСОВКА ═══════════════════ */
 
   /*
-   * Сетка: слева на всю высоту задачи/лиды, по центру календарь и планы, справа на всю высоту лента.
-   * Всё помещается в один экран — без прокрутки всей страницы.
-   *
-   * ┌─────────────┬───────────────────┬──────────────┐
-   * │ Задачи/лиды │    Календарь      │    Лента     │
-   * │  (высота)   ├───────────────────┤   (высота)   │
-   * │             │ Планы / эффектив. │              │
-   * └─────────────┴───────────────────┴──────────────┘
+   * Первый экран: 3 колонки в одну строку (stretch по высоте центральной колонки).
+   * Второй экран (ниже, прокрутка): 5 контрольных виджетов ТЗ в той же 3-колоночной сетке (2+2+1).
    */
 
   return (
-    <div className="grid h-full min-h-0 w-full min-w-0 grid-cols-1 gap-1.5 lg:grid-cols-[minmax(300px,1.25fr)_minmax(0,1.55fr)_minmax(300px,1.35fr)] lg:grid-rows-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-1.5 lg:overflow-hidden">
-
+    <div className="flex w-full min-w-0 flex-col gap-3 pb-2 lg:gap-6 lg:pb-5">
+      <div className="grid w-full min-w-0 grid-cols-1 gap-3 lg:grid-cols-[minmax(300px,1.25fr)_minmax(320px,1.55fr)_minmax(300px,1.35fr)] lg:items-stretch lg:gap-5">
       {/* ╔══════════════════════════════════════════╗
          ║  1. ЗАДАЧИ / НОВЫЕ ЛИДЫ  (сверху слева) ║
          ╚══════════════════════════════════════════╝ */}
-      <HubWidgetShell accent="color-mix(in srgb, var(--gold) 60%, transparent)" className="lg:row-span-2">
+      <HubWidgetShell accent="color-mix(in srgb, var(--gold) 60%, transparent)" className="h-full min-h-[min(680px,86vh)] rounded-xl lg:min-h-[800px]">
         <WidgetHeader
-          icon={<ListTodo className="size-3.5" strokeWidth={2} />}
+          icon={<ListTodo className="size-6 sm:size-7" strokeWidth={2} />}
           title={
             deskShowTasks && deskShowLeads
-              ? null
+              ? (mainTab === 'tasks' ? 'Задачи' : 'Лиды')
               : deskShowTasks
                 ? 'Задачи'
                 : deskShowLeads
@@ -516,24 +655,18 @@ export function DashboardWorkspace() {
                 </TabBtn>
               </div>
             ) : deskShowTasks ? (
-              <Link
-                to="/dashboard/tasks"
-                className="text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
-              >
+              <Link to="/dashboard/tasks" className={DESK_HEADER_LINK_CLASS}>
                 Все задачи →
               </Link>
             ) : deskShowLeads ? (
-              <Link
-                to="/dashboard/leads/poker"
-                className="text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
-              >
-                Все лиды →
+              <Link to={LEADS_CRM_OVERVIEW_HREF} className={DESK_HEADER_LINK_CLASS}>
+                Контроль лидов →
               </Link>
             ) : null
           }
         />
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-2.5 py-1">
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden px-4 py-4 sm:px-5 sm:py-5">
           {!deskShowTasks && !deskShowLeads ? (
             <div className="flex min-h-0 flex-1 flex-col justify-center gap-3 px-1 py-2 text-center">
               <p className="text-[14px] font-semibold leading-snug text-[color:var(--workspace-text)]">
@@ -546,7 +679,7 @@ export function DashboardWorkspace() {
                 {deskRailIds.has('secondary') && (
                   <Link
                     to="/dashboard/objects"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)]"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
                     Вторичный рынок
                   </Link>
@@ -554,7 +687,7 @@ export function DashboardWorkspace() {
                 {deskRailIds.has('newbuild') && (
                   <Link
                     to="/dashboard/new-buildings"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)]"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
                     Новостройки
                   </Link>
@@ -562,7 +695,7 @@ export function DashboardWorkspace() {
                 {deskRailIds.has('mls') && (
                   <Link
                     to="/dashboard/mls"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)]"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
                     Партнёры (MLS)
                   </Link>
@@ -570,7 +703,7 @@ export function DashboardWorkspace() {
                 {deskShowMlmAnalytics && (
                   <Link
                     to="/dashboard/partners/mlm"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)]"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
                     MLM-аналитика
                   </Link>
@@ -578,7 +711,7 @@ export function DashboardWorkspace() {
                 {deskRailIds.has('community') && (
                   <Link
                     to="/dashboard/community"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)]"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
                     Сообщество
                   </Link>
@@ -586,7 +719,7 @@ export function DashboardWorkspace() {
                 {deskRailIds.has('team') && (
                   <Link
                     to="/dashboard/team"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)]"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
                     Команда
                   </Link>
@@ -594,7 +727,7 @@ export function DashboardWorkspace() {
                 {deskShowInfo && (
                   <Link
                     to="/dashboard/settings/info"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)]"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
                     Инфо
                   </Link>
@@ -614,7 +747,7 @@ export function DashboardWorkspace() {
                     type="button"
                     onClick={() => setTaskMode(m.id)}
                     className={cn(
-                      'rounded px-1 py-px text-[11px] font-semibold uppercase tracking-wide transition-colors',
+                      'rounded-md px-2 py-1 text-[12px] font-semibold uppercase tracking-wide transition-colors sm:text-[13px]',
                       taskMode === m.id
                         ? 'bg-[color-mix(in_srgb,var(--gold)_20%,transparent)] text-[color:var(--workspace-text)]'
                         : 'text-[color:var(--workspace-text-muted)] hover:text-[color:var(--workspace-text)]',
@@ -625,31 +758,31 @@ export function DashboardWorkspace() {
                 ))}
                 <Link
                   to="/dashboard/tasks"
-                  className="ml-auto flex items-center gap-0.5 text-[12px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                  className={cn('ml-auto flex items-center gap-1', DESK_HEADER_LINK_CLASS)}
                 >
-                  <Plus className="size-3" strokeWidth={2.5} />
+                  <Plus className="size-3.5 sm:size-4" strokeWidth={2.5} />
                   В задачи
                 </Link>
               </div>
 
               {filteredTasks.length === 0 ? (
-                <p className="py-1 text-center text-[12px] text-[color:var(--workspace-text-muted)]">Нет задач</p>
+                <p className="py-2 text-center text-[14px] text-[color:var(--workspace-text-muted)] sm:text-[15px]">Нет задач</p>
               ) : (
-                <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
+                <ul className="min-h-0 flex-1 space-y-1 overflow-hidden">
                   {filteredTasks.slice(0, TASKS_PREVIEW).map((t) => {
                     const overdue = isTaskOverdue(t, todayIso)
                     return (
                       <li
                         key={t.id}
                         className={cn(
-                          'rounded-md border px-2 py-1',
+                          'rounded-lg border px-3 py-2',
                           overdue
                             ? 'border-red-500/25 bg-red-500/[0.06]'
                             : 'border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]',
                         )}
                       >
                         <div className="flex items-start justify-between gap-1">
-                          <p className="line-clamp-1 text-[14px] font-medium leading-snug text-[color:var(--workspace-text)]">
+                          <p className="line-clamp-1 text-[15px] font-medium leading-snug text-[color:var(--workspace-text)] sm:text-[16px]">
                             {t.title}
                           </p>
                           <span className={cn(
@@ -661,7 +794,7 @@ export function DashboardWorkspace() {
                             {PRIORITY_LABELS[t.priority]}
                           </span>
                         </div>
-                        <div className="mt-px flex flex-wrap items-center gap-x-1 text-[11px] text-[color:var(--workspace-text-muted)]">
+                        <div className="mt-0.5 flex flex-wrap items-center gap-x-1 text-[12px] text-[color:var(--workspace-text-muted)] sm:text-[13px]">
                           <span className={cn(overdue && 'font-bold text-red-400')}>
                             {STATUS_LABELS[t.status]}
                           </span>
@@ -688,36 +821,35 @@ export function DashboardWorkspace() {
             </>
           ) : deskShowLeads ? (
             <>
-              <div className="mb-0.5 flex items-center justify-between">
-                <p className="text-[12px] text-[color:var(--workspace-text-muted)]">Очередь «Новый лид»</p>
-                <Link
-                  to="/dashboard/leads/poker"
-                  className="flex items-center gap-0.5 text-[12px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
-                >
-                  <Plus className="size-3" strokeWidth={2.5} />
-                  В лиды
+              <div className="mb-1 flex items-center justify-between gap-2">
+                <p className="text-[14px] font-medium text-[color:var(--workspace-text-muted)] sm:text-[15px]">
+                  Очередь «Новый лид»
+                </p>
+                <Link to={LEADS_POKER_HREF} className={cn('flex shrink-0 items-center gap-1', DESK_HEADER_LINK_CLASS)}>
+                  <Plus className="size-3.5 sm:size-4" strokeWidth={2.5} />
+                  На стол →
                 </Link>
               </div>
               {newLeads.length === 0 ? (
-                <p className="py-1 text-center text-[12px] text-[color:var(--workspace-text-muted)]">Нет новых лидов</p>
+                <p className="py-2 text-center text-[14px] text-[color:var(--workspace-text-muted)] sm:text-[15px]">Нет новых лидов</p>
               ) : (
-                <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
+                <ul className="min-h-0 flex-1 space-y-1 overflow-hidden">
                   {newLeads.slice(0, LEADS_PREVIEW).map((l) => {
                     const st = l.status ?? 'new'
                     return (
                       <li
                         key={l.id}
-                        className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1"
+                        className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2"
                       >
                         <div className="flex items-start justify-between gap-1">
-                          <p className="line-clamp-1 text-[14px] font-medium text-[color:var(--workspace-text)]">
+                          <p className="line-clamp-1 text-[15px] font-medium text-[color:var(--workspace-text)] sm:text-[16px]">
                             {l.name ?? l.id}
                           </p>
                           <span className="shrink-0 rounded px-1 py-px text-[10px] font-bold uppercase text-amber-400/90">
                             {leadUrgency(l)}
                           </span>
                         </div>
-                        <div className="mt-px flex flex-wrap items-center gap-x-1 text-[11px] text-[color:var(--workspace-text-muted)]">
+                        <div className="mt-0.5 flex flex-wrap items-center gap-x-1 text-[12px] text-[color:var(--workspace-text-muted)] sm:text-[13px]">
                           <span>{SOURCE_LABELS[l.source]}</span>
                           <span className="opacity-40">·</span>
                           <span>
@@ -730,7 +862,7 @@ export function DashboardWorkspace() {
                             {LEAD_STATUS_LABELS[st]}
                           </span>
                         </div>
-                        <div className="mt-px text-[11px] text-[color:var(--workspace-text-muted)]">
+                        <div className="mt-0.5 text-[12px] text-[color:var(--workspace-text-muted)] sm:text-[13px]">
                           Отв.: {managerName(l.managerId)}
                         </div>
                       </li>
@@ -751,27 +883,27 @@ export function DashboardWorkspace() {
       {/* ╔══════════════════════════════════════════╗
          ║  2–4. Центр: календарь + планы (оверлей дел) ║
          ╚══════════════════════════════════════════╝ */}
-      <div className="flex min-h-0 flex-col gap-1.5 lg:col-start-2 lg:row-span-2 lg:row-start-1">
-      <HubWidgetShell accent="rgba(96,165,250,0.6)" className="min-h-0 flex-1">
+      <div className="flex h-full min-h-[min(680px,86vh)] flex-col gap-3.5 lg:min-h-[800px]">
+      <HubWidgetShell accent="rgba(96,165,250,0.6)" className="flex min-h-[360px] shrink-0 flex-col rounded-xl lg:min-h-[420px] lg:max-h-[min(560px,56vh)]">
         <WidgetHeader
-          icon={<CalendarDays className="size-3.5" strokeWidth={2} />}
+          icon={<CalendarDays className="size-6 sm:size-7" strokeWidth={2} />}
           title="Календарь"
           accentColor="#60a5fa"
           right={
             deskShowCalendar ? (
               <Link
                 to="/dashboard/calendar"
-                className="text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                className="text-[12px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
               >
                 Полный календарь →
               </Link>
             ) : null
           }
         />
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-1.5">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-2 sm:p-2.5">
           {deskShowCalendar ? (
             <>
-              <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/50 p-1.5">
+              <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/50 p-2 sm:p-2.5">
                 <MiniCalendar
                   variant="workspace"
                   hideFooterLink
@@ -788,17 +920,17 @@ export function DashboardWorkspace() {
                   open={workspaceEventsOpen}
                   onOpenChange={setWorkspaceEventsOpen}
                 />
-                <div className="flex shrink-0 items-center gap-2.5 text-[12px] text-[color:var(--workspace-text-muted)]">
+                <div className="flex shrink-0 flex-wrap items-center gap-2.5 text-[13px] text-[color:var(--workspace-text-muted)] sm:text-[14px]">
                   <span className="flex items-center gap-1">
-                    <Eye className="size-3.5 text-blue-300" />
+                    <Eye className="size-4 text-blue-300 sm:size-[18px]" />
                     Показ
                   </span>
                   <span className="flex items-center gap-1">
-                    <Phone className="size-3.5 text-violet-300" />
+                    <Phone className="size-4 text-violet-300 sm:size-[18px]" />
                     Звонок
                   </span>
                   <span className="flex items-center gap-1">
-                    <Users className="size-3.5 text-[color:var(--workspace-cal-meeting-dot)]" />
+                    <Users className="size-4 text-[color:var(--workspace-cal-meeting-dot)] sm:size-[18px]" />
                     Встреча
                   </span>
                 </div>
@@ -814,34 +946,32 @@ export function DashboardWorkspace() {
         </div>
       </HubWidgetShell>
 
-      <div className="relative min-h-0 flex-1">
+      <div className="relative flex min-h-[300px] flex-1 flex-col">
       {/* ╔══════════════════════════════════════════╗
          ║  4. ПЛАНЫ + СТРИК (нижняя половина центра)  ║
          ╚══════════════════════════════════════════╝ */}
-      <HubWidgetShell accent="rgba(251,146,60,0.6)" className="flex h-full min-h-0 flex-col">
+      <HubWidgetShell accent="rgba(251,146,60,0.6)" className="flex min-h-0 flex-1 flex-col rounded-xl">
         <WidgetHeader
-          icon={<Target className="size-3.5" strokeWidth={2} />}
-          title="Выполнение планов"
+          icon={<Target className="size-5 sm:size-6" strokeWidth={2} />}
+          title="Планы"
+          titleClassName="!text-[15px] sm:!text-base"
           accentColor="#fb923c"
           right={
             canOpenMyReport ? (
-              <Link
-                to="/dashboard/my-report"
-                className="text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
-              >
+              <Link to="/dashboard/my-report" className={DESK_HEADER_LINK_CLASS}>
                 Отчёт →
               </Link>
             ) : null
           }
         />
 
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-x-hidden overflow-y-auto px-3 py-2 pb-2.5">
-          <div className="grid shrink-0 grid-cols-1 gap-2 lg:grid-cols-2">
-            <div className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5">
-              <div className="mb-1.5 flex items-center justify-between text-[10px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 pb-4 sm:px-5 sm:py-5">
+          <div className="grid shrink-0 grid-cols-1 gap-3 lg:grid-cols-2">
+            <div className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-4 py-3.5 sm:px-5 sm:py-4">
+              <div className="mb-2 flex items-center justify-between text-[11px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)] sm:text-[12px]">
                 <span>План дня</span>
                 <span className="flex items-center gap-1 tabular-nums">
-                  <span className="text-[14px] leading-none text-[color:var(--workspace-text)]">{progress.dayPlanPercent}%</span>
+                  <span className="text-[16px] leading-none text-[color:var(--workspace-text)] sm:text-[17px]">{progress.dayPlanPercent}%</span>
                   <span className={cn(
                     'rounded px-1.5 py-px text-[8px]',
                     progress.dayPlanStatus === 'done' ? 'bg-emerald-500/20 text-emerald-300' :
@@ -857,10 +987,10 @@ export function DashboardWorkspace() {
               </div>
             </div>
 
-            <div className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5">
-              <div className="mb-1.5 flex items-center justify-between text-[10px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
+            <div className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-4 py-3.5 sm:px-5 sm:py-4">
+              <div className="mb-2 flex items-center justify-between text-[11px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)] sm:text-[12px]">
                 <span>План недели</span>
-                <span className="text-[14px] leading-none tabular-nums text-[color:var(--workspace-text)]">{progress.weekPlanPercent}%</span>
+                <span className="text-[16px] leading-none tabular-nums text-[color:var(--workspace-text)] sm:text-[17px]">{progress.weekPlanPercent}%</span>
               </div>
               <div className="h-2.5 overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">
                 <div className="h-full rounded-full" style={{ width: `${Math.min(100, progress.weekPlanPercent)}%`, background: 'linear-gradient(90deg, #60a5fa, #3b82f6)' }} />
@@ -868,15 +998,15 @@ export function DashboardWorkspace() {
             </div>
           </div>
 
-          <div className="grid shrink-0 grid-cols-1 gap-2 lg:grid-cols-3">
+          <div className="grid shrink-0 grid-cols-1 gap-3 lg:grid-cols-3">
             {[
               { label: 'Выручка', value: progress.revenue.currentLabel, sub: `/ ${progress.revenue.planLabel}`, pct: progress.revenue.percent, color: 'var(--gold)' },
               { label: 'Воронка', value: `${progress.funnelProgress.percent}%`, sub: '', pct: progress.funnelProgress.percent, color: '#34d399' },
               { label: 'Лиды', value: `${progress.leadsToday.count}`, sub: `/ ${progress.leadsToday.plan}`, pct: progress.leadsToday.plan > 0 ? (progress.leadsToday.count / progress.leadsToday.plan) * 100 : 0, color: '#60a5fa' },
             ].map((m) => (
-              <div key={m.label} className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5">
-                <p className="text-[10px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">{m.label}</p>
-                <p className="mb-1 text-[24px] font-bold leading-none text-[color:var(--workspace-text)]">
+              <div key={m.label} className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-4 py-3.5 sm:px-5 sm:py-4">
+                <p className="text-[12px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)] sm:text-[13px]">{m.label}</p>
+                <p className="mb-1.5 text-[28px] font-bold leading-none text-[color:var(--workspace-text)] sm:text-[32px]">
                   {m.value}
                   {m.sub && <span className="text-[10px] font-normal text-[color:var(--workspace-text-muted)]"> {m.sub}</span>}
                 </p>
@@ -885,10 +1015,10 @@ export function DashboardWorkspace() {
             ))}
           </div>
 
-          <div className="shrink-0 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/65 px-3 py-2">
-            <div className="flex flex-col gap-2">
+          <div className="shrink-0 rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/65 px-4 py-3">
+            <div className="flex flex-col gap-2.5">
               <div className="flex items-center justify-between gap-2">
-                <p className="text-[11px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
+                <p className="text-[13px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)] sm:text-[14px]">
                   Фокус дня
                 </p>
                 <span className={cn(
@@ -900,23 +1030,23 @@ export function DashboardWorkspace() {
               </div>
 
               {focusKpi ? (
-                <p className="text-[12px] text-[color:var(--workspace-text)]">
+                <p className="text-[13px] leading-relaxed text-[color:var(--workspace-text)] sm:text-[14px]">
                   Узкое место: <span className="font-semibold">{focusKpi.label}</span> ({focusKpi.current}/{focusKpi.plan})
                 </p>
               ) : (
-                <p className="text-[12px] text-[color:var(--workspace-text)]">
+                <p className="text-[13px] text-[color:var(--workspace-text)] sm:text-[14px]">
                   Все нормативы в норме.
                 </p>
               )}
 
               <div className="flex flex-col gap-1 border-t border-[color:var(--workspace-row-border)] pt-2 sm:flex-row sm:items-start sm:justify-between sm:gap-2">
-                <p className="min-w-0 text-[10px] leading-snug text-[color:var(--workspace-text-muted)]">
+                <p className="min-w-0 text-[12px] leading-snug text-[color:var(--workspace-text-muted)] sm:text-[13px]">
                   Следующий шаг: {focusGap > 0 ? `закрыть +${focusGap} по фокусу` : 'удержать текущий темп'}
                 </p>
                 {focusDeskHref && focusDeskLinkLabel ? (
                   <Link
                     to={focusDeskHref}
-                    className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                    className="shrink-0 text-[12px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[13px]"
                   >
                     {focusDeskLinkLabel}
                   </Link>
@@ -985,6 +1115,7 @@ export function DashboardWorkspace() {
           className="absolute inset-0 z-[24] flex min-h-0 flex-col overflow-hidden rounded-lg shadow-[0_16px_48px_rgba(0,0,0,0.55)]"
         >
           <WidgetHeader
+            layout="compact"
             icon={<CalendarClock className="size-3.5" strokeWidth={2} />}
             title={`Мероприятия · ${formatWorkspaceDayShort(workspaceCalDate)}`}
             accentColor="#60a5fa"
@@ -1009,6 +1140,7 @@ export function DashboardWorkspace() {
           className="absolute inset-0 z-[25] flex min-h-0 flex-col overflow-hidden rounded-lg shadow-[0_16px_48px_rgba(0,0,0,0.55)]"
         >
           <WidgetHeader
+            layout="compact"
             icon={<ListTodo className="size-3.5" strokeWidth={2} />}
             title="Дела на сегодня"
             accentColor="#60a5fa"
@@ -1093,9 +1225,9 @@ export function DashboardWorkspace() {
       {/* ╔══════════════════════════════════════════╗
          ║  3. УВЕДОМЛЕНИЯ / НАПОМИНАНИЯ / НОВОСТИ  ║
          ╚══════════════════════════════════════════╝ */}
-      <HubWidgetShell accent="rgba(52,211,153,0.5)" className="lg:col-start-3 lg:row-span-2 lg:row-start-1">
+      <HubWidgetShell accent="rgba(52,211,153,0.5)" className="h-full min-h-[min(680px,86vh)] rounded-xl lg:min-h-[800px]">
         <WidgetHeader
-          icon={<Bell className="size-3.5" strokeWidth={2} />}
+          icon={<Bell className="size-6 sm:size-7" strokeWidth={2} />}
           title={null}
           accentColor="#34d399"
           right={
@@ -1113,13 +1245,13 @@ export function DashboardWorkspace() {
           }
         />
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-2.5 py-1">
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden px-4 py-4 sm:px-5 sm:py-5">
           {infoTab === 'notifs' && (
             <>
               {deskShowInfo ? (
                 <Link
                   to="/dashboard/settings/info"
-                  className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                  className="mb-0.5 shrink-0 self-start text-[12px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[13px]"
                 >
                   Все уведомления →
                 </Link>
@@ -1129,7 +1261,7 @@ export function DashboardWorkspace() {
                   <li
                     key={n.id}
                     className={cn(
-                      'flex gap-1.5 overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1',
+                      'flex gap-2 overflow-hidden rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2',
                       FEED_ITEM_HEIGHT_CLASS,
                     )}
                   >
@@ -1154,7 +1286,7 @@ export function DashboardWorkspace() {
               {deskShowInfo ? (
                 <Link
                   to="/dashboard/settings/info/reminders"
-                  className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                  className="mb-0.5 shrink-0 self-start text-[12px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[13px]"
                 >
                   Все напоминания →
                 </Link>
@@ -1164,7 +1296,7 @@ export function DashboardWorkspace() {
                   <li
                     key={r.id}
                     className={cn(
-                      'flex items-start gap-1.5 overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1',
+                      'flex items-start gap-2 overflow-hidden rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2',
                       FEED_ITEM_HEIGHT_CLASS,
                     )}
                   >
@@ -1189,7 +1321,7 @@ export function DashboardWorkspace() {
               {deskShowInfo ? (
                 <Link
                   to="/dashboard/settings/info/news"
-                  className="mb-0.5 shrink-0 self-start text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                  className="mb-0.5 shrink-0 self-start text-[12px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[13px]"
                 >
                   Все новости →
                 </Link>
@@ -1199,7 +1331,7 @@ export function DashboardWorkspace() {
                   <li
                     key={a.id}
                     className={cn(
-                      'flex gap-1.5 overflow-hidden rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-1',
+                      'flex gap-2 overflow-hidden rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2',
                       FEED_ITEM_HEIGHT_CLASS,
                     )}
                   >
@@ -1224,6 +1356,65 @@ export function DashboardWorkspace() {
           )}
         </div>
       </HubWidgetShell>
+      </div>
+
+      {/* ╔══════════════════════════════════════════╗
+         ║  Контрольные виджеты ТЗ (раздел 8.x) —     ║
+         ║  те же 3 колонки: 2 + 2 + 1, без «лесенки» ║
+         ╚══════════════════════════════════════════╝ */}
+      <div className="grid w-full min-w-0 grid-cols-1 gap-3 lg:min-h-[min(640px,58vh)] lg:grid-cols-3 lg:items-stretch lg:gap-6">
+        <div className="flex min-h-[440px] flex-col gap-3 lg:h-full lg:min-h-0">
+          <SignalWidget
+            title="Сделки под контролем"
+            accent="rgba(251,191,36,0.6)"
+            linkTo="/dashboard/deals"
+            rowNavigateTo="/dashboard/deals"
+            emptyText="Нет активных сделок под контролем"
+            items={controlDeals.map((d) => `${d.clientName} · ${d.propertyAddress}`)}
+            className="min-h-0 flex-1 basis-0"
+          />
+          <SignalWidget
+            title="Объекты без активности"
+            accent="rgba(244,114,182,0.55)"
+            linkTo="/dashboard/objects/list"
+            rowNavigateTo="/dashboard/objects/list"
+            emptyText="Объекты актуальны"
+            items={staleObjects.map((p) => `${p.title} · ${p.city}`)}
+            className="min-h-0 flex-1 basis-0"
+          />
+        </div>
+        <div className="flex min-h-[440px] flex-col gap-3 lg:h-full lg:min-h-0">
+          <SignalWidget
+            title="Лиды без назначения"
+            accent="rgba(96,165,250,0.6)"
+            linkTo={LEADS_DISTRIBUTION_HREF}
+            rowNavigateTo={LEADS_DISTRIBUTION_HREF}
+            emptyText="Лидов без назначения нет"
+            items={unassignedLeads.map((l) => `${l.name ?? l.id} · ${SOURCE_LABELS[l.source]}`)}
+            className="min-h-0 flex-1 basis-0"
+          />
+          <SignalWidget
+            title="Сделки в зоне риска"
+            accent="rgba(239,68,68,0.65)"
+            linkTo="/dashboard/deals"
+            rowNavigateTo="/dashboard/deals"
+            emptyText="Рисковые сделки не обнаружены"
+            items={riskyDeals.map((d) => `${d.clientName} · обязательные пункты не закрыты`)}
+            className="min-h-0 flex-1 basis-0"
+          />
+        </div>
+        <div className="flex min-h-[440px] flex-col gap-3 lg:h-full lg:min-h-0">
+          <SignalWidget
+            title="Лиды с нарушением SLA"
+            accent="rgba(248,113,113,0.6)"
+            linkTo={LEADS_SLA_VIOLATIONS_HREF}
+            rowNavigateTo={LEADS_SLA_VIOLATIONS_HREF}
+            emptyText="Нарушений SLA нет"
+            items={slaBreachLeads.map((l) => `${l.name ?? l.id} · срочность: ${leadUrgency(l)}`)}
+            className="min-h-0 flex-1"
+          />
+        </div>
+      </div>
     </div>
   )
 }

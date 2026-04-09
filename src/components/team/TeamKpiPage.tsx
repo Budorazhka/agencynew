@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Phone, Mail, TrendingUp, Target, Users, Briefcase } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { Phone, Mail, TrendingUp, Target, Users, Briefcase, Search, AlertTriangle } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { MOCK_EMPLOYEES, ROLE_LABELS, type Employee } from '@/data/personnel-mock'
 import { formatUsdMillions } from '@/lib/format-currency'
@@ -135,62 +135,147 @@ const FILTER_TABS: { key: FilterRole; label: string }[] = [
 
 export function TeamKpiPage() {
   const [filter, setFilter] = useState<FilterRole>('all')
+  const [search, setSearch] = useState('')
 
-  const employees = MOCK_EMPLOYEES.filter(e =>
-    filter === 'all' ? e.role !== 'owner' : e.role === filter
+  const employees = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    return MOCK_EMPLOYEES.filter((e) => {
+      const roleOk = filter === 'all' ? e.role !== 'owner' : e.role === filter
+      if (!roleOk) return false
+      if (!q) return true
+      return (
+        e.name.toLowerCase().includes(q) ||
+        e.position.toLowerCase().includes(q) ||
+        (e.email?.toLowerCase().includes(q) ?? false)
+      )
+    })
+  }, [filter, search])
+
+  const strip = useMemo(() => {
+    const nonOwner = employees.filter((e) => e.role !== 'owner')
+    const totalRevenue = nonOwner.reduce((s, e) => s + (MOCK_KPI[e.id]?.revenue || 0), 0)
+    const totalDeals = nonOwner.reduce((s, e) => s + (MOCK_KPI[e.id]?.dealsMonth || 0), 0)
+    const plans = nonOwner.map((e) => MOCK_KPI[e.id]?.plan ?? 0)
+    const avgPlan = plans.length ? Math.round(plans.reduce((a, b) => a + b, 0) / plans.length) : 0
+    const overplan = nonOwner.filter((e) => (MOCK_KPI[e.id]?.plan || 0) >= 100).length
+    return { totalRevenue, totalDeals, avgPlan, overplan, nonOwnerCount: nonOwner.length }
+  }, [employees])
+
+  const needAttention = useMemo(
+    () =>
+      employees
+        .filter((e) => {
+          if (e.role === 'owner') return false
+          const k = MOCK_KPI[e.id]
+          if (!k) return false
+          return k.plan < 65 || k.activeTasks >= 10
+        })
+        .slice(0, 6),
+    [employees],
   )
-
-  // Сводка KPI для полоски показателей
-  const managers = MOCK_EMPLOYEES.filter(e => e.role === 'manager')
-  const totalRevenue = managers.reduce((s, e) => s + (MOCK_KPI[e.id]?.revenue || 0), 0)
-  const avgPlan = Math.round(managers.reduce((s, e) => s + (MOCK_KPI[e.id]?.plan || 0), 0) / (managers.length || 1))
-  const totalDeals = managers.reduce((s, e) => s + (MOCK_KPI[e.id]?.dealsMonth || 0), 0)
-  const overplan = managers.filter(e => (MOCK_KPI[e.id]?.plan || 0) >= 100).length
 
   return (
     <DashboardShell>
-      <div style={{ padding: '24px 28px 40px' }}>
+      <div style={{ padding: '24px 28px 40px', width: '100%', maxWidth: 'none' }}>
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 4 }}>KPI команды</div>
-          <div style={{ fontSize: 12, color: C.whiteLow }}>Показатели за текущий месяц</div>
+          <div style={{ fontSize: 12, color: C.whiteLow }}>Показатели за текущий месяц · сводка по текущей выдаче</div>
         </div>
 
-        {/* Summary strip */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
-          {[
-            { label: 'Выручка (менеджеры)', value: formatUsdMillions(totalRevenue, 1), color: '#4ade80' },
-            { label: 'Сделок закрыто',      value: totalDeals,                                    color: C.gold   },
-            { label: 'Ср. выполнение плана',value: `${avgPlan}%`,                                  color: avgPlan >= 80 ? '#4ade80' : '#fb923c' },
-            { label: 'Перевыполнили план',  value: `${overplan} из ${managers.length}`,            color: '#a78bfa' },
-          ].map(s => (
-            <div key={s.label} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: '14px 16px' }}>
-              <div style={{ fontSize: 20, fontWeight: 700, color: s.color }}>{s.value}</div>
-              <div style={{ fontSize: 10, color: C.whiteLow, marginTop: 3 }}>{s.label}</div>
+        <div className="mb-6 grid grid-cols-2 gap-2 md:grid-cols-4">
+          <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+            <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Выручка (не owner)</p>
+            <p className="text-xl font-bold text-emerald-300">{formatUsdMillions(strip.totalRevenue, 1)}</p>
+          </div>
+          <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+            <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Сделок за месяц</p>
+            <p className="text-xl font-bold text-[color:var(--gold)]">{strip.totalDeals}</p>
+          </div>
+          <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+            <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Ср. план</p>
+            <p className={`text-xl font-bold ${strip.avgPlan >= 80 ? 'text-emerald-300' : 'text-orange-300'}`}>{strip.avgPlan}%</p>
+          </div>
+          <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+            <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">≥100% плана</p>
+            <p className="text-xl font-bold text-violet-300">
+              {strip.overplan}
+              <span className="text-sm font-normal text-[color:var(--app-text-subtle)]"> / {strip.nonOwnerCount}</span>
+            </p>
+          </div>
+        </div>
+
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <div
+            className="flex h-9 max-w-md flex-1 items-center gap-2 rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] px-3"
+            style={{ minWidth: 200 }}
+          >
+            <Search className="size-3.5 shrink-0 text-[color:var(--app-text-subtle)]" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Поиск по имени, должности, email..."
+              className="min-w-0 flex-1 appearance-none border-0 bg-[var(--hub-card-bg)] text-xs text-[color:var(--workspace-text)] outline-none [color-scheme:dark] placeholder:text-[color:var(--app-text-subtle)]"
+            />
+          </div>
+          <div style={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+            {FILTER_TABS.map((t) => (
+              <button
+                key={t.key}
+                type="button"
+                onClick={() => setFilter(t.key)}
+                style={{
+                  padding: '7px 14px',
+                  borderRadius: 6,
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: filter === t.key ? 'rgba(201,168,76,0.1)' : 'transparent',
+                  color: filter === t.key ? C.gold : C.whiteLow,
+                  fontSize: 12,
+                  fontWeight: filter === t.key ? 700 : 400,
+                  borderBottom: filter === t.key ? '2px solid var(--gold)' : '2px solid transparent',
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {needAttention.length > 0 && (
+          <div className="mb-5 rounded-xl border border-orange-500/30 bg-orange-500/[0.07] p-4">
+            <div className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-orange-200">
+              <AlertTriangle className="size-3.5 shrink-0" />
+              Нужно внимание
             </div>
-          ))}
-        </div>
+            <ul className="m-0 list-none space-y-1.5 p-0">
+              {needAttention.map((e) => {
+                const k = MOCK_KPI[e.id]!
+                const bits: string[] = []
+                if (k.plan < 65) bits.push(`план ${k.plan}%`)
+                if (k.activeTasks >= 10) bits.push(`задач ${k.activeTasks}`)
+                return (
+                  <li
+                    key={e.id}
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] px-3 py-2 text-xs"
+                  >
+                    <span className="font-semibold text-[color:var(--workspace-text)]">{e.name}</span>
+                    <span className="text-[10px] text-[color:var(--app-text-subtle)]">{bits.join(' · ')}</span>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        )}
 
-        {/* Filter tabs */}
-        <div style={{ display: 'flex', gap: 2, marginBottom: 20 }}>
-          {FILTER_TABS.map(t => (
-            <button key={t.key} onClick={() => setFilter(t.key)} style={{
-              padding: '7px 14px', borderRadius: 6, border: 'none', cursor: 'pointer',
-              background: filter === t.key ? 'rgba(201,168,76,0.1)' : 'transparent',
-              color: filter === t.key ? C.gold : C.whiteLow,
-              fontSize: 12, fontWeight: filter === t.key ? 700 : 400,
-              borderBottom: filter === t.key ? '2px solid var(--gold)' : '2px solid transparent',
-            }}>
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* KPI grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 14 }}>
-          {employees.map(emp => (
+          {employees.map((emp) => (
             <KpiCard key={emp.id} emp={emp} />
           ))}
         </div>
+
+        {employees.length === 0 && (
+          <div className="py-16 text-center text-sm text-[color:var(--app-text-subtle)]">Никого не нашли по фильтрам</div>
+        )}
       </div>
     </DashboardShell>
   )

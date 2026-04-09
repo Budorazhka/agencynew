@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { UserPlus, Phone, Mail, Calendar, X, Pencil, Trash2, Users, ShieldOff, ShieldCheck } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { UserPlus, Phone, Mail, Calendar, X, Pencil, Trash2, Users, ShieldOff, ShieldCheck, Search, AlertTriangle } from 'lucide-react'
 import { useAuth, MOCK_USERS } from '@/context/AuthContext'
 import {
   MOCK_EMPLOYEES,
@@ -34,6 +34,48 @@ function formatDate(iso: string) {
 }
 function buildChildren(employees: Employee[], parentId: string) {
   return employees.filter((e) => e.managerId === parentId)
+}
+
+function collectDescendantIds(employees: Employee[], rootId: string): Set<string> {
+  const out = new Set<string>()
+  const stack = buildChildren(employees, rootId).map((e) => e.id)
+  while (stack.length) {
+    const id = stack.pop()!
+    if (out.has(id)) continue
+    out.add(id)
+    stack.push(...buildChildren(employees, id).map((e) => e.id))
+  }
+  return out
+}
+
+/** null — показать всё; пустой Set — нет совпадений; иначе только эти id */
+function visibleEmployeeIds(
+  employees: Employee[],
+  roleFilter: 'all' | EmployeeRole,
+  search: string,
+): Set<string> | null {
+  const q = search.trim().toLowerCase()
+  if (roleFilter === 'all' && !q) return null
+
+  const byId = new Map(employees.map((e) => [e.id, e]))
+  const matches = employees.filter((e) => {
+    const roleOk = roleFilter === 'all' || e.role === roleFilter
+    const searchOk = !q || e.name.toLowerCase().includes(q) || e.position.toLowerCase().includes(q) || (e.email?.toLowerCase().includes(q) ?? false)
+    return roleOk && searchOk
+  })
+  if (matches.length === 0) return new Set()
+
+  const ids = new Set<string>()
+  for (const m of matches) {
+    ids.add(m.id)
+    let cur: Employee | undefined = m
+    while (cur?.managerId) {
+      ids.add(cur.managerId)
+      cur = byId.get(cur.managerId)
+    }
+    for (const did of collectDescendantIds(employees, m.id)) ids.add(did)
+  }
+  return ids
 }
 
 // ─── Карточка сотрудника (стиль игральной карты) ─────────────────────────────
@@ -129,13 +171,17 @@ function OrgNode({
   allEmployees,
   onSelect,
   selectedId,
+  visibleIds,
 }: {
   employee: Employee
   allEmployees: Employee[]
   onSelect: (e: Employee) => void
   selectedId: string | null
+  visibleIds: Set<string> | null
 }) {
-  const children = buildChildren(allEmployees, employee.id)
+  if (visibleIds && !visibleIds.has(employee.id)) return null
+
+  const children = buildChildren(allEmployees, employee.id).filter((c) => !visibleIds || visibleIds.has(c.id))
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -172,6 +218,7 @@ function OrgNode({
                     allEmployees={allEmployees}
                     onSelect={onSelect}
                     selectedId={selectedId}
+                    visibleIds={visibleIds}
                   />
                 </div>
               )
@@ -473,8 +520,36 @@ export function PersonnelPage() {
   const [selected, setSelected] = useState<Employee | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [editTarget, setEditTarget] = useState<Employee | null>(null)
+  const [orgSearch, setOrgSearch] = useState('')
+  const [roleFilter, setRoleFilter] = useState<'all' | EmployeeRole>('all')
 
-  const roots = employees.filter((e) => !e.managerId)
+  const visibleIds = useMemo(
+    () => visibleEmployeeIds(employees, roleFilter, orgSearch),
+    [employees, roleFilter, orgSearch],
+  )
+
+  const personnelKpi = useMemo(() => {
+    const nonOwner = employees.filter((e) => e.role !== 'owner')
+    return {
+      total: employees.length,
+      managers: employees.filter((e) => e.role === 'manager').length,
+      rops: employees.filter((e) => e.role === 'rop').length,
+      directors: employees.filter((e) => e.role === 'director').length,
+      noPhone: nonOwner.filter((e) => !e.phone?.trim()).length,
+      noEmail: nonOwner.filter((e) => !e.email?.trim()).length,
+    }
+  }, [employees])
+
+  const contactGaps = useMemo(
+    () =>
+      employees.filter((e) => e.role !== 'owner' && (!e.phone?.trim() || !e.email?.trim())).slice(0, 8),
+    [employees],
+  )
+
+  const visibleRoots = useMemo(() => {
+    const rts = employees.filter((e) => !e.managerId)
+    return rts.filter((r) => !visibleIds || visibleIds.has(r.id))
+  }, [employees, visibleIds])
 
   const handleAdd = (data: typeof EMPTY_FORM) => {
     setEmployees((prev) => [...prev, { id: `emp-${Date.now()}`, name: data.name.trim(), role: data.role, position: data.position.trim(), managerId: data.managerId || null, phone: data.phone || undefined, email: data.email || undefined, hireDate: data.hireDate || undefined }])
@@ -568,6 +643,92 @@ export function PersonnelPage() {
             </div>
           ) : (
             <>
+              {!showForm && !editTarget && (
+                <div
+                  className="border-b border-[var(--green-border)]"
+                  style={{ padding: '16px 24px', background: 'var(--hub-card-bg)', flexShrink: 0 }}
+                >
+                  <p className="mb-3 text-[10px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
+                    Сводка по команде
+                  </p>
+                  <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+                    <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--green-deep)] p-3">
+                      <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Всего</p>
+                      <p className="text-lg font-bold text-[color:var(--gold)]">{personnelKpi.total}</p>
+                    </div>
+                    <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--green-deep)] p-3">
+                      <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Менеджеры</p>
+                      <p className="text-lg font-bold text-emerald-300">{personnelKpi.managers}</p>
+                    </div>
+                    <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--green-deep)] p-3">
+                      <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">РОП</p>
+                      <p className="text-lg font-bold text-amber-200">{personnelKpi.rops}</p>
+                    </div>
+                    <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--green-deep)] p-3">
+                      <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Директора</p>
+                      <p className="text-lg font-bold text-sky-300">{personnelKpi.directors}</p>
+                    </div>
+                    <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--green-deep)] p-3">
+                      <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Без телефона</p>
+                      <p className="text-lg font-bold text-orange-300">{personnelKpi.noPhone}</p>
+                    </div>
+                    <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--green-deep)] p-3">
+                      <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Без email</p>
+                      <p className="text-lg font-bold text-rose-300">{personnelKpi.noEmail}</p>
+                    </div>
+                  </div>
+
+                  <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                    <div className="flex h-9 max-w-md flex-1 items-center gap-2 rounded-lg border border-[var(--hub-card-border)] bg-[var(--green-deep)] px-3">
+                      <Search className="size-3.5 shrink-0 text-[color:var(--app-text-subtle)]" />
+                      <input
+                        value={orgSearch}
+                        onChange={(e) => setOrgSearch(e.target.value)}
+                        placeholder="Поиск в оргструктуре: имя, должность, email..."
+                        className="min-w-0 flex-1 border-0 bg-transparent text-xs text-[color:var(--workspace-text)] outline-none placeholder:text-[color:var(--app-text-subtle)]"
+                      />
+                    </div>
+                    <select
+                      value={roleFilter}
+                      onChange={(e) => setRoleFilter(e.target.value as 'all' | EmployeeRole)}
+                      className="h-9 min-w-[160px] rounded-lg border border-[var(--hub-card-border)] bg-[var(--green-deep)] px-2 text-xs text-[color:var(--workspace-text)]"
+                    >
+                      <option value="all">Все роли</option>
+                      {(Object.entries(ROLE_LABELS) as [EmployeeRole, string][]).map(([k, v]) => (
+                        <option key={k} value={k}>
+                          {v}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {contactGaps.length > 0 && (
+                    <div className="rounded-xl border border-orange-500/30 bg-orange-500/[0.07] p-4">
+                      <div className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-orange-200">
+                        <AlertTriangle className="size-3.5 shrink-0" />
+                        Заполните контакты
+                      </div>
+                      <ul className="m-0 list-none space-y-1.5 p-0">
+                        {contactGaps.map((e) => (
+                          <li key={e.id}>
+                            <button
+                              type="button"
+                              onClick={() => setSelected(e)}
+                              className="flex w-full flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--hub-card-border)] bg-[var(--green-deep)] px-3 py-2 text-left text-xs transition-colors hover:bg-[var(--green-card-hover)]"
+                            >
+                              <span className="font-semibold text-[color:var(--workspace-text)]">{e.name}</span>
+                              <span className="text-[10px] text-[color:var(--app-text-subtle)]">
+                                {[ !e.phone?.trim() ? 'нет телефона' : null, !e.email?.trim() ? 'нет email' : null ].filter(Boolean).join(' · ')}
+                              </span>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Form */}
               {(showForm || editTarget) && (
                 <div className="border-b border-[var(--green-border)]" style={{ padding: '16px 24px', background: 'var(--hub-card-bg)', backdropFilter: 'blur(8px)', flexShrink: 0 }}>
@@ -594,9 +755,20 @@ export function PersonnelPage() {
                 }}
               >
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 'max-content', gap: 0 }}>
-                  {roots.map((root) => (
-                    <OrgNode key={root.id} employee={root} allEmployees={employees} onSelect={setSelected} selectedId={selected?.id ?? null} />
-                  ))}
+                  {visibleRoots.length === 0 ? (
+                    <p className="py-12 text-center text-sm text-[color:var(--app-text-subtle)]">Никого не нашли по фильтрам</p>
+                  ) : (
+                    visibleRoots.map((root) => (
+                      <OrgNode
+                        key={root.id}
+                        employee={root}
+                        allEmployees={employees}
+                        onSelect={setSelected}
+                        selectedId={selected?.id ?? null}
+                        visibleIds={visibleIds}
+                      />
+                    ))
+                  )}
                 </div>
               </div>
             </>

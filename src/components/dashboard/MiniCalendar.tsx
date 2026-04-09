@@ -120,15 +120,15 @@ export function MiniCalendar({
     selectDate(todayStr)
   }
 
-  const cellMinH = isWorkspace ? '' : 'min-h-[52px]'
+  const cellMinH = isWorkspace ? '' : 'min-h-[56px]'
   const dayNumClass = isWorkspace
-    ? 'mb-0 flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-medium'
-    : 'mb-0.5 flex size-6 items-center justify-center rounded-full text-[11px] font-medium'
+    ? 'flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold leading-none'
+    : 'flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-medium leading-none'
   const headerMonthClass = isWorkspace
     ? 'text-sm font-bold tracking-tight text-[color:var(--workspace-text)] sm:text-base'
     : 'text-sm font-bold tracking-tight text-[color:var(--workspace-text)]'
   const dowClass = isWorkspace
-    ? 'text-center text-[10px] font-semibold uppercase tracking-wider text-[color:var(--workspace-text-dim)]'
+    ? 'text-center text-[11px] font-semibold uppercase tracking-wider text-[color:var(--workspace-text-dim)]'
     : 'text-center text-[9px] font-semibold uppercase tracking-wider text-[color:var(--workspace-text-dim)]'
 
   return (
@@ -208,7 +208,7 @@ export function MiniCalendar({
               <div
                 key={`e-${i}`}
                 className={cn(
-                  isWorkspace ? 'min-h-0 rounded-md' : 'min-h-[52px] rounded-md',
+                  isWorkspace ? 'min-h-0 rounded-md' : 'min-h-[56px] rounded-md',
                 )}
               />
             )
@@ -223,10 +223,10 @@ export function MiniCalendar({
               type="button"
               onClick={() => selectDate(date)}
               className={cn(
-                'flex min-h-0 flex-col items-stretch border text-left transition-colors',
+                'grid min-h-0 border text-center transition-colors',
                 isWorkspace
-                  ? 'h-full min-h-0 w-full min-w-0 overflow-hidden rounded-lg border p-1'
-                  : cn('rounded-md p-0.5', cellMinH),
+                  ? 'h-full min-h-0 w-full min-w-0 grid-rows-[1fr_auto] overflow-hidden rounded-lg border p-1'
+                  : cn('grid grid-rows-[1fr_auto] rounded-md p-0.5', cellMinH),
                 isSelected
                   ? 'border-[color:var(--hub-card-border-hover)] bg-[var(--hub-tile-icon-bg)]'
                   : isToday
@@ -237,6 +237,7 @@ export function MiniCalendar({
               <span
                 className={cn(
                   dayNumClass,
+                  'place-self-center',
                   isToday
                     ? 'bg-[color:var(--workspace-cal-today-bg)] font-bold text-[color:var(--workspace-cal-today-fg)]'
                     : 'text-[color:var(--workspace-text)] opacity-85',
@@ -244,7 +245,7 @@ export function MiniCalendar({
               >
                 {parseInt(d, 10)}
               </span>
-              <div className="flex min-h-0 flex-1 flex-wrap content-center justify-center gap-0.5">
+              <div className="flex min-h-0 w-full flex-wrap content-end justify-center gap-0.5 self-end pb-px">
                 {dayEvents
                   .map((ev) => ({ ev, icon: calendarCellIcon(ev.type) }))
                   .filter((x) => x.icon != null)
