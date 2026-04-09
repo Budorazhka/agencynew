@@ -149,7 +149,6 @@ export default function MlsVerificationSecondaryPage() {
                 <tbody>
                   {filtered.map((p) => {
                     const ok = p.state === 'verified'
-                    const warn = p.state === 'pending' || p.state === 'expired_docs'
                     const bad = p.state === 'suspended'
                     return (
                       <tr key={p.name} className="border-b border-[color:var(--workspace-row-border)]">

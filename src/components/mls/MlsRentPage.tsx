@@ -30,8 +30,8 @@ const LOTS: Array<{
   { id: 'r4', address: 'Невский, 120', region: 'СПб', partner: 'Лайт Рент', rooms: 2, areaM2: 48, rentUsd: 880, depositMonths: 1, status: 'active', daysListed: 71, availableFrom: '15.04', verified: false },
   { id: 'r5', address: 'ул. Арбат, 21', region: 'Москва', partner: 'Бета Партнёры', rooms: 1, areaM2: 32, rentUsd: 1450, depositMonths: 1, status: 'moderation', daysListed: 1, availableFrom: 'сразу', verified: false },
   { id: 'r6', address: 'ул. Кирова, 7', region: 'Регионы', partner: 'Юг Аренда', rooms: 2, areaM2: 52, rentUsd: 520, depositMonths: 1, status: 'active', daysListed: 95, availableFrom: '20.04', verified: true },
-  { id: 'r7', address: 'пр. Мира, 33', region: 'МО', partner: 'West Capital Homes', rooms: 2, areaM2: 58, rentUsd: 980, depositMonths: 1, status: 'active', daysListed: 18, verified: true },
-  { id: 'r8', address: 'ул. Рубинштейна, 40', region: 'СПб', partner: 'Batumi Invest Brokers', rooms: 1, areaM2: 30, rentUsd: 750, depositMonths: 1, status: 'active', daysListed: 55, verified: false },
+  { id: 'r7', address: 'пр. Мира, 33', region: 'МО', partner: 'West Capital Homes', rooms: 2, areaM2: 58, rentUsd: 980, depositMonths: 1, status: 'active', daysListed: 18, availableFrom: '05.05', verified: true },
+  { id: 'r8', address: 'ул. Рубинштейна, 40', region: 'СПб', partner: 'Batumi Invest Brokers', rooms: 1, areaM2: 30, rentUsd: 750, depositMonths: 1, status: 'active', daysListed: 55, availableFrom: 'сразу', verified: false },
 ]
 
 const money = new Intl.NumberFormat('ru-RU')
