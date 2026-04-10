@@ -1,6 +1,6 @@
 import ModuleHub from '@/components/ModuleHub'
 import { useAuth } from '@/context/AuthContext'
-import { LayoutGrid, Sparkles, FolderOpen, Briefcase, BarChart3, Users, CheckSquare, UserRound, AlertCircle } from 'lucide-react'
+import { LayoutGrid, Sparkles, FolderOpen, Briefcase, BarChart3, Users, CheckSquare, UserRound, AlertCircle, LibraryBig } from 'lucide-react'
 
 /**
  * Раздел 6.2 стартового ТЗ ALPHABASE.sale: CRM — панели и отчёты.
@@ -70,6 +70,12 @@ export default function CRMPage() {
       title: 'Отчёт: по команде',
       description: 'Сводные показатели команды, сравнение и выполнение планов.',
       route: '/dashboard/reports/team',
+    },
+    {
+      icon: <LibraryBig size={20} color="#c9a84c" />,
+      title: 'Реестр отчётов',
+      description: 'Единая витрина всех 12 отчётов ALPHABASE.sale по доменам.',
+      route: '/dashboard/reports/registry',
     },
   ]
 

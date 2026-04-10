@@ -13,7 +13,7 @@ type FinanceOp = {
   status: 'posted' | 'pending'
 }
 
-const OPS: FinanceOp[] = [
+const FINANCE_OPS_SEED: FinanceOp[] = [
   { id: 'fo-1', date: '2026-04-07', type: 'income', category: 'Комиссия по сделке', amount: 312000, note: 'Сделка deal-12', manager: 'Анна Первичкина', status: 'posted' },
   { id: 'fo-2', date: '2026-04-06', type: 'expense', category: 'Маркетинг', amount: 118000, note: 'Трафик по лидам', manager: 'Дмитрий Коваль', status: 'posted' },
   { id: 'fo-3', date: '2026-04-06', type: 'income', category: 'Аванс партнёра', amount: 145000, note: 'Первичный рынок', manager: 'Анна Первичкина', status: 'pending' },
@@ -31,31 +31,39 @@ const OPS: FinanceOp[] = [
 const money = new Intl.NumberFormat('ru-RU')
 
 export default function FinancePanelPage() {
+  const [ops, setOps] = useState<FinanceOp[]>(() => [...FINANCE_OPS_SEED])
   const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense'>('all')
   const [manager, setManager] = useState<string>('all')
   const [pendingOnly, setPendingOnly] = useState(false)
 
-  const managerOptions = useMemo(() => Array.from(new Set(OPS.map((o) => o.manager))).sort(), [])
+  const managerOptions = useMemo(() => Array.from(new Set(ops.map((o) => o.manager))).sort(), [ops])
+
+  const postOperation = (id: string) => {
+    setOps((prev) => prev.map((o) => (o.id === id ? { ...o, status: 'posted' } : o)))
+  }
 
   const filtered = useMemo(() => {
-    let rows = [...OPS]
+    let rows = [...ops]
     if (typeFilter !== 'all') rows = rows.filter((o) => o.type === typeFilter)
     if (manager !== 'all') rows = rows.filter((o) => o.manager === manager)
     if (pendingOnly) rows = rows.filter((o) => o.status === 'pending')
     return rows.sort((a, b) => b.date.localeCompare(a.date))
-  }, [manager, pendingOnly, typeFilter])
+  }, [manager, ops, pendingOnly, typeFilter])
 
   const kpi = useMemo(() => {
     const income = filtered.filter((o) => o.type === 'income').reduce((s, o) => s + o.amount, 0)
     const expense = filtered.filter((o) => o.type === 'expense').reduce((s, o) => s + o.amount, 0)
-    const pendingIn = OPS.filter((o) => o.status === 'pending' && o.type === 'income').reduce((s, o) => s + o.amount, 0)
-    const pendingOut = OPS.filter((o) => o.status === 'pending' && o.type === 'expense').reduce((s, o) => s + o.amount, 0)
-    const postedIncome = OPS.filter((o) => o.type === 'income' && o.status === 'posted').reduce((s, o) => s + o.amount, 0)
-    const postedExpense = OPS.filter((o) => o.type === 'expense' && o.status === 'posted').reduce((s, o) => s + o.amount, 0)
+    const pendingIn = ops.filter((o) => o.status === 'pending' && o.type === 'income').reduce((s, o) => s + o.amount, 0)
+    const pendingOut = ops.filter((o) => o.status === 'pending' && o.type === 'expense').reduce((s, o) => s + o.amount, 0)
+    const postedIncome = ops.filter((o) => o.type === 'income' && o.status === 'posted').reduce((s, o) => s + o.amount, 0)
+    const postedExpense = ops.filter((o) => o.type === 'expense' && o.status === 'posted').reduce((s, o) => s + o.amount, 0)
     return { income, expense, balance: income - expense, pendingIn, pendingOut, postedIncome, postedExpense }
-  }, [filtered])
+  }, [filtered, ops])
 
-  const pendingQueue = useMemo(() => OPS.filter((o) => o.status === 'pending').sort((a, b) => b.date.localeCompare(a.date)), [])
+  const pendingQueue = useMemo(
+    () => ops.filter((o) => o.status === 'pending').sort((a, b) => b.date.localeCompare(a.date)),
+    [ops],
+  )
 
   return (
     <DashboardShell>
@@ -65,6 +73,10 @@ export default function FinancePanelPage() {
             <h1 className="text-xl font-bold text-[color:var(--theme-accent-heading)]">Панель управления финансами</h1>
             <p className="mt-1 text-sm text-[color:var(--app-text-muted)]">
               Операции, проводки и очередь на подтверждение в одном контуре.
+            </p>
+            <p className="mt-2 rounded-md border border-[color:var(--workspace-row-border)] bg-[rgba(59,130,246,0.08)] px-3 py-2 text-xs leading-relaxed text-[color:var(--workspace-text-muted)]">
+              Набор данных демонстрационный. Кнопка «Провести» меняет статус локально; синхронизация с бухучётом и REST
+              проводок подключается на бэкенде.
             </p>
           </div>
 
@@ -148,6 +160,7 @@ export default function FinancePanelPage() {
                     <th className="px-2 py-2">Сумма</th>
                     <th className="px-2 py-2">Ответственный</th>
                     <th className="px-2 py-2">Статус</th>
+                    <th className="px-2 py-2 w-[140px]">Действие</th>
                     <th className="px-2 py-2">Комментарий</th>
                   </tr>
                 </thead>
@@ -176,6 +189,19 @@ export default function FinancePanelPage() {
                         <span className={op.status === 'posted' ? 'text-[color:var(--workspace-text-muted)]' : 'text-amber-300'}>
                           {op.status === 'posted' ? 'Проведено' : 'Ожидает'}
                         </span>
+                      </td>
+                      <td className="px-2 py-2">
+                        {op.status === 'pending' ? (
+                          <button
+                            type="button"
+                            onClick={() => postOperation(op.id)}
+                            className="rounded-md border border-emerald-600/50 bg-emerald-950/30 px-2 py-1 text-[11px] font-semibold text-emerald-200 transition-colors hover:bg-emerald-900/40"
+                          >
+                            Провести
+                          </button>
+                        ) : (
+                          <span className="text-[11px] text-[color:var(--app-text-subtle)]">—</span>
+                        )}
                       </td>
                       <td className="max-w-[220px] truncate px-2 py-2 text-xs text-[color:var(--workspace-text-muted)]" title={op.note}>
                         {op.note}
@@ -208,6 +234,13 @@ export default function FinancePanelPage() {
                     <span className="text-xs text-[color:var(--workspace-text-muted)]">
                       {op.date} · {op.manager}
                     </span>
+                    <button
+                      type="button"
+                      onClick={() => postOperation(op.id)}
+                      className="rounded-md border border-emerald-600/50 bg-emerald-950/30 px-2 py-1 text-[11px] font-semibold text-emerald-200 transition-colors hover:bg-emerald-900/40"
+                    >
+                      Провести
+                    </button>
                   </li>
                 ))}
               </ul>

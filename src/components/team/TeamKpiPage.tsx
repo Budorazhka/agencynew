@@ -20,8 +20,8 @@ const ROLE_ACCENT: Record<string, string> = {
   manager:  '#4ade80',
 }
 
-// Моковые KPI по сотрудникам
-const MOCK_KPI: Record<string, { leadsMonth: number; dealsMonth: number; revenue: number; plan: number; activeTasks: number }> = {
+/** Моковые KPI по сотрудникам (для отчёта по команде и карточек). */
+export const MOCK_KPI: Record<string, { leadsMonth: number; dealsMonth: number; revenue: number; plan: number; activeTasks: number }> = {
   'emp-owner':    { leadsMonth: 0,  dealsMonth: 0,  revenue: 0,          plan: 100, activeTasks: 3  },
   'emp-director': { leadsMonth: 2,  dealsMonth: 1,  revenue: 12_500_000, plan: 95,  activeTasks: 7  },
   'emp-rop-msk':  { leadsMonth: 8,  dealsMonth: 3,  revenue: 37_000_000, plan: 87,  activeTasks: 12 },
@@ -133,7 +133,9 @@ const FILTER_TABS: { key: FilterRole; label: string }[] = [
   { key: 'manager',  label: 'Менеджеры' },
 ]
 
-export function TeamKpiPage() {
+type TeamKpiPageProps = { embedded?: boolean }
+
+export function TeamKpiPage({ embedded = false }: TeamKpiPageProps) {
   const [filter, setFilter] = useState<FilterRole>('all')
   const [search, setSearch] = useState('')
 
@@ -174,12 +176,19 @@ export function TeamKpiPage() {
     [employees],
   )
 
-  return (
-    <DashboardShell>
-      <div style={{ padding: '24px 28px 40px', width: '100%', maxWidth: 'none' }}>
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 4 }}>KPI команды</div>
-          <div style={{ fontSize: 12, color: C.whiteLow }}>Показатели за текущий месяц · сводка по текущей выдаче</div>
+  const inner = (
+      <div style={{ padding: embedded ? '0' : '24px 28px 40px', width: '100%', maxWidth: 'none' }}>
+        <div style={{ marginBottom: embedded ? 16 : 20 }}>
+          {embedded ? (
+            <div style={{ fontSize: 13, fontWeight: 600, color: C.whiteMid }}>
+              Карточки сотрудников по текущим фильтрам отчёта
+            </div>
+          ) : (
+            <>
+              <div style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 4 }}>KPI команды</div>
+              <div style={{ fontSize: 12, color: C.whiteLow }}>Показатели за текущий месяц · сводка по текущей выдаче</div>
+            </>
+          )}
         </div>
 
         <div className="mb-6 grid grid-cols-2 gap-2 md:grid-cols-4">
@@ -277,6 +286,8 @@ export function TeamKpiPage() {
           <div className="py-16 text-center text-sm text-[color:var(--app-text-subtle)]">Никого не нашли по фильтрам</div>
         )}
       </div>
-    </DashboardShell>
   )
+
+  if (embedded) return inner
+  return <DashboardShell>{inner}</DashboardShell>
 }

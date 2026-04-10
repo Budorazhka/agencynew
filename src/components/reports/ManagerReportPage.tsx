@@ -1,9 +1,6 @@
-import { MyReportPage } from '@/components/dashboard/MyReportPage'
+import ManagerReportView from '@/components/reports/ManagerReportView'
 
-/**
- * Отдельная точка входа для отчета по менеджеру (ТЗ 12.4).
- * Верстка переиспользует личный отчет как базовый UI-шаблон.
- */
+/** ТЗ 12.4: отдельный шаблон отчёта по менеджеру (не личный кабинет). */
 export default function ManagerReportPage() {
-  return <MyReportPage />
+  return <ManagerReportView />
 }

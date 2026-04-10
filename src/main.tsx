@@ -88,6 +88,7 @@ import PrimaryPartnersReportPage from '@/components/newbuild/PrimaryPartnersRepo
 import NewBuildingsBookingsRegistrationsPage from '@/pages/modules/NewBuildingsBookingsRegistrationsPage'
 import ManagerReportPage from '@/components/reports/ManagerReportPage'
 import TeamReportPage from '@/components/reports/TeamReportPage'
+import ReportsRegistryPage from '@/components/reports/ReportsRegistryPage'
 import AgencyStatusesPage from '@/components/settings/AgencyStatusesPage'
 import FinancePanelPage from '@/components/finance/FinancePanelPage'
 import FinanceReportPage from '@/components/finance/FinanceReportPage'
@@ -329,6 +330,7 @@ createRoot(document.getElementById('root')!).render(
                           <Route path="team/branches" element={<BranchesPage />} />
                           <Route path="team/kpi" element={<TeamReportPage />} />
                           <Route path="team/access" element={<TeamAccessPage />} />
+                          <Route path="reports/registry" element={<ReportsRegistryPage />} />
                           <Route path="reports/manager" element={<ManagerReportPage />} />
                           <Route path="reports/team" element={<TeamReportPage />} />
                           <Route path="learning" element={<LearningPage />} />

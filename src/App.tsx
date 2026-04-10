@@ -11,6 +11,8 @@ export default function App() {
   const location = useLocation()
   /** Покерный стол CRM заполняет колонку под шапкой без лишнего скролла оболочки. */
   const isPokerRoute = location.pathname === '/dashboard/leads/poker'
+  const isNewBuildRegistrationsRoute = location.pathname === '/dashboard/new-buildings/registration'
+  const isFullHeightContentRoute = isPokerRoute || isNewBuildRegistrationsRoute
 
   return (
     <SidebarRailProvider>
@@ -26,7 +28,7 @@ export default function App() {
           <div
             className={cn(
               'relative min-h-0 flex-1 overflow-x-hidden',
-              isPokerRoute ? 'flex min-h-0 flex-col overflow-hidden' : 'overflow-y-auto',
+              isFullHeightContentRoute ? 'flex min-h-0 flex-col overflow-hidden' : 'overflow-y-auto',
             )}
           >
             <DashboardRouteGuard />

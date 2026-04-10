@@ -29,7 +29,7 @@ const MARKETPLACE_HREF = 'https://baza.sale'
 
 /**
  * Сквозной верхний бар ALPHABASE.sale: AI, Marketplace, уведомления, быстрые действия, профиль.
- * AI — заглушка «в разработке»; Marketplace — переход на baza.sale.
+ * AI — панель быстрых переходов; чат с моделью подключается отдельно. Marketplace — baza.sale.
  */
 export function DashboardTopHeader() {
   const [aiOpen, setAiOpen] = useState(false)
@@ -100,8 +100,8 @@ export function DashboardTopHeader() {
             'min-h-11 gap-2 px-3.5 py-2.5 text-[14px] font-bold',
             'ring-1 ring-transparent hover:ring-[color-mix(in_srgb,var(--gold)_42%,transparent)]',
           )}
-          title="AI — в разработке"
-          aria-label="AI — в разработке"
+          title="AI — быстрые сценарии"
+          aria-label="AI — быстрые сценарии"
           aria-haspopup="dialog"
           aria-expanded={aiOpen}
           onClick={() => setAiOpen(true)}
@@ -212,12 +212,50 @@ export function DashboardTopHeader() {
             </div>
             <DialogHeader className="min-w-0 flex-1 space-y-2 text-left">
               <DialogTitle className="text-[1.05rem] font-black uppercase leading-tight tracking-[0.05em] text-[color:var(--theme-accent-heading)]">
-                AI
+                AI-ассистент
               </DialogTitle>
               <DialogDescription className="text-[13px] leading-relaxed text-[color:var(--hub-body)]">
-                Раздел в разработке. Ассистент по сделкам, лидам и документам появится позже.
+                Сейчас доступны быстрые переходы в ключевые разделы. Диалог с моделью по сделкам, лидам и документам
+                подключается при готовности API.
               </DialogDescription>
             </DialogHeader>
+          </div>
+          <div className="flex flex-col gap-2 border-t border-[color:var(--workspace-row-border)] px-4 py-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--app-text-subtle)]">
+              Быстрый переход
+            </p>
+            <div className="flex flex-col gap-2">
+              <Link
+                to="/dashboard/leads"
+                onClick={() => setAiOpen(false)}
+                className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-medium text-[color:var(--workspace-text)] transition-colors hover:border-[color:color-mix(in_srgb,var(--gold)_40%,transparent)]"
+              >
+                Лиды и воронка
+              </Link>
+              <Link
+                to="/dashboard/deals"
+                onClick={() => setAiOpen(false)}
+                className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-medium text-[color:var(--workspace-text)] transition-colors hover:border-[color:color-mix(in_srgb,var(--gold)_40%,transparent)]"
+              >
+                Сделки
+              </Link>
+              <Link
+                to="/dashboard/objects/list"
+                onClick={() => setAiOpen(false)}
+                className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 text-[13px] font-medium text-[color:var(--workspace-text)] transition-colors hover:border-[color:color-mix(in_srgb,var(--gold)_40%,transparent)]"
+              >
+                Объекты
+              </Link>
+            </div>
+            <label className="mt-1 text-[11px] text-[color:var(--app-text-subtle)]">
+              <span className="mb-1 block">Запрос ассистенту (скоро)</span>
+              <textarea
+                readOnly
+                rows={2}
+                placeholder="Например: кратко по сделке deal-12…"
+                className="w-full resize-none rounded-md border border-[color:var(--workspace-row-border)] bg-[color-mix(in_srgb,var(--app-bg)_88%,transparent)] px-2 py-1.5 text-[12px] text-[color:var(--workspace-text-muted)] outline-none"
+              />
+            </label>
           </div>
         </DialogContent>
       </Dialog>

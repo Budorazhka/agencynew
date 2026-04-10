@@ -1,5 +1,5 @@
 import ModuleHub from '@/components/ModuleHub'
-import { Handshake, LineChart, MessagesSquare, PieChart } from 'lucide-react'
+import { Handshake, LineChart, MessagesSquare, PieChart, LibraryBig } from 'lucide-react'
 
 /**
  * Раздел 6.9 стартового ТЗ ALPHABASE.sale: Сообщество.
@@ -34,6 +34,12 @@ export default function CommunityHubPage() {
           title: 'Отчёт: о формировании сообщества партнёров',
           description: 'Динамика роста и вовлечённости сети.',
           route: '/dashboard/community/report',
+        },
+        {
+          icon: <LibraryBig size={20} color="#c9a84c" />,
+          title: 'Реестр отчётов',
+          description: 'Общий каталог отчётов по всем разделам ALPHABASE.sale.',
+          route: '/dashboard/reports/registry',
         },
       ]}
     />

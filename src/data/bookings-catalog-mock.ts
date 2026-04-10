@@ -10,12 +10,16 @@ export type NewBuildComplex = {
   developerName: string
 }
 
+/** Статус юнита в контуре первички (сигнал для панели объектов и комиссий). */
+export type NewBuildUnitStatus = 'free' | 'reserved' | 'sold' | 'hold'
+
 export type NewBuildApartment = {
   id: string
   rcId: string
   /** Подпись лота (как с шахматки / реестра) */
   label: string
   typology: string
+  salesStatus: NewBuildUnitStatus
 }
 
 export type AgencySecondaryLot = {
@@ -31,12 +35,12 @@ export const NEW_BUILD_COMPLEXES_MOCK: NewBuildComplex[] = [
 ]
 
 export const NEW_BUILD_APARTMENTS_MOCK: NewBuildApartment[] = [
-  { id: 'apt-ol-1', rcId: 'rc-olymp', label: 'корп. 3, кв. 45', typology: '3к, 78 м²' },
-  { id: 'apt-ol-2', rcId: 'rc-olymp', label: 'корп. 2, кв. 12', typology: '2к, 56 м²' },
-  { id: 'apt-ol-3', rcId: 'rc-olymp', label: 'корп. 1, кв. 201', typology: 'Студия, 28 м²' },
-  { id: 'apt-sm-1', rcId: 'rc-samolet', label: 'корп. А, кв. 88', typology: '2к, 54 м²' },
-  { id: 'apt-sm-2', rcId: 'rc-samolet', label: 'корп. Б, кв. 15', typology: '1к, 38 м²' },
-  { id: 'apt-bn-1', rcId: 'rc-bunin', label: 'секция 4, кв. 7', typology: '3к, 82 м²' },
+  { id: 'apt-ol-1', rcId: 'rc-olymp', label: 'корп. 3, кв. 45', typology: '3к, 78 м²', salesStatus: 'reserved' },
+  { id: 'apt-ol-2', rcId: 'rc-olymp', label: 'корп. 2, кв. 12', typology: '2к, 56 м²', salesStatus: 'free' },
+  { id: 'apt-ol-3', rcId: 'rc-olymp', label: 'корп. 1, кв. 201', typology: 'Студия, 28 м²', salesStatus: 'sold' },
+  { id: 'apt-sm-1', rcId: 'rc-samolet', label: 'корп. А, кв. 88', typology: '2к, 54 м²', salesStatus: 'free' },
+  { id: 'apt-sm-2', rcId: 'rc-samolet', label: 'корп. Б, кв. 15', typology: '1к, 38 м²', salesStatus: 'hold' },
+  { id: 'apt-bn-1', rcId: 'rc-bunin', label: 'секция 4, кв. 7', typology: '3к, 82 м²', salesStatus: 'free' },
 ]
 
 /** Лоты вторички из «своей» базы агентства */

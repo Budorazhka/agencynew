@@ -1,5 +1,5 @@
 import ModuleHub from '@/components/ModuleHub'
-import { Wallet, BarChart3 } from 'lucide-react'
+import { Wallet, BarChart3, LibraryBig } from 'lucide-react'
 
 /**
  * Раздел 6.8 стартового ТЗ ALPHABASE.sale: Финансы — панель и отчёт.
@@ -22,6 +22,12 @@ export default function FinanceHubPage() {
           title: 'Отчёт по финансам',
           description: 'Сводки и выгрузки по финансовому контуру агентства.',
           route: '/dashboard/finance/report',
+        },
+        {
+          icon: <LibraryBig size={20} color="#c9a84c" />,
+          title: 'Реестр отчётов',
+          description: 'Полный каталог отчётов для быстрых переходов между доменами.',
+          route: '/dashboard/reports/registry',
         },
       ]}
     />

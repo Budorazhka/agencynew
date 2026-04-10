@@ -84,27 +84,27 @@
         {
           "label": "Панель: Объекты и комиссии",
           "path": "/dashboard/new-buildings/objects",
-          "kind": "stub"
+          "kind": "app"
         },
         {
           "label": "Панель: Брони и регистрации",
           "path": "/dashboard/new-buildings/bookings-registrations",
-          "kind": "stub"
+          "kind": "app"
         },
         {
           "label": "Панель: Новостройки",
           "path": "/dashboard/new-buildings/catalog",
-          "kind": "stub"
+          "kind": "app"
         },
         {
           "label": "Панель: Партнёры первичного рынка",
           "path": "/dashboard/new-buildings/partners",
-          "kind": "stub"
+          "kind": "app"
         },
         {
           "label": "Отчёт: о работе партнёров по первичному рынку",
           "path": "/dashboard/new-buildings/report-partners",
-          "kind": "stub"
+          "kind": "app"
         }
       ],
       "hub": "/dashboard/new-buildings"
@@ -180,17 +180,23 @@
           "kind": "app"
         },
         {
-          "label": "Панель: Обучение и база знаний",
-          "path": "/dashboard/learning",
+          "label": "Отчёт: по менеджеру",
+          "path": "/dashboard/reports/manager",
           "kind": "app"
         },
         {
-          "label": "Отчёт: по менеджеру / команде / KPI / планам",
-          "path": "/dashboard/team/kpi",
+          "label": "Отчёт: по команде",
+          "path": "/dashboard/reports/team",
           "kind": "app"
         }
       ],
-      "hub": "/dashboard/team"
+      "hub": "/dashboard/team",
+      "extraInSidebarNotInBaseTz": [
+        {
+          "label": "Обучение (поздняя правка сайдбара)",
+          "path": "/dashboard/learning"
+        }
+      ]
     },
     {
       "tz": "8. Финансы",
@@ -198,12 +204,12 @@
         {
           "label": "Панель: Финансы",
           "path": "/dashboard/finance/panel",
-          "kind": "stub"
+          "kind": "app"
         },
         {
           "label": "Отчёт: по финансам",
           "path": "/dashboard/finance/report",
-          "kind": "stub"
+          "kind": "app"
         }
       ],
       "hub": "/dashboard/finance"
@@ -214,7 +220,7 @@
         {
           "label": "Панель: Сообщество",
           "path": "/dashboard/community/panel",
-          "kind": "stub"
+          "kind": "app"
         },
         {
           "label": "Панель: Партнёры сообщества",
@@ -225,7 +231,7 @@
         {
           "label": "Отчёт: о формировании сообщества партнёров",
           "path": "/dashboard/community/report",
-          "kind": "stub"
+          "kind": "app"
         }
       ],
       "hub": "/dashboard/community"
@@ -241,7 +247,7 @@
         {
           "label": "Панель: Автозадачи и триггеры",
           "path": "/dashboard/settings/automation",
-          "kind": "stub"
+          "kind": "app"
         },
         {
           "label": "Панель: Уведомления",
@@ -251,7 +257,7 @@
         {
           "label": "Служебный: Настройки системы",
           "path": "/dashboard/settings/system",
-          "kind": "stub"
+          "kind": "app"
         }
       ],
       "hub": "/dashboard/settings-hub",
@@ -275,12 +281,23 @@
       ]
     },
     {
+      "tz": "11. Реестр отчётов",
+      "items": [
+        {
+          "label": "Единый реестр отчётов (12 позиций)",
+          "path": "/dashboard/reports/registry",
+          "kind": "app",
+          "note": "Группировка по доменам: Лиды / CRM / Объекты / MLS / Финансы / Сообщество."
+        }
+      ]
+    },
+    {
       "tz": "Хедер (п. 5 стартового doc)",
       "items": [
         {
           "label": "AI / Marketplace / уведомления / быстрые действия / профиль",
           "path": null,
-          "note": "Реализация в shell App / хедер дашборда; marketplace: /dashboard/marketplace"
+          "note": "Реализация в shell App / хедер дашборда; Marketplace открывается внешней ссылкой https://baza.sale"
         }
       ]
     }

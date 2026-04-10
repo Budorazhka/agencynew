@@ -204,9 +204,11 @@ export default function SystemSettingsPage() {
           <section className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
             <div className="mb-2 flex items-center gap-2">
               <Shield className="size-4 text-[color:var(--gold)]" />
-              <h2 className="text-sm font-semibold text-[color:var(--theme-accent-heading)]">Ключи API (заглушка UI)</h2>
+              <h2 className="text-sm font-semibold text-[color:var(--theme-accent-heading)]">Ключи API и интеграции</h2>
             </div>
-            <p className="text-xs text-[color:var(--app-text-muted)]">Отображение без значений секретов — только маски и срок ротации.</p>
+            <p className="text-xs text-[color:var(--app-text-muted)]">
+              Маски и срок ротации без раскрытия секретов. Подключение к хранилищу ключей — по готовности бэкенда.
+            </p>
             <div className="mt-2 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2 font-mono text-xs text-[color:var(--workspace-text-muted)]">
               crm_primary · ••••••••••last4 A7F2 · ротация 2026-07-01
             </div>

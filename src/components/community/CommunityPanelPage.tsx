@@ -3,6 +3,7 @@ import { AlertTriangle, CalendarDays, Filter, MessageSquare, Radio, Users } from
 import { DashboardShell } from '@/components/layout/DashboardShell'
 
 type MemberSegment = 'broker' | 'developer' | 'partner'
+type CommunityRole = 'member' | 'expert' | 'moderator' | 'partner_admin'
 
 const SEGMENT_LABEL: Record<MemberSegment, string> = {
   broker: 'Брокер',
@@ -10,23 +11,33 @@ const SEGMENT_LABEL: Record<MemberSegment, string> = {
   partner: 'Партнёр-сервис',
 }
 
+const COMMUNITY_ROLE_LABEL: Record<CommunityRole, string> = {
+  member: 'Участник',
+  expert: 'Эксперт',
+  moderator: 'Модератор',
+  partner_admin: 'Админ компании',
+}
+
 const MEMBERS: Array<{
   id: string
   name: string
   segment: MemberSegment
+  communityRole: CommunityRole
+  /** Связка с контактом CRM (демо-идентификатор). */
+  crmContactId: string
   company: string
   joined: string
   lastActiveDays: number
   eventsYtd: number
   engagement: number
 }> = [
-  { id: 'm1', name: 'Ирина Соколова', segment: 'broker', company: 'Альфа-недвижимость', joined: '2024-06-12', lastActiveDays: 1, eventsYtd: 9, engagement: 92 },
-  { id: 'm2', name: 'Георгий Мамедов', segment: 'broker', company: 'GeoPrime Realty', joined: '2025-01-20', lastActiveDays: 3, eventsYtd: 6, engagement: 78 },
-  { id: 'm3', name: 'Елена Воронова', segment: 'developer', company: 'ГК «Север»', joined: '2023-11-02', lastActiveDays: 0, eventsYtd: 11, engagement: 88 },
-  { id: 'm4', name: 'Олег Панин', segment: 'partner', company: 'LegalPro', joined: '2025-03-08', lastActiveDays: 14, eventsYtd: 2, engagement: 44 },
-  { id: 'm5', name: 'Мария Ким', segment: 'broker', company: 'Сити Экспресс', joined: '2024-09-15', lastActiveDays: 2, eventsYtd: 7, engagement: 81 },
-  { id: 'm6', name: 'Артём Зайцев', segment: 'partner', company: 'Mortgage Hub', joined: '2024-02-01', lastActiveDays: 8, eventsYtd: 4, engagement: 62 },
-  { id: 'm7', name: 'Дмитрий Новацкий', segment: 'broker', company: 'West Capital Homes', joined: '2025-02-28', lastActiveDays: 21, eventsYtd: 1, engagement: 38 },
+  { id: 'm1', name: 'Ирина Соколова', segment: 'broker', communityRole: 'moderator', crmContactId: 'crm-c-901', company: 'Альфа-недвижимость', joined: '2024-06-12', lastActiveDays: 1, eventsYtd: 9, engagement: 92 },
+  { id: 'm2', name: 'Георгий Мамедов', segment: 'broker', communityRole: 'expert', crmContactId: 'crm-c-902', company: 'GeoPrime Realty', joined: '2025-01-20', lastActiveDays: 3, eventsYtd: 6, engagement: 78 },
+  { id: 'm3', name: 'Елена Воронова', segment: 'developer', communityRole: 'partner_admin', crmContactId: 'crm-c-903', company: 'ГК «Север»', joined: '2023-11-02', lastActiveDays: 0, eventsYtd: 11, engagement: 88 },
+  { id: 'm4', name: 'Олег Панин', segment: 'partner', communityRole: 'member', crmContactId: 'crm-c-904', company: 'LegalPro', joined: '2025-03-08', lastActiveDays: 14, eventsYtd: 2, engagement: 44 },
+  { id: 'm5', name: 'Мария Ким', segment: 'broker', communityRole: 'member', crmContactId: 'crm-c-905', company: 'Сити Экспресс', joined: '2024-09-15', lastActiveDays: 2, eventsYtd: 7, engagement: 81 },
+  { id: 'm6', name: 'Артём Зайцев', segment: 'partner', communityRole: 'expert', crmContactId: 'crm-c-906', company: 'Mortgage Hub', joined: '2024-02-01', lastActiveDays: 8, eventsYtd: 4, engagement: 62 },
+  { id: 'm7', name: 'Дмитрий Новацкий', segment: 'broker', communityRole: 'member', crmContactId: '—', company: 'West Capital Homes', joined: '2025-02-28', lastActiveDays: 21, eventsYtd: 1, engagement: 38 },
 ]
 
 const EVENTS: Array<{
@@ -93,6 +104,9 @@ export default function CommunityPanelPage() {
             <h1 className="text-xl font-bold text-[color:var(--theme-accent-heading)]">Панель управления сообществом</h1>
             <p className="mt-1 text-sm text-[color:var(--app-text-muted)]">
               Участники, вовлечённость, события и оперативная лента активности.
+            </p>
+            <p className="mt-2 rounded-md border border-[color:var(--workspace-row-border)] bg-[rgba(139,92,246,0.07)] px-3 py-2 text-xs leading-relaxed text-[color:var(--workspace-text-muted)]">
+              Роли в сообществе и связь с CRM заданы в таблице ниже; обмен с боевым каталогом контактов включается на API.
             </p>
           </div>
 
@@ -163,6 +177,8 @@ export default function CommunityPanelPage() {
                     <tr className="border-b border-[color:var(--workspace-row-border)] text-left text-[11px] uppercase tracking-wide text-[color:var(--app-text-subtle)]">
                       <th className="px-2 py-2">Имя</th>
                       <th className="px-2 py-2">Сегмент</th>
+                      <th className="px-2 py-2">Роль</th>
+                      <th className="px-2 py-2">CRM</th>
                       <th className="px-2 py-2">Компания</th>
                       <th className="px-2 py-2">Активность</th>
                       <th className="px-2 py-2">События</th>
@@ -177,6 +193,8 @@ export default function CommunityPanelPage() {
                         <tr key={m.id} className="border-b border-[color:var(--workspace-row-border)]">
                           <td className="px-2 py-2 font-medium text-[color:var(--workspace-text)]">{m.name}</td>
                           <td className="px-2 py-2 text-[color:var(--workspace-text-muted)]">{SEGMENT_LABEL[m.segment]}</td>
+                          <td className="px-2 py-2 text-[color:var(--workspace-text)]">{COMMUNITY_ROLE_LABEL[m.communityRole]}</td>
+                          <td className="px-2 py-2 font-mono text-[11px] text-[color:var(--workspace-text-muted)]">{m.crmContactId}</td>
                           <td className="px-2 py-2 text-[color:var(--workspace-text)]">{m.company}</td>
                           <td className={m.lastActiveDays > 7 ? 'px-2 py-2 text-amber-300' : 'px-2 py-2 text-[color:var(--workspace-text)]'}>
                             {m.lastActiveDays === 0 ? 'сегодня' : `${m.lastActiveDays} дн.`}

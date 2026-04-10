@@ -7,6 +7,7 @@ import {
   Building2,
   Building,
   Handshake,
+  GraduationCap,
   Wallet,
   MessagesSquare,
 } from 'lucide-react'
@@ -77,11 +78,14 @@ export const DASHBOARD_RAIL_ITEMS: DashboardRailItem[] = [
     label: 'Команда',
     to: '/dashboard/team',
     icon: Building,
-    /** П. 6.7 ТЗ: обучение и LMS — внутри «Команды», отдельной кнопки rail в матрице нет. */
-    match: (p) =>
-      p.startsWith('/dashboard/team') ||
-      p.startsWith('/dashboard/learning') ||
-      p.startsWith('/dashboard/lms'),
+    match: (p) => p.startsWith('/dashboard/team'),
+  },
+  {
+    id: 'learning',
+    label: 'Обучение',
+    to: '/dashboard/learning',
+    icon: GraduationCap,
+    match: (p) => p.startsWith('/dashboard/learning') || p.startsWith('/dashboard/lms'),
   },
   { id: 'finance', label: 'Финансы', to: '/dashboard/finance', icon: Wallet, match: (p) => p.startsWith('/dashboard/finance') },
   {
@@ -107,16 +111,16 @@ const PARTNER_RAIL_IDS = new Set(['desk', 'crm', 'secondary', 'newbuild', 'mls',
  * Пусто = видит весь список (кроме partner — там только allow-list).
  */
 const HIDE_RAIL_IDS_FOR_ROLE: Partial<Record<UserRole, string[]>> = {
-  /** Команда —, Финансы — */
-  marketer: ['team', 'finance'],
-  /** Лиды —, Команда —, Финансы —, Сообщество — */
-  lawyer: ['leads', 'team', 'finance', 'community'],
+  /** Команда —, Обучение —, Финансы — */
+  marketer: ['team', 'learning', 'finance'],
+  /** Лиды —, Команда —, Обучение —, Финансы —, Сообщество — */
+  lawyer: ['leads', 'team', 'learning', 'finance', 'community'],
   /** Операционные разделы —; Команда П; Обучение П; Сообщество О (в т.ч. MLM-аналитика с хаба). */
   hr: ['leads', 'crm', 'newbuild', 'secondary', 'mls', 'finance'],
-  /** Лиды —, Команда —, Сообщество —; Обучение — в панелях */
-  finance: ['leads', 'team', 'community'],
-  /** Команда — */
-  procurement_head: ['team'],
+  /** Лиды —, Команда —, Обучение —, Сообщество — */
+  finance: ['leads', 'team', 'learning', 'community'],
+  /** Команда —, Обучение — */
+  procurement_head: ['team', 'learning'],
 }
 
 /** Доступ к разделу MLS (видимость пункта rail = тот же флаг, что и у guard по `mls`). */
@@ -157,10 +161,6 @@ export function getDashboardSectionIdForPath(pathname: string): string | null {
   if (pathname === '/dashboard/my-report' || pathname.startsWith('/dashboard/my-report/')) return 'desk'
   /** Календарь — полный экран с виджета рабочего стола; тот же контур доступа, что «Рабочий стол». */
   if (pathname.startsWith('/dashboard/calendar')) return 'desk'
-  /** Обучение / LMS — тот же раздел матрицы, что «Команда» (в rail одна кнопка). */
-  if (pathname.startsWith('/dashboard/learning') || pathname.startsWith('/dashboard/lms')) {
-    return 'team'
-  }
   for (const item of DASHBOARD_RAIL_ITEMS) {
     if (item.id === 'desk') continue
     if (item.match?.(pathname)) return item.id

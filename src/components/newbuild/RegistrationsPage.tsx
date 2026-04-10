@@ -61,17 +61,17 @@ export default function RegistrationsPage() {
   )
 
   return (
-    <DashboardShell>
-      <div className="min-h-0 flex-1 overflow-y-auto p-6">
-        <div className="mx-auto w-full max-w-6xl space-y-4">
-          <div>
-            <h1 className="text-xl font-bold text-[color:var(--theme-accent-heading)]">Панель управления регистрацией</h1>
-            <p className="mt-1 text-sm text-[color:var(--app-text-muted)]">
-              Реестр регистраций покупателей в проектах девелопера, фильтры и карточка выбранной записи.
-            </p>
-          </div>
+    <div className="flex h-full min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden">
+      <DashboardShell scrollMain={false}>
+      <div className="flex min-h-0 w-full flex-1 flex-col gap-3 px-4 py-4 sm:px-6 sm:py-5">
+        <div className="shrink-0">
+          <h1 className="text-xl font-bold text-[color:var(--theme-accent-heading)]">Панель управления регистрацией</h1>
+          <p className="mt-1 text-sm text-[color:var(--app-text-muted)]">
+            Реестр регистраций покупателей в проектах девелопера, фильтры и карточка выбранной записи.
+          </p>
+        </div>
 
-          <section className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+          <section className="shrink-0 rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
             <div className="mb-3 flex items-center gap-2">
               <Filter className="size-4 text-[color:var(--gold)]" />
               <h2 className="text-sm font-semibold text-[color:var(--theme-accent-heading)]">Фильтры</h2>
@@ -113,7 +113,7 @@ export default function RegistrationsPage() {
             </div>
           </section>
 
-          <section className="grid grid-cols-2 gap-2 md:grid-cols-5">
+          <section className="grid shrink-0 grid-cols-2 gap-2 md:grid-cols-5">
             <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
               <p className="text-[10px] uppercase tracking-wide text-[color:var(--app-text-subtle)]">В выборке</p>
               <p className="text-xl font-bold text-[color:var(--theme-accent-heading)]">{kpi.total}</p>
@@ -136,13 +136,13 @@ export default function RegistrationsPage() {
             </div>
           </section>
 
-          <div className="grid min-h-[440px] grid-cols-1 gap-3 lg:grid-cols-[1.15fr_1fr]">
-            <section className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
-              <div className="mb-2 flex items-center gap-2">
+          <div className="grid min-h-[min(400px,55vh)] flex-1 grid-cols-1 gap-3 lg:min-h-0 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,1fr)]">
+            <section className="flex min-h-0 flex-col rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+              <div className="mb-2 flex shrink-0 items-center gap-2">
                 <FileText className="size-4 text-[color:var(--gold)]" />
                 <h2 className="text-sm font-semibold text-[color:var(--theme-accent-heading)]">Реестр регистраций</h2>
               </div>
-              <div className="overflow-x-auto">
+              <div className="min-h-0 flex-1 overflow-auto">
                 <table className="w-full min-w-[560px] border-collapse text-sm">
                   <thead>
                     <tr className="border-b border-[color:var(--workspace-row-border)] text-left text-[11px] uppercase tracking-wide text-[color:var(--app-text-subtle)]">
@@ -177,16 +177,16 @@ export default function RegistrationsPage() {
                   </tbody>
                 </table>
               </div>
-              {filtered.length === 0 && <p className="mt-2 text-sm text-[color:var(--app-text-muted)]">Нет записей по фильтрам.</p>}
+              {filtered.length === 0 && <p className="mt-2 shrink-0 text-sm text-[color:var(--app-text-muted)]">Нет записей по фильтрам.</p>}
             </section>
 
-            <section className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
-              <div className="mb-2 flex items-center gap-2">
+            <section className="flex min-h-[min(280px,40vh)] flex-col overflow-hidden rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3 lg:min-h-0">
+              <div className="mb-2 flex shrink-0 items-center gap-2">
                 <UserRound className="size-4 text-[color:var(--gold)]" />
                 <h2 className="text-sm font-semibold text-[color:var(--theme-accent-heading)]">Карточка регистрации</h2>
               </div>
               {selected ? (
-                <div className="space-y-3">
+                <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-0.5">
                   <div className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] p-3">
                     <p className="text-sm font-semibold text-[color:var(--workspace-text)]">{selected.clientName}</p>
                     <p className="mt-1 text-xs text-[color:var(--workspace-text-muted)]">{selected.propertyAddress}</p>
@@ -267,13 +267,13 @@ export default function RegistrationsPage() {
             </section>
           </div>
 
-          <section className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
+          <section className="max-h-[min(200px,28vh)] shrink-0 overflow-hidden rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
             <div className="mb-2 flex items-center gap-2">
               <AlertTriangle className="size-4 text-amber-400" />
               <h2 className="text-sm font-semibold text-[color:var(--theme-accent-heading)]">Требуют внимания</h2>
             </div>
             <p className="mb-2 text-xs text-[color:var(--app-text-muted)]">По всем регистрациям: просрочка, отклонение или долго в статусе «новая».</p>
-            <ul className="space-y-2">
+            <ul className="max-h-[min(120px,18vh)] space-y-2 overflow-y-auto pr-1">
               {needsAttention.map((r) => (
                 <li
                   key={r.id}
@@ -284,8 +284,8 @@ export default function RegistrationsPage() {
               ))}
             </ul>
           </section>
-        </div>
       </div>
-    </DashboardShell>
+      </DashboardShell>
+    </div>
   )
 }

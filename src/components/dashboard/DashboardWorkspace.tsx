@@ -307,6 +307,7 @@ function SignalWidget({
   linkTo,
   rowNavigateTo,
   className,
+  emptyState = 'normal',
 }: {
   title: string
   accent: string
@@ -316,7 +317,15 @@ function SignalWidget({
   /** Клик по строке списка (и по пустому состоянию) ведёт сюда */
   rowNavigateTo?: string
   className?: string
+  /** Пустое состояние: норма / «всё ок» / требует внимания (визуальный режим ТЗ). */
+  emptyState?: 'normal' | 'ok' | 'warn'
 }) {
+  const emptyBoxClass =
+    emptyState === 'ok'
+      ? 'border border-dashed border-emerald-500/35 bg-emerald-500/[0.07] text-emerald-100/90'
+      : emptyState === 'warn'
+        ? 'border border-dashed border-amber-500/40 bg-amber-500/[0.08] text-amber-100/90'
+        : 'border border-dashed border-[color:var(--workspace-row-border)] text-[color:var(--workspace-text-muted)]'
   return (
     <HubWidgetShell
       accent={accent}
@@ -346,12 +355,16 @@ function SignalWidget({
           rowNavigateTo ? (
             <Link
               to={rowNavigateTo}
-              className="flex flex-1 items-center rounded-lg border border-dashed border-[color:var(--workspace-row-border)] px-3 py-3 text-[14px] leading-relaxed text-[color:var(--workspace-text-muted)] transition-colors hover:border-[color:color-mix(in_srgb,var(--gold)_35%,transparent)] hover:text-[color:var(--workspace-text)] sm:text-[15px]"
+              className={cn(
+                'flex flex-1 items-center rounded-lg px-3 py-3 text-[14px] leading-relaxed transition-colors hover:border-[color:color-mix(in_srgb,var(--gold)_35%,transparent)] sm:text-[15px]',
+                emptyBoxClass,
+                emptyState === 'normal' && 'hover:text-[color:var(--workspace-text)]',
+              )}
             >
               {emptyText}
             </Link>
           ) : (
-            <p className="flex flex-1 items-center text-[14px] leading-relaxed text-[color:var(--workspace-text-muted)] sm:text-[15px]">
+            <p className={cn('flex flex-1 items-center rounded-lg px-3 py-3 text-[14px] leading-relaxed sm:text-[15px]', emptyBoxClass)}>
               {emptyText}
             </p>
           )
@@ -722,6 +735,14 @@ export function DashboardWorkspace() {
                     className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
                     Команда
+                  </Link>
+                )}
+                {deskRailIds.has('learning') && (
+                  <Link
+                    to="/dashboard/learning"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
+                  >
+                    Обучение
                   </Link>
                 )}
                 {deskShowInfo && (
@@ -1370,6 +1391,7 @@ export function DashboardWorkspace() {
             linkTo="/dashboard/deals"
             rowNavigateTo="/dashboard/deals"
             emptyText="Нет активных сделок под контролем"
+            emptyState={controlDeals.length === 0 ? 'ok' : 'normal'}
             items={controlDeals.map((d) => `${d.clientName} · ${d.propertyAddress}`)}
             className="min-h-0 flex-1 basis-0"
           />
@@ -1379,6 +1401,7 @@ export function DashboardWorkspace() {
             linkTo="/dashboard/objects/list"
             rowNavigateTo="/dashboard/objects/list"
             emptyText="Объекты актуальны"
+            emptyState={staleObjects.length === 0 ? 'ok' : 'warn'}
             items={staleObjects.map((p) => `${p.title} · ${p.city}`)}
             className="min-h-0 flex-1 basis-0"
           />
@@ -1390,6 +1413,7 @@ export function DashboardWorkspace() {
             linkTo={LEADS_DISTRIBUTION_HREF}
             rowNavigateTo={LEADS_DISTRIBUTION_HREF}
             emptyText="Лидов без назначения нет"
+            emptyState={unassignedLeads.length === 0 ? 'ok' : 'warn'}
             items={unassignedLeads.map((l) => `${l.name ?? l.id} · ${SOURCE_LABELS[l.source]}`)}
             className="min-h-0 flex-1 basis-0"
           />
@@ -1399,6 +1423,7 @@ export function DashboardWorkspace() {
             linkTo="/dashboard/deals"
             rowNavigateTo="/dashboard/deals"
             emptyText="Рисковые сделки не обнаружены"
+            emptyState={riskyDeals.length === 0 ? 'ok' : 'warn'}
             items={riskyDeals.map((d) => `${d.clientName} · обязательные пункты не закрыты`)}
             className="min-h-0 flex-1 basis-0"
           />
@@ -1410,6 +1435,7 @@ export function DashboardWorkspace() {
             linkTo={LEADS_SLA_VIOLATIONS_HREF}
             rowNavigateTo={LEADS_SLA_VIOLATIONS_HREF}
             emptyText="Нарушений SLA нет"
+            emptyState={slaBreachLeads.length === 0 ? 'ok' : 'warn'}
             items={slaBreachLeads.map((l) => `${l.name ?? l.id} · срочность: ${leadUrgency(l)}`)}
             className="min-h-0 flex-1"
           />
