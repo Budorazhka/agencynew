@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { type CSSProperties, type ReactNode } from 'react'
 
 interface DashboardShellProps {
   children: ReactNode
@@ -12,15 +12,16 @@ interface DashboardShellProps {
 }
 
 export function DashboardShell({ children, scrollMain = true }: DashboardShellProps) {
-  const mainStyle = {
+  const overflowY: NonNullable<CSSProperties['overflowY']> = scrollMain ? 'auto' : 'hidden'
+  const mainStyle: CSSProperties = {
     flex: 1,
-    position: 'relative' as const,
+    position: 'relative',
     minHeight: 0,
-    overflowY: scrollMain ? 'auto' : 'hidden',
-    overflowX: 'hidden' as const,
+    overflowY,
+    overflowX: 'hidden',
     background: 'var(--app-bg)',
     display: 'flex',
-    flexDirection: 'column' as const,
+    flexDirection: 'column',
   }
 
   return (
