@@ -1084,7 +1084,7 @@ function StageDeckPile({
         {leads.length === 0 && (
           <span
             className={cn(
-              "v2-card-back absolute border border-dashed border-[rgba(238,209,152,0.4)] opacity-60",
+              "v2-card-empty absolute opacity-60",
               compact ? "rounded-[11px]" : "rounded-[14px]"
             )}
             style={{ width: cardWidth, height: cardHeight, top: 0, left: 0 }}

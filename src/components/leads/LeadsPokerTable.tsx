@@ -130,7 +130,7 @@ function StageColumn({
               <PlayingCard lead={current} onClick={() => onSelect(current)} />
             </div>
           ) : (
-            <div className="w-[90px] min-h-[100px] rounded-[14px] border border-dashed border-[rgba(238,209,152,0.4)] flex items-center justify-center v2-card-back opacity-60">
+            <div className="w-[90px] min-h-[100px] flex items-center justify-center v2-card-empty opacity-60">
               <span className="text-[10px] text-[rgba(247,232,198,0.6)]">{!visible ? '—' : 'пусто'}</span>
             </div>
           )}
