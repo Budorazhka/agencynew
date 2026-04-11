@@ -139,9 +139,15 @@ export function LeadHistoryTimeline({
   const isManager = currentUser?.role === "manager"
   const scrollRef = useRef<HTMLDivElement>(null)
 
+  const getDefaultDeadline = () => {
+    const d = new Date()
+    d.setDate(d.getDate() + 1)
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
+  }
+
   const [newComment, setNewComment] = useState("")
   const [inputType, setInputType] = useState<"comment" | "task">(initialInputType)
-  const [taskDeadline, setTaskDeadline] = useState("")
+  const [taskDeadline, setTaskDeadline] = useState(() => initialInputType === "task" ? getDefaultDeadline() : "")
   const [taskAssignee, setTaskAssignee] = useState("")
   const [taskEisenhowerUrgent, setTaskEisenhowerUrgent] = useState<boolean>(false)
   const [taskEisenhowerImportant, setTaskEisenhowerImportant] = useState<boolean>(false)
@@ -199,7 +205,7 @@ export function LeadHistoryTimeline({
 
     dispatch({ type: 'ADD_LEAD_EVENT', leadId, event })
     setNewComment('')
-    setTaskDeadline('')
+    setTaskDeadline(getDefaultDeadline())
     setTaskAssignee('')
     setTaskEisenhowerUrgent(false)
     setTaskEisenhowerImportant(false)
@@ -329,70 +335,70 @@ export function LeadHistoryTimeline({
   return (
     <div className="flex h-full flex-col bg-white overflow-hidden font-sans">
       {/* Scrollable Timeline Area */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 md:p-8 scroll-smooth font-sans">
-        <div className="max-w-4xl mx-auto pb-6">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 md:p-4 scroll-smooth font-sans lead-history-scroll">
+        <div className="mx-auto pb-3">
           {/* Filter toggle */}
-          <div className="flex items-center justify-end mb-4">
+          <div className="flex items-center justify-end mb-2">
             <button
               onClick={() => setOnlyTasks((v) => !v)}
               className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wide border transition-colors",
+                "flex items-center gap-1 px-2 py-1 rounded-full text-[9px] font-bold uppercase tracking-wide border transition-colors",
                 onlyTasks
                   ? "bg-amber-100 text-amber-800 border-amber-300"
                   : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
               )}
             >
-              <ListFilter className="size-3.5" />
+              <ListFilter className="size-3" />
               Только задачи
             </button>
           </div>
 
-          <div className="space-y-10">
+          <div className="space-y-4">
             {groupedEvents.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-                <MessageSquare className="size-10 mb-4 opacity-50" />
-                <p className="font-medium">История пока пуста</p>
-                <p className="text-sm">Оставьте первый комментарий ниже</p>
+              <div className="flex flex-col items-center justify-center py-8 text-slate-400">
+                <MessageSquare className="size-7 mb-2 opacity-50" />
+                <p className="text-[11px] font-medium">История пока пуста</p>
+                <p className="text-[10px]">Оставьте первый комментарий ниже</p>
               </div>
             ) : (
               groupedEvents.map((group) => (
                 <div key={group.dateLabel} className="relative">
                   {/* Date header */}
-                  <div className="flex items-center gap-3 mb-5">
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 shrink-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 shrink-0">
                       {group.dateLabel}
                     </span>
                     <div className="flex-1 h-px bg-slate-100" />
                   </div>
 
                   {/* Timeline Line */}
-                  <div className="absolute left-8 md:left-[52px] top-10 bottom-0 w-px bg-gradient-to-b from-slate-200 to-transparent" />
+                  <div className="absolute left-6 md:left-[36px] top-7 bottom-0 w-px bg-gradient-to-b from-slate-200 to-transparent" />
 
-                  <div className="space-y-6">
+                  <div className="space-y-2.5">
                     {group.events.map((event) => {
                       const isEditing = editingEventId === event.id
                       return (
-                        <div key={event.id} className="relative flex gap-4 md:gap-6 group">
+                        <div key={event.id} className="relative flex gap-2 md:gap-3 group">
                           {/* Time */}
-                          <div className="w-16 pt-1.5 text-right shrink-0">
-                            <span className="text-xs font-medium text-slate-400 tabular-nums">
+                          <div className="w-10 pt-1 text-right shrink-0">
+                            <span className="text-[10px] font-medium text-slate-400 tabular-nums">
                               {formatTime(event.timestamp)}
                             </span>
                           </div>
 
                           {/* Icon */}
-                          <div className="relative z-10 mt-1 flex items-center justify-center">
+                          <div className="relative z-10 mt-0.5 flex items-center justify-center">
                             <TooltipProvider delayDuration={100}>
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <div className={cn(
-                                    "flex size-8 items-center justify-center rounded-full border bg-white shadow-sm ring-4 ring-white transition-all duration-300 group-hover:scale-110",
+                                    "flex size-6 items-center justify-center rounded-full border bg-white shadow-sm ring-2 ring-white transition-all duration-300 group-hover:scale-110 [&>svg]:size-3",
                                     getEventColorClass(event.type)
                                   )}>
                                     {getEventIcon(event.type)}
                                   </div>
                                 </TooltipTrigger>
-                                <TooltipContent side="right" className="font-semibold px-2.5 py-1">
+                                <TooltipContent side="right" className="font-semibold px-2 py-0.5 text-[10px]">
                                   {getEventTypeName(event.type)}
                                 </TooltipContent>
                               </Tooltip>
@@ -400,54 +406,53 @@ export function LeadHistoryTimeline({
                           </div>
 
                           {/* Content */}
-                          <div className="flex-1 min-w-0 pt-0.5 pb-2">
-                            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:border-slate-300 hover:shadow-md">
-                              <div className="flex items-start justify-between mb-2 gap-2">
-                                <div className="flex flex-col gap-1 items-start">
+                          <div className="flex-1 min-w-0 pt-0 pb-0.5">
+                            <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 shadow-sm transition-all hover:border-slate-300 hover:shadow-md">
+                              <div className="flex items-start justify-between mb-1 gap-1">
+                                <div className="flex items-center gap-1.5 flex-wrap">
                                   <span className={cn(
-                                    "text-[12px] font-bold truncate",
+                                    "text-[10px] font-bold truncate",
                                     event.type === 'overdue' ? "text-rose-600" : "text-slate-900"
                                   )}>
                                     {event.type === 'overdue'
-                                      ? 'Внимание, просрочка!'
+                                      ? 'Просрочка!'
                                       : event.type === 'task_created' && event.payload.setByRole
-                                        ? `Задача поставлена: ${TASK_SET_BY_ROLE_LABEL[event.payload.setByRole]} ${event.authorName}`
+                                        ? `${TASK_SET_BY_ROLE_LABEL[event.payload.setByRole]} ${event.authorName}`
                                         : event.authorName}
                                   </span>
                                   <span className={cn(
-                                    "text-[10px] uppercase tracking-wider font-semibold shrink-0 bg-slate-100 px-2 py-0.5 rounded-md",
+                                    "text-[8px] uppercase tracking-wider font-semibold shrink-0 bg-slate-100 px-1.5 py-0.5 rounded",
                                     event.type === 'overdue' ? "text-rose-600 bg-rose-50 border-rose-100 border" : "text-slate-500"
                                   )}>
                                     {getEventTypeName(event.type)}
                                   </span>
                                 </div>
 
-                                {/* Actions Menu */}
                                 {(event.type === 'comment' || event.type === 'task' || event.type === 'task_created') && (
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-6 w-6 text-slate-400 hover:text-slate-600">
-                                        <MoreHorizontal className="size-4" />
+                                      <Button variant="ghost" size="icon" className="h-5 w-5 text-slate-400 hover:text-slate-600">
+                                        <MoreHorizontal className="size-3" />
                                       </Button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-40">
+                                    <DropdownMenuContent align="end" className="w-36">
                                       {event.type === 'task_created' && (
                                         <DropdownMenuItem
-                                          className="cursor-pointer"
+                                          className="cursor-pointer text-[11px]"
                                           onClick={() => handleStartEdit(event)}
                                         >
-                                          <Pencil className="size-4 mr-2" />
+                                          <Pencil className="size-3 mr-1.5" />
                                           Редактировать
                                         </DropdownMenuItem>
                                       )}
                                       <DropdownMenuItem
-                                        className="text-rose-600 focus:text-rose-600 focus:bg-rose-50 cursor-pointer"
+                                        className="text-rose-600 focus:text-rose-600 focus:bg-rose-50 cursor-pointer text-[11px]"
                                         onClick={() => {
                                           if (!leadId) return
                                           dispatch({ type: 'DELETE_LEAD_EVENT', leadId, eventId: event.id })
                                         }}
                                       >
-                                        <Trash2 className="size-4 mr-2" />
+                                        <Trash2 className="size-3 mr-1.5" />
                                         Удалить
                                       </DropdownMenuItem>
                                     </DropdownMenuContent>
@@ -455,19 +460,18 @@ export function LeadHistoryTimeline({
                                 )}
                               </div>
 
-                              {/* Inline edit form */}
                               {isEditing ? (
-                                <div className="space-y-2 mt-1">
+                                <div className="space-y-1.5 mt-0.5">
                                   <Input
                                     value={editTaskName}
                                     onChange={(e) => setEditTaskName(e.target.value)}
                                     onKeyDown={(e) => { if (e.key === 'Enter') handleSaveEdit(event) }}
                                     placeholder="Название задачи"
-                                    className="text-sm"
+                                    className="text-[11px] h-7"
                                     autoFocus
                                   />
                                   <div>
-                                    <p className="text-[10px] uppercase text-slate-500 font-bold tracking-wide mb-1.5">Срочность и важность</p>
+                                    <p className="text-[9px] uppercase text-slate-500 font-bold tracking-wide mb-1">Срочность и важность</p>
                                     <EisenhowerChips
                                       urgent={editEisenhowerUrgent}
                                       important={editEisenhowerImportant}
@@ -475,42 +479,42 @@ export function LeadHistoryTimeline({
                                       onChangeImportant={setEditEisenhowerImportant}
                                     />
                                   </div>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-[10px] uppercase text-slate-500 font-bold tracking-wide shrink-0">Срок:</span>
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-[9px] uppercase text-slate-500 font-bold tracking-wide shrink-0">Срок:</span>
                                     <input
                                       type="datetime-local"
                                       value={editDeadline}
                                       onChange={(e) => setEditDeadline(e.target.value)}
-                                      className="h-8 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 shadow-sm focus:outline-none focus:ring-1 focus:ring-slate-300"
+                                      className="h-7 rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[10px] text-slate-700 shadow-sm focus:outline-none focus:ring-1 focus:ring-slate-300"
                                     />
                                   </div>
-                                  <div className="flex items-center gap-2 pt-1">
-                                    <Button size="sm" onClick={() => handleSaveEdit(event)} className="h-7 px-3 text-xs">
+                                  <div className="flex items-center gap-1.5 pt-0.5">
+                                    <Button size="sm" onClick={() => handleSaveEdit(event)} className="h-6 px-2.5 text-[10px]">
                                       Сохранить
                                     </Button>
-                                    <Button size="sm" variant="ghost" onClick={handleCancelEdit} className="h-7 px-3 text-xs">
+                                    <Button size="sm" variant="ghost" onClick={handleCancelEdit} className="h-6 px-2.5 text-[10px]">
                                       Отмена
                                     </Button>
                                   </div>
                                 </div>
                               ) : (
-                                <div className="text-[13px] text-slate-700 leading-relaxed max-w-2xl">
+                                <div className="text-[11px] text-slate-700 leading-snug">
                                   {event.type === 'stage_change' ? (
                                     <span>
-                                      Перевод на этап <span className="font-semibold text-slate-900">«{
+                                      → <span className="font-semibold text-slate-900">{
                                         LEAD_STAGES.find(s => s.id === event.payload.toStage)?.name
                                         || event.payload.toStageName
                                         || event.payload.toStage
-                                      }»</span>
+                                      }</span>
                                     </span>
                                   ) : event.type === 'assign' ? (
                                     <span>
-                                      Назначен менеджер <span className="font-semibold text-slate-900">{event.payload.managerName}</span>
+                                      Менеджер: <span className="font-semibold text-slate-900">{event.payload.managerName}</span>
                                     </span>
                                   ) : event.type === 'created' ? (
                                     <span>Лид поступил в систему</span>
                                   ) : event.type === 'task_created' ? (
-                                    <div className="space-y-2.5">
+                                    <div className="space-y-1.5">
                                       <span className="text-slate-900 font-medium">{event.payload.taskName}</span>
                                       {(event.payload.eisenhowerUrgent !== undefined || event.payload.eisenhowerImportant !== undefined) && (
                                         <EisenhowerChips
@@ -520,8 +524,8 @@ export function LeadHistoryTimeline({
                                         />
                                       )}
                                       {event.payload.deadline && (
-                                        <div className="flex items-center gap-1.5 text-[11px] font-medium text-amber-700 bg-amber-50 w-fit px-2.5 py-1 rounded-md border border-amber-200">
-                                          <Clock className="size-3.5" />
+                                        <div className="flex items-center gap-1 text-[9px] font-medium text-amber-700 bg-amber-50 w-fit px-2 py-0.5 rounded border border-amber-200">
+                                          <Clock className="size-3" />
                                           <span>Срок: {formatDateHeader(event.payload.deadline)}, {formatTime(event.payload.deadline)}</span>
                                         </div>
                                       )}
@@ -552,113 +556,93 @@ export function LeadHistoryTimeline({
         </div>
       </div>
 
-      {/* Input Area */}
-      <div className="shrink-0 border-t border-slate-200 bg-white p-4 pt-3 shadow-[0_-4px_24px_rgba(0,0,0,0.02)] z-20">
-        <div className="max-w-4xl mx-auto flex flex-col gap-3">
-          {/* Tabs */}
-          <div className="flex items-center gap-1.5 px-12">
-            <button
-              onClick={() => setInputType("comment")}
-              className={cn(
-                "px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wide transition-colors",
-                inputType === "comment"
-                  ? "bg-slate-100 text-slate-800 border border-slate-200"
-                  : "text-slate-400 hover:text-slate-600 hover:bg-slate-50 border border-transparent"
-              )}
-            >
-              Комментарий
-            </button>
-            <button
-              onClick={() => setInputType("task")}
-              className={cn(
-                "px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wide transition-colors",
-                inputType === "task"
-                  ? "bg-amber-100 text-amber-800 border border-amber-200"
-                  : "text-slate-400 hover:text-slate-600 hover:bg-slate-50 border border-transparent"
-              )}
-            >
-              Задача
-            </button>
-          </div>
-
-          {/* Input field */}
-          <div className="flex items-end gap-3">
-            <Button
-              variant="outline"
-              size="icon"
-              className="shrink-0 size-11 rounded-full border-slate-200 bg-white text-slate-600 hover:bg-slate-100 shadow-sm"
-              title="Прикрепить файл"
-            >
-              <Plus className="size-5" />
-            </Button>
-
-            <div className="relative flex-1 flex flex-col gap-2">
+      {/* Input bar — comment by default, task form replaces it on toggle */}
+      <div className={cn(
+        "shrink-0 border-t bg-white px-3 z-20",
+        inputType === "task" ? "border-amber-200 py-2" : "border-slate-200 py-1.5"
+      )}>
+        {inputType === "comment" ? (
+          <div className="flex items-center gap-1.5">
+            <div className="relative flex-1">
               <Input
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) handleAddEvent() }}
-                placeholder={inputType === "comment" ? "Написать комментарий..." : "Опишите задачу..."}
-                className={cn(
-                  "w-full min-h-[44px] rounded-xl border-slate-200 bg-slate-50 px-4 py-2 pr-12 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:ring-1 focus-visible:ring-slate-300 focus-visible:border-slate-300 shadow-inner",
-                  inputType === "task" && "border-amber-200 bg-amber-50/30 focus-visible:ring-amber-300 focus-visible:border-amber-300"
-                )}
+                placeholder="Комментарий..."
+                className="w-full h-7 rounded-lg border-slate-200 bg-slate-50 px-3 py-1 pr-8 text-[11px] text-slate-900 placeholder:text-slate-400 focus-visible:ring-1 focus-visible:ring-slate-300"
               />
-
-              {inputType === "task" && (
-                <div className="flex flex-wrap items-center gap-4 pl-1 mb-1">
-                  {!isManager && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] uppercase text-slate-500 font-bold tracking-wide">Исполнитель:</span>
-                      <Select value={taskAssignee} onValueChange={setTaskAssignee}>
-                        <SelectTrigger className="h-8 w-[160px] text-xs">
-                          <SelectValue placeholder="Текущий менеджер" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="lm-1">Текущий менеджер</SelectItem>
-                          {leadManagers?.map(mgr => (
-                            <SelectItem key={mgr.id} value={mgr.id}>{mgr.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                  <div>
-                    <p className="text-[10px] uppercase text-slate-500 font-bold tracking-wide mb-1.5">Срочность и важность</p>
-                    <EisenhowerChips
-                      urgent={taskEisenhowerUrgent}
-                      important={taskEisenhowerImportant}
-                      onChangeUrgent={setTaskEisenhowerUrgent}
-                      onChangeImportant={setTaskEisenhowerImportant}
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase text-slate-500 font-bold tracking-wide">Крайний срок:</span>
-                    <Input
-                      type="datetime-local"
-                      value={taskDeadline}
-                      onChange={(e) => setTaskDeadline(e.target.value)}
-                      className="h-8 w-auto border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 rounded-md shadow-sm"
-                    />
-                  </div>
-                </div>
-              )}
-
               <Button
                 size="sm"
                 onClick={handleAddEvent}
-                className={cn(
-                  "absolute right-1.5 top-1.5 h-8 w-8 rounded-full p-0 flex items-center justify-center transition-colors shadow-sm",
-                  inputType === "task"
-                    ? "bg-amber-500 text-amber-50 hover:bg-amber-600"
-                    : "bg-emerald-500 text-emerald-50 hover:bg-emerald-600"
-                )}
-                title={inputType === "task" ? "Поставить задачу" : "Отправить"}
+                className="absolute right-0.5 top-0.5 h-6 w-6 rounded-full p-0 flex items-center justify-center bg-emerald-500 text-white hover:bg-emerald-600 shadow-sm"
               >
-                <Send className="size-4 ml-0.5" />
+                <Send className="size-3 ml-px" />
               </Button>
             </div>
+            <button
+              onClick={() => { setInputType("task"); if (!taskDeadline) setTaskDeadline(getDefaultDeadline()) }}
+              className="shrink-0 flex items-center gap-1 px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wide border border-slate-200 bg-slate-50 text-slate-500 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-200 transition-colors"
+            >
+              <Plus className="size-3" />
+              Задача
+            </button>
           </div>
-        </div>
+        ) : (
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-1.5">
+              <Input
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) handleAddEvent() }}
+                placeholder="Опишите задачу..."
+                className="flex-1 h-7 rounded-lg border-amber-200 bg-amber-50/40 px-3 py-1 text-[11px] text-slate-900 placeholder:text-slate-400 focus-visible:ring-1 focus-visible:ring-amber-300"
+                autoFocus
+              />
+              <Button
+                size="sm"
+                onClick={handleAddEvent}
+                className="shrink-0 h-7 px-3 text-[9px] font-bold uppercase tracking-wide bg-amber-500 text-white hover:bg-amber-600 rounded-lg"
+              >
+                <Send className="size-3 mr-1" />
+                Задача
+              </Button>
+              <button
+                onClick={() => setInputType("comment")}
+                className="shrink-0 h-7 w-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+              >✕</button>
+            </div>
+            <div className="flex flex-wrap items-center gap-2.5">
+              {!isManager && (
+                <Select value={taskAssignee} onValueChange={setTaskAssignee}>
+                  <SelectTrigger className="h-6 w-[130px] text-[9px] bg-white border-slate-200">
+                    <SelectValue placeholder="Исполнитель" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="lm-1">Текущий менеджер</SelectItem>
+                    {leadManagers?.map(mgr => (
+                      <SelectItem key={mgr.id} value={mgr.id}>{mgr.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+              <div className="flex items-center gap-1">
+                <span className="text-[8px] uppercase text-slate-400 font-bold">Срок:</span>
+                <input
+                  type="datetime-local"
+                  value={taskDeadline}
+                  onChange={(e) => setTaskDeadline(e.target.value)}
+                  className="h-6 rounded border border-slate-200 bg-white px-1.5 text-[9px] text-slate-700 focus:outline-none focus:ring-1 focus:ring-amber-200"
+                />
+              </div>
+              <EisenhowerChips
+                urgent={taskEisenhowerUrgent}
+                important={taskEisenhowerImportant}
+                onChangeUrgent={setTaskEisenhowerUrgent}
+                onChangeImportant={setTaskEisenhowerImportant}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

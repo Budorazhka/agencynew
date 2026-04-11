@@ -13,7 +13,7 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core"
-import { Filter, Search, X, Eye, LayoutList, LayoutGrid } from "lucide-react"
+import { Filter, Search, X, Eye, LayoutList, LayoutGrid, Maximize2 } from "lucide-react"
 import { useLeads } from "@/context/LeadsContext"
 import { useAuth } from "@/context/AuthContext"
 import type { Lead } from "@/types/leads"
@@ -532,20 +532,6 @@ export function LeadsCardTableView({
           {viewMode === "poker" ? "Список" : "Стол"}
         </Button>
 
-        {viewMode === "poker" && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setHistoryInitialMode("comment")
-              setHistoryOpen(true)
-            }}
-            className="h-7 shrink-0 gap-1 px-2 text-[11px] font-medium border-[rgba(241,208,146,0.28)] bg-[rgba(51,35,18,0.66)] text-[rgba(247,232,198,0.86)] hover:bg-[rgba(88,57,25,0.74)]"
-          >
-            История
-          </Button>
-        )}
-
         {variant === "dialog" && onClose && (
           <Button
             variant="outline"
@@ -750,52 +736,44 @@ export function LeadsCardTableView({
             })}
           </div>
 
-          {/* ── CENTER PANEL — inline history card between rows ── */}
+          {/* ── CENTER PANEL — inline history, between card rows ── */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
-            style={{ top: '62%', width: 480 }}
+            className="absolute z-20 flex flex-col"
+            style={{ top: 285, bottom: 195, left: "calc(50% - 250px)" }}
           >
-            <div className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl text-slate-900" style={{ height: 260 }}>
+            <div
+              className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-slate-50 text-slate-900 shadow-2xl"
+              style={{ width: 560 }}
+            >
               {/* header */}
-              <div className="shrink-0 flex items-center justify-between gap-3 border-b border-slate-200 bg-white px-5 py-3">
-                <div className="flex flex-col gap-0.5 min-w-0">
-                  <p className="text-[13px] font-bold tracking-tight text-slate-900 truncate">
-                    {activeLead ? (activeLead.name ?? activeLead.id) : "Выберите лид"}
+              <div className="shrink-0 flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-1.5">
+                <div className="flex flex-col min-w-0">
+                  <p className="text-[11px] font-bold tracking-tight text-slate-900 truncate leading-tight">
+                    {activeLead ? (activeLead.name ?? activeLead.id) : "Карточка лида"}
                   </p>
                   {activeLead && (
-                    <p className="text-[11px] text-slate-500 truncate">
+                    <p className="text-[9px] text-slate-500 truncate leading-tight">
                       {LEAD_STAGES.find((s) => s.id === activeLead.stageId)?.name ?? activeLead.stageId}
                     </p>
                   )}
                 </div>
-                {activeLead && !isManager && (
-                  <Select
-                    value={activeLead.managerId || "unassigned"}
-                    onValueChange={(val) => {
-                      const newManagerId = val === "unassigned" ? null : val
-                      const newManagerName = newManagerId
-                        ? (leadManagers.find((m) => m.id === newManagerId)?.name ?? "")
-                        : ""
-                      setTransferConfirm({ newManagerId, newManagerName })
-                    }}
-                  >
-                    <SelectTrigger className="h-7 w-[140px] shrink-0 text-[11px]">
-                      <SelectValue placeholder="Менеджер" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="unassigned">Не назначен</SelectItem>
-                      {leadManagers.map((m) => (
-                        <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                <button
+                  onClick={() => { setHistoryInitialMode("comment"); setHistoryOpen(true) }}
+                  className="flex size-6 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+                  title="Развернуть карточку"
+                >
+                  <Maximize2 className="size-3" />
+                </button>
               </div>
-              {/* timeline */}
-              <div className="flex-1 min-h-0 overflow-hidden bg-slate-50/50">
+              {/* timeline body */}
+              <div className="flex-1 min-h-0 overflow-hidden">
                 {activeLead
-                  ? <LeadHistoryTimeline leadId={activeLead.id} initialInputType={historyInitialMode} />
-                  : <div className="flex h-full items-center justify-center text-[12px] text-slate-400">Кликните на карту лида</div>
+                  ? <LeadHistoryTimeline leadId={activeLead.id} initialInputType="comment" />
+                  : (
+                    <div className="flex h-full items-center justify-center">
+                      <p className="text-[11px] text-slate-400">Кликните на карту лида</p>
+                    </div>
+                  )
                 }
               </div>
             </div>
