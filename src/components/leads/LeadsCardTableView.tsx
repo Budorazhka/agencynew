@@ -13,7 +13,7 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core"
-import { Filter, Search, X, Eye, LayoutList, LayoutGrid, CheckSquare, Clock, History } from "lucide-react"
+import { Filter, Search, X, Eye, LayoutList, LayoutGrid } from "lucide-react"
 import { useLeads } from "@/context/LeadsContext"
 import { useAuth } from "@/context/AuthContext"
 import type { Lead } from "@/types/leads"
@@ -750,57 +750,53 @@ export function LeadsCardTableView({
             })}
           </div>
 
-          {/* ── CENTER OVAL — between top and bottom card rows ── */}
+          {/* ── CENTER PANEL — inline history card between rows ── */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2"
-            style={{ top: '62%' }}
+            className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
+            style={{ top: '62%', width: 480 }}
           >
-            <div
-              className="relative flex items-center justify-center"
-              style={{ width: 380, height: 200 }}
-            >
-              {/* felt oval */}
-              <div
-                className="absolute inset-0 rounded-[50%]"
-                style={{
-                  background: "radial-gradient(ellipse at 50% 40%, rgba(30,70,52,0.92) 0%, rgba(14,42,30,0.96) 100%)",
-                  boxShadow: "inset 0 0 0 2px rgba(212,175,85,0.22), 0 4px 32px rgba(0,0,0,0.4)",
-                }}
-              />
-              <div className="relative z-10 w-full px-8 text-center">
-                {activeLead ? (
-                  <>
-                    <div className="mb-1 flex items-center justify-center gap-3">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-[color:var(--hub-stat-label)]">Расклад</p>
-                      <button
-                        onClick={() => { setHistoryInitialMode("comment"); setHistoryOpen(true) }}
-                        className="flex items-center gap-1 rounded-full border border-[color:var(--hub-tile-icon-border)] px-2 py-0.5 text-[9px] text-[color:var(--hub-stat-label)] hover:text-[color:var(--theme-accent-heading)] hover:border-[color:var(--hub-card-border-hover)] transition-colors"
-                      >
-                        <History className="w-2 h-2" />
-                        История
-                      </button>
-                    </div>
-                    <p className="text-[18px] font-bold leading-tight text-[rgba(255,244,215,0.95)]">{activeLead.name ?? "Без имени"}</p>
-                    <p className="mb-1.5 text-[10px] text-[color:var(--hub-desc)]">
+            <div className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl text-slate-900" style={{ height: 260 }}>
+              {/* header */}
+              <div className="shrink-0 flex items-center justify-between gap-3 border-b border-slate-200 bg-white px-5 py-3">
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <p className="text-[13px] font-bold tracking-tight text-slate-900 truncate">
+                    {activeLead ? (activeLead.name ?? activeLead.id) : "Выберите лид"}
+                  </p>
+                  {activeLead && (
+                    <p className="text-[11px] text-slate-500 truncate">
                       {LEAD_STAGES.find((s) => s.id === activeLead.stageId)?.name ?? activeLead.stageId}
                     </p>
-                    <div className="flex items-center justify-center gap-5">
-                      {[
-                        { label: "Задача", icon: <CheckSquare className="w-2.5 h-2.5" />, value: activeLead.hasTask ? "Есть" : "Нет", bad: !activeLead.hasTask },
-                        { label: "Менеджер", icon: <Eye className="w-2.5 h-2.5" />, value: activeLead.managerId ? "Назначен" : "Нет", bad: !activeLead.managerId },
-                        { label: "Просрочка", icon: <Clock className="w-2.5 h-2.5" />, value: activeLead.taskOverdue ? "Да" : "Нет", bad: !!activeLead.taskOverdue },
-                      ].map(({ label, icon, value, bad }) => (
-                        <div key={label} className="text-center">
-                          <div className={cn("flex justify-center mb-0.5", bad ? "text-rose-400" : "text-[color:var(--workspace-text-muted)]")}>{icon}</div>
-                          <p className="text-[8px] uppercase tracking-wide text-[color:var(--theme-accent-icon-dim)]">{label}</p>
-                          <p className={cn("text-[10px] font-bold", bad ? "text-rose-400" : "text-[color:var(--hub-stat-label)]")}>{value}</p>
-                        </div>
+                  )}
+                </div>
+                {activeLead && !isManager && (
+                  <Select
+                    value={activeLead.managerId || "unassigned"}
+                    onValueChange={(val) => {
+                      const newManagerId = val === "unassigned" ? null : val
+                      const newManagerName = newManagerId
+                        ? (leadManagers.find((m) => m.id === newManagerId)?.name ?? "")
+                        : ""
+                      setTransferConfirm({ newManagerId, newManagerName })
+                    }}
+                  >
+                    <SelectTrigger className="h-7 w-[140px] shrink-0 text-[11px]">
+                      <SelectValue placeholder="Менеджер" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="unassigned">Не назначен</SelectItem>
+                      {leadManagers.map((m) => (
+                        <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
                       ))}
-                    </div>
-                  </>
-                ) : (
-                  <p className="text-[11px] text-[rgba(247,229,189,0.4)]">Выберите лид</p>
+                    </SelectContent>
+                  </Select>
                 )}
+              </div>
+              {/* timeline */}
+              <div className="flex-1 min-h-0 overflow-hidden bg-slate-50/50">
+                {activeLead
+                  ? <LeadHistoryTimeline leadId={activeLead.id} initialInputType={historyInitialMode} />
+                  : <div className="flex h-full items-center justify-center text-[12px] text-slate-400">Кликните на карту лида</div>
+                }
               </div>
             </div>
           </div>
