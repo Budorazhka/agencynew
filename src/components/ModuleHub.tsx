@@ -181,17 +181,17 @@ export default function ModuleHub({
                 </span>
               </div>
 
-              {/* Title */}
+              {/* Title — перенос длинных подписей; без жёсткой «двух строк» при узких колонках */}
               <h3
-                className="line-clamp-2 w-full min-w-0 px-0.5"
+                className="module-hub-section-title line-clamp-4 w-full min-w-0 px-0.5"
                 style={{
                   margin: 0,
                   fontSize: 'clamp(10px, 1.05vw, 13px)',
                   fontWeight: 700,
                   color: 'var(--theme-accent-heading)',
-                  letterSpacing: '0.08em',
+                  letterSpacing: '0.06em',
                   textTransform: 'uppercase',
-                  lineHeight: 1.25,
+                  lineHeight: 1.3,
                 }}
               >
                 {s.title}

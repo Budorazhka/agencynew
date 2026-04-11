@@ -15,7 +15,7 @@ type RegionStatusRow = {
   ownerAgency: string | null
 }
 
-const MY_AGENCY = 'ALPHABASE.sale Agency'
+const MY_AGENCY = 'baza.sale Agency'
 
 const STATUS_LABELS: Record<StatusType, string> = {
   aggregator_primary: 'Агрегатор первичного рынка',

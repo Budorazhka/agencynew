@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Eye, Monitor, Moon, Sparkles, Sun } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/DashboardShell'
+import type { UiFontScale } from '@/context/ThemeContext'
 import { useTheme } from '@/hooks/useTheme'
 
 const C = {
@@ -15,11 +16,10 @@ type ThemeMode = 'standard' | 'light'
 type Density = 'comfort' | 'compact'
 
 export function ThemeSettingsPage() {
-  const { preference, setPreference } = useTheme()
+  const { preference, setPreference, uiFontScale, setUiFontScale } = useTheme()
   const themeMode: ThemeMode = preference === 'light' ? 'light' : 'standard'
   const [density, setDensity] = useState<Density>('comfort')
   const [reduceMotion, setReduceMotion] = useState(false)
-  const [fontScale, setFontScale] = useState<'100' | '110' | '125'>('100')
 
   return (
     <DashboardShell>
@@ -40,7 +40,7 @@ export function ThemeSettingsPage() {
           </div>
           <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
             <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Масштаб текста</p>
-            <p className="text-sm font-semibold text-[color:var(--workspace-text)]">{fontScale}%</p>
+            <p className="text-sm font-semibold text-[color:var(--workspace-text)]">{uiFontScale}%</p>
           </div>
           <div className="rounded-lg border border-[var(--hub-card-border)] bg-[var(--hub-card-bg)] p-3">
             <p className="text-[10px] uppercase text-[color:var(--app-text-subtle)]">Анимации</p>
@@ -108,8 +108,8 @@ export function ThemeSettingsPage() {
             <div>
               <p className="mb-1 text-[11px] uppercase text-[color:var(--app-text-subtle)]">Базовый кегль</p>
               <select
-                value={fontScale}
-                onChange={(e) => setFontScale(e.target.value as typeof fontScale)}
+                value={uiFontScale}
+                onChange={(e) => setUiFontScale(e.target.value as UiFontScale)}
                 className="w-full rounded-md border border-[var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2 py-2 text-sm text-[color:var(--workspace-text)]"
               >
                 <option value="100">100%</option>
@@ -123,7 +123,7 @@ export function ThemeSettingsPage() {
             </label>
           </div>
           <p className="mt-2 text-xs text-[color:var(--app-text-muted)]">
-            Плотность и масштаб здесь только фиксируются в состоянии страницы; глобальное применение — на этапе подключения к настройкам профиля.
+            Масштаб текста применяется ко всему интерфейсу и сохраняется в этом браузере. Плотность сетки — только предпросмотр на этой странице.
           </p>
         </section>
 
@@ -136,7 +136,7 @@ export function ThemeSettingsPage() {
             className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] p-3"
             style={{
               padding: density === 'compact' ? '10px 12px' : '16px 18px',
-              fontSize: fontScale === '100' ? 13 : fontScale === '110' ? 14 : 15,
+              fontSize: uiFontScale === '100' ? 13 : uiFontScale === '110' ? 14 : 15,
               transition: reduceMotion ? 'none' : 'padding 0.2s, font-size 0.2s',
             }}
           >

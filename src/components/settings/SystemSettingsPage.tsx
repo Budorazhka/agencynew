@@ -5,7 +5,7 @@ import { DashboardShell } from '@/components/layout/DashboardShell'
 type IntStatus = 'ok' | 'pending' | 'error'
 
 const ITEMS: Array<{ key: string; value: string; category: 'org' | 'locale' | 'security' }> = [
-  { key: 'Профиль агентства', value: 'ALPHABASE.sale Agency', category: 'org' },
+  { key: 'Профиль агентства', value: 'baza.sale Agency', category: 'org' },
   { key: 'Регион по умолчанию', value: 'Тбилиси', category: 'locale' },
   { key: 'Часовой пояс', value: 'UTC+4', category: 'locale' },
   { key: 'Язык интерфейса', value: 'Русский', category: 'locale' },

@@ -29,18 +29,8 @@ export type DashboardRailItem = {
 export const DASHBOARD_RAIL_ITEMS: DashboardRailItem[] = [
   { id: 'desk', label: 'Рабочий стол', to: '/dashboard', icon: LayoutDashboard, end: true },
   {
-    id: 'leads',
-    label: 'Лиды',
-    to: '/dashboard/leads-hub',
-    icon: UserCog,
-    match: (p) =>
-      p.startsWith('/dashboard/leads-hub') ||
-      (p.startsWith('/dashboard/leads') && !p.startsWith('/dashboard/leads/poker')),
-  },
-  {
     id: 'crm',
     label: 'CRM',
-    /** Хаб + клиенты, сделки, задачи, покер — контур п. 2 ТЗ (не отдельные пункты rail). */
     to: '/dashboard/crm',
     icon: CreditCard,
     match: (p) =>
@@ -51,16 +41,24 @@ export const DASHBOARD_RAIL_ITEMS: DashboardRailItem[] = [
       p.startsWith('/dashboard/tasks'),
   },
   {
+    id: 'leads',
+    label: 'Лиды',
+    to: '/dashboard/leads-hub',
+    icon: UserCog,
+    match: (p) =>
+      p.startsWith('/dashboard/leads-hub') ||
+      (p.startsWith('/dashboard/leads') && !p.startsWith('/dashboard/leads/poker')),
+  },
+  {
     id: 'newbuild',
     label: 'Новостройки',
     to: '/dashboard/new-buildings',
     icon: Landmark,
-    /** Хаб первички + брони (вход на брони с хаба «Новостройки»). */
     match: (p) => p.startsWith('/dashboard/new-buildings') || p.startsWith('/dashboard/bookings'),
   },
   {
     id: 'secondary',
-    label: 'Вторичный рынок',
+    label: 'Объекты вторичного рынка',
     to: '/dashboard/objects',
     icon: Building2,
     match: (p) => p.startsWith('/dashboard/objects'),
@@ -82,7 +80,7 @@ export const DASHBOARD_RAIL_ITEMS: DashboardRailItem[] = [
   },
   {
     id: 'learning',
-    label: 'Обучение',
+    label: 'Обучение и база знаний',
     to: '/dashboard/learning',
     icon: GraduationCap,
     match: (p) => p.startsWith('/dashboard/learning') || p.startsWith('/dashboard/lms'),

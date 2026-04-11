@@ -1,33 +1,24 @@
 import ModuleHub from '@/components/ModuleHub'
-import { Wallet, BarChart3, LibraryBig } from 'lucide-react'
+import { Wallet, BarChart3 } from 'lucide-react'
 
-/**
- * Раздел 6.8 стартового ТЗ ALPHABASE.sale: Финансы — панель и отчёт.
- */
+/** П. 13.8 */
 export default function FinanceHubPage() {
   return (
     <ModuleHub
       moduleIcon={<Wallet size={32} color="#c9a84c" />}
       moduleName="Финансы"
-      moduleDescription="Простой строгий финансовый контур: операции и отчётность (вёрстка под дальнейшее API)."
       sections={[
         {
           icon: <Wallet size={20} color="#c9a84c" />,
           title: 'Финансы',
-          description: 'Панель управления: платежи, начисления, привязка к сделкам — табличный интерфейс.',
+          description: '',
           route: '/dashboard/finance/panel',
         },
         {
           icon: <BarChart3 size={20} color="#c9a84c" />,
-          title: 'Отчёт по финансам',
-          description: 'Сводки и выгрузки по финансовому контуру агентства.',
+          title: 'По финансам',
+          description: '',
           route: '/dashboard/finance/report',
-        },
-        {
-          icon: <LibraryBig size={20} color="#c9a84c" />,
-          title: 'Реестр отчётов',
-          description: 'Полный каталог отчётов для быстрых переходов между доменами.',
-          route: '/dashboard/reports/registry',
         },
       ]}
     />

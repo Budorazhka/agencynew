@@ -27,10 +27,7 @@ import { cn } from '@/lib/utils'
 /** Прямая ссылка на витрину (п. 5 ТЗ). */
 const MARKETPLACE_HREF = 'https://baza.sale'
 
-/**
- * Сквозной верхний бар ALPHABASE.sale: AI, Marketplace, уведомления, быстрые действия, профиль.
- * AI — панель быстрых переходов; чат с моделью подключается отдельно. Marketplace — baza.sale.
- */
+/** Сквозной верхний бар: AI, Marketplace, уведомления, быстрые действия, профиль. */
 export function DashboardTopHeader() {
   const [aiOpen, setAiOpen] = useState(false)
   const { currentUser } = useAuth()
@@ -54,7 +51,7 @@ export function DashboardTopHeader() {
       .slice(0, 2) || 'П'
 
   const btn = cn(
-    'inline-flex min-h-10 items-center justify-center gap-2 rounded-lg px-3 py-2 text-[13px] font-semibold transition-colors',
+    'inline-flex min-h-10 items-center justify-center gap-2 rounded-lg px-3 py-2 text-[13px] font-normal transition-colors',
     isLight
       ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
       : 'text-emerald-100/85 hover:bg-emerald-900/35 hover:text-emerald-50',
@@ -97,7 +94,7 @@ export function DashboardTopHeader() {
           type="button"
           className={cn(
             btn,
-            'min-h-11 gap-2 px-3.5 py-2.5 text-[14px] font-bold',
+            'min-h-10 gap-2 px-3.5 py-2 text-[13px] font-normal',
             'ring-1 ring-transparent hover:ring-[color-mix(in_srgb,var(--gold)_42%,transparent)]',
           )}
           title="AI — быстрые сценарии"
@@ -115,8 +112,9 @@ export function DashboardTopHeader() {
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
-            'inline-flex min-h-9 shrink-0 items-center justify-center rounded-md px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white transition-[filter,transform] hover:brightness-110 active:scale-[0.98]',
+            'inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-[var(--section-cta-radius)] px-3.5 py-2 text-[13px] font-light uppercase text-white transition-[filter,transform] hover:brightness-110 active:scale-[0.98]',
             'bg-[var(--corporate-green)] shadow-sm shadow-black/20',
+            'tracking-[0.26em]',
           )}
           title="Перейти на baza.sale"
           aria-label="Marketplace — baza.sale"
@@ -136,7 +134,7 @@ export function DashboardTopHeader() {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={8} className={notifPanelClass}>
-            <DropdownMenuLabel className="px-3 py-2 text-[13px] font-semibold">
+            <DropdownMenuLabel className="px-3 py-2 text-[13px] font-normal">
               Уведомления
             </DropdownMenuLabel>
             <div className="max-h-[min(52vh,18rem)] overflow-y-auto px-1 pb-1">
@@ -149,7 +147,7 @@ export function DashboardTopHeader() {
                   )}
                   onSelect={(e) => e.preventDefault()}
                 >
-                  <span className="text-[13px] font-semibold leading-snug">{n.title}</span>
+                  <span className="text-[13px] font-normal leading-snug">{n.title}</span>
                   <span className={cn('text-[11px] leading-snug', notifMuted)}>{n.body}</span>
                   <span className={cn('text-[10px]', notifMuted)}>{n.time}</span>
                 </DropdownMenuItem>
@@ -157,7 +155,7 @@ export function DashboardTopHeader() {
             </div>
             <DropdownMenuSeparator className={isLight ? 'bg-slate-200' : 'bg-emerald-800/40'} />
             {canInfo ? (
-              <DropdownMenuItem asChild className="cursor-pointer font-medium">
+              <DropdownMenuItem asChild className="cursor-pointer font-normal">
                 <Link to="/dashboard/settings/info">Все в разделе «Инфо»…</Link>
               </DropdownMenuItem>
             ) : (
@@ -173,7 +171,7 @@ export function DashboardTopHeader() {
         <Link
           to={profileTo}
           className={cn(
-            'flex size-10 shrink-0 items-center justify-center rounded-full border text-xs font-extrabold transition-colors',
+            'flex size-10 shrink-0 items-center justify-center rounded-full border text-xs font-normal transition-colors',
             isLight
               ? 'border-slate-200 bg-slate-100 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
               : 'border-emerald-800/50 bg-emerald-950/40 text-emerald-100 hover:border-[color:var(--gold)]/40 hover:bg-emerald-900/30',
@@ -211,7 +209,7 @@ export function DashboardTopHeader() {
               <Sparkles className="size-5" strokeWidth={2} />
             </div>
             <DialogHeader className="min-w-0 flex-1 space-y-2 text-left">
-              <DialogTitle className="text-[1.05rem] font-black uppercase leading-tight tracking-[0.05em] text-[color:var(--theme-accent-heading)]">
+              <DialogTitle className="text-[1.05rem] font-normal uppercase leading-tight tracking-[0.05em] text-[color:var(--theme-accent-heading)]">
                 AI-ассистент
               </DialogTitle>
               <DialogDescription className="text-[13px] leading-relaxed text-[color:var(--hub-body)]">
@@ -221,7 +219,7 @@ export function DashboardTopHeader() {
             </DialogHeader>
           </div>
           <div className="flex flex-col gap-2 border-t border-[color:var(--workspace-row-border)] px-4 py-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--app-text-subtle)]">
+            <p className="text-[11px] font-normal uppercase tracking-wide text-[color:var(--app-text-subtle)]">
               Быстрый переход
             </p>
             <div className="flex flex-col gap-2">

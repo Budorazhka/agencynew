@@ -122,13 +122,13 @@ export function MiniCalendar({
 
   const cellMinH = isWorkspace ? '' : 'min-h-[56px]'
   const dayNumClass = isWorkspace
-    ? 'flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold leading-none'
+    ? 'flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-normal leading-none'
     : 'flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-medium leading-none'
   const headerMonthClass = isWorkspace
-    ? 'text-sm font-bold tracking-tight text-[color:var(--workspace-text)] sm:text-base'
+    ? 'text-sm font-normal tracking-tight text-[color:var(--workspace-text)] sm:text-base'
     : 'text-sm font-bold tracking-tight text-[color:var(--workspace-text)]'
   const dowClass = isWorkspace
-    ? 'text-center text-[11px] font-semibold uppercase tracking-wider text-[color:var(--workspace-text-dim)]'
+    ? 'text-center text-[11px] font-normal uppercase tracking-wider text-[color:var(--workspace-text-dim)]'
     : 'text-center text-[9px] font-semibold uppercase tracking-wider text-[color:var(--workspace-text-dim)]'
 
   return (
@@ -160,8 +160,8 @@ export function MiniCalendar({
             type="button"
             onClick={goThisMonth}
             className={cn(
-              'rounded-md border border-[color:var(--workspace-cal-chip-border)] bg-[var(--workspace-cal-chip-bg)] font-bold uppercase tracking-wider text-[color:var(--workspace-cal-chip-text)]',
-              isWorkspace ? 'px-1.5 py-px text-[9px]' : 'px-2 py-0.5 text-[10px]',
+              'rounded-md border border-[color:var(--workspace-cal-chip-border)] bg-[var(--workspace-cal-chip-bg)] uppercase tracking-wider text-[color:var(--workspace-cal-chip-text)]',
+              isWorkspace ? 'px-1.5 py-px text-[9px] font-normal' : 'px-2 py-0.5 text-[10px] font-bold',
             )}
           >
             Сегодня
@@ -239,7 +239,10 @@ export function MiniCalendar({
                   dayNumClass,
                   'place-self-center',
                   isToday
-                    ? 'bg-[color:var(--workspace-cal-today-bg)] font-bold text-[color:var(--workspace-cal-today-fg)]'
+                    ? cn(
+                        'bg-[color:var(--workspace-cal-today-bg)] text-[color:var(--workspace-cal-today-fg)]',
+                        isWorkspace ? 'font-normal' : 'font-bold',
+                      )
                     : 'text-[color:var(--workspace-text)] opacity-85',
                 )}
               >
@@ -274,8 +277,8 @@ export function MiniCalendar({
         >
           <div
             className={cn(
-              'font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)]',
-              isWorkspace ? 'mb-0.5 text-[10px]' : 'mb-1.5 text-[10px]',
+              'uppercase tracking-wider text-[color:var(--theme-accent-link-dim)]',
+              isWorkspace ? 'mb-0.5 text-[10px] font-normal' : 'mb-1.5 text-[10px] font-bold',
             )}
           >
             {new Date(selectedDate + 'T12:00:00').toLocaleDateString('ru-RU', {

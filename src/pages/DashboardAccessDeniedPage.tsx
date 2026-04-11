@@ -14,7 +14,7 @@ export function DashboardAccessDeniedPage() {
     <div className="mx-auto w-full max-w-3xl px-4 py-5 sm:px-6 sm:py-7">
       <div className="rounded-xl border border-[color:var(--green-border)]/35 bg-[color:var(--green-card)] px-5 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_12px_40px_rgba(0,0,0,0.1)] sm:px-8 sm:py-8">
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--app-text-muted)]">
-          ALPHABASE.sale · доступ
+          baza.sale · доступ
         </p>
         <h1 className="text-[1.4rem] font-bold leading-tight tracking-tight text-[color:var(--app-text)] sm:text-[1.65rem]">
           Нет доступа к разделу

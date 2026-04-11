@@ -12,7 +12,7 @@ import {
   roleCanAccessSettingsHub,
 } from '@/config/dashboard-rail'
 
-const RAIL_EXPANDED_W = 'w-[260px]'
+const RAIL_EXPANDED_W = 'w-[min(100%,288px)]'
 const RAIL_COLLAPSED_W = 'w-[72px]'
 const RAIL_ICON = 'size-[22px] shrink-0'
 
@@ -32,11 +32,11 @@ export function DashboardAppRail() {
   const canSettingsHub = roleCanAccessSettingsHub(currentUser?.role ?? 'manager')
 
   const productTitle = branding.name || 'Sovereign Analyst'
-  const productSub = 'ALPHABASE.sale'
+  const productSub = 'baza.sale'
 
   const linkBase = cn(
-    'group flex items-center font-sans text-[13px] font-semibold leading-snug tracking-tight transition-colors duration-150',
-    railCollapsed ? 'justify-center px-0 py-2.5' : 'gap-3 px-4 py-2.5',
+    'group flex min-w-0 font-sans text-[13px] font-semibold leading-snug tracking-tight transition-colors duration-150',
+    railCollapsed ? 'items-center justify-center px-0 py-2.5' : 'items-start gap-3 px-4 py-2.5',
   )
 
   return (
@@ -80,7 +80,7 @@ export function DashboardAppRail() {
                 <span className="text-sm font-extrabold text-[color:var(--hub-tile-icon-hover-fg)]">{productTitle.slice(0, 2).toUpperCase()}</span>
               </div>
               <div className="min-w-0">
-                <h1 className="truncate text-base font-bold tracking-tight text-[color:var(--rail-product-title)]">
+                <h1 className="line-clamp-2 min-w-0 break-words text-base font-bold tracking-tight text-[color:var(--rail-product-title)] [overflow-wrap:anywhere]">
                   {productTitle}
                 </h1>
                 <p className="truncate text-[11px] font-medium uppercase tracking-wide text-[color:var(--app-text-muted)]">
@@ -115,7 +115,8 @@ export function DashboardAppRail() {
               title={railCollapsed ? item.label : undefined}
               className={cn(
                 linkBase,
-                'relative overflow-hidden',
+                'relative',
+                railCollapsed && 'overflow-hidden',
                 active
                   ? cn(
                       'text-[color:var(--rail-active-fg)]',
@@ -134,9 +135,14 @@ export function DashboardAppRail() {
                   aria-hidden
                 />
               ) : null}
-              <Icon className={cn(RAIL_ICON, 'relative z-[2] shrink-0')} strokeWidth={active ? 2.25 : 2} />
+              <Icon
+                className={cn(RAIL_ICON, 'relative z-[2] shrink-0', !railCollapsed && 'mt-0.5')}
+                strokeWidth={active ? 2.25 : 2}
+              />
               {!railCollapsed && (
-                <span className="relative z-[2] min-w-0 flex-1 truncate">{item.label}</span>
+                <span className="relative z-[2] min-w-0 flex-1 break-words hyphens-auto leading-tight [overflow-wrap:anywhere] line-clamp-4">
+                  {item.label}
+                </span>
               )}
             </Link>
           )

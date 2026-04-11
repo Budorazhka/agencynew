@@ -61,12 +61,16 @@ const DESK_PREVIEW = 6
 const TASKS_PREVIEW = 12
 const LEADS_PREVIEW = 12
 const NOTIFS_PREVIEW = 8
-const FEED_ITEM_HEIGHT_CLASS = 'min-h-[118px]'
+/** Единая «лента» уведомлений / напоминаний / новостей: без фикс. высоты — только отступы и ритм текста */
+const FEED_ITEM_CLASS =
+  'flex items-start gap-2.5 overflow-hidden rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2.5 sm:px-3.5 sm:py-3'
 const FEED_TITLE_CLASS =
-  'line-clamp-2 text-[15px] font-semibold leading-snug text-[color:var(--workspace-text)] sm:text-[16px]'
+  'line-clamp-2 text-[13px] font-normal leading-snug text-[color:var(--workspace-text)] sm:text-[14px]'
 const FEED_BODY_CLASS =
-  'line-clamp-2 text-[14px] leading-snug text-[color:var(--workspace-text-muted)] sm:text-[15px]'
-const FEED_META_CLASS = 'text-[13px] text-[color:var(--workspace-text-muted)]'
+  'line-clamp-2 text-[12px] font-normal leading-snug text-[color:var(--workspace-text-muted)] sm:text-[13px]'
+const FEED_META_CLASS =
+  'text-[11px] font-normal leading-snug text-[color:var(--workspace-text-muted)] sm:text-[12px]'
+const FEED_STACK_CLASS = 'flex min-w-0 flex-1 flex-col gap-1'
 
 /** Покер: предвыбор «Не назначен» — LeadsCardTableView `distribution` */
 const LEADS_DISTRIBUTION_HREF = '/dashboard/leads/poker?distribution=1'
@@ -78,7 +82,7 @@ const LEADS_POKER_HREF = '/dashboard/leads/poker'
 const LEADS_SLA_VIOLATIONS_HREF = '/dashboard/leads/poker?violations=1'
 
 const DESK_HEADER_LINK_CLASS =
-  'text-[13px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[14px]'
+  'text-[13px] font-normal uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[14px]'
 
 const DAY_STATUS_LABEL = {
   done: 'Выполнено',
@@ -137,14 +141,14 @@ function WidgetHeader({
     <div
       className={cn(
         'flex shrink-0 items-center justify-between gap-2 border-b border-[color:var(--workspace-row-border)]',
-        spacious ? 'px-4 py-3.5 sm:px-5 sm:py-4' : 'px-3 py-1.5',
+        spacious ? 'px-3 py-2.5 sm:px-4 sm:py-3' : 'px-3 py-1.5',
       )}
     >
-      <div className={cn('flex min-w-0 items-center', spacious ? 'gap-4' : 'gap-1.5')}>
+      <div className={cn('flex min-w-0 items-center', spacious ? 'gap-2.5' : 'gap-1.5')}>
         <div
           className={cn(
             'flex shrink-0 items-center justify-center rounded-lg',
-            spacious ? 'size-11 sm:size-12' : 'size-6 rounded-md',
+            spacious ? 'size-8 sm:size-9' : 'size-6 rounded-md',
           )}
           style={{
             background: accentColor ? `${accentColor}18` : 'var(--workspace-widget-icon-bg)',
@@ -156,8 +160,8 @@ function WidgetHeader({
         {title ? (
           <h3
             className={cn(
-              'line-clamp-2 font-bold leading-snug tracking-tight text-[color:var(--workspace-widget-title)]',
-              spacious ? 'text-base font-bold sm:text-lg' : 'text-[12px] sm:text-[13px]',
+              'min-w-0 flex-1 line-clamp-2 font-normal leading-snug tracking-tight text-[color:var(--workspace-widget-title)]',
+              spacious ? 'text-[14px] font-normal sm:text-[15px]' : 'text-[12px] sm:text-[13px]',
               titleClassName,
             )}
           >
@@ -191,8 +195,8 @@ function TabBtn({
       className={cn(
         'relative inline-flex items-center gap-0.5 transition-colors',
         main
-          ? 'rounded-lg px-2.5 py-1.5 text-[13px] font-bold tracking-tight sm:px-3 sm:text-[14px]'
-          : 'rounded-md px-2.5 py-1 text-[13px] font-bold uppercase tracking-wide sm:text-[14px]',
+          ? 'rounded-lg px-2.5 py-1.5 text-[13px] font-normal tracking-tight sm:px-3 sm:text-[14px]'
+          : 'rounded-md px-2.5 py-1 text-[13px] font-normal uppercase tracking-wide sm:text-[14px]',
         active
           ? main
             ? 'bg-[color-mix(in_srgb,var(--gold)_24%,transparent)] text-[color:var(--workspace-text)]'
@@ -204,7 +208,7 @@ function TabBtn({
     >
       {children}
       {badge != null && badge > 0 && (
-        <span className="flex size-5 items-center justify-center rounded-full bg-[#e11d48] text-[10px] font-bold leading-none text-white">
+        <span className="flex size-5 items-center justify-center rounded-full bg-[#e11d48] text-[10px] font-normal leading-none text-white">
           {badge > 9 ? '9+' : badge}
         </span>
       )}
@@ -228,18 +232,20 @@ function InfoTabBtn({
       type="button"
       onClick={onClick}
       className={cn(
-        'relative flex min-w-0 flex-1 items-center justify-center gap-1 rounded-md border px-2.5 py-2.5 text-[13px] font-bold transition-colors sm:px-3 sm:py-3 sm:text-[14px]',
+        'relative flex min-h-[2.75rem] min-w-0 flex-1 items-center justify-center gap-1 rounded-md border px-1.5 py-1.5 text-[12px] font-normal leading-snug transition-colors sm:min-h-[2.5rem] sm:gap-1.5 sm:px-2 sm:py-2 sm:text-[13px]',
         active
           ? 'border-[color:var(--workspace-row-border)] bg-[color-mix(in_srgb,var(--gold)_14%,transparent)] text-[color:var(--workspace-text)] shadow-[inset_0_-2px_0_0_var(--gold)]'
           : 'border-transparent text-[color:var(--workspace-text-muted)] hover:border-[color:var(--workspace-row-border)] hover:bg-[rgba(255,255,255,0.04)] hover:text-[color:var(--workspace-text)]',
       )}
     >
-      <span className="min-w-0 truncate">{children}</span>
-      {badge != null && badge > 0 && (
-        <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#e11d48] text-[10px] font-bold leading-none text-white">
+      <span className="min-w-0 flex-1 hyphens-auto text-pretty text-center leading-snug [overflow-wrap:anywhere] line-clamp-2">
+        {children}
+      </span>
+      {badge != null && badge > 0 ? (
+        <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#e11d48] text-[10px] font-normal leading-none text-white">
           {badge > 9 ? '9+' : badge}
         </span>
-      )}
+      ) : null}
     </button>
   )
 }
@@ -294,10 +300,10 @@ function MiniBar({ pct, color }: { pct: number; color: string }) {
   )
 }
 
-const SIGNAL_PREVIEW = 6
+const SIGNAL_PREVIEW = 4
 
 const SIGNAL_ROW_CLASS =
-  'line-clamp-2 rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3.5 py-3 text-[14px] leading-snug text-[color:var(--workspace-text)] transition-colors hover:border-[color:color-mix(in_srgb,var(--gold)_40%,transparent)] hover:bg-[rgba(255,255,255,0.05)] sm:px-4 sm:py-3.5 sm:text-[15px]'
+  'line-clamp-1 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2.5 py-1.5 text-[12px] leading-snug text-[color:var(--workspace-text)] transition-colors hover:border-[color:color-mix(in_srgb,var(--gold)_40%,transparent)] hover:bg-[rgba(255,255,255,0.05)] sm:text-[13px]'
 
 function SignalWidget({
   title,
@@ -314,10 +320,8 @@ function SignalWidget({
   items: string[]
   emptyText: string
   linkTo: string
-  /** Клик по строке списка (и по пустому состоянию) ведёт сюда */
   rowNavigateTo?: string
   className?: string
-  /** Пустое состояние: норма / «всё ок» / требует внимания (визуальный режим ТЗ). */
   emptyState?: 'normal' | 'ok' | 'warn'
 }) {
   const emptyBoxClass =
@@ -329,34 +333,29 @@ function SignalWidget({
   return (
     <HubWidgetShell
       accent={accent}
-      className={cn('flex min-h-[260px] flex-col rounded-xl', className)}
+      className={cn('flex min-h-0 flex-col rounded-lg', className)}
     >
-      <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[color:var(--workspace-row-border)] px-4 py-4 sm:px-5">
-        <div className="flex min-w-0 items-center gap-3">
-          <div
-            className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-[color:var(--workspace-row-border)] bg-[rgba(255,255,255,0.06)] sm:size-14"
-            style={{ boxShadow: `inset 0 0 0 1px ${accent}` }}
-          >
-            <AlertTriangle className="size-[22px] shrink-0 text-[color:var(--workspace-widget-title)] sm:size-6" strokeWidth={2} />
-          </div>
-          <h3 className="line-clamp-2 text-base font-bold leading-tight tracking-tight text-[color:var(--workspace-widget-title)] sm:text-lg">
+      <div className="flex shrink-0 items-center justify-between gap-1.5 border-b border-[color:var(--workspace-row-border)] px-2.5 py-1.5 sm:px-3 sm:py-2">
+        <div className="flex min-w-0 items-center gap-1.5">
+          <AlertTriangle className="size-4 shrink-0 text-[color:var(--workspace-widget-title)]" strokeWidth={2} style={{ color: accent }} />
+          <h3 className="line-clamp-1 text-[12px] font-normal leading-snug tracking-tight text-[color:var(--workspace-widget-title)] sm:text-[13px]">
             {title}
           </h3>
         </div>
         <Link
           to={linkTo}
-          className="shrink-0 text-[12px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[13px]"
+          className="shrink-0 text-[10px] font-normal uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[11px]"
         >
           Открыть →
         </Link>
       </div>
-      <div className="flex min-h-[200px] flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5 sm:py-5">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-2 py-1.5 sm:px-2.5 sm:py-2">
         {items.length === 0 ? (
           rowNavigateTo ? (
             <Link
               to={rowNavigateTo}
               className={cn(
-                'flex flex-1 items-center rounded-lg px-3 py-3 text-[14px] leading-relaxed transition-colors hover:border-[color:color-mix(in_srgb,var(--gold)_35%,transparent)] sm:text-[15px]',
+                'flex flex-1 items-center rounded-md px-2 py-1.5 text-[12px] leading-snug transition-colors hover:border-[color:color-mix(in_srgb,var(--gold)_35%,transparent)] sm:text-[13px]',
                 emptyBoxClass,
                 emptyState === 'normal' && 'hover:text-[color:var(--workspace-text)]',
               )}
@@ -364,12 +363,12 @@ function SignalWidget({
               {emptyText}
             </Link>
           ) : (
-            <p className={cn('flex flex-1 items-center rounded-lg px-3 py-3 text-[14px] leading-relaxed sm:text-[15px]', emptyBoxClass)}>
+            <p className={cn('flex flex-1 items-center rounded-md px-2 py-1.5 text-[12px] leading-snug sm:text-[13px]', emptyBoxClass)}>
               {emptyText}
             </p>
           )
         ) : (
-          <ul className="flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto">
+          <ul className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
             {items.slice(0, SIGNAL_PREVIEW).map((item, i) =>
               rowNavigateTo ? (
                 <li key={`${i}-${item}`}>
@@ -405,7 +404,6 @@ export function DashboardWorkspace() {
     [deskRole],
   )
   const deskShowTasks = isDashboardPathAllowedForRole('/dashboard/tasks', deskRole)
-  const deskShowMlmAnalytics = isDashboardPathAllowedForRole('/dashboard/partners/mlm', deskRole)
   const deskShowLeads = deskRailIds.has('leads')
   const deskShowCalendar = isDashboardPathAllowedForRole('/dashboard/calendar/personal', deskRole)
   const deskShowInfo = isDashboardPathAllowedForRole('/dashboard/settings/info', deskRole)
@@ -630,22 +628,16 @@ export function DashboardWorkspace() {
    */
 
   return (
-    <div className="flex w-full min-w-0 flex-col gap-3 pb-2 lg:gap-6 lg:pb-5">
-      <div className="grid w-full min-w-0 grid-cols-1 gap-3 lg:grid-cols-[minmax(300px,1.25fr)_minmax(320px,1.55fr)_minmax(300px,1.35fr)] lg:items-stretch lg:gap-5">
+    <div className="h-full w-full min-w-0 overflow-y-auto overflow-x-hidden">
+      <div className="grid h-full w-full grid-cols-1 gap-2 lg:grid-cols-[minmax(240px,1.12fr)_minmax(260px,1.38fr)_minmax(240px,1.12fr)] lg:items-stretch lg:gap-2.5">
       {/* ╔══════════════════════════════════════════╗
          ║  1. ЗАДАЧИ / НОВЫЕ ЛИДЫ  (сверху слева) ║
          ╚══════════════════════════════════════════╝ */}
-      <HubWidgetShell accent="color-mix(in srgb, var(--gold) 60%, transparent)" className="h-full min-h-[min(680px,86vh)] rounded-xl lg:min-h-[800px]">
+      <HubWidgetShell accent="color-mix(in srgb, var(--gold) 60%, transparent)" className="flex h-full min-h-0 flex-col rounded-xl">
         <WidgetHeader
-          icon={<ListTodo className="size-6 sm:size-7" strokeWidth={2} />}
+          icon={<ListTodo className="size-5" strokeWidth={2} />}
           title={
-            deskShowTasks && deskShowLeads
-              ? (mainTab === 'tasks' ? 'Задачи' : 'Лиды')
-              : deskShowTasks
-                ? 'Задачи'
-                : deskShowLeads
-                  ? 'Лиды'
-                  : 'Рабочий стол'
+            deskShowTasks || deskShowLeads ? 'Задачи / Новые лиды' : 'Рабочий стол'
           }
           right={
             deskShowTasks && deskShowLeads ? (
@@ -664,7 +656,7 @@ export function DashboardWorkspace() {
                   badge={badgeLeads}
                   onClick={() => openMainTab('leads')}
                 >
-                  Лиды
+                  Новые лиды
                 </TabBtn>
               </div>
             ) : deskShowTasks ? (
@@ -679,10 +671,10 @@ export function DashboardWorkspace() {
           }
         />
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden px-4 py-4 sm:px-5 sm:py-5">
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden px-3 py-3 sm:px-4 sm:py-3.5">
           {!deskShowTasks && !deskShowLeads ? (
             <div className="flex min-h-0 flex-1 flex-col justify-center gap-3 px-1 py-2 text-center">
-              <p className="text-[14px] font-semibold leading-snug text-[color:var(--workspace-text)]">
+              <p className="text-[14px] font-normal leading-snug text-[color:var(--workspace-text)]">
                 Контур по роли
               </p>
               <p className="text-[13px] leading-relaxed text-[color:var(--workspace-text-muted)]">
@@ -692,15 +684,15 @@ export function DashboardWorkspace() {
                 {deskRailIds.has('secondary') && (
                   <Link
                     to="/dashboard/objects"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-normal text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
-                    Вторичный рынок
+                    Объекты вторичного рынка
                   </Link>
                 )}
                 {deskRailIds.has('newbuild') && (
                   <Link
                     to="/dashboard/new-buildings"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-normal text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
                     Новостройки
                   </Link>
@@ -708,23 +700,15 @@ export function DashboardWorkspace() {
                 {deskRailIds.has('mls') && (
                   <Link
                     to="/dashboard/mls"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-normal text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
-                    Партнёры (MLS)
-                  </Link>
-                )}
-                {deskShowMlmAnalytics && (
-                  <Link
-                    to="/dashboard/partners/mlm"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
-                  >
-                    MLM-аналитика
+                    MLS
                   </Link>
                 )}
                 {deskRailIds.has('community') && (
                   <Link
                     to="/dashboard/community"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-normal text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
                     Сообщество
                   </Link>
@@ -732,7 +716,7 @@ export function DashboardWorkspace() {
                 {deskRailIds.has('team') && (
                   <Link
                     to="/dashboard/team"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-normal text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
                     Команда
                   </Link>
@@ -740,15 +724,15 @@ export function DashboardWorkspace() {
                 {deskRailIds.has('learning') && (
                   <Link
                     to="/dashboard/learning"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-normal text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
-                    Обучение
+                    Обучение и база знаний
                   </Link>
                 )}
                 {deskShowInfo && (
                   <Link
                     to="/dashboard/settings/info"
-                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-semibold text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
+                    className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-3 text-[14px] font-normal text-[color:var(--workspace-text)] hover:border-[color:var(--theme-accent-link-dim)] sm:px-4 sm:text-[15px]"
                   >
                     Инфо
                   </Link>
@@ -768,7 +752,7 @@ export function DashboardWorkspace() {
                     type="button"
                     onClick={() => setTaskMode(m.id)}
                     className={cn(
-                      'rounded-md px-2 py-1 text-[12px] font-semibold uppercase tracking-wide transition-colors sm:text-[13px]',
+                      'rounded-md px-2 py-1 text-[12px] font-normal uppercase tracking-wide transition-colors sm:text-[13px]',
                       taskMode === m.id
                         ? 'bg-[color-mix(in_srgb,var(--gold)_20%,transparent)] text-[color:var(--workspace-text)]'
                         : 'text-[color:var(--workspace-text-muted)] hover:text-[color:var(--workspace-text)]',
@@ -803,11 +787,11 @@ export function DashboardWorkspace() {
                         )}
                       >
                         <div className="flex items-start justify-between gap-1">
-                          <p className="line-clamp-1 text-[15px] font-medium leading-snug text-[color:var(--workspace-text)] sm:text-[16px]">
+                          <p className="line-clamp-1 text-[15px] font-normal leading-snug text-[color:var(--workspace-text)] sm:text-[16px]">
                             {t.title}
                           </p>
                           <span className={cn(
-                            'shrink-0 rounded px-1 py-px text-[10px] font-bold uppercase',
+                            'shrink-0 rounded px-1 py-px text-[10px] font-normal uppercase',
                             t.priority === 'critical' ? 'bg-red-500/20 text-red-300' :
                             t.priority === 'high' ? 'bg-orange-500/20 text-orange-300' :
                             'bg-[rgba(255,255,255,0.06)] text-[color:var(--workspace-text-muted)]',
@@ -816,7 +800,7 @@ export function DashboardWorkspace() {
                           </span>
                         </div>
                         <div className="mt-0.5 flex flex-wrap items-center gap-x-1 text-[12px] text-[color:var(--workspace-text-muted)] sm:text-[13px]">
-                          <span className={cn(overdue && 'font-bold text-red-400')}>
+                          <span className={cn(overdue && 'font-normal text-red-400')}>
                             {STATUS_LABELS[t.status]}
                           </span>
                           <span className="opacity-40">·</span>
@@ -836,14 +820,14 @@ export function DashboardWorkspace() {
               {filteredTasks.length > TASKS_PREVIEW && (
                 <p className="mt-0.5 shrink-0 text-[11px] text-[color:var(--workspace-text-muted)]">
                   +ещё {filteredTasks.length - TASKS_PREVIEW} →{' '}
-                  <Link to="/dashboard/tasks" className="font-semibold text-[color:var(--theme-accent-link-dim)] hover:underline">перейти в задачи</Link>
+                  <Link to="/dashboard/tasks" className="font-normal text-[color:var(--theme-accent-link-dim)] hover:underline">перейти в задачи</Link>
                 </p>
               )}
             </>
           ) : deskShowLeads ? (
             <>
               <div className="mb-1 flex items-center justify-between gap-2">
-                <p className="text-[14px] font-medium text-[color:var(--workspace-text-muted)] sm:text-[15px]">
+                <p className="text-[14px] font-normal text-[color:var(--workspace-text-muted)] sm:text-[15px]">
                   Очередь «Новый лид»
                 </p>
                 <Link to={LEADS_POKER_HREF} className={cn('flex shrink-0 items-center gap-1', DESK_HEADER_LINK_CLASS)}>
@@ -863,10 +847,10 @@ export function DashboardWorkspace() {
                         className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2"
                       >
                         <div className="flex items-start justify-between gap-1">
-                          <p className="line-clamp-1 text-[15px] font-medium text-[color:var(--workspace-text)] sm:text-[16px]">
+                          <p className="line-clamp-1 text-[15px] font-normal text-[color:var(--workspace-text)] sm:text-[16px]">
                             {l.name ?? l.id}
                           </p>
-                          <span className="shrink-0 rounded px-1 py-px text-[10px] font-bold uppercase text-amber-400/90">
+                          <span className="shrink-0 rounded px-1 py-px text-[10px] font-normal uppercase text-amber-400/90">
                             {leadUrgency(l)}
                           </span>
                         </div>
@@ -879,7 +863,7 @@ export function DashboardWorkspace() {
                             })}
                           </span>
                           <span className="opacity-40">·</span>
-                          <span className="font-semibold" style={{ color: LEAD_STATUS_COLORS[st] }}>
+                          <span className="font-normal" style={{ color: LEAD_STATUS_COLORS[st] }}>
                             {LEAD_STATUS_LABELS[st]}
                           </span>
                         </div>
@@ -904,17 +888,17 @@ export function DashboardWorkspace() {
       {/* ╔══════════════════════════════════════════╗
          ║  2–4. Центр: календарь + планы (оверлей дел) ║
          ╚══════════════════════════════════════════╝ */}
-      <div className="flex h-full min-h-[min(680px,86vh)] flex-col gap-3.5 lg:min-h-[800px]">
-      <HubWidgetShell accent="rgba(96,165,250,0.6)" className="flex min-h-[360px] shrink-0 flex-col rounded-xl lg:min-h-[420px] lg:max-h-[min(560px,56vh)]">
+      <div className="flex h-full min-h-0 flex-col gap-1.5">
+      <HubWidgetShell accent="rgba(96,165,250,0.6)" className="flex min-h-0 flex-[1.1] flex-col rounded-xl">
         <WidgetHeader
-          icon={<CalendarDays className="size-6 sm:size-7" strokeWidth={2} />}
+          icon={<CalendarDays className="size-5" strokeWidth={2} />}
           title="Календарь"
           accentColor="#60a5fa"
           right={
             deskShowCalendar ? (
               <Link
                 to="/dashboard/calendar"
-                className="text-[12px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                className="text-[12px] font-normal uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
               >
                 Полный календарь →
               </Link>
@@ -934,24 +918,24 @@ export function DashboardWorkspace() {
                   onTodayReactivate={() => setTodayTasksOverlayOpen((o) => !o)}
                 />
               </div>
-              <div className="mt-1 flex shrink-0 items-center gap-2">
+              <div className="mt-0.5 flex shrink-0 items-center gap-1.5">
                 <WorkspaceDayEventsMenu
                   className="min-w-0 flex-1"
                   dateIso={workspaceCalDate}
                   open={workspaceEventsOpen}
                   onOpenChange={setWorkspaceEventsOpen}
                 />
-                <div className="flex shrink-0 flex-wrap items-center gap-2.5 text-[13px] text-[color:var(--workspace-text-muted)] sm:text-[14px]">
-                  <span className="flex items-center gap-1">
-                    <Eye className="size-4 text-blue-300 sm:size-[18px]" />
+                <div className="flex shrink-0 flex-wrap items-center gap-2 text-[11px] text-[color:var(--workspace-text-muted)] sm:text-[12px]">
+                  <span className="flex items-center gap-0.5">
+                    <Eye className="size-3.5 text-blue-300" />
                     Показ
                   </span>
-                  <span className="flex items-center gap-1">
-                    <Phone className="size-4 text-violet-300 sm:size-[18px]" />
+                  <span className="flex items-center gap-0.5">
+                    <Phone className="size-3.5 text-violet-300" />
                     Звонок
                   </span>
-                  <span className="flex items-center gap-1">
-                    <Users className="size-4 text-[color:var(--workspace-cal-meeting-dot)] sm:size-[18px]" />
+                  <span className="flex items-center gap-0.5">
+                    <Users className="size-3.5 text-[color:var(--workspace-cal-meeting-dot)]" />
                     Встреча
                   </span>
                 </div>
@@ -967,14 +951,14 @@ export function DashboardWorkspace() {
         </div>
       </HubWidgetShell>
 
-      <div className="relative flex min-h-[300px] flex-1 flex-col">
+      <div className="relative flex min-h-0 flex-1 flex-col">
       {/* ╔══════════════════════════════════════════╗
          ║  4. ПЛАНЫ + СТРИК (нижняя половина центра)  ║
          ╚══════════════════════════════════════════╝ */}
       <HubWidgetShell accent="rgba(251,146,60,0.6)" className="flex min-h-0 flex-1 flex-col rounded-xl">
         <WidgetHeader
-          icon={<Target className="size-5 sm:size-6" strokeWidth={2} />}
-          title="Планы"
+          icon={<Target className="size-5" strokeWidth={2} />}
+          title="Выполнение планов"
           titleClassName="!text-[15px] sm:!text-base"
           accentColor="#fb923c"
           right={
@@ -986,15 +970,15 @@ export function DashboardWorkspace() {
           }
         />
 
-        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 pb-4 sm:px-5 sm:py-5">
-          <div className="grid shrink-0 grid-cols-1 gap-3 lg:grid-cols-2">
-            <div className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-4 py-3.5 sm:px-5 sm:py-4">
-              <div className="mb-2 flex items-center justify-between text-[11px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)] sm:text-[12px]">
+        <div className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-x-hidden overflow-y-auto px-2.5 py-2 sm:px-3 sm:py-2.5">
+          <div className="grid shrink-0 grid-cols-2 gap-1.5">
+            <div className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2.5 py-2">
+              <div className="flex items-center justify-between text-[10px] font-normal uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
                 <span>План дня</span>
                 <span className="flex items-center gap-1 tabular-nums">
-                  <span className="text-[16px] leading-none text-[color:var(--workspace-text)] sm:text-[17px]">{progress.dayPlanPercent}%</span>
+                  <span className="text-[14px] leading-none text-[color:var(--workspace-text)]">{progress.dayPlanPercent}%</span>
                   <span className={cn(
-                    'rounded px-1.5 py-px text-[8px]',
+                    'rounded px-1 py-px text-[8px]',
                     progress.dayPlanStatus === 'done' ? 'bg-emerald-500/20 text-emerald-300' :
                     progress.dayPlanStatus === 'at_risk' ? 'bg-red-500/20 text-red-300' :
                     'bg-blue-500/20 text-blue-300',
@@ -1003,129 +987,112 @@ export function DashboardWorkspace() {
                   </span>
                 </span>
               </div>
-              <div className="h-2.5 overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">
+              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">
                 <div className="h-full rounded-full" style={{ width: `${Math.min(100, progress.dayPlanPercent)}%`, background: 'linear-gradient(90deg, var(--gold), var(--gold-dark))' }} />
               </div>
             </div>
 
-            <div className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-4 py-3.5 sm:px-5 sm:py-4">
-              <div className="mb-2 flex items-center justify-between text-[11px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)] sm:text-[12px]">
+            <div className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2.5 py-2">
+              <div className="flex items-center justify-between text-[10px] font-normal uppercase tracking-wide text-[color:var(--workspace-text-dim)]">
                 <span>План недели</span>
-                <span className="text-[16px] leading-none tabular-nums text-[color:var(--workspace-text)] sm:text-[17px]">{progress.weekPlanPercent}%</span>
+                <span className="text-[14px] leading-none tabular-nums text-[color:var(--workspace-text)]">{progress.weekPlanPercent}%</span>
               </div>
-              <div className="h-2.5 overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">
+              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">
                 <div className="h-full rounded-full" style={{ width: `${Math.min(100, progress.weekPlanPercent)}%`, background: 'linear-gradient(90deg, #60a5fa, #3b82f6)' }} />
               </div>
             </div>
           </div>
 
-          <div className="grid shrink-0 grid-cols-1 gap-3 lg:grid-cols-3">
+          <div className="grid shrink-0 grid-cols-3 gap-1.5">
             {[
               { label: 'Выручка', value: progress.revenue.currentLabel, sub: `/ ${progress.revenue.planLabel}`, pct: progress.revenue.percent, color: 'var(--gold)' },
               { label: 'Воронка', value: `${progress.funnelProgress.percent}%`, sub: '', pct: progress.funnelProgress.percent, color: '#34d399' },
               { label: 'Лиды', value: `${progress.leadsToday.count}`, sub: `/ ${progress.leadsToday.plan}`, pct: progress.leadsToday.plan > 0 ? (progress.leadsToday.count / progress.leadsToday.plan) * 100 : 0, color: '#60a5fa' },
             ].map((m) => (
-              <div key={m.label} className="rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-4 py-3.5 sm:px-5 sm:py-4">
-                <p className="text-[12px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)] sm:text-[13px]">{m.label}</p>
-                <p className="mb-1.5 text-[28px] font-bold leading-none text-[color:var(--workspace-text)] sm:text-[32px]">
+              <div key={m.label} className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-2.5 py-2">
+                <p className="text-[10px] font-normal uppercase tracking-wide text-[color:var(--workspace-text-dim)]">{m.label}</p>
+                <p className="text-[18px] font-normal leading-none text-[color:var(--workspace-text)]">
                   {m.value}
-                  {m.sub && <span className="text-[10px] font-normal text-[color:var(--workspace-text-muted)]"> {m.sub}</span>}
+                  {m.sub && <span className="text-[9px] font-normal text-[color:var(--workspace-text-muted)]"> {m.sub}</span>}
                 </p>
-                <MiniBar pct={m.pct} color={m.color} />
+                <div className="mt-1"><MiniBar pct={m.pct} color={m.color} /></div>
               </div>
             ))}
           </div>
 
-          <div className="shrink-0 rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/65 px-4 py-3">
-            <div className="flex flex-col gap-2.5">
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-[13px] font-bold uppercase tracking-wide text-[color:var(--workspace-text-dim)] sm:text-[14px]">
-                  Фокус дня
-                </p>
-                <span className={cn(
-                  'rounded px-1.5 py-px text-[8px] font-bold uppercase',
-                  dayPlanGapPct > 0 ? 'bg-amber-500/20 text-amber-300' : 'bg-emerald-500/20 text-emerald-300',
-                )}>
-                  {dayPlanGapPct > 0 ? `-${dayPlanGapPct}% к плану` : 'План закрыт'}
-                </span>
-              </div>
-
-              {focusKpi ? (
-                <p className="text-[13px] leading-relaxed text-[color:var(--workspace-text)] sm:text-[14px]">
-                  Узкое место: <span className="font-semibold">{focusKpi.label}</span> ({focusKpi.current}/{focusKpi.plan})
-                </p>
-              ) : (
-                <p className="text-[13px] text-[color:var(--workspace-text)] sm:text-[14px]">
-                  Все нормативы в норме.
-                </p>
-              )}
-
-              <div className="flex flex-col gap-1 border-t border-[color:var(--workspace-row-border)] pt-2 sm:flex-row sm:items-start sm:justify-between sm:gap-2">
-                <p className="min-w-0 text-[12px] leading-snug text-[color:var(--workspace-text-muted)] sm:text-[13px]">
-                  Следующий шаг: {focusGap > 0 ? `закрыть +${focusGap} по фокусу` : 'удержать текущий темп'}
-                </p>
-                {focusDeskHref && focusDeskLinkLabel ? (
-                  <Link
-                    to={focusDeskHref}
-                    className="shrink-0 text-[12px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[13px]"
-                  >
-                    {focusDeskLinkLabel}
-                  </Link>
-                ) : null}
-              </div>
+          <div className="shrink-0 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/65 px-2.5 py-2">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-[11px] font-normal uppercase tracking-wide text-[color:var(--workspace-text-dim)]">Фокус дня</p>
+              <span className={cn(
+                'rounded px-1 py-px text-[8px] font-normal uppercase',
+                dayPlanGapPct > 0 ? 'bg-amber-500/20 text-amber-300' : 'bg-emerald-500/20 text-emerald-300',
+              )}>
+                {dayPlanGapPct > 0 ? `-${dayPlanGapPct}% к плану` : 'План закрыт'}
+              </span>
+            </div>
+            {focusKpi ? (
+              <p className="mt-0.5 text-[12px] leading-snug text-[color:var(--workspace-text)]">
+                Узкое место: {focusKpi.label} ({focusKpi.current}/{focusKpi.plan})
+              </p>
+            ) : null}
+            <div className="mt-1 flex items-center justify-between gap-2 border-t border-[color:var(--workspace-row-border)] pt-1">
+              <p className="min-w-0 text-[11px] leading-snug text-[color:var(--workspace-text-muted)]">
+                {focusGap > 0 ? `Закрыть +${focusGap} по фокусу` : 'Удержать темп'}
+              </p>
+              {focusDeskHref && focusDeskLinkLabel ? (
+                <Link
+                  to={focusDeskHref}
+                  className="shrink-0 text-[10px] font-normal uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+                >
+                  {focusDeskLinkLabel}
+                </Link>
+              ) : null}
             </div>
           </div>
 
-          <div className="shrink-0 rounded-lg border border-orange-400/25 bg-gradient-to-r from-[#f97316]/[0.12] via-[#f97316]/[0.06] to-transparent px-3 py-2.5">
-            <div className="flex flex-col gap-2.5">
-              <div className="flex items-start gap-2">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#fb923c] to-[#ea580c] shadow-md shadow-orange-900/30">
-                  <Flame className="size-5 text-white" strokeWidth={2.2} fill="rgba(255,255,255,0.25)" />
+          <div className="shrink-0 rounded-md border border-orange-400/25 bg-gradient-to-r from-[#f97316]/[0.12] via-[#f97316]/[0.06] to-transparent px-2.5 py-2">
+            <div className="flex items-center gap-2">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#fb923c] to-[#ea580c] shadow-sm shadow-orange-900/30">
+                <Flame className="size-4 text-white" strokeWidth={2.2} fill="rgba(255,255,255,0.25)" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-[18px] font-normal tabular-nums leading-none text-[#fff7ed]">{streak.currentStreak}</span>
+                  <span className="text-[10px] font-normal uppercase text-orange-200/80">дн. подряд</span>
                 </div>
-                <div className="min-w-0">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-[22px] font-black tabular-nums leading-none text-[#fff7ed]">{streak.currentStreak}</span>
-                    <span className="text-[11px] font-bold uppercase text-orange-200/80">дн. подряд</span>
-                  </div>
-                  <p className="text-[9px] text-orange-100/55">
-                    рекорд: <span className="font-semibold text-orange-100">{streak.bestStreak}</span> дней
-                  </p>
-                </div>
+                <p className="text-[9px] text-orange-100/55">
+                  рек. <span className="font-normal text-orange-100">{streak.bestStreak}</span>
+                </p>
+              </div>
 
-                <div className="ml-auto flex shrink-0 gap-1">
+                <div className="ml-auto flex shrink-0 gap-0.5">
                   {streak.slots.map((s, i) => (
-                    <div key={i} className="flex flex-col items-center gap-0.5">
-                      <div
-                        className={cn(
-                          'flex size-6 items-center justify-center rounded-full border-2 text-[8px] font-bold transition-colors',
-                          s.active
-                            ? 'border-[#fbbf24] bg-gradient-to-b from-[#fbbf24] to-[#f59e0b] text-[#422006] shadow shadow-amber-500/30'
-                            : s.isToday
-                              ? 'border-dashed border-[#fdba74] bg-[#f97316]/15'
-                              : 'border-orange-200/20 bg-black/10 text-orange-100/40',
-                        )}
-                      >
-                        {s.active ? <Check className="size-3.5" strokeWidth={3} /> : s.weekday[0].toUpperCase()}
-                      </div>
-                      <span className="text-[7px] font-semibold uppercase text-orange-100/50">{s.weekday}</span>
+                    <div
+                      key={i}
+                      className={cn(
+                        'flex size-5 items-center justify-center rounded-full border text-[7px] font-normal',
+                        s.active
+                          ? 'border-[#fbbf24] bg-gradient-to-b from-[#fbbf24] to-[#f59e0b] text-[#422006]'
+                          : s.isToday
+                            ? 'border-dashed border-[#fdba74] bg-[#f97316]/15'
+                            : 'border-orange-200/20 bg-black/10 text-orange-100/40',
+                      )}
+                      title={s.weekday}
+                    >
+                      {s.active ? <Check className="size-3" strokeWidth={3} /> : s.weekday[0].toUpperCase()}
                     </div>
                   ))}
                 </div>
               </div>
-
-              <div className="shrink-0">
-                <div className="mb-1 flex items-center justify-between gap-2 text-[10px] font-bold uppercase leading-normal text-orange-100/80">
-                  <span className="shrink-0">Цель дня</span>
-                  <span className="text-[14px] leading-none tabular-nums">{streak.xpToday.current} / {streak.xpToday.goal}</span>
-                </div>
-                <div className="h-2 overflow-hidden rounded-full bg-black/25">
+              <div className="mt-1 flex items-center gap-2">
+                <span className="text-[9px] font-normal uppercase text-orange-100/60">Цель: {streak.xpToday.current}/{streak.xpToday.goal}</span>
+                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-black/25">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-[#fde047] via-[#facc15] to-[#eab308] transition-all"
                     style={{ width: `${xpPct}%` }}
                   />
                 </div>
               </div>
-            </div>
           </div>
         </div>
       </HubWidgetShell>
@@ -1196,12 +1163,12 @@ export function DashboardWorkspace() {
                       )}
                     >
                       <div className="flex items-start justify-between gap-1">
-                        <p className="line-clamp-2 text-[13px] font-medium leading-snug text-[color:var(--workspace-text)]">
+                        <p className="line-clamp-2 text-[13px] font-normal leading-snug text-[color:var(--workspace-text)]">
                           {t.title}
                         </p>
                         <span
                           className={cn(
-                            'shrink-0 rounded px-1 py-px text-[10px] font-bold uppercase',
+                            'shrink-0 rounded px-1 py-px text-[10px] font-normal uppercase',
                             t.priority === 'critical'
                               ? 'bg-red-500/20 text-red-300'
                               : t.priority === 'high'
@@ -1213,7 +1180,7 @@ export function DashboardWorkspace() {
                         </span>
                       </div>
                       <div className="mt-px flex flex-wrap items-center gap-x-1 text-[11px] text-[color:var(--workspace-text-muted)]">
-                        <span className={cn(overdue && 'font-bold text-red-400')}>{STATUS_LABELS[t.status]}</span>
+                        <span className={cn(overdue && 'font-normal text-red-400')}>{STATUS_LABELS[t.status]}</span>
                         <span className="opacity-40">·</span>
                         <span>
                           {t.dueDate}
@@ -1233,7 +1200,7 @@ export function DashboardWorkspace() {
             )}
             <Link
               to="/dashboard/tasks"
-              className="mt-1 shrink-0 text-center text-[11px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
+              className="mt-1 shrink-0 text-center text-[11px] font-normal uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)]"
             >
               Все задачи →
             </Link>
@@ -1246,54 +1213,57 @@ export function DashboardWorkspace() {
       {/* ╔══════════════════════════════════════════╗
          ║  3. УВЕДОМЛЕНИЯ / НАПОМИНАНИЯ / НОВОСТИ  ║
          ╚══════════════════════════════════════════╝ */}
-      <HubWidgetShell accent="rgba(52,211,153,0.5)" className="h-full min-h-[min(680px,86vh)] rounded-xl lg:min-h-[800px]">
-        <WidgetHeader
-          icon={<Bell className="size-6 sm:size-7" strokeWidth={2} />}
-          title={null}
-          accentColor="#34d399"
-          right={
-            <div className="flex min-w-0 max-w-[min(100%,20rem)] gap-0.5 rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] p-0.5 sm:max-w-none">
-              <InfoTabBtn active={infoTab === 'notifs'} badge={badgeNotifs} onClick={() => openInfoTab('notifs')}>
-                Уведомления
-              </InfoTabBtn>
-              <InfoTabBtn active={infoTab === 'reminders'} badge={badgeReminders} onClick={() => openInfoTab('reminders')}>
-                Напоминания
-              </InfoTabBtn>
-              <InfoTabBtn active={infoTab === 'news'} badge={badgeNews} onClick={() => openInfoTab('news')}>
-                Новости
-              </InfoTabBtn>
+      <HubWidgetShell accent="rgba(52,211,153,0.5)" className="flex h-full min-h-0 flex-col rounded-xl">
+        <div className="flex shrink-0 flex-col gap-2 border-b border-[color:var(--workspace-row-border)] px-2.5 py-2 sm:px-3 sm:py-2.5">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <div
+              className="flex size-8 shrink-0 items-center justify-center rounded-lg sm:size-9"
+              style={{
+                background: 'color-mix(in srgb, #34d399 12%, transparent)',
+                color: '#34d399',
+              }}
+            >
+              <Bell className="size-5" strokeWidth={2} />
             </div>
-          }
-        />
+            <h3 className="min-w-0 flex-1 text-[14px] font-normal leading-snug tracking-tight text-[color:var(--workspace-widget-title)] sm:text-[15px]">
+              Уведомления, напоминания и новости
+            </h3>
+          </div>
+          <div
+            className="grid w-full min-w-0 grid-cols-3 gap-0.5 rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] p-0.5"
+            role="tablist"
+            aria-label="Разделы ленты"
+          >
+            <InfoTabBtn active={infoTab === 'notifs'} badge={badgeNotifs} onClick={() => openInfoTab('notifs')}>
+              Уведомления
+            </InfoTabBtn>
+            <InfoTabBtn active={infoTab === 'reminders'} badge={badgeReminders} onClick={() => openInfoTab('reminders')}>
+              Напоминания
+            </InfoTabBtn>
+            <InfoTabBtn active={infoTab === 'news'} badge={badgeNews} onClick={() => openInfoTab('news')}>
+              Новости
+            </InfoTabBtn>
+          </div>
+        </div>
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden px-4 py-4 sm:px-5 sm:py-5">
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden px-3 py-2.5 sm:px-4 sm:py-3">
           {infoTab === 'notifs' && (
             <>
               {deskShowInfo ? (
                 <Link
                   to="/dashboard/settings/info"
-                  className="mb-0.5 shrink-0 self-start text-[12px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[13px]"
+                  className="mb-0.5 shrink-0 self-start text-[12px] font-normal uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[13px]"
                 >
                   Все уведомления →
                 </Link>
               ) : null}
-              <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
+              <ul className="min-h-0 flex-1 space-y-1.5 overflow-hidden">
                 {DASHBOARD_NOTIFICATIONS_PREVIEW.slice(0, NOTIFS_PREVIEW).map((n) => (
-                  <li
-                    key={n.id}
-                    className={cn(
-                      'flex gap-2 overflow-hidden rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2',
-                      FEED_ITEM_HEIGHT_CLASS,
-                    )}
-                  >
-                    {notifIcon(n.type)}
-                    <div className="flex min-w-0 flex-1 flex-col justify-between">
-                      <p className={FEED_TITLE_CLASS}>
-                        {n.title}
-                      </p>
-                      <p className={FEED_BODY_CLASS}>
-                        {n.body}
-                      </p>
+                  <li key={n.id} className={FEED_ITEM_CLASS}>
+                    <span className="mt-0.5 shrink-0">{notifIcon(n.type)}</span>
+                    <div className={FEED_STACK_CLASS}>
+                      <p className={FEED_TITLE_CLASS}>{n.title}</p>
+                      <p className={FEED_BODY_CLASS}>{n.body}</p>
                       <p className={FEED_META_CLASS}>{n.time}</p>
                     </div>
                   </li>
@@ -1307,28 +1277,25 @@ export function DashboardWorkspace() {
               {deskShowInfo ? (
                 <Link
                   to="/dashboard/settings/info/reminders"
-                  className="mb-0.5 shrink-0 self-start text-[12px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[13px]"
+                  className="mb-0.5 shrink-0 self-start text-[12px] font-normal uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[13px]"
                 >
                   Все напоминания →
                 </Link>
               ) : null}
-              <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
+              <ul className="min-h-0 flex-1 space-y-1.5 overflow-hidden">
                 {remindersPreview.map((r) => (
-                  <li
-                    key={r.id}
-                    className={cn(
-                      'flex items-start gap-2 overflow-hidden rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2',
-                      FEED_ITEM_HEIGHT_CLASS,
-                    )}
-                  >
+                  <li key={r.id} className={FEED_ITEM_CLASS}>
                     <Clock className="mt-0.5 size-3.5 shrink-0 text-[color:var(--theme-accent-link-dim)]" />
-                    <div className="flex min-w-0 flex-1 flex-col justify-between">
-                      <p className="line-clamp-1 text-[12px] font-medium leading-snug text-[color:var(--workspace-text)]">
-                        {r.title}
-                      </p>
-                      <p className="flex items-center gap-0.5 text-[11px] text-[color:var(--theme-accent-link)]">
-                        {formatReminderDue(r.dueAt)}
-                        {r.entityLabel && <span className="text-[color:var(--workspace-text-muted)]"> · {r.entityLabel}</span>}
+                    <div className={FEED_STACK_CLASS}>
+                      <p className={FEED_TITLE_CLASS}>{r.title}</p>
+                      <p className={FEED_META_CLASS}>
+                        <span className="text-[color:var(--theme-accent-link-dim)]">{formatReminderDue(r.dueAt)}</span>
+                        {r.entityLabel ? (
+                          <>
+                            <span className="text-[color:var(--workspace-text-muted)]"> · </span>
+                            <span>{r.entityLabel}</span>
+                          </>
+                        ) : null}
                       </p>
                     </div>
                   </li>
@@ -1342,30 +1309,20 @@ export function DashboardWorkspace() {
               {deskShowInfo ? (
                 <Link
                   to="/dashboard/settings/info/news"
-                  className="mb-0.5 shrink-0 self-start text-[12px] font-bold uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[13px]"
+                  className="mb-0.5 shrink-0 self-start text-[12px] font-normal uppercase tracking-wide text-[color:var(--theme-accent-link-dim)] hover:text-[color:var(--theme-accent-link)] sm:text-[13px]"
                 >
                   Все новости →
                 </Link>
               ) : null}
-              <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden">
+              <ul className="min-h-0 flex-1 space-y-1.5 overflow-hidden">
                 {newsPreview.map((a) => (
-                  <li
-                    key={a.id}
-                    className={cn(
-                      'flex gap-2 overflow-hidden rounded-lg border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)] px-3 py-2',
-                      FEED_ITEM_HEIGHT_CLASS,
-                    )}
-                  >
-                    <span className="flex size-3.5 shrink-0 items-center justify-center text-[12px] leading-none">
+                  <li key={a.id} className={FEED_ITEM_CLASS}>
+                    <span className="mt-0.5 flex size-3.5 shrink-0 items-center justify-center text-[12px] leading-none sm:text-[13px]">
                       {a.emoji}
                     </span>
-                    <div className="flex min-w-0 flex-1 flex-col justify-between">
-                      <p className={FEED_TITLE_CLASS}>
-                        {a.title}
-                      </p>
-                      <p className={FEED_BODY_CLASS}>
-                        {a.body}
-                      </p>
+                    <div className={FEED_STACK_CLASS}>
+                      <p className={FEED_TITLE_CLASS}>{a.title}</p>
+                      <p className={FEED_BODY_CLASS}>{a.body}</p>
                       <p className={FEED_META_CLASS}>
                         {new Date(a.publishedAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} · {a.author}
                       </p>
@@ -1380,11 +1337,10 @@ export function DashboardWorkspace() {
       </div>
 
       {/* ╔══════════════════════════════════════════╗
-         ║  Контрольные виджеты ТЗ (раздел 8.x) —     ║
-         ║  те же 3 колонки: 2 + 2 + 1, без «лесенки» ║
+         ║  Контрольные виджеты (второй экран)        ║
          ╚══════════════════════════════════════════╝ */}
-      <div className="grid w-full min-w-0 grid-cols-1 gap-3 lg:min-h-[min(640px,58vh)] lg:grid-cols-3 lg:items-stretch lg:gap-6">
-        <div className="flex min-h-[440px] flex-col gap-3 lg:h-full lg:min-h-0">
+      <div className="grid w-full grid-cols-1 gap-2 pb-4 pt-2 lg:grid-cols-3 lg:gap-2.5">
+        <div className="flex flex-col gap-2">
           <SignalWidget
             title="Сделки под контролем"
             accent="rgba(251,191,36,0.6)"
@@ -1393,7 +1349,6 @@ export function DashboardWorkspace() {
             emptyText="Нет активных сделок под контролем"
             emptyState={controlDeals.length === 0 ? 'ok' : 'normal'}
             items={controlDeals.map((d) => `${d.clientName} · ${d.propertyAddress}`)}
-            className="min-h-0 flex-1 basis-0"
           />
           <SignalWidget
             title="Объекты без активности"
@@ -1403,10 +1358,9 @@ export function DashboardWorkspace() {
             emptyText="Объекты актуальны"
             emptyState={staleObjects.length === 0 ? 'ok' : 'warn'}
             items={staleObjects.map((p) => `${p.title} · ${p.city}`)}
-            className="min-h-0 flex-1 basis-0"
           />
         </div>
-        <div className="flex min-h-[440px] flex-col gap-3 lg:h-full lg:min-h-0">
+        <div className="flex flex-col gap-2">
           <SignalWidget
             title="Лиды без назначения"
             accent="rgba(96,165,250,0.6)"
@@ -1415,7 +1369,6 @@ export function DashboardWorkspace() {
             emptyText="Лидов без назначения нет"
             emptyState={unassignedLeads.length === 0 ? 'ok' : 'warn'}
             items={unassignedLeads.map((l) => `${l.name ?? l.id} · ${SOURCE_LABELS[l.source]}`)}
-            className="min-h-0 flex-1 basis-0"
           />
           <SignalWidget
             title="Сделки в зоне риска"
@@ -1425,10 +1378,9 @@ export function DashboardWorkspace() {
             emptyText="Рисковые сделки не обнаружены"
             emptyState={riskyDeals.length === 0 ? 'ok' : 'warn'}
             items={riskyDeals.map((d) => `${d.clientName} · обязательные пункты не закрыты`)}
-            className="min-h-0 flex-1 basis-0"
           />
         </div>
-        <div className="flex min-h-[440px] flex-col gap-3 lg:h-full lg:min-h-0">
+        <div className="flex flex-col gap-2">
           <SignalWidget
             title="Лиды с нарушением SLA"
             accent="rgba(248,113,113,0.6)"
@@ -1437,7 +1389,6 @@ export function DashboardWorkspace() {
             emptyText="Нарушений SLA нет"
             emptyState={slaBreachLeads.length === 0 ? 'ok' : 'warn'}
             items={slaBreachLeads.map((l) => `${l.name ?? l.id} · срочность: ${leadUrgency(l)}`)}
-            className="min-h-0 flex-1"
           />
         </div>
       </div>

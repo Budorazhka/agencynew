@@ -29,7 +29,7 @@ export function WorkspaceDayEventsMenu({ dateIso, className, open, onOpenChange 
         onClick={() => onOpenChange(!open)}
         className={cn(
           'flex w-full items-center justify-center gap-1.5 rounded-md border border-[color:var(--workspace-row-border)]',
-          'bg-[var(--workspace-row-bg)]/80 px-2 py-1.5 text-left text-[10px] font-semibold text-[color:var(--workspace-text)]',
+          'bg-[var(--workspace-row-bg)]/80 px-2 py-1.5 text-left text-[10px] font-normal text-[color:var(--workspace-text)]',
           'shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)] transition-colors',
           'hover:border-[color:var(--hub-card-border-hover)] hover:bg-[var(--workspace-row-bg)]',
           open && 'border-[color:var(--hub-card-border-hover)] bg-[var(--nav-item-bg-active)]',
@@ -40,7 +40,7 @@ export function WorkspaceDayEventsMenu({ dateIso, className, open, onOpenChange 
         <span className="min-w-0 flex-1 truncate">
           Мероприятия · {formatWorkspaceDayShort(dateIso)}
         </span>
-        <span className="shrink-0 tabular-nums text-[10px] font-bold text-[color:var(--workspace-text-muted)]">
+        <span className="shrink-0 tabular-nums text-[10px] font-normal text-[color:var(--workspace-text-muted)]">
           {events.length}
         </span>
         <ChevronDown
@@ -73,8 +73,8 @@ export function WorkspaceDayEventsPanel({ dateIso, className }: PanelProps) {
               key={ev.id}
               className="rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/50 px-3 py-2"
             >
-              <p className="text-[13px] font-medium leading-snug text-[color:var(--workspace-text)]">
-                <span className="font-bold text-[color:var(--theme-accent-link)]">{ev.time}</span> · {ev.title}
+              <p className="text-[13px] font-normal leading-snug text-[color:var(--workspace-text)]">
+                <span className="font-normal text-[color:var(--theme-accent-link)]">{ev.time}</span> · {ev.title}
               </p>
               {ev.client ? (
                 <p className="mt-1 text-[11px] text-[color:var(--workspace-text-dim)]">{ev.client}</p>
@@ -85,7 +85,7 @@ export function WorkspaceDayEventsPanel({ dateIso, className }: PanelProps) {
       )}
       <Link
         to="/dashboard/calendar"
-        className="mt-2 shrink-0 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/40 py-2 text-center text-[11px] font-bold uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] transition-colors hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--theme-accent-link)]"
+        className="mt-2 shrink-0 rounded-md border border-[color:var(--workspace-row-border)] bg-[var(--workspace-row-bg)]/40 py-2 text-center text-[11px] font-normal uppercase tracking-wider text-[color:var(--theme-accent-link-dim)] transition-colors hover:border-[color:var(--hub-card-border-hover)] hover:text-[color:var(--theme-accent-link)]"
       >
         Полный календарь
       </Link>

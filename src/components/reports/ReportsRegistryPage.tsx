@@ -128,7 +128,7 @@ export default function ReportsRegistryPage() {
           <div>
             <h1 className="text-xl font-bold text-[color:var(--theme-accent-heading)]">Реестр отчетов</h1>
             <p className="mt-1 text-sm text-[color:var(--app-text-muted)]">
-              Единая витрина отчетности ALPHABASE.sale по разделам платформы.
+              Единая витрина отчетности baza.sale по разделам платформы.
             </p>
           </div>
 

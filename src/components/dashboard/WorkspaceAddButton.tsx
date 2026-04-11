@@ -58,8 +58,8 @@ export function WorkspaceAddButton({ className, variant = 'fab', label }: Props)
         className={cn(
           'flex items-center gap-2 text-[color:var(--hub-tile-icon-hover-fg)] transition-all hover:brightness-110 active:scale-95',
           isFab
-            ? 'rounded-full bg-[var(--gold)] px-5 py-3 text-[15px] font-semibold shadow-[0_4px_18px_rgba(0,0,0,0.22),inset_0_1px_0_rgba(255,255,255,0.18)]'
-            : 'min-h-10 rounded-[var(--section-cta-radius)] bg-[var(--gold)] px-3.5 py-2 text-[13px] font-semibold text-[color:var(--hub-tile-icon-hover-fg)] shadow-[0_4px_18px_rgba(0,0,0,0.22),inset_0_1px_0_rgba(255,255,255,0.18)] sm:px-4',
+            ? 'rounded-full bg-[var(--gold)] px-5 py-3 text-[15px] font-normal shadow-[0_4px_18px_rgba(0,0,0,0.22),inset_0_1px_0_rgba(255,255,255,0.18)]'
+            : 'min-h-10 rounded-[var(--section-cta-radius)] bg-[var(--gold)] px-3.5 py-2 text-[13px] font-normal text-[color:var(--hub-tile-icon-hover-fg)] shadow-[0_4px_18px_rgba(0,0,0,0.22),inset_0_1px_0_rgba(255,255,255,0.18)] sm:px-4',
           empty && 'cursor-not-allowed opacity-45 hover:brightness-100',
         )}
       >

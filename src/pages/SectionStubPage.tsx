@@ -37,7 +37,7 @@ export function SectionStubPage({
           )}
         >
           <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[color:var(--hub-desc)]">
-            ALPHABASE.sale · раздел в работе
+            baza.sale · раздел в работе
           </p>
           <h1 className="text-[1.35rem] font-black uppercase leading-tight tracking-[0.04em] text-[color:var(--theme-accent-heading)] sm:text-[1.65rem]">
             {title}
