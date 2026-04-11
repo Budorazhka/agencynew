@@ -12,7 +12,7 @@ export default function CRMPage() {
       icon: <LayoutGrid size={20} color="#c9a84c" />,
       title: 'CRM',
       description: '',
-      route: '/dashboard/clients/list',
+      route: '/dashboard/leads/poker',
     },
     {
       icon: <Sparkles size={20} color="#c9a84c" />,
