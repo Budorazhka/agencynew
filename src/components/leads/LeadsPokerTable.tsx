@@ -385,10 +385,20 @@ export function LeadsPokerTable() {
         </div>
       </div>
 
-      {/* Detail panel */}
+      {/* Detail panel — centred modal overlay */}
       {showDetail && selectedLead && (
-        <div className="mt-3 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden max-h-[500px] overflow-y-auto">
-          <LeadDetailPanel lead={selectedLead} onClose={() => setShowDetail(false)} />
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(4px)' }}
+          onClick={() => setShowDetail(false)}
+        >
+          <div
+            className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl border border-[color:var(--hub-card-border-hover)] shadow-[0_24px_64px_rgba(0,0,0,0.55)]"
+            style={{ background: 'var(--app-bg)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <LeadDetailPanel lead={selectedLead} onClose={() => setShowDetail(false)} />
+          </div>
         </div>
       )}
 
