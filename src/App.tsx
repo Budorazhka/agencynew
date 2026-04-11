@@ -12,8 +12,6 @@ export default function App() {
   /** Покерный стол CRM заполняет колонку под шапкой без лишнего скролла оболочки. */
   const isPokerRoute = location.pathname === '/dashboard/leads/poker'
   const isNewBuildRegistrationsRoute = location.pathname === '/dashboard/new-buildings/registration'
-  const isDeskHomeRoute =
-    location.pathname === '/dashboard' || location.pathname === '/dashboard/'
   const isStretchRoute = isPokerRoute || isNewBuildRegistrationsRoute
 
   return (
