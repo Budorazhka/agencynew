@@ -750,11 +750,14 @@ export function LeadsCardTableView({
             })}
           </div>
 
-          {/* ── CENTER OVAL ── */}
-          <div className="absolute left-1/2 -translate-x-1/2" style={{ bottom: 90 }}>
+          {/* ── CENTER OVAL — between top and bottom card rows ── */}
+          <div
+            className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2"
+            style={{ top: '62%' }}
+          >
             <div
               className="relative flex items-center justify-center"
-              style={{ width: 320, height: 180 }}
+              style={{ width: 380, height: 200 }}
             >
               {/* felt oval */}
               <div
