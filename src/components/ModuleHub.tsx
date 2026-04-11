@@ -170,7 +170,7 @@ export default function ModuleHub({
                 borderRadius: 10,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'background 0.2s',
-                marginBottom: 'clamp(6px, 1vw, 12px)',
+                marginBottom: 'clamp(6px, 0.7vw, 10px)',
                 flexShrink: 0,
               }}>
                 <span
