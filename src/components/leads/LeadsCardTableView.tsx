@@ -13,7 +13,7 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core"
-import { Filter, Search, X, Eye, LayoutList, LayoutGrid } from "lucide-react"
+import { Filter, Search, X, Eye, LayoutList, LayoutGrid, CheckSquare, Clock, History } from "lucide-react"
 import { useLeads } from "@/context/LeadsContext"
 import { useAuth } from "@/context/AuthContext"
 import type { Lead } from "@/types/leads"
@@ -748,6 +748,58 @@ export function LeadsCardTableView({
                 </div>
               )
             })}
+          </div>
+
+          {/* ── CENTER OVAL ── */}
+          <div className="absolute left-1/2 -translate-x-1/2" style={{ bottom: 90 }}>
+            <div
+              className="relative flex items-center justify-center"
+              style={{ width: 320, height: 180 }}
+            >
+              {/* felt oval */}
+              <div
+                className="absolute inset-0 rounded-[50%]"
+                style={{
+                  background: "radial-gradient(ellipse at 50% 40%, rgba(30,70,52,0.92) 0%, rgba(14,42,30,0.96) 100%)",
+                  boxShadow: "inset 0 0 0 2px rgba(212,175,85,0.22), 0 4px 32px rgba(0,0,0,0.4)",
+                }}
+              />
+              <div className="relative z-10 w-full px-8 text-center">
+                {activeLead ? (
+                  <>
+                    <div className="mb-1 flex items-center justify-center gap-3">
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-[color:var(--hub-stat-label)]">Расклад</p>
+                      <button
+                        onClick={() => { setHistoryInitialMode("comment"); setHistoryOpen(true) }}
+                        className="flex items-center gap-1 rounded-full border border-[color:var(--hub-tile-icon-border)] px-2 py-0.5 text-[9px] text-[color:var(--hub-stat-label)] hover:text-[color:var(--theme-accent-heading)] hover:border-[color:var(--hub-card-border-hover)] transition-colors"
+                      >
+                        <History className="w-2 h-2" />
+                        История
+                      </button>
+                    </div>
+                    <p className="text-[18px] font-bold leading-tight text-[rgba(255,244,215,0.95)]">{activeLead.name ?? "Без имени"}</p>
+                    <p className="mb-1.5 text-[10px] text-[color:var(--hub-desc)]">
+                      {LEAD_STAGES.find((s) => s.id === activeLead.stageId)?.name ?? activeLead.stageId}
+                    </p>
+                    <div className="flex items-center justify-center gap-5">
+                      {[
+                        { label: "Задача", icon: <CheckSquare className="w-2.5 h-2.5" />, value: activeLead.hasTask ? "Есть" : "Нет", bad: !activeLead.hasTask },
+                        { label: "Менеджер", icon: <Eye className="w-2.5 h-2.5" />, value: activeLead.managerId ? "Назначен" : "Нет", bad: !activeLead.managerId },
+                        { label: "Просрочка", icon: <Clock className="w-2.5 h-2.5" />, value: activeLead.taskOverdue ? "Да" : "Нет", bad: !!activeLead.taskOverdue },
+                      ].map(({ label, icon, value, bad }) => (
+                        <div key={label} className="text-center">
+                          <div className={cn("flex justify-center mb-0.5", bad ? "text-rose-400" : "text-[color:var(--workspace-text-muted)]")}>{icon}</div>
+                          <p className="text-[8px] uppercase tracking-wide text-[color:var(--theme-accent-icon-dim)]">{label}</p>
+                          <p className={cn("text-[10px] font-bold", bad ? "text-rose-400" : "text-[color:var(--hub-stat-label)]")}>{value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-[11px] text-[rgba(247,229,189,0.4)]">Выберите лид</p>
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
